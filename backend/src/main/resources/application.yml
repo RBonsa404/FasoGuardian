@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: fasoguardian
+  autoconfigure:
+    # Aucun compte en mémoire : l'authentification est fournie par le module identite.
+    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${FG_DB_URL:jdbc:postgresql://localhost:5432/fasoguardian}
+    username: ${FG_DB_USER:fasoguardian}
+    password: ${FG_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: plateforme
+        jdbc:
+          time_zone: UTC
+  flyway:
+    default-schema: plateforme
+    create-schemas: true
+  mvc:
+    problemdetails:
+      enabled: true
+  modulith:
+    events:
+      republish-outstanding-events-on-restart: true
+
+server:
+  port: ${FG_SERVER_PORT:8080}
+  shutdown: graceful
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "recette | prod"
+
+# Recette et production : journaux structurés JSON, sans donnée personnelle (identifiants techniques uniquement).
+logging:
+  structured:
+    format:
+      console: ecs
+
+springdoc:
+  swagger-ui:
+    enabled: false

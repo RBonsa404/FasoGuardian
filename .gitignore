@@ -1,0 +1,38 @@
+# Secrets et configuration locale : jamais dans le dépôt
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+infra/**/certs/
+infra/**/secrets/
+
+# Java / Maven
+target/
+*.class
+.mvn/wrapper/maven-wrapper.jar
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+playwright-report/
+test-results/
+
+# Firmware
+firmware/build/
+firmware/**/Debug/
+firmware/**/Release/
+
+# Outils
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.iml
+.DS_Store
+Thumbs.db
+*.log
