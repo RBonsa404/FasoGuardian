@@ -1,0 +1,72 @@
+/* FasoGuardian — jetons de conception v1.0 · Tailwind CSS 4 */
+@import "tailwindcss";
+
+@theme {
+  /* Marque */
+  --color-nuit-50:#EEF0F6; --color-nuit-100:#D9DDE9; --color-nuit-200:#B4BBD0; --color-nuit-300:#8A93B0; --color-nuit-400:#5F6A8C; --color-nuit-500:#3D4767; --color-nuit-600:#283150; --color-nuit-700:#1A2139; --color-nuit-800:#121829; --color-nuit-900:#0A0E1A; --color-nuit-950:#05070E;
+  --color-confiance-50:#EDF3FC; --color-confiance-100:#D3E2F7; --color-confiance-200:#A8C5EE; --color-confiance-300:#74A1E0; --color-confiance-400:#4479CB; --color-confiance-500:#245BAE; --color-confiance-600:#1A4A93; --color-confiance-700:#123C7A; --color-confiance-800:#0E2F60; --color-confiance-900:#0A2246; --color-confiance-950:#06152C;
+  --color-electrique-50:#EAF6FF; --color-electrique-100:#CDEBFF; --color-electrique-200:#9DD8FF; --color-electrique-300:#66C2FF; --color-electrique-400:#2FA8FF; --color-electrique-500:#0F8EEB; --color-electrique-600:#0072C7; --color-electrique-700:#005AA0; --color-electrique-800:#064A80; --color-electrique-900:#0A3D69; --color-electrique-950:#072645;
+  /* ambre : ALERTES UNIQUEMENT (SOS, retrait non autorisé, sortie de zone) */
+  --color-ambre-50:#FFF6E8; --color-ambre-100:#FFE9C7; --color-ambre-200:#FFD38F; --color-ambre-300:#FFBA52; --color-ambre-400:#FF9F1C; --color-ambre-500:#F28500; --color-ambre-600:#CC6A00; --color-ambre-700:#A15102; --color-ambre-800:#833F09; --color-ambre-900:#6C350C; --color-ambre-950:#3E1A02;
+  --color-neutre-50:#F5F7FB; --color-neutre-100:#EAEEF5; --color-neutre-200:#DCE2EC; --color-neutre-300:#C2CADA; --color-neutre-400:#A9B1C7; --color-neutre-500:#7F89A5; --color-neutre-600:#5F6A8C; --color-neutre-700:#3D4767; --color-neutre-800:#232B45; --color-neutre-900:#161C30; --color-neutre-950:#0D1220;
+
+  /* Rôles sémantiques (thème sombre par défaut) */
+  --color-bg:#0A0E1A; --color-surface:#121829; --color-surface-2:#1A2139; --color-line:#232B45; --color-line-strong:#323C5C;
+  --color-text:#F3F5FA; --color-text-2:#A9B1C7; --color-text-3:#7F89A5;
+  --color-accent:#2FA8FF; --color-primary:#245BAE; --color-primary-hover:#2C6AC6; --color-primary-pressed:#1A4A93;
+  --color-success:#3DD39B; --color-attention:#B79CFF; --color-danger:#FF6B78; --color-alert:#FF9F1C; --color-on-alert:#0A0E1A;
+
+  /* Typographie */
+  --font-display:"Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:"Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-system:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* page QR */
+  --text-display-xl:72px; --text-display-xl--line-height:1.05; --text-display-xl--letter-spacing:-0.035em;
+  --text-display:48px; --text-display--line-height:1.1; --text-display--letter-spacing:-0.03em;
+  --text-h1:32px; --text-h1--line-height:1.2; --text-h1--letter-spacing:-0.02em;
+  --text-h2:24px; --text-h2--line-height:1.25;
+  --text-h3:18px; --text-h3--line-height:1.3;
+  --text-body-lg:17px; --text-body-lg--line-height:1.55;
+  --text-body:15px; --text-body--line-height:1.5;
+  --text-label:13px; --text-label--line-height:1.4;
+  --text-data:28px; --text-data--line-height:1.15;
+  --text-caption:12px; --text-caption--line-height:1.35;
+
+  /* Espace (base 4 px) — Tailwind 4 dérive p-1 = 4px etc. */
+  --spacing:4px;
+
+  /* Rayons */
+  --radius-xs:6px; --radius-sm:10px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-2xl:36px; --radius-full:999px;
+
+  /* Élévations */
+  --shadow-e1:0 1px 2px rgba(0,0,0,.4);
+  --shadow-e2:0 8px 24px rgba(0,0,0,.45);
+  --shadow-e3:0 24px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(47,168,255,.18);
+  --shadow-focus:0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+
+  /* Motion */
+  --duration-instant:120ms; --duration-fast:200ms; --duration-base:320ms; --duration-slow:600ms;
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-enter:cubic-bezier(.2,.8,.2,1); --ease-exit:cubic-bezier(.4,0,1,1);
+  --animate-live-pulse:fg-pulse 2000ms cubic-bezier(.2,.7,.3,1) infinite;
+  --animate-sos-wave:fg-wave 1200ms cubic-bezier(.2,.7,.3,1) infinite;
+  --animate-shimmer:fg-shimmer 1400ms linear infinite;
+  --animate-rise:fg-rise 320ms cubic-bezier(.2,.8,.2,1) both;
+
+  @keyframes fg-pulse { 0%{transform:scale(.6);opacity:.7} 100%{transform:scale(2.4);opacity:0} }
+  @keyframes fg-wave { 0%{transform:scale(.35);opacity:.8} 100%{transform:scale(1.7);opacity:0} }
+  @keyframes fg-shimmer { 0%{background-position:-240px 0} 100%{background-position:240px 0} }
+  @keyframes fg-rise { 0%{transform:translateY(12px);opacity:0} 100%{transform:none;opacity:1} }
+}
+
+/* Thème clair */
+[data-theme="clair"], .theme-clair {
+  --color-bg:#F5F7FB; --color-surface:#FFFFFF; --color-surface-2:#EAEEF5; --color-line:#DCE2EC; --color-line-strong:#C2CADA;
+  --color-text:#0A0E1A; --color-text-2:#3D4767; --color-text-3:#5F6A8C;
+  --color-accent:#0067B5; --color-primary:#123C7A; --color-primary-hover:#1A4A93; --color-primary-pressed:#0E2F60;
+  --color-success:#0E7A52; --color-attention:#5B3FC4; --color-danger:#C42B3B;
+  /* --color-alert reste #FF9F1C : toujours en fond, texte nuit (jamais texte ambre sur clair) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --animate-live-pulse:none; --animate-sos-wave:none; --animate-shimmer:none; --animate-rise:fg-fade 120ms linear both; }
+  @keyframes fg-fade { from{opacity:0} to{opacity:1} }
+}

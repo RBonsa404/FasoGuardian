@@ -1,0 +1,13 @@
+@import '../../ui/src/styles/index.css';
+
+@layer base {
+  html {
+    font-family: var(--font-system);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-system);
+  }
+}

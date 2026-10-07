@@ -1,0 +1,28 @@
+/* Point d'entrée des styles FasoGuardian : à importer une seule fois par application. */
+@import './tokens.css';
+@import './tokens-derives.css';
+
+/* Les classes utilitaires des composants fg-* vivent dans la bibliothèque. */
+@source '../lib';
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+}

@@ -1,0 +1,33 @@
+/*
+ * Jetons dérivés du design system : valeurs relevées dans « FasoGuardian Design System »
+ * (fonds doux, encres sur aplats, états du bouton d'alerte) qui ne figurent pas dans tokens.css.
+ * tokens.css reste la copie conforme du paquet de transmission ; ce fichier le complète sans le modifier.
+ */
+@theme {
+  --color-accent-soft: rgba(47, 168, 255, 0.16);
+  --color-success-soft: rgba(61, 211, 155, 0.14);
+  --color-attention-soft: rgba(183, 156, 255, 0.14);
+  --color-attention-text: #d9ccff;
+  --color-alert-soft: rgba(255, 159, 28, 0.16);
+  --color-alert-ink: #ffb347;
+  --color-alert-hover: #ffb347;
+  --color-alert-pressed: #f28500;
+  --color-on-success: #0a0e1a;
+  --color-on-danger: #0a0e1a;
+
+  --radius-banner: 14px;
+  --border-width-trait: 1.5px;
+  --border-width-spinner: 2.5px;
+  --animate-spinner: spin 800ms linear infinite;
+}
+
+[data-theme='clair'],
+.theme-clair {
+  --color-accent-soft: rgba(0, 103, 181, 0.12);
+  --color-success-soft: #ddf3ea;
+  --color-attention-soft: #ece6ff;
+  --color-attention-text: #3b2591;
+  --color-alert-ink: #833f09;
+  --color-on-success: #ffffff;
+  --color-on-danger: #ffffff;
+}
