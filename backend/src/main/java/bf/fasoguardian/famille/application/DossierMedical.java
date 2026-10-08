@@ -44,7 +44,8 @@ public class DossierMedical {
     public record ElementMedical(TypeElement type, String libelle, boolean critique) {
     }
 
-    public record FicheSanteVue(String groupeSanguin, List<ElementMedical> elements, Instant modifieLe) {
+    public record FicheSanteVue(String groupeSanguin, boolean groupeSanguinSurQr, List<ElementMedical> elements,
+            Instant modifieLe) {
     }
 
     public record RevisionVue(int nombreElements, int nombreCritiques, Instant modifieLe) {
@@ -57,7 +58,7 @@ public class DossierMedical {
     }
 
     /** Contenu chiffré de la fiche. */
-    record Contenu(String groupeSanguin, List<ElementMedical> elements) {
+    record Contenu(String groupeSanguin, boolean groupeSanguinSurQr, List<ElementMedical> elements) {
     }
 
     private final AccesEnfant acces;
@@ -87,11 +88,12 @@ public class DossierMedical {
     public FicheSanteVue fiche(UUID tuteurId, UUID enfantId) {
         acces.exigerTuteur(tuteurId, enfantId);
         journal.consigner(tuteurId, "PARENT", "CONSULTATION_FICHE_SANTE", "ENFANT", enfantId.toString(), Resultat.SUCCES);
-        return fiches.findById(enfantId).map(this::vue).orElseGet(() -> new FicheSanteVue(null, List.of(), null));
+        return fiches.findById(enfantId).map(this::vue).orElseGet(() -> new FicheSanteVue(null, false, List.of(), null));
     }
 
     @Transactional
-    public FicheSanteVue enregistrer(UUID tuteurId, UUID enfantId, String groupeSanguin, List<ElementMedical> elements) {
+    public FicheSanteVue enregistrer(UUID tuteurId, UUID enfantId, String groupeSanguin, boolean groupeSanguinSurQr,
+            List<ElementMedical> elements) {
         acces.exigerTuteur(tuteurId, enfantId);
         List<ElementMedical> propres = elements == null ? List.of() : elements.stream()
                 .map(e -> new ElementMedical(e.type(), e.libelle() == null ? "" : e.libelle().trim(), e.critique()))
@@ -104,7 +106,7 @@ public class DossierMedical {
             throw invalide("Chaque information médicale porte un type et un libellé de 120 caractères au plus (20 au maximum).");
         }
         Instant maintenant = horloge.instant();
-        byte[] chiffre = chiffrement.chiffrer(CategorieDonnee.SANTE, json.writeValueAsBytes(new Contenu(groupeSanguin, propres)));
+        byte[] chiffre = chiffrement.chiffrer(CategorieDonnee.SANTE, json.writeValueAsBytes(new Contenu(groupeSanguin, groupeSanguinSurQr && groupeSanguin != null, propres)));
         FicheSante fiche = fiches.findById(enfantId).orElse(null);
         if (fiche == null) {
             fiche = fiches.save(new FicheSante(enfantId, chiffre, maintenant));
@@ -114,7 +116,7 @@ public class DossierMedical {
         revisions.save(new RevisionSante(enfantId, tuteurId, propres.size(),
                 (int) propres.stream().filter(ElementMedical::critique).count(), maintenant));
         journal.consigner(tuteurId, "PARENT", "MODIFICATION_FICHE_SANTE", "ENFANT", enfantId.toString(), Resultat.SUCCES);
-        return new FicheSanteVue(groupeSanguin, propres, maintenant);
+        return new FicheSanteVue(groupeSanguin, groupeSanguinSurQr && groupeSanguin != null, propres, maintenant);
     }
 
     @Transactional(readOnly = true)
@@ -122,6 +124,50 @@ public class DossierMedical {
         acces.exigerTuteur(tuteurId, enfantId);
         return revisions.findByEnfantIdOrderByModifieLeDesc(enfantId).stream()
                 .map(r -> new RevisionVue(r.nombreElements(), r.nombreCritiques(), r.modifieLe())).toList();
+    }
+
+    // ------------------------------------------------------- projection publique
+
+    /** Information médicale affichable sur la page publique : libellé du type et libellé de l'élément. */
+    public record InformationCritique(String type, String libelle) {
+    }
+
+    /** Contact affichable sur la page publique : son lien avec l'enfant et le numéro à composer, sans son nom. */
+    public record ContactPublic(String lien, String telephone) {
+    }
+
+    /**
+     * Éléments marqués critiques par le parent, et groupe sanguin s'il a choisi de l'afficher.
+     * Réservé à la page publique QR : aucun contrôle d'accès, aucune donnée non critique.
+     */
+    @Transactional(readOnly = true)
+    public List<InformationCritique> informationsCritiques(UUID enfantId) {
+        return fiches.findById(enfantId).map(fiche -> {
+            Contenu contenu = json.readValue(chiffrement.dechiffrer(CategorieDonnee.SANTE, fiche.contenuChiffre()), Contenu.class);
+            List<InformationCritique> informations = new java.util.ArrayList<>();
+            contenu.elements().stream().filter(ElementMedical::critique)
+                    .forEach(e -> informations.add(new InformationCritique(libelle(e.type()), e.libelle())));
+            if (contenu.groupeSanguinSurQr() && contenu.groupeSanguin() != null) {
+                informations.add(new InformationCritique("Groupe sanguin", contenu.groupeSanguin()));
+            }
+            return List.copyOf(informations);
+        }).orElse(List.of());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContactPublic> contactsVisibles(UUID enfantId) {
+        return contacts.findByEnfantIdOrderByRang(enfantId).stream().filter(ContactUrgence::visibleSurQr)
+                .map(c -> new ContactPublic(c.lien(), chiffrement.dechiffrerTexte(CategorieDonnee.TELEPHONE, c.telephoneChiffre())))
+                .toList();
+    }
+
+    private static String libelle(TypeElement type) {
+        return switch (type) {
+            case ALLERGIE -> "Allergie";
+            case PATHOLOGIE -> "Pathologie";
+            case TRAITEMENT -> "Traitement";
+            case AUTRE -> "Information";
+        };
     }
 
     // ---------------------------------------------------------------- contacts
@@ -183,7 +229,7 @@ public class DossierMedical {
 
     private FicheSanteVue vue(FicheSante fiche) {
         Contenu contenu = json.readValue(chiffrement.dechiffrer(CategorieDonnee.SANTE, fiche.contenuChiffre()), Contenu.class);
-        return new FicheSanteVue(contenu.groupeSanguin(), contenu.elements(), fiche.modifieLe());
+        return new FicheSanteVue(contenu.groupeSanguin(), contenu.groupeSanguinSurQr(), contenu.elements(), fiche.modifieLe());
     }
 
     private ContactVue vue(ContactUrgence c) {

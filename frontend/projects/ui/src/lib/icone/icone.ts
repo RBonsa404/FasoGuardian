@@ -10,23 +10,15 @@ import { ICONES, NomIcone } from './icones';
 @Component({
   selector: 'fg-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.75"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    focusable="false"
-    [attr.width]="taille()"
-    [attr.height]="taille()"
-    [attr.role]="libelle() ? 'img' : null"
-    [attr.aria-label]="libelle() || null"
-    [attr.aria-hidden]="libelle() ? null : 'true'"
-    [innerHTML]="contenu()"
-  ></svg>`,
-  host: { class: 'inline-flex flex-none' },
+  template: '',
+  host: {
+    class: 'inline-flex flex-none',
+    '[attr.role]': 'libelle() ? "img" : null',
+    '[attr.aria-label]': 'libelle() || null',
+    '[attr.aria-hidden]': 'libelle() ? null : "true"',
+    // Le SVG entier est posé sur l'hôte : le rendu côté serveur ne sait pas écrire dans un élément SVG.
+    '[innerHTML]': 'svg()',
+  },
 })
 export class FgIcon {
   private readonly assainisseur = inject(DomSanitizer);
@@ -36,5 +28,11 @@ export class FgIcon {
   readonly libelle = input<string>();
 
   // Les tracés sont des constantes du dépôt, issues du paquet de design : aucun contenu externe.
-  protected readonly contenu = computed(() => this.assainisseur.bypassSecurityTrustHtml(ICONES[this.nom()]));
+  protected readonly svg = computed(() =>
+    this.assainisseur.bypassSecurityTrustHtml(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" ` +
+        `stroke-linecap="round" stroke-linejoin="round" focusable="false" width="${this.taille()}" height="${this.taille()}">` +
+        `${ICONES[this.nom()]}</svg>`,
+    ),
+  );
 }

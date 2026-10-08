@@ -39,6 +39,8 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        // Délai plancher de la page publique QR réduit pour les tests.
+        registre.add("fasoguardian.qr.delai-minimal", () -> "PT0.08S");
         registre.add("fasoguardian.amorcage.admin.identifiant", () -> ADMIN_IDENTIFIANT);
         registre.add("fasoguardian.amorcage.admin.mot-de-passe", () -> ADMIN_MOT_DE_PASSE);
         for (CategorieDonnee categorie : CategorieDonnee.values()) {

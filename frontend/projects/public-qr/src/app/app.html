@@ -1,3 +1,124 @@
-<main id="contenu">
-  <router-outlet />
+<header class="flex items-center gap-2.5">
+  <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+    <path d="M32 5 54 13v17c0 15-9.5 25-22 29C19.5 55 10 45 10 30V13Z" fill="#123C7A" />
+    <path d="M41 25a11 11 0 1 0 1.5 10H33" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" />
+    <circle cx="32" cy="15" r="3" fill="#2FA8FF" />
+  </svg>
+  <strong class="text-body-lg font-bold">FasoGuardian</strong>
+  <fg-si condition="numero">
+    <span class="ml-auto rounded-full bg-surface-2 px-3 py-1 font-mono text-label font-semibold" i18n-aria-label="@@qr.numero" aria-label="Numéro du bracelet">[[numero]]</span>
+  </fg-si>
+</header>
+
+<main class="flex flex-col gap-5">
+  <fg-etat nom="trouve">
+    <div class="flex flex-col gap-2">
+      <h1 class="m-0 text-h1 font-bold tracking-tight" i18n="@@qr.title">Vous avez trouvé un enfant ?</h1>
+      <p class="m-0 text-body-lg text-text-2" i18n="@@qr.texte">Merci. Restez avec lui dans un endroit sûr et visible, puis prévenez sa famille.</p>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <fg-pour liste="contacts">
+        <a class="flex min-h-14 items-center gap-3 rounded-lg bg-primary px-4 text-body-lg font-bold text-white" href="tel:[[telephone]]">
+          <fg-icon nom="telephone" [taille]="22" /><span i18n="@@qr.appeler">Appeler · [[lien]]</span>
+        </a>
+      </fg-pour>
+      <div class="grid grid-cols-2 gap-2.5">
+        <a class="flex min-h-14 flex-col justify-center rounded-lg border border-line-strong px-4" href="tel:17">
+          <strong class="text-h3 font-bold">17</strong><span class="text-label text-text-2" i18n="@@qr.police">Police secours</span>
+        </a>
+        <a class="flex min-h-14 flex-col justify-center rounded-lg border border-line-strong px-4" href="tel:18">
+          <strong class="text-h3 font-bold">18</strong><span class="text-label text-text-2" i18n="@@qr.pompiers">Sapeurs-pompiers</span>
+        </a>
+      </div>
+    </div>
+
+    <fg-si condition="medical">
+      <section class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4">
+        <h2 class="m-0 flex items-center gap-2 text-h3 font-semibold"><fg-icon nom="medical" [taille]="20" /><ng-container i18n="@@qr.medical">Informations médicales</ng-container></h2>
+        <dl class="m-0 flex flex-col gap-2">
+          <fg-pour liste="elements">
+            <div class="flex flex-col">
+              <dt class="text-label font-semibold text-text-2">[[type]]</dt>
+              <dd class="m-0 text-body-lg font-semibold">[[libelle]]</dd>
+            </div>
+          </fg-pour>
+        </dl>
+      </section>
+    </fg-si>
+
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-h3 font-semibold" i18n="@@qr.attendant">En attendant</h2>
+      <ol class="m-0 flex list-decimal flex-col gap-1.5 pl-5 text-body text-text-2">
+        <li i18n="@@qr.conseil1">Restez avec l'enfant, parlez-lui calmement.</li>
+        <li i18n="@@qr.conseil2">Ne retirez pas le bracelet.</li>
+        <li i18n="@@qr.conseil3">Ne publiez pas sa photo sur les réseaux sociaux.</li>
+      </ol>
+    </section>
+
+    <form class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4" method="post" action="/q/[[jeton]]/prevenir">
+      <h2 class="m-0 text-h3 font-semibold" i18n="@@qr.sms.titre">Prévenir la famille par SMS</h2>
+      <label class="flex flex-col gap-1.5 text-label font-semibold">
+        <ng-container i18n="@@qr.sms.telephone">Votre numéro de téléphone</ng-container>
+        <input class="h-13 rounded-md border border-line-strong bg-bg px-3.5 text-saisie text-text" type="tel" name="telephone" inputmode="numeric" autocomplete="tel-national" required minlength="8" maxlength="20" placeholder="70 12 34 56" />
+      </label>
+      <label class="flex flex-col gap-1.5 text-label font-semibold">
+        <ng-container i18n="@@qr.sms.lieu">Où êtes-vous ? (facultatif)</ng-container>
+        <input class="h-13 rounded-md border border-line-strong bg-bg px-3.5 text-saisie text-text" type="text" name="lieu" maxlength="120" />
+      </label>
+      <fg-si condition="erreurFormulaire">
+        <p class="m-0 text-label font-semibold text-danger" role="alert">[[erreurFormulaire]]</p>
+      </fg-si>
+      <button class="min-h-12 cursor-pointer rounded-md border border-line-strong bg-transparent px-4 text-body font-semibold text-text" type="submit" i18n="@@qr.sms.action">Prévenir la famille</button>
+    </form>
+
+    <p class="m-0 text-label text-text-3" i18n="@@qr.privacy">
+      Cette page n'affiche ni le nom, ni la photo, ni la position de l'enfant. La famille est informée que le bracelet a été scanné.
+    </p>
+  </fg-etat>
+
+  <fg-etat nom="prevenu">
+    <div class="flex flex-col gap-2">
+      <span class="flex items-center gap-2 self-start rounded-full bg-success-soft px-3 py-1 text-label font-semibold text-success"><fg-icon nom="valider" [taille]="16" /><ng-container i18n="@@qr.prevenu.badge">Message transmis à la famille</ng-container></span>
+      <h1 class="m-0 text-h1 font-bold tracking-tight" i18n="@@qr.prevenu.titre">La famille a été prévenue</h1>
+      <p class="m-0 text-body-lg text-text-2" i18n="@@qr.prevenu.texte">Un proche va vous rappeler sur le numéro que vous avez indiqué. Restez avec l'enfant.</p>
+    </div>
+    <div class="flex flex-col gap-2.5">
+      <fg-pour liste="contacts">
+        <a class="flex min-h-14 items-center gap-3 rounded-lg bg-primary px-4 text-body-lg font-bold text-white" href="tel:[[telephone]]">
+          <fg-icon nom="telephone" [taille]="22" /><span i18n="@@qr.appeler">Appeler · [[lien]]</span>
+        </a>
+      </fg-pour>
+      <a class="flex min-h-12 items-center rounded-lg border border-line-strong px-4 text-body font-semibold" href="tel:17" i18n="@@qr.prevenu.police">Personne ne répond ? Appeler le 17</a>
+    </div>
+    <p class="m-0 text-label text-text-3" i18n="@@qr.prevenu.privacy">
+      Merci pour votre geste. Votre numéro n'est transmis qu'à la famille et n'est conservé que 30 jours.
+    </p>
+  </fg-etat>
+
+  <fg-etat nom="inconnu">
+    <div class="flex flex-col gap-2">
+      <h1 class="m-0 text-h1 font-bold tracking-tight" i18n="@@qr.inconnu.titre">Ce code n'est pas reconnu</h1>
+      <p class="m-0 text-body-lg text-text-2" i18n="@@qr.inconnu.texte">Il est peut-être abîmé ou ne provient pas d'un bracelet FasoGuardian.</p>
+    </div>
+    <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+      <h2 class="m-0 text-h3 font-semibold" i18n="@@qr.inconnu.seul">Vous êtes avec un enfant seul ?</h2>
+      <p class="m-0 text-body text-text-2" i18n="@@qr.inconnu.conseil">Restez avec lui et contactez la Police. Le numéro gravé sur le bracelet (FG-XXXX) peut aider les agents.</p>
+      <a class="flex min-h-14 items-center gap-3 rounded-lg bg-primary px-4 text-body-lg font-bold text-white" href="tel:17"><fg-icon nom="telephone" [taille]="22" /><ng-container i18n="@@qr.appeler17">Appeler le 17</ng-container></a>
+    </section>
+    <p class="m-0 text-label text-text-3">Réf. 404-QR · fasoguardian.bf</p>
+  </fg-etat>
+
+  <fg-etat nom="desactive">
+    <div class="flex flex-col gap-2">
+      <h1 class="m-0 text-h1 font-bold tracking-tight" i18n="@@qr.desactive.titre">Ce bracelet n'est plus actif</h1>
+      <p class="m-0 text-body-lg text-text-2" i18n="@@qr.desactive.texte">Il a été déclaré perdu par sa famille. Vous pouvez le déposer dans un point relais FasoGuardian ou au commissariat le plus proche.</p>
+    </div>
+    <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+      <h2 class="m-0 text-h3 font-semibold" i18n="@@qr.desactive.enfant">Un enfant porte ce bracelet ?</h2>
+      <p class="m-0 text-body text-text-2" i18n="@@qr.desactive.conseil">Restez avec lui et appelez la Police. Le bracelet peut avoir été volé.</p>
+      <a class="flex min-h-14 items-center gap-3 rounded-lg bg-primary px-4 text-body-lg font-bold text-white" href="tel:17"><fg-icon nom="telephone" [taille]="22" /><ng-container i18n="@@qr.appeler17">Appeler le 17</ng-container></a>
+    </section>
+    <p class="m-0 text-label text-text-3" i18n="@@qr.desactive.signale">Ce scan a été signalé à FasoGuardian.</p>
+  </fg-etat>
 </main>

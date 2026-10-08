@@ -13,6 +13,6 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0003](0003-module-plateforme.md) | Socle technique partagé `plateforme` à côté des neuf modules métier | Acceptée |
 | [0004](0004-versions-figees.md) | Versions figées au démarrage et écarts par rapport à FG-DOC-06 | Acceptée |
 | [0005](0005-ecarts-du-design.md) | Sept écarts et ajouts du paquet de design | Acceptée en partie |
-| [0006](0006-rendu-de-la-page-qr.md) | Mode de rendu de la page QR (sans bundle Angular côté client) | Proposée |
+| [0006](0006-rendu-de-la-page-qr.md) | Page QR rendue par le serveur à partir d'un gabarit produit par Angular, sans script | Acceptée |
 | [0007](0007-politique-de-mot-de-passe.md) | Mot de passe des parents : 10 caractères dont un chiffre (écart ASVS) | Acceptée |
 | [0008](0008-chiffrement-dans-les-cas-d-usage.md) | Chiffrement appelé par les cas d'usage plutôt que par convertisseurs JPA | Acceptée |

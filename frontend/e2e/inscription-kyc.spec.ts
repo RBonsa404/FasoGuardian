@@ -48,7 +48,7 @@ test("un parent s'inscrit, dépose son dossier, et son compte est activé après
 
   // Le compte n'est pas actif tant que le dossier n'est pas validé
   await page.getByRole('button', { name: "Découvrir l'application" }).click();
-  await expect(page.getByText('En instruction')).toBeVisible();
+  await expect(page.getByText('En instruction', { exact: true })).toBeVisible();
 
   // Instruction par un agent KYC
   const jeton = await agentKyc(request);

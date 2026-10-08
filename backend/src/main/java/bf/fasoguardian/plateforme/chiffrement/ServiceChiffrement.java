@@ -111,6 +111,21 @@ public class ServiceChiffrement {
         return (chiffreComplet[0] & 0xFF) != versionsCourantes.get(categorie);
     }
 
+    /**
+     * Empreinte déterministe d'une valeur dans un domaine nommé, hors catégories de chiffrement :
+     * pseudonymisation (adresses IP du journal des consultations). Changer de domaine change tous les pseudonymes.
+     */
+    public String empreinteLibre(String domaine, String valeur) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(cleEmpreinte);
+            mac.update(("LIBRE:" + domaine + ":").getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(mac.doFinal(valeur.getBytes(StandardCharsets.UTF_8)));
+        } catch (GeneralSecurityException erreur) {
+            throw new IllegalStateException("Calcul d'empreinte impossible", erreur);
+        }
+    }
+
     /** Empreinte déterministe d'une valeur normalisée, pour les colonnes de recherche exacte. */
     public String empreinte(CategorieDonnee categorie, String valeurNormalisee) {
         try {

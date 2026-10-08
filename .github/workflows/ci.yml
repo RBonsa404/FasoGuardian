@@ -45,7 +45,9 @@ jobs:
       - name: Construction des applications
         working-directory: frontend
         run: npm run build
-      # Le budget de public-qr sera vérifié ici dès l'application de l'ADR 0006.
+      - name: Gabarit de la page QR à jour, sans script, sous 60 Ko (bloquant)
+        working-directory: frontend
+        run: node tools/gabarit-qr.mjs --verifier
       - name: Budget de la PWA Parents (250 Ko, bloquant)
         working-directory: frontend
         run: npm run budgets -- parents

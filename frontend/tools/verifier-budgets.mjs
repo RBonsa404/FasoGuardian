@@ -1,13 +1,13 @@
 // Vérifie les budgets de poids transféré (gzip) du chargement initial. Bloquant en intégration continue.
 //   parents   : 250 Ko maximum (FG-DOC-06, tableau 9 ; REQ-SYS-009)
-//   public-qr : 60 Ko maximum, tout compris (REQ-SYS-014)
+// Le budget de 60 Ko de la page QR est vérifié sur son gabarit par tools/gabarit-qr.mjs (ADR 0006).
 // Usage : node tools/verifier-budgets.mjs [application...]   (après ng build ; toutes les applications par défaut)
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-const BUDGETS_KO = { parents: 250, 'public-qr': 60 };
+const BUDGETS_KO = { parents: 250 };
 
 const racine = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const poidsGzip = (chemin) => gzipSync(readFileSync(chemin), { level: 9 }).length;

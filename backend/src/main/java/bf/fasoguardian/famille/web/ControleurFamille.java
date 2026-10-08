@@ -61,7 +61,8 @@ class ControleurFamille {
     record ElementDto(@NotNull DossierMedical.TypeElement type, @NotBlank @Size(max = 120) String libelle, boolean critique) {
     }
 
-    record DemandeSante(@Size(max = 3) String groupeSanguin, @Valid @Size(max = 20) List<ElementDto> elements) {
+    record DemandeSante(@Size(max = 3) String groupeSanguin, Boolean groupeSanguinSurQr,
+            @Valid @Size(max = 20) List<ElementDto> elements) {
     }
 
     record DemandeContact(@NotBlank @Size(max = 40) String lien, @NotBlank @Size(max = 80) String nom,
@@ -105,7 +106,8 @@ class ControleurFamille {
             @Valid @RequestBody DemandeSante demande) {
         List<ElementMedical> elements = demande.elements() == null ? List.of() : demande.elements().stream()
                 .map(e -> new ElementMedical(e.type(), e.libelle(), e.critique())).toList();
-        return sansCache(medical.enregistrer(id(jeton), enfantId, demande.groupeSanguin(), elements));
+        return sansCache(medical.enregistrer(id(jeton), enfantId, demande.groupeSanguin(),
+                Boolean.TRUE.equals(demande.groupeSanguinSurQr()), elements));
     }
 
     @Operation(summary = "Journal des révisions de la fiche médicale")

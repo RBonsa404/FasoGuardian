@@ -24,7 +24,9 @@
                 "input": "projects/site/public"
               }
             ],
-            "styles": ["projects/site/src/styles.css"],
+            "styles": [
+              "projects/site/src/styles.css"
+            ],
             "server": "projects/site/src/main.server.ts",
             "outputMode": "server",
             "security": {
@@ -93,8 +95,12 @@
                 "input": "projects/parents/public"
               }
             ],
-            "styles": ["projects/parents/src/styles.css"],
-            "polyfills": ["@angular/localize/init"]
+            "styles": [
+              "projects/parents/src/styles.css"
+            ],
+            "polyfills": [
+              "@angular/localize/init"
+            ]
           },
           "configurations": {
             "production": {
@@ -155,15 +161,14 @@
                 "input": "projects/public-qr/public"
               }
             ],
-            "styles": ["projects/public-qr/src/styles.css"],
+            "styles": [
+              "projects/public-qr/src/styles.css"
+            ],
             "server": "projects/public-qr/src/main.server.ts",
-            "outputMode": "server",
-            "security": {
-              "allowedHosts": []
-            },
-            "ssr": {
-              "entry": "projects/public-qr/src/server.ts"
-            }
+            "outputMode": "static",
+            "polyfills": [
+              "@angular/localize/init"
+            ]
           },
           "configurations": {
             "production": {
@@ -224,8 +229,12 @@
                 "input": "projects/console/public"
               }
             ],
-            "styles": ["projects/console/src/styles.css"],
-            "polyfills": ["@angular/localize/init"]
+            "styles": [
+              "projects/console/src/styles.css"
+            ],
+            "polyfills": [
+              "@angular/localize/init"
+            ]
           },
           "configurations": {
             "production": {

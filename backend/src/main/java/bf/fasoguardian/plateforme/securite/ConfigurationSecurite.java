@@ -45,6 +45,8 @@ class ConfigurationSecurite {
                         .requestMatchers("/actuator/health/**", "/actuator/prometheus").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/auth/**", "/api/v1/public/**").permitAll()
+                        // Page publique QR : HTML sans compte ni script, limitée en débit par le module famille.
+                        .requestMatchers("/q/**").permitAll()
                         // Outils de développement : les contrôleurs n'existent que sous le profil dev.
                         .requestMatchers("/api/v1/dev/**").permitAll()
                         .anyRequest().authenticated())

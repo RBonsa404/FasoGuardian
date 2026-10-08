@@ -12,7 +12,8 @@
     "importer:design": "node tools/importer-design.mjs",
     "build:tout": "ng build ui && ng build api && ng build parents && ng build public-qr && ng build console && ng build site",
     "budgets": "node tools/verifier-budgets.mjs",
-    "e2e": "playwright test -c e2e/playwright.config.ts"
+    "e2e": "playwright test -c e2e/playwright.config.ts",
+    "gabarit:qr": "ng build public-qr && node tools/gabarit-qr.mjs"
   },
   "private": true,
   "packageManager": "npm@11.16.0",

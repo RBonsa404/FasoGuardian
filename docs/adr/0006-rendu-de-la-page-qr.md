@@ -1,6 +1,6 @@
 # ADR 0006 — Mode de rendu de la page publique QR
 
-Statut : proposée — à trancher à l'étape « famille et page QR »
+Statut : acceptée — 8 octobre 2026
 
 ## Contexte
 
@@ -20,10 +20,20 @@ dont 67 Ko de bundle JavaScript.
 
 ## Décision
 
-À prendre avec le module `famille`. L'option 2 est privilégiée à ce stade, parce qu'elle n'ajoute aucun
-composant à exploiter pour une équipe de quatre personnes.
+Option 2. La page est écrite avec Angular et Tailwind dans `frontend/projects/public-qr`, à partir des jetons
+du design. Sa construction la pré-rend une fois ; `tools/gabarit-qr.mjs` en tire un gabarit HTML autonome
+(feuille de style en ligne, aucun script, aucune ressource externe), versionné dans
+`backend/src/main/resources/gabarits/page-qr.html`. Le serveur Spring Boot le remplit à chaque scan
+(`GabaritPageQr`) : balises `fg-etat`, `fg-si`, `fg-pour` et marqueurs `[[nom]]`, toute valeur étant échappée.
+
+L'envoi d'un message à la famille est un formulaire HTML classique (`POST /q/{jeton}/prevenir`).
 
 ## Conséquences
 
-Tant que la décision n'est pas appliquée, le budget de 60 Ko de `public-qr` n'est pas tenu ; la vérification
-bloquante en intégration continue ne porte que sur `parents`.
+- Aucun processus Node.js en production ; la page fonctionne sans JavaScript et ne déclenche qu'une requête.
+- Poids mesuré le 8 octobre 2026 : 9 Ko compressés pour un budget de 60 Ko. L'intégration continue échoue si
+  le gabarit versionné n'est pas à jour, contient un script ou dépasse le budget.
+- L'application `public-qr` n'est jamais exécutée dans un navigateur : son paquet JavaScript n'est pas déployé.
+- Toute modification de la page impose de relancer `npm run gabarit:qr` et de committer le gabarit.
+- Écart de forme avec FG-DOC-06 (§4.1), qui décrit la page comme un fichier statique : elle est rendue par le
+  serveur d'application, condition pour afficher des données propres au bracelet sans JavaScript.

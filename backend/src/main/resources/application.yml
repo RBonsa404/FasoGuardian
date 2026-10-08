@@ -68,6 +68,9 @@ fasoguardian:
   jetons:
     # Secret de signature des jetons (HS256), 32 octets au moins en base64.
     secret: ${FG_JWT_SECRET:}
+  qr:
+    # Délai de réponse plancher de la page publique, identique pour un jeton valide ou non.
+    delai-minimal: PT0.3S
   sms:
     # Adaptateur SMS : « bac-a-sable » tant que l'agrégateur n'est pas choisi.
     adaptateur: ${FG_SMS_ADAPTATEUR:}

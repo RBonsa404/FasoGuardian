@@ -7,13 +7,13 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 10 en cours (US-PAR-001 à 005, 011, 019, US-SYS-006, US-ADM-001, 002). Étape 1 « Socle » close.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 12 en cours (US-PAR-001 à 005, 011, 019, US-TRS-001, US-SYS-006, 010, US-ADM-001, 002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
 | US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `InstructionKyc`, `Verification`, console `FileKyc` et `InstructionKyc` | `InscriptionEtSessionsIT`, `KycIT`, `inscription.spec.ts`, `verification.spec.ts`, e2e `inscription-kyc.spec.ts` et `console-kyc.spec.ts` | En cours : critères d'acceptation couverts de bout en bout, parent et agent ; contrôle visuel complet des écrans 10, 11, 59 et 60 à faire |
 | US-PAR-002 | MUST | REQ-MUST-02 | identite | parents | `ProfilParent`, `CodesSms`, `ControleurProfil`, `MotDePasseOublie`, `Reglages`, `SecondFacteur` | `ProfilIT`, e2e `compte.spec.ts` | En cours : coordonnées modifiées et horodatées, réinitialisation par code, clôture avec second facteur et accusé ; purge effective des données sous 30 jours à faire (module audit) |
-| US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents | `ServiceLiensTutelle`, `AccesEnfant`, `DossierMedical` (contacts) | `FamilleIT` | En cours : contacts d'urgence chiffrés côté serveur ; invitation d'un second tuteur, écrans 17 et 34 à faire |
+| US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents, public-qr | `ServiceLiensTutelle`, `AccesEnfant`, `DossierMedical` (contacts), `PagePubliqueQr` | `FamilleIT`, `PagePubliqueQrIT` | En cours : contacts chiffrés, contact visible joignable depuis la page publique ; invitation d'un second tuteur, écrans 17 et 34 à faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents | `Familles`, `ControleurFamille` | `FamilleIT` | En cours : fiche créée à l'approbation du KYC, corrections horodatées et historisées côté serveur ; photo et écran 31 à faire |
 | US-PAR-005 | SHOULD | REQ-SHOULD-01 | identite | parents, console | `Verification` (choix « en point d'inscription ») | `KycIT`, `verification.spec.ts` | En cours : parcours accompagné sans photo ; prise de rendez-vous et saisie par l'agent à faire ; critère « sans aide dans la majorité des cas » à valider au pilote |
 | US-PAR-006 | MUST | REQ-MUST-09 | telemetrie, geolocalisation | parents |  |  | À faire |
@@ -30,8 +30,8 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 10 en cours (US-PAR-001
 | US-PAR-010 | MUST | REQ-MUST-12 | alertes | parents, console |  |  | À faire |
 | US-SYS-005 | COULD | REQ-COULD-05 | alertes, notifications | parents |  |  | À faire |
 | US-FDS-001 | COULD | Complémentaire | alertes | console, parents |  |  | À faire |
-| US-PAR-011 | MUST | REQ-MUST-05 | famille | parents | `DossierMedical`, `ControleurFamille` | `FamilleIT` | En cours : fiche chiffrée, éléments critiques, journal de révisions côté serveur ; projection sur la page publique et écran 32 à faire |
-| US-TRS-001 | MUST | REQ-MUST-06 | famille | public-qr, site |  |  | À faire |
+| US-PAR-011 | MUST | REQ-MUST-05 | famille | parents, public-qr | `DossierMedical`, `ControleurFamille`, `PagePubliqueQr` | `FamilleIT`, `PagePubliqueQrIT` | En cours : fiche chiffrée, éléments critiques projetés sur la page publique, journal de révisions ; écran 32 à faire |
+| US-TRS-001 | MUST | REQ-MUST-06 | famille | public-qr | `PagePubliqueQr`, `ControleurPageQr`, `GabaritPageQr`, `public-qr/app.html`, `tools/gabarit-qr.mjs` | `PagePubliqueQrIT`, `public-qr/app.spec.ts`, e2e `page-qr.spec.ts` | En cours : page minimale sans nom ni position, page générique, 9 Ko sans script, consultation journalisée ; rattachement du jeton à l'appairage (dispositifs) et mesure en 2G réelle à faire |
 | US-PAR-012 | MUST | REQ-MUST-17 | alertes, dispositifs | parents, firmware |  |  | À faire |
 | US-ADM-001 | MUST | REQ-MUST-23 | identite, plateforme, audit | console | `AgentsInternes`, `ControleurAgents`, `JournalisationRefus`, console `Connexion`, `Structure`, `Refuse` | `AgentsEtAuditIT`, `KycIT`, e2e `console-kyc.spec.ts` | En cours : agents, TOTP obligatoire, cloisonnement, refus journalisés, écrans 55, 56 et 58 ; gestion des agents (écran 69), verrouillage après inactivité et cloisonnement des positions à faire |
 | US-SYS-006 | MUST | REQ-MUST-24 | plateforme, identite, famille | site | `ServiceChiffrement`, `InstructionKyc` | `ServiceChiffrementTest`, `InscriptionEtSessionsIT`, `KycIT` | En cours : téléphone, identités et pièces KYC chiffrés ; santé à venir avec son module |
@@ -49,7 +49,7 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 10 en cours (US-PAR-001
 | US-PAR-017 | COULD | REQ-COULD-02 | identite | parents, console |  |  | À faire |
 | US-SUP-001 | COULD | REQ-COULD-03 | identite | console, parents, site |  |  | À faire |
 | US-SYS-009 | COULD | REQ-COULD-04 | dispositifs | firmware |  |  | À faire |
-| US-SYS-010 | SHOULD | REQ-MUST-06 (sécurité) | famille | public-qr, console |  |  | À faire |
+| US-SYS-010 | SHOULD | REQ-MUST-06 (sécurité) | famille, audit | public-qr, console | `PagePubliqueQr` (compteurs par source) | `PagePubliqueQrIT` | En cours : blocage après 20 jetons invalides par minute, délai constant, entrée d'audit ; alerte visible de l'administrateur (écran 73) à faire |
 | US-PAR-018 | SHOULD | REQ-MUST-11 (ergonomie) | alertes | parents |  |  | À faire |
 | US-SYS-011 | MUST | REQ-MUST-07 (sécurité) | dispositifs | firmware |  |  | À faire |
 | US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents | `Sessions` | `InscriptionEtSessionsIT` | En cours : rotation et révocation côté serveur, réauthentification à l'écran de connexion ; écran 14 et consultation hors ligne à faire |
