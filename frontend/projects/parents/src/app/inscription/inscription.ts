@@ -127,7 +127,7 @@ export class Inscription {
     }
     this.appeler(this.client.terminerInscription(this.preuve()!, this.motDePasse.value, consentements), () => {
       this.motDePasse.setValue('');
-      void this.router.navigate(['/']);
+      void this.router.navigate(['/verification', 'mode']);
     });
   }
 

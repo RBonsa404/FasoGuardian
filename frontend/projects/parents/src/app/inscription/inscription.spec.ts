@@ -28,6 +28,7 @@ describe('Inscription', () => {
         provideRouter(
           [
             { path: '', component: AccueilFactice },
+            { path: 'verification/:etape', component: AccueilFactice },
             { path: 'inscription/:etape', component: Inscription },
           ],
           withComponentInputBinding(),
@@ -58,7 +59,7 @@ describe('Inscription', () => {
     expect(TestBed.inject(Router).url).toBe('/inscription/numero');
   });
 
-  it("mène du numéro à la création du compte, puis à l'accueil", async () => {
+  it('mène du numéro à la création du compte, puis à la vérification', async () => {
     saisir(champ(), '70123456');
     await soumettre();
     const envoi = serveur.expectOne('/api/v1/auth/inscription/numero');
@@ -93,7 +94,7 @@ describe('Inscription', () => {
     fin.flush({ jetonAcces: 'jeton', expireDansSecondes: 900 }, { status: 201, statusText: 'Created' });
     await harnais.fixture.whenStable();
 
-    expect(TestBed.inject(Router).url).toBe('/');
+    expect(TestBed.inject(Router).url).toBe('/verification/mode');
     expect(TestBed.inject(Session).ouverte()).toBe(true);
   });
 

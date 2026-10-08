@@ -42,7 +42,7 @@ let suite = 0;
 })
 export class FgChamp implements ControlValueAccessor {
   readonly libelle = input.required<string>();
-  readonly type = input<'text' | 'password' | 'email'>('text');
+  readonly type = input<'text' | 'password' | 'email' | 'date'>('text');
   readonly autocomplete = input<string>();
   readonly longueurMax = input<number>();
   readonly aide = input<string>();

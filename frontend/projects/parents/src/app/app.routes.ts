@@ -31,5 +31,11 @@ export const routes: Routes = [
   { path: 'connexion', loadComponent: () => import('./connexion/connexion').then((m) => m.Connexion) },
   { path: 'inscription', pathMatch: 'full', redirectTo: 'inscription/numero' },
   { path: 'inscription/:etape', loadComponent: () => import('./inscription/inscription').then((m) => m.Inscription) },
+  { path: 'verification', pathMatch: 'full', redirectTo: 'verification/instruction' },
+  {
+    path: 'verification/:etape',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./verification/verification').then((m) => m.Verification),
+  },
   { path: '**', redirectTo: '' },
 ];

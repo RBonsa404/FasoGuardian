@@ -1,0 +1,248 @@
+@switch (etape()) {
+  @case ('mode') {
+    <app-etape
+      [surtitre]="surtitre()"
+      i18n-titre="@@verification.mode.titre"
+      titre="Comment voulez-vous vérifier votre identité ?"
+      i18n-texte="@@verification.mode.texte"
+      texte="Nous devons confirmer que vous êtes le parent ou le tuteur de l'enfant."
+      [numero]="numero()"
+      [total]="total()"
+      (retour)="reculer()"
+    >
+      <div role="radiogroup" class="flex flex-col gap-3" i18n-aria-label="@@verification.mode.groupe" aria-label="Mode de vérification">
+        <button type="button" role="radio" [attr.aria-checked]="enLigne()" [class]="classesChoix(enLigne())" (click)="choisirCanal('EN_LIGNE')">
+          <span [class]="classesPastille(enLigne())"><fg-icon nom="kyc-piece" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5 text-left">
+            <strong class="text-body font-semibold" i18n="@@verification.mode.enLigne">En ligne, maintenant</strong>
+            <span class="text-label text-text-2" i18n="@@verification.mode.enLigne.texte">Photo de votre pièce et du justificatif · 5 min</span>
+          </span>
+        </button>
+        <button type="button" role="radio" [attr.aria-checked]="!enLigne()" [class]="classesChoix(!enLigne())" (click)="choisirCanal('POINT_INSCRIPTION')">
+          <span [class]="classesPastille(!enLigne())"><fg-icon nom="agent" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5 text-left">
+            <strong class="text-body font-semibold" i18n="@@verification.mode.point">En point d'inscription</strong>
+            <span class="text-label text-text-2" i18n="@@verification.mode.point.texte">Un agent vous accompagne · Dassasgho, Pissy, Gounghin</span>
+          </span>
+        </button>
+      </div>
+      <ng-container pied>
+        <button fg-button taille="lg" type="button" (click)="avancerDepuisMode()">
+          @if (enLigne()) {
+            <ng-container i18n="@@verification.mode.action.enLigne">Continuer en ligne</ng-container>
+          } @else {
+            <ng-container i18n="@@verification.mode.action.point">Continuer avec un agent</ng-container>
+          }
+        </button>
+        <span class="py-2 text-center text-label font-medium text-text-3" i18n="@@verification.mode.pied">Vos documents sont chiffrés.</span>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('identite') {
+    <app-etape
+      [surtitre]="surtitre()"
+      i18n-titre="@@verification.identite.titre"
+      titre="Votre identité"
+      i18n-texte="@@verification.identite.texte"
+      texte="Tel qu'écrit sur votre pièce."
+      [numero]="numero()"
+      [total]="total()"
+      (retour)="reculer()"
+    >
+      <form id="formulaire" class="contents" [formGroup]="identite" (submit)="$event.preventDefault(); validerIdentite()">
+        <fg-input i18n-libelle="@@verification.identite.nom" libelle="Nom" autocomplete="family-name" [longueurMax]="80" formControlName="nom" />
+        <fg-input i18n-libelle="@@verification.identite.prenoms" libelle="Prénoms" autocomplete="given-name" [longueurMax]="120" formControlName="prenoms" />
+        <fg-input
+          i18n-libelle="@@verification.identite.piece"
+          libelle="Numéro de la pièce"
+          i18n-aide="@@verification.identite.piece.aide"
+          aide="CNIB, passeport ou carte consulaire"
+          [longueurMax]="32"
+          formControlName="numeroPiece"
+        />
+      </form>
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="submit" form="formulaire" i18n="@@commun.continuer">Continuer</button>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('piece') {
+    <app-etape
+      [surtitre]="surtitre()"
+      i18n-titre="@@verification.piece.titre"
+      titre="Photo de votre pièce"
+      i18n-texte="@@verification.piece.texte"
+      texte="Recto et verso, bien à plat."
+      [numero]="numero()"
+      [total]="total()"
+      (retour)="reculer()"
+    >
+      @if (etat.aCompleter(); as aCompleter) {
+        <fg-banner ton="attention">{{ aCompleter.motif }}</fg-banner>
+      }
+      @for (carte of cartesPiece; track carte.type) {
+        <ng-container *ngTemplateOutlet="fichier; context: { $implicit: carte, accept: 'image/jpeg,image/png' }" />
+      }
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="button" (click)="validerPiece()" i18n="@@commun.continuer">Continuer</button>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('filiation') {
+    <app-etape
+      [surtitre]="surtitre()"
+      i18n-titre="@@verification.filiation.titre"
+      titre="Votre lien avec l'enfant"
+      i18n-texte="@@verification.filiation.texte"
+      texte="Acte de naissance de l'enfant, ou jugement de tutelle."
+      [numero]="numero()"
+      [total]="total()"
+      (retour)="reculer()"
+    >
+      @if (!etat.aCompleter()) {
+        <form id="formulaire" class="contents" [formGroup]="enfant" (submit)="$event.preventDefault(); validerFiliation()">
+          <fg-input i18n-libelle="@@verification.enfant.prenom" libelle="Prénom de l'enfant" [longueurMax]="80" formControlName="prenom" />
+          <fg-input i18n-libelle="@@verification.enfant.nom" libelle="Nom de l'enfant" [longueurMax]="80" formControlName="nom" />
+          <fg-input type="date" i18n-libelle="@@verification.enfant.naissance" libelle="Date de naissance" formControlName="dateNaissance" />
+        </form>
+        <fg-switch [formControl]="tuteur" i18n-libelle="@@verification.filiation.tuteur" libelle="Je suis le tuteur légal de l'enfant">
+          <strong class="text-body font-semibold" i18n="@@verification.filiation.tuteur">Je suis le tuteur légal de l'enfant</strong>
+          <span class="text-label text-text-2" i18n="@@verification.filiation.tuteur.texte">Le jugement de tutelle remplace l'acte de naissance.</span>
+        </fg-switch>
+      }
+      @if (enLigne()) {
+        <ng-container *ngTemplateOutlet="fichier; context: { $implicit: justificatif(), accept: 'image/jpeg,image/png,application/pdf' }" />
+      }
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="button" (click)="validerFiliation()" i18n="@@commun.continuer">Continuer</button>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('recap') {
+    <app-etape
+      [surtitre]="surtitre()"
+      i18n-titre="@@verification.recap.titre"
+      titre="Récapitulatif"
+      i18n-texte="@@verification.recap.texte"
+      texte="Vérifiez avant l'envoi."
+      [numero]="numero()"
+      [total]="total()"
+      (retour)="reculer()"
+    >
+      @if (etat.identite(); as i) {
+        <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
+          <span [class]="classesPastille(false)"><fg-icon nom="kyc-piece" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5">
+            <strong class="text-body font-semibold">{{ i.nom }} {{ i.prenoms }}</strong>
+            <span class="text-label text-text-2">{{ i.numeroPiece }}</span>
+          </span>
+        </div>
+      }
+      @if (etat.enfant(); as e) {
+        <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
+          <span [class]="classesPastille(false)"><fg-icon nom="filiation" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5">
+            <strong class="text-body font-semibold">{{ e.prenom }} {{ e.nom }}</strong>
+            <span class="text-label text-text-2">{{ e.dateNaissance | date: 'longDate' }}</span>
+          </span>
+        </div>
+      }
+      <p class="m-0 text-label text-text-2">
+        @if (enLigne()) {
+          <ng-container i18n="@@verification.recap.pieces">Pièces jointes : {{ nombrePieces() }}.</ng-container>
+        } @else {
+          <ng-container i18n="@@verification.recap.point">Présentez-vous en point d'inscription avec vos originaux : un agent finalisera la vérification.</ng-container>
+        }
+      </p>
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="button" [chargement]="enCours()" (click)="envoyer()" i18n="@@verification.recap.action">
+          Envoyer mon dossier
+        </button>
+        <span class="py-2 text-center text-label font-medium text-text-3" i18n="@@verification.recap.pied">Réponse sous 48 h ouvrées.</span>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('instruction') {
+    <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7">
+      @if (dossier(); as d) {
+        @switch (d.statut) {
+          @case ('APPROUVE') {
+            <fg-badge class="self-start" ton="succes" icone="valider" i18n="@@kyc.statut.approuve">Compte activé</fg-badge>
+            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.approuve.titre">Votre compte est activé</h1>
+            <p class="m-0 text-body text-text-2" i18n="@@kyc.approuve.texte">Votre lien avec l'enfant est vérifié.</p>
+          }
+          @case ('COMPLEMENT_DEMANDE') {
+            <fg-badge class="self-start" ton="attention" icone="info" i18n="@@kyc.statut.complement">Complément demandé</fg-badge>
+            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.complement.titre">Un complément est nécessaire</h1>
+            <p class="m-0 text-body text-text-2">{{ d.motif }}</p>
+          }
+          @case ('REJETE') {
+            <fg-badge class="self-start" ton="attention" icone="info" i18n="@@kyc.statut.rejete">Dossier non validé</fg-badge>
+            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.rejete.titre">Votre dossier n'a pas pu être validé</h1>
+            <p class="m-0 text-body text-text-2">{{ d.motif }}</p>
+          }
+          @default {
+            <fg-badge class="self-start" ton="accent" icone="horloge" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
+            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.instruction.titre">Dossier en instruction</h1>
+            <p class="m-0 text-body text-text-2" i18n="@@kyc.instruction.texte">Un agent vérifie vos documents. Vous recevrez un SMS dès la décision.</p>
+          }
+        }
+        <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
+          <span [class]="classesPastille(d.statut === 'APPROUVE')"><fg-icon [nom]="d.statut === 'APPROUVE' ? 'valider' : 'horloge'" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@kyc.reference">Réf. {{ d.reference }}</strong>
+            @if (d.deposeLe) {
+              <span class="text-label text-text-2" i18n="@@kyc.deposeLe">Déposé le {{ d.deposeLe | date: 'd MMM à HH:mm' }}</span>
+            }
+          </span>
+        </div>
+        <div class="mt-auto flex flex-col gap-2">
+          @switch (d.statut) {
+            @case ('COMPLEMENT_DEMANDE') {
+              <button fg-button taille="lg" type="button" (click)="completer(d)" i18n="@@kyc.complement.action">Compléter mon dossier</button>
+            }
+            @case ('REJETE') {
+              <button fg-button taille="lg" type="button" (click)="recommencer()" i18n="@@kyc.rejete.action">Déposer un nouveau dossier</button>
+            }
+            @case ('APPROUVE') {
+              <button fg-button taille="lg" type="button" (click)="accueil()" i18n="@@commun.continuer">Continuer</button>
+            }
+            @default {
+              <button fg-button taille="lg" type="button" (click)="accueil()" i18n="@@kyc.instruction.action">Découvrir l'application</button>
+            }
+          }
+        </div>
+      } @else if (erreur(); as message) {
+        <fg-banner ton="erreur">{{ message }}</fg-banner>
+        <button fg-button variante="secondary" type="button" (click)="chargerDossier()" i18n="@@commun.reessayer">Réessayer</button>
+      } @else {
+        <fg-skeleton forme="ligne" class="w-1/3" />
+        <fg-skeleton forme="carte" />
+      }
+    </div>
+  }
+}
+
+<ng-template #banniere>
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+</ng-template>
+
+<ng-template #fichier let-carte let-accept="accept">
+  <label
+    class="flex cursor-pointer items-center gap-3 rounded-lg bg-surface p-3.5 has-focus-visible:outline-2 has-focus-visible:outline-accent"
+    [class]="fichierDe(carte.type) ? 'border border-success' : 'border border-dashed border-line-strong'"
+  >
+    <span [class]="classesPastille(!!fichierDe(carte.type))"><fg-icon [nom]="icone(fichierDe(carte.type))" [taille]="20" /></span>
+    <span class="flex flex-1 flex-col gap-0.5">
+      <strong class="text-body font-semibold">{{ carte.titre }}</strong>
+      <span class="text-label text-text-2">{{ poids(fichierDe(carte.type)) || carte.invite }}</span>
+    </span>
+    <input class="sr-only" type="file" capture="environment" [accept]="accept" [attr.data-piece]="carte.type" (change)="joindre(carte.type, $event)" />
+  </label>
+</ng-template>

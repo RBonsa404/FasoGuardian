@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { ClientAuthentification, Compte } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgSquelette } from 'ui';
@@ -12,7 +12,7 @@ import { erreurLisible } from '../commun/erreurs';
  */
 @Component({
   selector: 'app-accueil',
-  imports: [FgBadge, FgBanniere, FgBouton, FgSquelette],
+  imports: [RouterLink, FgBadge, FgBanniere, FgBouton, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@accueil.titre">Mon compte</h1>
@@ -32,6 +32,9 @@ import { erreurLisible } from '../commun/erreurs';
           <p class="m-0 text-label text-text-2" i18n="@@accueil.instruction">
             Votre compte sera actif dès que votre lien avec l'enfant aura été vérifié par un agent.
           </p>
+          <a class="self-start text-label font-semibold text-accent" routerLink="/verification" i18n="@@accueil.suivre">
+            Suivre ma vérification
+          </a>
         }
       </section>
     } @else if (erreur(); as message) {

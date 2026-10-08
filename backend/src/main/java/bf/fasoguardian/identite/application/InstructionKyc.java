@@ -69,7 +69,7 @@ public class InstructionKyc {
 
     /** Vue du parent : aucun contenu de pièce, aucune identité de l'agent. */
     public record DossierParent(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
-            String motif, List<PieceVue> pieces) {
+            String motif, Instant deposeLe, Instant decideLe, List<PieceVue> pieces) {
     }
 
     /** Ligne de la file d'instruction : aucune donnée d'identité. */
@@ -278,6 +278,7 @@ public class InstructionKyc {
 
     private DossierParent vueParent(DossierKyc d) {
         return new DossierParent(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(), d.motif(),
+                d.deposeLe(), d.decideLe(),
                 pieces.findByDossierId(d.id()).stream().map(InstructionKyc::vue).toList());
     }
 

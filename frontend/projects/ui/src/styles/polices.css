@@ -1,0 +1,20 @@
+/*
+ * Polices de la charte : Inter (texte) et Sora (titres), variables, sous-ensemble latin uniquement,
+ * servies par l'application elle-même (aucun appel à un service tiers). La page publique QR ne les
+ * importe pas : elle utilise les polices du système.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Sora';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('@fontsource-variable/sora/files/sora-latin-wght-normal.woff2') format('woff2-variations');
+}

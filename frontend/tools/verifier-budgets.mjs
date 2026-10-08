@@ -3,7 +3,7 @@
 //   public-qr : 60 Ko maximum, tout compris (REQ-SYS-014)
 // Usage : node tools/verifier-budgets.mjs [application...]   (après ng build ; toutes les applications par défaut)
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
@@ -39,6 +39,16 @@ for (const [application, budgetKo] of Object.entries(BUDGETS_KO)) {
     const url = balise.match(/(?:src|href)="([^"]+)"/)[1];
     if (estInitiale && !/^(https?:)?\/\//.test(url)) {
       ressources.add(url.replace(/^\//, ''));
+    }
+  }
+
+  // Les polices et images appelées par les feuilles de style initiales font partie du chargement initial.
+  for (const feuille of [...ressources].filter((ressource) => ressource.endsWith('.css'))) {
+    const css = readFileSync(join(dossier, feuille), 'utf8');
+    for (const [, url] of css.matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
+      if (!url.startsWith('data:') && !/^(https?:)?\/\//.test(url)) {
+        ressources.add(join(dirname(feuille), url).split(sep).join('/').replace(/^\.?\//, ''));
+      }
     }
   }
 
