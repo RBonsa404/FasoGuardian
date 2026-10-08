@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +42,13 @@ class ServiceJournalAudit implements JournalAudit {
     private final Clock horloge;
     private final Counter ruptures;
     private final TransactionTemplate transaction;
+    private final TransactionTemplate transactionPropre;
 
     ServiceJournalAudit(JdbcTemplate jdbc, Clock horloge, MeterRegistry metriques,
             PlatformTransactionManager gestionnaire) {
         this.transaction = new TransactionTemplate(gestionnaire);
+        this.transactionPropre = new TransactionTemplate(gestionnaire);
+        this.transactionPropre.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         this.jdbc = jdbc;
         this.horloge = horloge;
         this.ruptures = Counter.builder("fasoguardian.audit.chaine.rompue")
@@ -55,8 +59,11 @@ class ServiceJournalAudit implements JournalAudit {
     @Override
     public void consigner(UUID acteurId, String role, String action, String typeCible, String cibleId,
             Resultat resultat) {
-        // Rejoint la transaction en cours, ou en ouvre une : le verrou est tenu jusqu'à la validation.
-        transaction.executeWithoutResult(etat -> ecrire(acteurId, role, action, typeCible, cibleId, resultat));
+        // Une action réussie est tracée dans sa propre transaction métier : l'une ne va pas sans l'autre.
+        // Un refus est tracé à part : il doit survivre à l'annulation de l'opération refusée. Il survient
+        // toujours avant toute écriture de l'opération, qui ne détient donc pas encore le verrou du journal.
+        TransactionTemplate modele = resultat == Resultat.REFUS ? transactionPropre : transaction;
+        modele.executeWithoutResult(etat -> ecrire(acteurId, role, action, typeCible, cibleId, resultat));
     }
 
     private void ecrire(UUID acteurId, String role, String action, String typeCible, String cibleId,

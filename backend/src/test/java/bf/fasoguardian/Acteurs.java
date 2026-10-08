@@ -54,6 +54,48 @@ public final class Acteurs {
         return new Parent(telephone, extraire(session, "\"jetonAcces\":\"([^\"]+)\""));
     }
 
+    public record ParentAvecEnfant(Parent parent, String enfantId) {
+    }
+
+    private static String jetonKyc;
+
+    /**
+     * Parent dont le dossier KYC (en point d'inscription, enfant « Awa Ouédraogo ») vient d'être approuvé :
+     * la fiche de l'enfant existe et le lien de tutelle est actif.
+     */
+    public ParentAvecEnfant parentAvecEnfant() throws Exception {
+        Parent parent = parent();
+        String dossier = extraire(mvc.perform(post("/api/v1/kyc/dossiers").header("Authorization", "Bearer " + parent.jeton())
+                .contentType(MediaType.APPLICATION_JSON).content("""
+                        {"canal":"POINT_INSCRIPTION","natureLien":"PARENT",
+                         "demandeur":{"nom":"Ouédraogo","prenoms":"Mariam","typePiece":"CNIB","numeroPiece":"B12345678"},
+                         "enfant":{"prenom":"Awa","nom":"Ouédraogo","dateNaissance":"2018-03-14"}}
+                        """)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(),
+                "\"id\":\"([0-9a-f-]{36})\"");
+        mvc.perform(post("/api/v1/kyc/dossiers/" + dossier + "/depot").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(status().isOk());
+        String kyc;
+        synchronized (Acteurs.class) {
+            if (jetonKyc == null) {
+                jetonKyc = agent("[\"KYC\"]").jeton();
+            }
+            kyc = jetonKyc;
+        }
+        String base = "/api/v1/console/kyc/dossiers/" + dossier;
+        mvc.perform(post(base + "/prise-en-charge").header("Authorization", "Bearer " + kyc)).andExpect(status().isOk());
+        mvc.perform(post(base + "/decision").header("Authorization", "Bearer " + kyc)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"decision\":\"APPROUVER\"}")).andExpect(status().isOk());
+        // La fiche est créée par un écouteur asynchrone de l'événement DossierKycApprouve.
+        String[] enfantId = new String[1];
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            String corps = mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                    .get("/api/v1/enfants").header("Authorization", "Bearer " + parent.jeton()))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            enfantId[0] = extraire(corps, "\"id\":\"([0-9a-f-]{36})\"");
+        });
+        return new ParentAvecEnfant(parent, enfantId[0]);
+    }
+
     /** Crée un agent aux rôles donnés (tableau JSON, par exemple {@code ["KYC"]}) sans le connecter. */
     public String creerAgent(String roles) throws Exception {
         String identifiant = "agent.essai." + SUITE.incrementAndGet();

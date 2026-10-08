@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DepotLiensTutelle extends JpaRepository<LienTutelle, UUID> {
 
     List<LienTutelle> findByTuteurId(UUID tuteurId);
+
+    List<LienTutelle> findByEnfantId(UUID enfantId);
 }
