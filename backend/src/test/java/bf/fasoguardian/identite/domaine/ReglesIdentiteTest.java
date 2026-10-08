@@ -114,6 +114,14 @@ class ReglesIdentiteTest {
         }
 
         @Test
+        void unCodeDejaUtilisePeutEtreRemplaceSansAttendre() {
+            var emission = CodeUsageUnique.emettre(CONTEXTE, T0);
+
+            assertThat(emission.code().verifier(CONTEXTE, emission.codeEnClair(), T0.plusSeconds(5))).isEqualTo(Resultat.VALIDE);
+            assertThat(emission.code().renvoiPossible(T0.plusSeconds(6))).isTrue();
+        }
+
+        @Test
         void lEtatSeReconstitueDepuisLaBaseSansLeCodeEnClair() {
             var emission = CodeUsageUnique.emettre(CONTEXTE, T0);
             var relu = CodeUsageUnique.reconstituer(emission.code().empreinte(), T0, 2, false);

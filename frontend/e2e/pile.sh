@@ -71,6 +71,9 @@ case "${1:-}" in
     } > "$ENV"
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).
     [ -f "$RACINE/infra/certs/ca.crt" ] || sh "$RACINE/infra/generer-certificats-dev.sh"
+    # Une pile laissée par une session précédente (poste redémarré) garderait l'ancienne base et son mot de passe.
+    for port in 8080 4201 4202; do arreter_port "$port"; done
+    $COMPOSE down -v
     $COMPOSE up -d --wait postgres
     $COMPOSE up -d mosquitto
     lancer_serveur

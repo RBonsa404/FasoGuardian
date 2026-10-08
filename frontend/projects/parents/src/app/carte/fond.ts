@@ -150,8 +150,10 @@ export class Carte {
       etendue.push(...autour(position, Math.max(position.precisionM, 150)));
     }
 
-    // La vue n'est recadrée que lorsque ce qui est montré change de nature, pas à chaque rafraîchissement.
-    const cadre = `${this.zones().length}|${trace.length}|${position ? 'p' : ''}|${brouillon ? 'b' : ''}`;
+    // La vue n'est recadrée que lorsque ce qui est montré change (nature des éléments, cercle en cours de tracé),
+    // pas à chaque rafraîchissement de la position.
+    const cercle = brouillon?.centre ? `${brouillon.centre.latitude.toFixed(5)},${brouillon.centre.longitude.toFixed(5)},${brouillon.rayonM}` : '';
+    const cadre = `${this.zones().length}|${trace.length}|${position ? 'p' : ''}|${cercle}`;
     if (etendue.length > 0 && cadre !== this.cadre && !brouillon?.sommets.length) {
       this.cadre = cadre;
       carte.fitBounds(L.latLngBounds(etendue), { padding: [32, 32], maxZoom: 17 });

@@ -83,6 +83,7 @@ export class EditionZone {
   }
 
   protected placer(point: PointGeo): void {
+    this.erreur.set(null);
     if (this.forme() === 'CERCLE') {
       this.centre.set(point);
     } else if (this.sommets().length < SOMMETS_MAXIMUM) {

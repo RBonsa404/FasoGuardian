@@ -37,16 +37,16 @@ type Action = 'suspendre' | 'supprimer';
           <span class="flex min-w-0 flex-1 flex-col gap-0.5">
             <strong class="truncate text-body font-semibold">{{ zone.nom }}</strong>
             <span class="text-label text-text-2">{{ resume(zone) }}</span>
+            @if (zone.sortieEnCours) {
+              <fg-badge class="mt-1 self-start" ton="alerte" icone="sortie-zone" i18n="@@zones.sortie">Sortie en cours</fg-badge>
+            } @else if (zone.statut === 'SUSPENDUE') {
+              <fg-badge class="mt-1 self-start" ton="attention" i18n="@@zones.suspendue">Suspendue</fg-badge>
+            } @else if (zone.dansLaPlage) {
+              <fg-badge class="mt-1 self-start" ton="succes" i18n="@@zones.active">Active</fg-badge>
+            } @else {
+              <fg-badge class="mt-1 self-start" ton="neutre" i18n="@@zones.horsPlage">Hors plage horaire</fg-badge>
+            }
           </span>
-          @if (zone.sortieEnCours) {
-            <fg-badge ton="alerte" icone="sortie-zone" i18n="@@zones.sortie">Sortie en cours</fg-badge>
-          } @else if (zone.statut === 'SUSPENDUE') {
-            <fg-badge ton="attention" i18n="@@zones.suspendue">Suspendue</fg-badge>
-          } @else if (zone.dansLaPlage) {
-            <fg-badge ton="succes" i18n="@@zones.active">Active</fg-badge>
-          } @else {
-            <fg-badge ton="neutre" i18n="@@zones.horsPlage">Hors plage horaire</fg-badge>
-          }
         </button>
       } @empty {
         <p class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2" i18n="@@zones.vide">Aucune zone pour l'instant. Tracez l'école ou la maison : vous serez prévenu si votre enfant en sort pendant les heures prévues.</p>

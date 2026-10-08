@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 18 en cours (US-PAR-001 à 006, 011, 013, 014, 019, US-TRS-001, US-SYS-001 à 003, 006, 010, US-ADM-001, 002, US-SAV-002). Étape 1 « Socle » close.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 22 en cours (US-PAR-001 à 009, 011, 013, 014, 019, US-ENF-001, US-TRS-001, US-SYS-001 à 003, 006, 010, US-ADM-001, 002, US-SAV-002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -16,16 +16,16 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 18 en cours (US-PAR-001
 | US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents, public-qr | `ServiceLiensTutelle`, `AccesEnfant`, `DossierMedical` (contacts), `PagePubliqueQr`, `Contacts` | `FamilleIT`, `PagePubliqueQrIT`, e2e `famille.spec.ts` | En cours : contacts chiffrés, contact visible joignable depuis la page publique, écran 34 ; invitation d'un second tuteur à faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents | `Familles`, `ControleurFamille`, `FicheEnfantEcran`, `Enfants` | `FamilleIT`, e2e `famille.spec.ts` | En cours : fiche créée à l'approbation du KYC, corrections horodatées et historisées, écrans 17 et 31 ; photo de l'enfant à faire |
 | US-PAR-005 | SHOULD | REQ-SHOULD-01 | identite | parents, console | `Verification` (choix « en point d'inscription ») | `KycIT`, `verification.spec.ts` | En cours : parcours accompagné sans photo ; prise de rendez-vous et saisie par l'agent à faire ; critère « sans aide dans la majorité des cas » à valider au pilote |
-| US-PAR-006 | MUST | REQ-MUST-09 | telemetrie, geolocalisation | parents | `Ingestion`, `Positions`, `ControleurPosition`, `DepotTelemetrie` | `TelemetrieIT` | En cours : dernière position avec horodatage et précision, accès refusé et journalisé pour un compte non rattaché ; carte (écran 16), fraîcheur de 5 minutes et rafraîchissement en alerte à faire avec le module geolocalisation |
-| US-PAR-007 | MUST | REQ-MUST-10 | geolocalisation | parents |  |  | À faire |
-| US-PAR-008 | MUST | REQ-MUST-13 | geolocalisation, alertes | parents |  |  | À faire |
+| US-PAR-006 | MUST | REQ-MUST-09 | telemetrie, geolocalisation | parents | `Ingestion`, `Positions`, `ControleurPosition`, `DepotTelemetrie`, `CarteEnfant`, `Carte` | `TelemetrieIT`, e2e `zones.spec.ts` | En cours : dernière position avec horodatage et précision sur la carte (écran 18), rafraîchie chaque minute, accès refusé et journalisé pour un compte non rattaché ; tableau de bord (écran 16), fraîcheur de 15 minutes de l'offre Essentiel et rafraîchissement à 60 s en mode alerte à faire |
+| US-PAR-007 | MUST | REQ-MUST-10 | geolocalisation | parents | `SafeZones`, `SafeZone`, `ZoneCirculaire`, `ZonePolygonale`, `PlageHoraire`, `ControleurZones`, `Zones`, `EditionZone` | `ReglesZonesTest`, `GeolocalisationIT`, e2e `zones.spec.ts` | En cours : les trois critères sont couverts (zone active dans sa plage, suspension réactivable, tolérance), écrans 21 à 23 (ADR 0010) ; nombre de zones par offre à faire avec les abonnements |
+| US-PAR-008 | MUST | REQ-MUST-13 | geolocalisation, alertes | parents | `Positions.trajet`, `Trajets` | `GeolocalisationIT`, e2e `zones.spec.ts` | En cours : trajet d'une journée sur 30 jours, écran 19 ; journal des alertes (écran 20) et conservation de 90 jours par offre à faire |
 | US-SYS-001 | MUST | REQ-MUST-14 | telemetrie, notifications | parents, firmware, simulator | `AbonneMqtt`, `ConfigurationMqtt`, simulateur | `AbonneMqttIT`, essai Compose avec le simulateur | En cours : réception MQTT en TLS mutuel ; repli par SMS signé à faire avec le module alertes |
 | US-SYS-002 | MUST | REQ-MUST-15 | telemetrie | parents, firmware, simulator | `Ingestion` (idempotence, heure de mesure d'origine), `PositionRecue` | `TelemetrieIT` | En cours : côté serveur, messages rejoués ignorés et positions tamponnées enregistrées à leur heure d'origine ; tampon du bracelet (firmware) et de l'application (PWA hors ligne) à faire |
 | US-SYS-003 | MUST | REQ-MUST-16 | telemetrie | firmware, simulator | `Mesure` (réseau, opérateur), `EtatBracelet`, `MonBracelet` | `TelemetrieIT` | En cours : réseau et opérateur retenus affichés au parent ; la bascule elle-même relève du firmware |
-| US-PAR-009 | SHOULD | REQ-SHOULD-03 | telemetrie, geolocalisation | parents |  |  | À faire |
+| US-PAR-009 | SHOULD | REQ-SHOULD-03 | telemetrie, geolocalisation | parents | `CarteEnfant` (précise / approximative, cercle d'incertitude) | `TelemetrieIT` | En cours : mention et rayon d'incertitude affichés selon la source de la position ; test d'interface à écrire |
 | US-SEC-001 | SHOULD | REQ-SHOULD-04 | famille | parents |  |  | À faire |
 | US-SYS-004 | COULD | REQ-COULD-06 | dispositifs, telemetrie | console, simulator |  |  | À faire |
-| US-ENF-001 | MUST | REQ-MUST-11 | telemetrie, geolocalisation, alertes, notifications | parents, firmware |  |  | À faire |
+| US-ENF-001 | MUST | REQ-MUST-11 | telemetrie, geolocalisation, alertes, notifications | parents, firmware | `Surveillance`, `SuiviZone`, `SortieDeZone`, `RetourEnZone` | `ReglesZonesTest`, `GeolocalisationIT` | En cours : sortie de Safe Zone détectée et publiée après tolérance ; alerte au parent, retrait, arrachement et batterie critique à faire avec le module alertes |
 | US-ENF-002 | MUST | REQ-MUST-11 | telemetrie, alertes, notifications | parents, firmware |  |  | À faire |
 | US-PAR-010 | MUST | REQ-MUST-12 | alertes | parents, console |  |  | À faire |
 | US-SYS-005 | COULD | REQ-COULD-05 | alertes, notifications | parents |  |  | À faire |

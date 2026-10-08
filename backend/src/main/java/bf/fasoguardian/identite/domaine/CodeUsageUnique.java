@@ -71,8 +71,12 @@ public final class CodeUsageUnique {
         return essais >= ESSAIS_MAX ? Resultat.EPUISE : Resultat.INCORRECT;
     }
 
+    /**
+     * Un nouveau code peut être émis une minute après le précédent, ou aussitôt si celui-ci a déjà servi :
+     * deux actions sensibles enchaînées ne doivent pas faire attendre le parent.
+     */
     public boolean renvoiPossible(Instant maintenant) {
-        return !maintenant.isBefore(emisLe.plus(DELAI_RENVOI));
+        return consomme || !maintenant.isBefore(emisLe.plus(DELAI_RENVOI));
     }
 
     public int essaisRestants() {
