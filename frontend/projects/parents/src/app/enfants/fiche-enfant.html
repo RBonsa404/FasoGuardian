@@ -31,6 +31,15 @@
   <button fg-button variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
 
   <nav class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" i18n-aria-label="@@enfant.rubriques" aria-label="Rubriques de la fiche">
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'carte']">
+      <fg-icon nom="position" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.carte">Carte</span>
+    </a>
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'zones']">
+      <fg-icon nom="safe-zone" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.zones">Safe Zones</span>
+    </a>
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'trajets']">
+      <fg-icon nom="historique" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.trajets">Trajets</span>
+    </a>
     <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'bracelet']">
       <fg-icon nom="bracelet" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.bracelet">Bracelet</span>
     </a>

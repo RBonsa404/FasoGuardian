@@ -1,0 +1,114 @@
+<div class="relative h-72 flex-none">
+  <app-carte class="absolute inset-0" i18n-libelle="@@zone.carte" libelle="Carte : touchez pour tracer la zone" [brouillon]="brouillon()" (touche)="placer($event)" />
+  <a class="absolute top-6 left-4 z-1000 grid size-11 place-items-center rounded-full bg-surface shadow-e2 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'zones']" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <fg-icon nom="retour" [taille]="22" />
+  </a>
+  <span class="absolute inset-x-4 bottom-3 z-1000 rounded-full bg-surface px-3 py-1.5 text-center text-caption font-semibold shadow-e1" role="status">{{ consigne() }}</span>
+</div>
+
+<form class="flex flex-1 flex-col gap-4 px-5 pt-4 pb-7" (submit)="$event.preventDefault(); demanderConfirmation()">
+  <h1 class="m-0 text-h2 font-bold tracking-tight">
+    @if (creation()) {
+      <ng-container i18n="@@zone.titre.nouvelle">Nouvelle zone</ng-container>
+    } @else {
+      <ng-container i18n="@@zone.titre.modifier">Modifier la zone</ng-container>
+    }
+  </h1>
+
+  <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+    <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@zone.forme">Forme</legend>
+    <div class="flex gap-1.5">
+      <label [class]="classeChoix(forme() === 'CERCLE')">
+        <input class="sr-only" type="radio" name="forme" [checked]="forme() === 'CERCLE'" (change)="forme.set('CERCLE')" />
+        <ng-container i18n="@@zone.forme.cercle">Cercle</ng-container>
+      </label>
+      <label [class]="classeChoix(forme() === 'POLYGONE')">
+        <input class="sr-only" type="radio" name="forme" [checked]="forme() === 'POLYGONE'" (change)="forme.set('POLYGONE')" />
+        <ng-container i18n="@@zone.forme.polygone">Polygone</ng-container>
+      </label>
+    </div>
+  </fieldset>
+
+  @if (forme() === 'CERCLE') {
+    <label class="flex flex-col gap-1.5 text-label font-semibold" for="rayon">
+      <span class="flex justify-between"><ng-container i18n="@@zone.rayon">Rayon</ng-container><span class="tabular-nums text-text-2">{{ distance(rayonM()) }}</span></span>
+      <input id="rayon" class="accent-accent" type="range" min="50" max="5000" step="10" [value]="rayonM()" (input)="reglerRayon($event)" />
+    </label>
+  } @else {
+    <button fg-button variante="secondary" taille="sm" type="button" class="self-start" [disabled]="sommets().length === 0" (click)="retirerDernierSommet()" i18n="@@zone.retirer">Retirer le dernier sommet</button>
+  }
+
+  <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+    <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@zone.type">Type de lieu</legend>
+    <div class="flex flex-wrap gap-1.5">
+      @for (c of categories; track c.valeur) {
+        <label [class]="classeChoix(categorie() === c.valeur) + ' min-w-24 px-3'">
+          <input class="sr-only" type="radio" name="categorie" [checked]="categorie() === c.valeur" (change)="choisirCategorie(c)" />
+          {{ c.libelle }}
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <fg-input i18n-libelle="@@zone.nom" libelle="Nom de la zone" [longueurMax]="40" [formControl]="nom" />
+
+  <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+    <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@zone.jours">Jours</legend>
+    <div class="flex gap-1.5">
+      @for (j of joursDeLaSemaine; track j.valeur) {
+        <label [class]="classeChoix(jours().includes(j.valeur))">
+          <input class="sr-only" type="checkbox" [checked]="jours().includes(j.valeur)" [attr.aria-label]="j.nom" (change)="basculerJour(j.valeur)" />
+          <span aria-hidden="true">{{ j.initiale }}</span>
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <fg-switch [formControl]="journeeEntiere" i18n-libelle="@@zone.journee" libelle="Toute la journée">
+    <span class="text-label font-semibold" i18n="@@zone.journee">Toute la journée</span>
+  </fg-switch>
+  @if (!touteLaJournee()) {
+    <div class="flex gap-3">
+      <label class="flex flex-1 flex-col gap-1.5 text-label font-semibold" for="debut">
+        <ng-container i18n="@@zone.debut">Début</ng-container>
+        <input id="debut" class="h-13 rounded-md border-(length:--border-width-trait) border-line-strong bg-bg px-3 text-saisie font-medium text-text" type="time" [formControl]="debut" />
+      </label>
+      <label class="flex flex-1 flex-col gap-1.5 text-label font-semibold" for="fin">
+        <ng-container i18n="@@zone.fin">Fin</ng-container>
+        <input id="fin" class="h-13 rounded-md border-(length:--border-width-trait) border-line-strong bg-bg px-3 text-saisie font-medium text-text" type="time" [formControl]="fin" />
+      </label>
+    </div>
+  }
+
+  <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+    <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@zone.tolerance">Délai avant alerte</legend>
+    <div class="flex gap-1.5">
+      @for (t of tolerances; track t) {
+        <label [class]="classeChoix(toleranceMin() === t)">
+          <input class="sr-only" type="radio" name="tolerance" [checked]="toleranceMin() === t" (change)="toleranceMin.set(t)" />
+          @if (t === 0) {
+            <ng-container i18n="@@zone.tolerance.aucun">Aucun</ng-container>
+          } @else {
+            <ng-container i18n="@@zone.tolerance.minutes">{{ t }} min</ng-container>
+          }
+        </label>
+      }
+    </div>
+    <span class="text-caption text-text-3" i18n="@@zone.tolerance.aide">Une sortie plus courte que ce délai ne déclenche pas d'alerte.</span>
+  </fieldset>
+
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+  <button fg-button class="mt-auto" taille="lg" type="submit" [chargement]="enCours()" i18n="@@zone.enregistrer">Enregistrer · code SMS</button>
+</form>
+
+<app-second-facteur
+  action="MODIFIER_SAFE_ZONE"
+  [ouverte]="confirmation()"
+  i18n-explication="@@zone.code"
+  explication="Saisissez le code reçu par SMS pour enregistrer la zone."
+  [erreur]="erreurCode()"
+  (saisi)="enregistrer($event)"
+  (annule)="confirmation.set(false)"
+/>

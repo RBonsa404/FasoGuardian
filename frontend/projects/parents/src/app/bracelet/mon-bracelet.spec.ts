@@ -1,4 +1,4 @@
-import { ilYA } from './mon-bracelet';
+import { ilYA } from '../commun/temps';
 
 describe('ancienneté du dernier contact', () => {
   const maintenant = new Date('2026-10-08T14:30:00Z');

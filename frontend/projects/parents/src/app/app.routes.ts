@@ -55,6 +55,26 @@ export const routes: Routes = [
     loadComponent: () => import('./enfants/contacts').then((m) => m.Contacts),
   },
   {
+    path: 'enfants/:id/carte',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./carte/carte-enfant').then((m) => m.CarteEnfant),
+  },
+  {
+    path: 'enfants/:id/zones',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./zones/zones').then((m) => m.Zones),
+  },
+  {
+    path: 'enfants/:id/zones/:zid',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./zones/edition-zone').then((m) => m.EditionZone),
+  },
+  {
+    path: 'enfants/:id/trajets',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./carte/trajets').then((m) => m.Trajets),
+  },
+  {
     path: 'enfants/:id/bracelet',
     canActivate: [sessionRequise],
     loadComponent: () => import('./bracelet/mon-bracelet').then((m) => m.MonBracelet),

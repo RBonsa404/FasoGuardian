@@ -60,10 +60,11 @@ public class SafeZones {
     /**
      * @param dansLaPlage   la zone est surveillée en ce moment (active et dans sa plage horaire)
      * @param sortieEnCours une sortie a été signalée et l'enfant n'est pas revenu
+     * @param enfantDedans  d'après la dernière position évaluée ; {@code null} hors plage ou sans position
      */
     public record ZoneVue(UUID id, Forme forme, String nom, Categorie categorie, Point centre, Integer rayonM,
             List<Point> sommets, List<Integer> jours, String debut, String fin, int toleranceS, Statut statut,
-            boolean dansLaPlage, boolean sortieEnCours) {
+            boolean dansLaPlage, boolean sortieEnCours, Boolean enfantDedans) {
     }
 
     public record ZonesVue(List<ZoneVue> zones, int maximum) {
@@ -203,18 +204,20 @@ public class SafeZones {
 
     private ZoneVue vue(SafeZone zone) {
         boolean dansLaPlage = zone.active() && zone.plage().contient(heureLocale(horloge.instant()));
-        boolean sortie = dansLaPlage && depot.suivi(zone.id()).map(SuiviZone::sortieSignalee).orElse(false);
+        SuiviZone suivi = dansLaPlage ? depot.suivi(zone.id()).orElse(null) : null;
+        boolean sortie = suivi != null && suivi.sortieSignalee();
+        Boolean dedans = suivi == null ? null : suivi.vuDedans() && suivi.dehorsDepuis() == null;
         List<Integer> jours = zone.plage().jours().stream().map(DayOfWeek::getValue).sorted().toList();
         if (zone instanceof ZoneCirculaire cercle) {
             return new ZoneVue(zone.id(), Forme.CERCLE, zone.nom(), zone.categorie(),
                     new Point(cercle.centre().latitude(), cercle.centre().longitude()), cercle.rayonM(), null, jours,
                     zone.plage().debut().toString(), zone.plage().fin().toString(), zone.toleranceS(), zone.statut(),
-                    dansLaPlage, sortie);
+                    dansLaPlage, sortie, dedans);
         }
         return new ZoneVue(zone.id(), Forme.POLYGONE, zone.nom(), zone.categorie(), null, null,
                 ((ZonePolygonale) zone).sommets().stream().map(c -> new Point(c.latitude(), c.longitude())).toList(), jours,
                 zone.plage().debut().toString(), zone.plage().fin().toString(), zone.toleranceS(), zone.statut(),
-                dansLaPlage, sortie);
+                dansLaPlage, sortie, dedans);
     }
 
     private static ErreurMetier conflit() {

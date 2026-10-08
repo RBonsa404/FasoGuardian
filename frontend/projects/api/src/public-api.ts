@@ -10,3 +10,4 @@ export * from './lib/console';
 export * from './lib/profil';
 export * from './lib/famille';
 export * from './lib/bracelet';
+export * from './lib/geolocalisation';

@@ -7,6 +7,7 @@ import { Bracelet, ClientBracelet, EtatBracelet } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
+import { heure, ilYA } from '../commun/temps';
 import { VisuelBracelet } from './visuel';
 
 /**
@@ -197,23 +198,6 @@ function force(signalDbm: number): string {
     return $localize`:@@bracelet.signal.fort:fort`;
   }
   return signalDbm >= -100 ? $localize`:@@bracelet.signal.moyen:moyen` : $localize`:@@bracelet.signal.faible:faible`;
-}
-
-function heure(instantIso: string): string {
-  return new Date(instantIso).toLocaleTimeString('fr', { hour: '2-digit', minute: '2-digit' });
-}
-
-/** Ancienneté lisible d'un instant passé : « à l'instant », « il y a 12 min », « il y a 3 h », « il y a 2 j ». */
-export function ilYA(instantIso: string, maintenant = new Date()): string {
-  const minutes = Math.max(0, Math.floor((maintenant.getTime() - new Date(instantIso).getTime()) / 60_000));
-  if (minutes < 1) {
-    return $localize`:@@duree.instant:à l'instant`;
-  }
-  if (minutes < 60) {
-    return $localize`:@@duree.minutes:il y a ${minutes}:minutes: min`;
-  }
-  const heures = Math.floor(minutes / 60);
-  return heures < 24 ? $localize`:@@duree.heures:il y a ${heures}:heures: h` : $localize`:@@duree.jours:il y a ${Math.floor(heures / 24)}:jours: j`;
 }
 
 /** « 10/27 » à partir d'une date ISO. */

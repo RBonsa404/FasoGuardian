@@ -1,0 +1,131 @@
+@import 'leaflet/dist/leaflet.css';
+
+/* Habillage de la carte aux couleurs du design system : aucune valeur propre, seulement des jetons. */
+.fg-carte {
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+}
+
+/* Thème sombre : les tuiles claires du fournisseur sont assombries ; le thème clair les montre telles quelles. */
+.fg-carte .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(200deg) brightness(1.5) contrast(0.85) saturate(0.35);
+}
+
+[data-theme='clair'] .fg-carte .leaflet-tile-pane,
+.theme-clair .fg-carte .leaflet-tile-pane {
+  filter: none;
+}
+
+.fg-carte .leaflet-control-attribution {
+  background: var(--color-surface);
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
+
+.fg-carte .leaflet-control-attribution a {
+  color: var(--color-text-2);
+}
+
+.fg-zone {
+  stroke: var(--color-success);
+  stroke-width: 2;
+  fill: var(--color-success);
+  fill-opacity: 0.1;
+}
+
+.fg-zone-inactive {
+  stroke: var(--color-text-3);
+  stroke-dasharray: 6 6;
+  fill: var(--color-text-3);
+  fill-opacity: 0.06;
+}
+
+/* L'ambre est réservé aux alertes : une sortie de zone en cours en est une. */
+.fg-zone-sortie {
+  stroke: var(--color-alert);
+  fill: var(--color-alert);
+  fill-opacity: 0.12;
+}
+
+.fg-zone-brouillon {
+  stroke: var(--color-accent);
+  fill: var(--color-accent);
+  fill-opacity: 0.16;
+}
+
+.fg-sommet {
+  stroke: var(--color-bg);
+  stroke-width: 2;
+  fill: var(--color-accent);
+  fill-opacity: 1;
+}
+
+.fg-incertitude {
+  stroke: var(--color-accent);
+  stroke-width: 1;
+  fill: var(--color-accent);
+  fill-opacity: 0.1;
+}
+
+.fg-trace {
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.fg-trace-borne {
+  stroke: var(--color-bg);
+  stroke-width: 2;
+  fill: var(--color-text-2);
+  fill-opacity: 1;
+}
+
+.fg-trace-fin {
+  fill: var(--color-accent);
+}
+
+.fg-repere {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-e2);
+}
+
+.fg-repere::before {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  opacity: 0.45;
+  animation: var(--animate-live-pulse);
+  content: '';
+}
+
+.fg-repere > span {
+  position: relative;
+  display: grid;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  place-items: center;
+  border: 2px solid var(--color-bg);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-saisie);
+  font-weight: 700;
+}
+
+.fg-repere-attenue {
+  background: var(--color-text-3);
+}
+
+.fg-repere-attenue::before {
+  display: none;
+}
