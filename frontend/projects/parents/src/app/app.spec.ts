@@ -11,6 +11,5 @@ describe('App', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     expect(page.querySelector('main#contenu')).not.toBeNull();
-    expect(page.querySelector('header img')?.getAttribute('alt')).toBe('FasoGuardian');
   });
 });

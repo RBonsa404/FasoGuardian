@@ -9,3 +9,5 @@ export * from './lib/banniere/banniere';
 export * from './lib/squelette/squelette';
 export * from './lib/saisie/telephone';
 export * from './lib/saisie/code';
+export * from './lib/saisie/champ';
+export * from './lib/interrupteur/interrupteur';

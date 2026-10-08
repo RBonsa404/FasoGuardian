@@ -1,0 +1,149 @@
+@switch (etape()) {
+  @case ('numero') {
+    <app-etape
+      i18n-surtitre="@@inscription.numero.surtitre"
+      surtitre="Inscription · 1/4"
+      i18n-titre="@@inscription.numero.titre"
+      titre="Votre numéro de téléphone"
+      i18n-texte="@@inscription.numero.texte"
+      texte="Nous vous envoyons un code par SMS."
+      [numero]="numero()"
+      [total]="4"
+      (retour)="reculer()"
+    >
+      <form id="formulaire" class="contents" (submit)="$event.preventDefault(); envoyerNumero()">
+        <fg-phone-input
+          i18n-libelle="@@inscription.numero.libelle"
+          libelle="Numéro mobile"
+          i18n-aide="@@inscription.numero.aide"
+          aide="Les alertes arriveront sur ce numéro."
+          [erreur]="erreurChamp()"
+          [formControl]="telephone"
+        />
+      </form>
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="submit" form="formulaire" [chargement]="enCours()" i18n="@@inscription.numero.action">
+          Recevoir le code
+        </button>
+        <a class="py-2 text-center text-label font-medium text-text-3" routerLink="/connexion" i18n="@@inscription.numero.pied">
+          Déjà un compte ? Se connecter
+        </a>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('code') {
+    <app-etape
+      i18n-surtitre="@@inscription.code.surtitre"
+      surtitre="Inscription · 2/4"
+      i18n-titre="@@inscription.code.titre"
+      titre="Saisissez le code reçu"
+      [texte]="texteCode"
+      [numero]="numero()"
+      [total]="4"
+      (retour)="reculer()"
+    >
+      <form id="formulaire" class="contents" (submit)="$event.preventDefault(); verifierCode()">
+        <fg-otp
+          i18n-libelle="@@inscription.code.libelle"
+          libelle="Code à 6 chiffres"
+          [erreur]="erreurChamp()"
+          [formControl]="code"
+          (complet)="verifierCode()"
+        />
+      </form>
+      @if (attenteRenvoi() > 0) {
+        <span class="text-label text-text-2" i18n="@@inscription.code.attente">
+          Renvoyer le code dans <strong class="text-text tabular-nums">{{ renvoi() }}</strong>
+        </span>
+      } @else {
+        <button fg-button variante="ghost" taille="sm" type="button" class="self-start" (click)="renvoyerCode()" i18n="@@inscription.code.renvoyer">
+          Renvoyer le code
+        </button>
+      }
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="submit" form="formulaire" [chargement]="enCours()" i18n="@@inscription.code.action">
+          Vérifier
+        </button>
+        <a class="py-2 text-center text-label font-medium text-text-3" [routerLink]="['/inscription', 'numero']" i18n="@@inscription.code.pied">
+          Mauvais numéro ? Modifier
+        </a>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('mot-de-passe') {
+    <app-etape
+      i18n-surtitre="@@inscription.mdp.surtitre"
+      surtitre="Inscription · 3/4"
+      i18n-titre="@@inscription.mdp.titre"
+      titre="Choisissez un mot de passe"
+      i18n-texte="@@inscription.mdp.texte"
+      texte="10 caractères minimum, avec un chiffre."
+      [numero]="numero()"
+      [total]="4"
+      (retour)="reculer()"
+    >
+      <form id="formulaire" class="contents" (submit)="$event.preventDefault(); validerMotDePasse()">
+        <fg-input
+          type="password"
+          autocomplete="new-password"
+          [longueurMax]="128"
+          i18n-libelle="@@inscription.mdp.libelle"
+          libelle="Mot de passe"
+          [aide]="motDePasseRobuste() ? aideRobuste : undefined"
+          [aideValide]="true"
+          [erreur]="erreurChamp()"
+          [formControl]="motDePasse"
+        />
+      </form>
+      <ng-container pied>
+        <button fg-button taille="lg" type="submit" form="formulaire" i18n="@@inscription.mdp.action">Continuer</button>
+      </ng-container>
+    </app-etape>
+  }
+  @case ('accords') {
+    <app-etape
+      i18n-surtitre="@@inscription.accords.surtitre"
+      surtitre="Inscription · 4/4"
+      i18n-titre="@@inscription.accords.titre"
+      titre="Vos accords"
+      i18n-texte="@@inscription.accords.texte"
+      texte="Vous pourrez modifier les accords facultatifs dans les réglages."
+      [numero]="numero()"
+      [total]="4"
+      (retour)="reculer()"
+    >
+      <div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
+        <fg-switch class="py-3" [verrouille]="true" [formControl]="obligatoire" i18n-libelle="@@accords.cgu.titre" libelle="Conditions générales (obligatoire)">
+          <strong class="text-body font-semibold" i18n="@@accords.cgu.titre">Conditions générales (obligatoire)</strong>
+          <span class="text-label text-text-2" i18n="@@accords.cgu.texte">J'accepte les conditions d'utilisation du service.</span>
+        </fg-switch>
+        <fg-switch class="py-3" [verrouille]="true" [formControl]="obligatoire" i18n-libelle="@@accords.donnees.titre" libelle="Traitement des données de l'enfant (obligatoire)">
+          <strong class="text-body font-semibold" i18n="@@accords.donnees.titre">Traitement des données de l'enfant (obligatoire)</strong>
+          <span class="text-label text-text-2" i18n="@@accords.donnees.texte">Position, alertes et fiche médicale, conservées selon votre offre.</span>
+        </fg-switch>
+        <fg-switch class="py-3" [formControl]="partageFds" i18n-libelle="@@accords.fds.titre" libelle="Partage avec les forces de sécurité">
+          <strong class="text-body font-semibold" i18n="@@accords.fds.titre">Partage avec les forces de sécurité</strong>
+          <span class="text-label text-text-2" i18n="@@accords.fds.texte">Seulement si je signale une disparition, après code SMS.</span>
+        </fg-switch>
+        <fg-switch class="py-3" [formControl]="conseilsSms" i18n-libelle="@@accords.sms.titre" libelle="Conseils et actualités par SMS">
+          <strong class="text-body font-semibold" i18n="@@accords.sms.titre">Conseils et actualités par SMS</strong>
+          <span class="text-label text-text-2" i18n="@@accords.sms.texte">Facultatif, 2 messages par mois au plus.</span>
+        </fg-switch>
+      </div>
+      <ng-container *ngTemplateOutlet="banniere" />
+      <ng-container pied>
+        <button fg-button taille="lg" type="button" [chargement]="enCours()" (click)="terminer()" i18n="@@inscription.accords.action">
+          Créer mon compte
+        </button>
+      </ng-container>
+    </app-etape>
+  }
+}
+
+<ng-template #banniere>
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+</ng-template>

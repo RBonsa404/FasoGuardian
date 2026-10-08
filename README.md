@@ -54,8 +54,11 @@ docker compose --env-file .env -f infra/docker-compose.yml up --build
 Applications clientes en développement :
 
 ```bash
-cd frontend && npm ci && npx ng serve parents
+cd frontend && npm ci && npx ng serve parents --proxy-config proxy.dev.json
 ```
+
+Le fichier `proxy.dev.json` relaie `/api` vers un serveur lancé en local sur le port 8080. Sous le profil
+`dev`, les SMS de l'adaptateur bac à sable se lisent sur `GET /api/v1/dev/sms`.
 
 Simulateur de bracelets :
 
@@ -99,4 +102,4 @@ d'impact (AIPD), à la désignation d'un délégué à la protection des donnée
 
 ## Licence
 
-À définir par le Collectif Dedsec.
+[MIT](LICENSE) — © 2026 Collectif Dedsec.

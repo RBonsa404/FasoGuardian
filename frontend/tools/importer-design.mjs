@@ -48,6 +48,7 @@ for (const fichier of readdirSync(dossierIcones).sort()) {
   ecrire(join(ui, 'assets', 'icones', fichier), svg);
 }
 
+icones.retour = '<path d="M15 6l-6 6 6 6"></path>';
 icones.info = '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16v.5"></path>';
 
 const lignes = Object.entries(icones)

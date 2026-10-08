@@ -26,6 +26,7 @@ export const ICONES = {
   'qr': "<path d=\"M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2M18 14h2v2M14 18h2v2M18 20h2\"></path>",
   'recu': "<path d=\"M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3\"></path>",
   'reglages': "<path d=\"M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1M15 4v4M9 10v4M17 16v4\"></path>",
+  'retour': "<path d=\"M15 6l-6 6 6 6\"></path>",
   'retrait': "<path d=\"M9 15l-2 2a3 3 0 0 1-4-4l2-2M15 9l2-2a3 3 0 0 1 4 4l-2 2M8 8 6 6M16 16l2 2\"></path>",
   'safe-zone': "<path d=\"M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18M12 8l3 1.2V12c0 2-1.4 3.3-3 3.8-1.6-.5-3-1.8-3-3.8V9.2z\"></path>",
   'signal-2g': "<path d=\"M4 20v-3M9 20v-7\"></path>",

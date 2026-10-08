@@ -11,7 +11,7 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001,
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
-| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `ControleurAuthentification` | `InscriptionEtSessionsIT`, `ReglesIdentiteTest` | En cours : inscription et session du parent ; KYC et écrans à faire |
+| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `ControleurAuthentification` | `InscriptionEtSessionsIT`, `ReglesIdentiteTest`, `inscription.spec.ts` | En cours : inscription et session du parent, écrans 10 et 12 ; KYC et écran 11 à faire |
 | US-PAR-002 | MUST | REQ-MUST-02 | identite, audit | parents |  |  | À faire |
 | US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents |  |  | À faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents |  |  | À faire |
@@ -52,7 +52,7 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001,
 | US-SYS-010 | SHOULD | REQ-MUST-06 (sécurité) | famille | public-qr, console |  |  | À faire |
 | US-PAR-018 | SHOULD | REQ-MUST-11 (ergonomie) | alertes | parents |  |  | À faire |
 | US-SYS-011 | MUST | REQ-MUST-07 (sécurité) | dispositifs | firmware |  |  | À faire |
-| US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents | `Sessions` | `InscriptionEtSessionsIT` | En cours : rotation et révocation côté serveur ; écran 14 et consultation hors ligne à faire |
+| US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents | `Sessions` | `InscriptionEtSessionsIT` | En cours : rotation et révocation côté serveur, réauthentification à l'écran de connexion ; écran 14 et consultation hors ligne à faire |
 | US-KYC-001 | SHOULD | REQ-MUST-01 (exception) | identite | console |  |  | À faire |
 
 ## Exigences système vérifiées par le socle

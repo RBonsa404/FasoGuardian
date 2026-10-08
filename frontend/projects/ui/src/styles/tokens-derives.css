@@ -16,6 +16,8 @@
   --color-on-danger: #0a0e1a;
 
   --radius-banner: 14px;
+  --text-titre-ecran: 26px;
+  --text-titre-ecran--line-height: 1.2;
   --text-saisie: 16px;
   --text-saisie--line-height: 1.4;
   --border-width-trait: 1.5px;

@@ -93,7 +93,8 @@
                 "input": "projects/parents/public"
               }
             ],
-            "styles": ["projects/parents/src/styles.css"]
+            "styles": ["projects/parents/src/styles.css"],
+            "polyfills": ["@angular/localize/init"]
           },
           "configurations": {
             "production": {

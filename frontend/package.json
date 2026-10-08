@@ -32,6 +32,7 @@
     "@angular/build": "22.2.2",
     "@angular/cli": "22.2.2",
     "@angular/compiler-cli": "22.2.1",
+    "@angular/localize": "22.2.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/express": "5.0.6",
     "@types/node": "22.20.5",
