@@ -43,6 +43,9 @@ import { erreurLisible } from '../commun/erreurs';
     } @else {
       <fg-skeleton forme="carte" />
     }
+    @if (compte()?.statut === 'ACTIF') {
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/enfants" i18n="@@accueil.enfants">Mes enfants</a>
+    }
     <a class="mt-auto self-start py-2 text-label font-semibold text-accent" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
     <button fg-button variante="secondary" type="button" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">
       Se déconnecter

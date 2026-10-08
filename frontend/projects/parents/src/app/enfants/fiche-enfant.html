@@ -1,0 +1,79 @@
+<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/enfants" i18n-aria-label="@@etape.retour" aria-label="Retour">
+  <fg-icon nom="retour" [taille]="22" />
+</a>
+@if (enfant(); as e) {
+  <div class="flex items-center gap-4">
+    <span class="grid size-16 flex-none place-items-center rounded-full bg-surface-2 font-display text-h2 font-bold" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <h1 class="m-0 truncate text-titre-ecran font-bold tracking-tight">{{ e.prenom }} {{ e.nom }}</h1>
+      <span class="text-label text-text-2" i18n="@@enfant.naissance">Né(e) le {{ e.dateNaissance | date: 'dd/MM/yyyy' }} · {{ age() }} ans</span>
+    </div>
+  </div>
+
+  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@enfant.ecole">École</dt>
+      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.ecole || '—' }}</dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@enfant.quartier">Quartier</dt>
+      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.quartier || '—' }}</dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@enfant.taille">Taille</dt>
+      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.tailleCm ? e.profil.tailleCm + ' cm' : '—' }}</dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@enfant.signes">Signes distinctifs</dt>
+      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.signesDistinctifs || '—' }}</dd>
+    </div>
+  </dl>
+  <button fg-button variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
+
+  <nav class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" i18n-aria-label="@@enfant.rubriques" aria-label="Rubriques de la fiche">
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'medical']">
+      <fg-icon nom="medical" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.medical">Fiche médicale</span>
+    </a>
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'contacts']">
+      <fg-icon nom="telephone" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.contacts">Contacts d'urgence</span>
+    </a>
+  </nav>
+
+  @if (historique().length > 0) {
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-h3 font-semibold" i18n="@@enfant.historique">Historique des modifications</h2>
+      <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+        @for (revision of historique(); track $index) {
+          <li class="text-label text-text-2" i18n="@@enfant.revision">{{ revision.modifieLe | date: 'd MMM y à HH:mm' }} · {{ libelleChamp(revision.champ) }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  <fg-sheet i18n-titre="@@enfant.modifier" titre="Modifier la fiche" [ouverte]="edition()" (fermee)="edition.set(false)">
+    <form class="contents" [formGroup]="formulaire" (submit)="$event.preventDefault(); enregistrer()">
+      <fg-input i18n-libelle="@@enfant.prenomLibelle" libelle="Prénom" [longueurMax]="80" formControlName="prenom" />
+      <fg-input i18n-libelle="@@enfant.nomLibelle" libelle="Nom" [longueurMax]="80" formControlName="nom" />
+      <fg-input i18n-libelle="@@enfant.ecole" libelle="École" [longueurMax]="80" formControlName="ecole" />
+      <fg-input i18n-libelle="@@enfant.quartier" libelle="Quartier" [longueurMax]="80" formControlName="quartier" />
+      <fg-input i18n-libelle="@@enfant.tailleLibelle" libelle="Taille (cm)" [longueurMax]="3" formControlName="tailleCm" />
+      <fg-input
+        i18n-libelle="@@enfant.signes"
+        libelle="Signes distinctifs"
+        i18n-aide="@@enfant.signes.aide"
+        aide="Ils aident à reconnaître l'enfant ; ils n'apparaissent jamais sur la page publique."
+        [longueurMax]="200"
+        formControlName="signesDistinctifs"
+      />
+      @if (erreur(); as message) {
+        <fg-banner ton="erreur">{{ message }}</fg-banner>
+      }
+      <button fg-button type="submit" [chargement]="enCours()" i18n="@@commun.enregistrer">Enregistrer</button>
+    </form>
+  </fg-sheet>
+} @else if (erreur(); as message) {
+  <fg-banner ton="erreur">{{ message }}</fg-banner>
+} @else {
+  <fg-skeleton forme="carte" />
+  <fg-skeleton forme="carte" />
+}

@@ -87,6 +87,8 @@ fasoguardian:
         1: ${FG_CLE_SECRET_MFA:}
       IMEI:
         1: ${FG_CLE_IMEI:}
+      PROFIL_ENFANT:
+        1: ${FG_CLE_PROFIL_ENFANT:}
 
 ---
 spring:

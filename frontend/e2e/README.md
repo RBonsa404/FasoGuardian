@@ -6,6 +6,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 |---|---|---|
 | `inscription-kyc.spec.ts` | Inscription du parent, dépôt du dossier, validation par un agent KYC, compte activé | US-PAR-001 |
 | `compte.spec.ts` | Mot de passe oublié par code SMS, puis clôture du compte confirmée par second facteur | US-PAR-002 |
+| `famille.spec.ts` | Fiche enfant, fiche médicale avec élément critique, contact d'urgence visible sur la page QR | US-PAR-003, 004, 011 |
 | `page-qr.spec.ts` | Page publique QR sans JavaScript : page générique, une seule requête, moins de 60 Ko | US-TRS-001, US-SYS-010 |
 | `console-kyc.spec.ts` | Enrôlement TOTP d'un agent, instruction et validation d'un dossier dans la console ; refus opposé à un opérateur support | US-ADM-001, US-PAR-001 |
 

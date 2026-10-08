@@ -8,3 +8,4 @@ export * from './lib/erreurs';
 export * from './lib/kyc';
 export * from './lib/console';
 export * from './lib/profil';
+export * from './lib/famille';
