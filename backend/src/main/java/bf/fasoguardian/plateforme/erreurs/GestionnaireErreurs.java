@@ -1,5 +1,7 @@
 package bf.fasoguardian.plateforme.erreurs;
 
+import bf.fasoguardian.plateforme.securite.JournalisationRefus;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,10 +24,25 @@ class GestionnaireErreurs extends ResponseEntityExceptionHandler {
 
     private static final Logger journal = LoggerFactory.getLogger(GestionnaireErreurs.class);
 
+    private final JournalisationRefus refus;
+
+    GestionnaireErreurs(JournalisationRefus refus) {
+        this.refus = refus;
+    }
+
     @ExceptionHandler(ErreurMetier.class)
     ResponseEntity<ProblemDetail> erreurMetier(ErreurMetier erreur) {
         ProblemDetail probleme = Problemes.de(erreur.code(), erreur.getMessage());
+        erreur.proprietes().forEach(probleme::setProperty);
         return ResponseEntity.status(erreur.code().statut()).body(probleme);
+    }
+
+    /** Refus levé par une règle @PreAuthorize : même réponse et même journalisation qu'un refus de route. */
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<ProblemDetail> accesRefuse(AccessDeniedException erreur, HttpServletRequest requete) {
+        refus.publier(requete);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Problemes.de(CodeErreur.ACCES_REFUSE, "Vous n'êtes pas autorisé à accéder à cette ressource."));
     }
 
     @ExceptionHandler(Exception.class)

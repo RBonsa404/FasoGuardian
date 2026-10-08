@@ -62,6 +62,25 @@ public final class Totp {
         return trouve;
     }
 
+    public static byte[] depuisBase32(String base32) {
+        java.io.ByteArrayOutputStream sortie = new java.io.ByteArrayOutputStream();
+        int tampon = 0;
+        int bits = 0;
+        for (char caractere : base32.toUpperCase().toCharArray()) {
+            int valeur = ALPHABET_BASE32.indexOf(caractere);
+            if (valeur < 0) {
+                throw new IllegalArgumentException("Caractère hors de l'alphabet base32");
+            }
+            tampon = (tampon << 5) | valeur;
+            bits += 5;
+            if (bits >= 8) {
+                sortie.write((tampon >> (bits - 8)) & 0xFF);
+                bits -= 8;
+            }
+        }
+        return sortie.toByteArray();
+    }
+
     /** Secret encodé en base32 sans remplissage, tel que saisi ou scanné dans l'application d'authentification. */
     public static String enBase32(byte[] secret) {
         StringBuilder sortie = new StringBuilder();

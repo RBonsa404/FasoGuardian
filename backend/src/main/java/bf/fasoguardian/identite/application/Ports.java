@@ -1,5 +1,6 @@
 package bf.fasoguardian.identite.application;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
@@ -20,8 +21,8 @@ public final class Ports {
 
     public interface EmetteurJetons {
 
-        /** Jeton d'accès de courte durée (15 minutes pour un parent). */
-        JetonAcces acces(UUID utilisateurId, Set<String> roles, Instant maintenant);
+        /** Jeton d'accès de courte durée (15 minutes pour un parent, 10 pour un agent). */
+        JetonAcces acces(UUID utilisateurId, Set<String> roles, Instant maintenant, Duration duree);
 
         /** Preuve, valable 15 minutes, que le numéro a été vérifié par SMS pendant l'inscription. */
         String preuveTelephone(String telephoneE164, Instant maintenant);

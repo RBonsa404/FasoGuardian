@@ -55,6 +55,11 @@ springdoc:
 # Une clé = 32 octets en base64 (openssl rand -base64 32). Pour une rotation, ajouter la version 2 et
 # conserver la version 1 tant que des données chiffrées avec elle subsistent.
 fasoguardian:
+  amorcage:
+    # Premier administrateur, créé seulement si aucun agent n'existe (voir AmorcageAdministrateur).
+    admin:
+      identifiant: ${FG_ADMIN_IDENTIFIANT:}
+      mot-de-passe: ${FG_ADMIN_MOT_DE_PASSE:}
   jetons:
     # Secret de signature des jetons (HS256), 32 octets au moins en base64.
     secret: ${FG_JWT_SECRET:}

@@ -118,7 +118,7 @@ class ControleurAuthentification {
         }
     }
 
-    private static ResponseEntity<JetonAccesDto> reponse(HttpStatus statut, Session session) {
+    static ResponseEntity<JetonAccesDto> reponse(HttpStatus statut, Session session) {
         Duration duree = Duration.between(java.time.Instant.now(), session.rafraichissementExpireLe());
         return ResponseEntity.status(statut)
                 .header(HttpHeaders.SET_COOKIE, cookie(session.jetonRafraichissement(), duree).toString())

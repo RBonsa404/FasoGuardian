@@ -45,7 +45,6 @@ class JetonsEtHachage {
     static final String USAGE = "usage";
     static final String USAGE_ACCES = "acces";
     static final String USAGE_PREUVE_TELEPHONE = "preuve-telephone";
-    static final Duration DUREE_ACCES_PARENT = Duration.ofMinutes(15);
     static final Duration DUREE_PREUVE = Duration.ofMinutes(15);
 
     @Bean
@@ -90,12 +89,12 @@ class JetonsEtHachage {
         JwtDecoder decodeurPreuves = decodeur(cleJetons, USAGE_PREUVE_TELEPHONE);
         return new EmetteurJetons() {
             @Override
-            public JetonAcces acces(UUID utilisateurId, Set<String> roles, Instant maintenant) {
-                JwtClaimsSet revendications = base(maintenant, DUREE_ACCES_PARENT, USAGE_ACCES)
+            public JetonAcces acces(UUID utilisateurId, Set<String> roles, Instant maintenant, Duration duree) {
+                JwtClaimsSet revendications = base(maintenant, duree, USAGE_ACCES)
                         .subject(utilisateurId.toString())
                         .claim("roles", List.copyOf(roles))
                         .build();
-                return new JetonAcces(signer(revendications), DUREE_ACCES_PARENT.toSeconds());
+                return new JetonAcces(signer(revendications), duree.toSeconds());
             }
 
             @Override

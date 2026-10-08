@@ -1,5 +1,6 @@
 package bf.fasoguardian.identite.domaine;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 
@@ -23,6 +24,16 @@ public class Tuteur extends Utilisateur {
     @Override
     public Set<String> roles() {
         return Set.of(ROLE);
+    }
+
+    @Override
+    public Duration dureeJetonAcces() {
+        return Duration.ofMinutes(15);
+    }
+
+    @Override
+    public Duration dureeSession() {
+        return Duration.ofDays(30);
     }
 
     /** Appelé à la validation du dossier KYC. */

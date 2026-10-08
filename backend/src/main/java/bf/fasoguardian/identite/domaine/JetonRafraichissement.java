@@ -10,14 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Jeton de rafraîchissement rotatif (30 jours). Seule son empreinte est conservée. Chaque échange produit un
+ * Jeton de rafraîchissement rotatif (30 jours pour un parent, 30 minutes d'inactivité pour un agent). Seule son empreinte est conservée. Chaque échange produit un
  * nouveau jeton de la même famille ; présenter un jeton déjà échangé signale un vol et révoque la famille.
  */
 @Entity
 @Table(schema = "identite", name = "jeton_rafraichissement")
 public class JetonRafraichissement {
-
-    public static final Duration DUREE = Duration.ofDays(30);
 
     @Id
     private UUID id;
@@ -46,22 +44,24 @@ public class JetonRafraichissement {
     protected JetonRafraichissement() {
     }
 
-    private JetonRafraichissement(UUID utilisateurId, UUID famille, String empreinte, Instant maintenant) {
+    private JetonRafraichissement(UUID utilisateurId, UUID famille, String empreinte, Instant maintenant,
+            Duration duree) {
         this.id = UUID.randomUUID();
         this.utilisateurId = utilisateurId;
         this.famille = famille;
         this.empreinte = empreinte;
         this.emisLe = maintenant;
-        this.expireLe = maintenant.plus(DUREE);
+        this.expireLe = maintenant.plus(duree);
     }
 
-    public static JetonRafraichissement nouvelleFamille(UUID utilisateurId, String empreinte, Instant maintenant) {
-        return new JetonRafraichissement(utilisateurId, UUID.randomUUID(), empreinte, maintenant);
+    public static JetonRafraichissement nouvelleFamille(UUID utilisateurId, String empreinte, Instant maintenant,
+            Duration duree) {
+        return new JetonRafraichissement(utilisateurId, UUID.randomUUID(), empreinte, maintenant, duree);
     }
 
-    public JetonRafraichissement successeur(String empreinteSuivante, Instant maintenant) {
+    public JetonRafraichissement successeur(String empreinteSuivante, Instant maintenant, Duration duree) {
         this.utiliseLe = maintenant;
-        return new JetonRafraichissement(utilisateurId, famille, empreinteSuivante, maintenant);
+        return new JetonRafraichissement(utilisateurId, famille, empreinteSuivante, maintenant, duree);
     }
 
     public boolean dejaUtiliseOuRevoque() {

@@ -73,6 +73,12 @@ public abstract class Utilisateur {
     /** Rôles portés par le jeton d'accès. */
     public abstract java.util.Set<String> roles();
 
+    /** Durée de vie du jeton d'accès. */
+    public abstract Duration dureeJetonAcces();
+
+    /** Durée de vie du jeton de rafraîchissement, repoussée à chaque échange. */
+    public abstract Duration dureeSession();
+
     public void definirMotDePasse(String empreinteArgon2id, Instant maintenant) {
         this.mdpArgon2id = empreinteArgon2id;
         this.mdpModifieLe = maintenant;

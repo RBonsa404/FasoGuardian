@@ -24,7 +24,9 @@ public enum CodeErreur {
     CONSENTEMENT_REQUIS(HttpStatus.BAD_REQUEST, "Consentement obligatoire manquant"),
     IDENTIFIANTS_INVALIDES(HttpStatus.UNAUTHORIZED, "Identifiants invalides"),
     COMPTE_VERROUILLE(HttpStatus.LOCKED, "Compte temporairement verrouillé"),
-    SESSION_EXPIREE(HttpStatus.UNAUTHORIZED, "Session expirée");
+    SESSION_EXPIREE(HttpStatus.UNAUTHORIZED, "Session expirée"),
+    TOTP_A_ACTIVER(HttpStatus.FORBIDDEN, "Second facteur à activer"),
+    CODE_TOTP_REQUIS(HttpStatus.UNAUTHORIZED, "Code de l'application d'authentification requis");
 
     private final HttpStatus statut;
     private final String titre;

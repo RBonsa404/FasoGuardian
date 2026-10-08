@@ -61,7 +61,7 @@ class InscriptionEtSessionsIT extends TestIntegration {
         inscrire(telephone).andExpect(status().isCreated());
 
         var lignes = jdbc.queryForList(
-                "SELECT telephone_chiffre, telephone_hash, mdp_argon2id FROM identite.utilisateur");
+                "SELECT telephone_chiffre, telephone_hash, mdp_argon2id FROM identite.utilisateur WHERE type = 'TUTEUR'");
         assertThat(lignes).isNotEmpty().allSatisfy(ligne -> {
             assertThat(new String((byte[]) ligne.get("telephone_chiffre"), StandardCharsets.ISO_8859_1))
                     .doesNotContain(telephone);

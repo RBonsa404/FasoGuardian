@@ -82,7 +82,8 @@ public class Sessions {
     public Session ouvrir(Utilisateur utilisateur, Instant maintenant) {
         String opaque = nouveauJetonOpaque();
         JetonRafraichissement jeton = jetons.save(
-                JetonRafraichissement.nouvelleFamille(utilisateur.id(), empreinte(opaque), maintenant));
+                JetonRafraichissement.nouvelleFamille(utilisateur.id(), empreinte(opaque), maintenant,
+                        utilisateur.dureeSession()));
         return session(utilisateur, opaque, jeton, maintenant);
     }
 
@@ -107,7 +108,8 @@ public class Sessions {
             throw sessionExpiree();
         }
         String suivant = nouveauJetonOpaque();
-        JetonRafraichissement successeur = jetons.save(courant.successeur(empreinte(suivant), maintenant));
+        JetonRafraichissement successeur = jetons.save(
+                courant.successeur(empreinte(suivant), maintenant, utilisateur.dureeSession()));
         return session(utilisateur, suivant, successeur, maintenant);
     }
 
@@ -122,7 +124,8 @@ public class Sessions {
     }
 
     private Session session(Utilisateur utilisateur, String opaque, JetonRafraichissement jeton, Instant maintenant) {
-        JetonAcces acces = emetteur.acces(utilisateur.id(), utilisateur.roles(), maintenant);
+        JetonAcces acces = emetteur.acces(utilisateur.id(), utilisateur.roles(), maintenant,
+                utilisateur.dureeJetonAcces());
         return new Session(acces.valeur(), acces.expireDansSecondes(), opaque, jeton.expireLe());
     }
 

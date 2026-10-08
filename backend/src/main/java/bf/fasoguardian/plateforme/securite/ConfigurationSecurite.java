@@ -28,7 +28,8 @@ import tools.jackson.databind.json.JsonMapper;
 class ConfigurationSecurite {
 
     @Bean
-    SecurityFilterChain chaineDeFiltres(HttpSecurity http, JsonMapper json) throws Exception {
+    SecurityFilterChain chaineDeFiltres(HttpSecurity http, JsonMapper json, JournalisationRefus refus)
+            throws Exception {
         http
                 // API sans état authentifiée par en-tête Authorization : pas de jeton CSRF nécessaire ici.
                 // Les points utilisant un cookie (rafraîchissement) reçoivent leur propre protection dans identite.
@@ -54,8 +55,11 @@ class ConfigurationSecurite {
                 .exceptionHandling(erreurs -> erreurs
                         .authenticationEntryPoint((requete, reponse, erreur) -> ecrire(reponse, json,
                                 CodeErreur.NON_AUTHENTIFIE, "Une authentification est requise pour accéder à cette ressource."))
-                        .accessDeniedHandler((requete, reponse, erreur) -> ecrire(reponse, json,
-                                CodeErreur.ACCES_REFUSE, "Vous n'êtes pas autorisé à accéder à cette ressource.")));
+                        .accessDeniedHandler((requete, reponse, erreur) -> {
+                            refus.publier(requete);
+                            ecrire(reponse, json, CodeErreur.ACCES_REFUSE,
+                                    "Vous n'êtes pas autorisé à accéder à cette ressource.");
+                        }));
         return http.build();
     }
 

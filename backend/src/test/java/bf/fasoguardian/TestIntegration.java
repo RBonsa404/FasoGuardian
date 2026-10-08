@@ -22,6 +22,9 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("test")
 public abstract class TestIntegration {
 
+    protected static final String ADMIN_IDENTIFIANT = "admin.test";
+    protected static final String ADMIN_MOT_DE_PASSE = "mot-de-passe-de-test-" + java.util.UUID.randomUUID();
+
     @ServiceConnection
     static final PostgreSQLContainer postgres = new PostgreSQLContainer(
             DockerImageName.parse("postgis/postgis:17-3.5").asCompatibleSubstituteFor("postgres"));
@@ -36,6 +39,8 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        registre.add("fasoguardian.amorcage.admin.identifiant", () -> ADMIN_IDENTIFIANT);
+        registre.add("fasoguardian.amorcage.admin.mot-de-passe", () -> ADMIN_MOT_DE_PASSE);
         for (CategorieDonnee categorie : CategorieDonnee.values()) {
             String cle = cleAleatoire();
             registre.add("fasoguardian.chiffrement.cles." + categorie + ".1", () -> cle);

@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001, US-PAR-019, US-SYS-006). Étape 1 « Socle » close.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 5 en cours (US-PAR-001, US-PAR-019, US-SYS-006, US-ADM-001, US-ADM-002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -33,9 +33,9 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001,
 | US-PAR-011 | MUST | REQ-MUST-05 | famille | parents |  |  | À faire |
 | US-TRS-001 | MUST | REQ-MUST-06 | famille | public-qr, site |  |  | À faire |
 | US-PAR-012 | MUST | REQ-MUST-17 | alertes, dispositifs | parents, firmware |  |  | À faire |
-| US-ADM-001 | MUST | REQ-MUST-23 | identite | console |  |  | À faire |
+| US-ADM-001 | MUST | REQ-MUST-23 | identite, plateforme, audit | console | `AgentsInternes`, `ControleurAgents`, `JournalisationRefus` | `AgentsEtAuditIT` | En cours : comptes d'agents, TOTP obligatoire, cloisonnement et refus journalisés ; écrans 55 à 58 et 69 à faire |
 | US-SYS-006 | MUST | REQ-MUST-24 | plateforme, identite, famille | site | `ServiceChiffrement` | `ServiceChiffrementTest`, `InscriptionEtSessionsIT` | En cours : téléphone chiffré ; pièces KYC et santé à venir avec leurs modules |
-| US-ADM-002 | MUST | REQ-MUST-25 | audit | console |  |  | À faire |
+| US-ADM-002 | MUST | REQ-MUST-25 | audit | console | `ServiceJournalAudit`, V3 (table en ajout seul) | `AgentsEtAuditIT` | En cours : journal chaîné, contrôle quotidien, altération détectée ; consultation (écran 70) à faire |
 | US-ADM-003 | MUST | REQ-MUST-26 | audit | console, site |  |  | À faire |
 | US-ADM-004 | SHOULD | REQ-SHOULD-02 | plateforme | console |  |  | À faire |
 | US-PAR-013 | MUST | REQ-MUST-07 | dispositifs | parents, console, firmware |  |  | À faire |

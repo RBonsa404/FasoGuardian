@@ -21,6 +21,16 @@ public final class PolitiqueMotDePasse {
         CONTIENT_LE_TELEPHONE
     }
 
+    public static final int LONGUEUR_MIN_AGENT = 12;
+
+    /** Agents internes : 12 caractères au moins, sans règle de composition (OWASP ASVS V2.1). */
+    public static Optional<Refus> verifierAgent(String motDePasse) {
+        if (motDePasse == null || motDePasse.codePointCount(0, motDePasse.length()) < LONGUEUR_MIN_AGENT) {
+            return Optional.of(Refus.TROP_COURT);
+        }
+        return motDePasse.length() > LONGUEUR_MAX ? Optional.of(Refus.TROP_LONG) : Optional.empty();
+    }
+
     /** Renvoie le motif de refus, ou vide si le mot de passe est acceptable. */
     public static Optional<Refus> verifier(String motDePasse, NumeroTelephone telephone) {
         if (motDePasse == null || motDePasse.codePointCount(0, motDePasse.length()) < LONGUEUR_MIN) {
