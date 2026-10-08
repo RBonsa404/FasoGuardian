@@ -51,6 +51,24 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+# Clés de chiffrement applicatif : fournies par le coffre de secrets, jamais écrites ici (FG-DOC-06 §8.3).
+# Une clé = 32 octets en base64 (openssl rand -base64 32). Pour une rotation, ajouter la version 2 et
+# conserver la version 1 tant que des données chiffrées avec elle subsistent.
+fasoguardian:
+  chiffrement:
+    cle-empreinte: ${FG_CLE_EMPREINTE:}
+    cles:
+      TELEPHONE:
+        1: ${FG_CLE_TELEPHONE:}
+      PIECE_KYC:
+        1: ${FG_CLE_PIECE_KYC:}
+      SANTE:
+        1: ${FG_CLE_SANTE:}
+      SECRET_MFA:
+        1: ${FG_CLE_SECRET_MFA:}
+      IMEI:
+        1: ${FG_CLE_IMEI:}
+
 ---
 spring:
   config:

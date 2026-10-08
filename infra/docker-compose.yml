@@ -38,6 +38,12 @@ services:
       FG_DB_URL: jdbc:postgresql://postgres:5432/${FG_DB_NAME}
       FG_DB_USER: ${FG_DB_USER}
       FG_DB_PASSWORD: ${FG_DB_PASSWORD}
+      FG_CLE_EMPREINTE: ${FG_CLE_EMPREINTE:?définir FG_CLE_EMPREINTE dans .env}
+      FG_CLE_TELEPHONE: ${FG_CLE_TELEPHONE:?définir FG_CLE_TELEPHONE dans .env}
+      FG_CLE_PIECE_KYC: ${FG_CLE_PIECE_KYC:?définir FG_CLE_PIECE_KYC dans .env}
+      FG_CLE_SANTE: ${FG_CLE_SANTE:?définir FG_CLE_SANTE dans .env}
+      FG_CLE_SECRET_MFA: ${FG_CLE_SECRET_MFA:?définir FG_CLE_SECRET_MFA dans .env}
+      FG_CLE_IMEI: ${FG_CLE_IMEI:?définir FG_CLE_IMEI dans .env}
     depends_on:
       postgres:
         condition: service_healthy

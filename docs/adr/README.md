@@ -14,3 +14,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0004](0004-versions-figees.md) | Versions figées au démarrage et écarts par rapport à FG-DOC-06 | Acceptée |
 | [0005](0005-ecarts-du-design.md) | Sept écarts et ajouts du paquet de design | Acceptée en partie |
 | [0006](0006-rendu-de-la-page-qr.md) | Mode de rendu de la page QR (sans bundle Angular côté client) | Proposée |
+| [0007](0007-politique-de-mot-de-passe.md) | Mot de passe des parents : 10 caractères dont un chiffre (écart ASVS) | Acceptée |
