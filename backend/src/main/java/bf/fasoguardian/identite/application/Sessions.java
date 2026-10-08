@@ -123,6 +123,12 @@ public class Sessions {
                 jetons.findByFamille(courant.famille()).forEach(jeton -> jeton.revoquer(maintenant)));
     }
 
+    /** Ferme toutes les sessions d'un compte (réinitialisation du mot de passe, clôture). */
+    @Transactional
+    public void fermerToutes(java.util.UUID utilisateurId, Instant maintenant) {
+        jetons.findByUtilisateurIdAndRevoqueLeIsNull(utilisateurId).forEach(jeton -> jeton.revoquer(maintenant));
+    }
+
     private Session session(Utilisateur utilisateur, String opaque, JetonRafraichissement jeton, Instant maintenant) {
         JetonAcces acces = emetteur.acces(utilisateur.id(), utilisateur.roles(), maintenant,
                 utilisateur.dureeJetonAcces());

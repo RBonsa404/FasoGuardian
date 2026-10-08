@@ -12,4 +12,6 @@ public interface DepotJetonsRafraichissement extends JpaRepository<JetonRafraich
     Optional<JetonRafraichissement> findByEmpreinte(String empreinte);
 
     List<JetonRafraichissement> findByFamille(UUID famille);
+
+    List<JetonRafraichissement> findByUtilisateurIdAndRevoqueLeIsNull(UUID utilisateurId);
 }

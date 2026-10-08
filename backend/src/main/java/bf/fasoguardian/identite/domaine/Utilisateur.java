@@ -56,6 +56,12 @@ public abstract class Utilisateur {
     @Column(name = "cree_le", nullable = false)
     private Instant creeLe;
 
+    @Column(name = "telephone_modifie_le")
+    private Instant telephoneModifieLe;
+
+    @Column(name = "clos_le")
+    private Instant closLe;
+
     @Version
     private long version;
 
@@ -106,6 +112,18 @@ public abstract class Utilisateur {
     public void enregistrerConnexionReussie() {
         echecsConnexion = 0;
         verrouilleJusquA = null;
+    }
+
+    public void changerTelephone(byte[] nouveauChiffre, String nouvelleEmpreinte, Instant maintenant) {
+        this.telephoneChiffre = nouveauChiffre;
+        this.telephoneHash = nouvelleEmpreinte;
+        this.telephoneModifieLe = maintenant;
+    }
+
+    /** Clôture : le compte ne peut plus s'authentifier ; ses données sont purgées sous 30 jours. */
+    public void clore(Instant maintenant) {
+        this.statut = StatutCompte.CLOS;
+        this.closLe = maintenant;
     }
 
     protected void changerStatut(StatutCompte nouveau) {

@@ -28,7 +28,8 @@ public enum CodeErreur {
     TOTP_A_ACTIVER(HttpStatus.FORBIDDEN, "Second facteur à activer"),
     CODE_TOTP_REQUIS(HttpStatus.UNAUTHORIZED, "Code de l'application d'authentification requis"),
     DOSSIER_INCOMPLET(HttpStatus.BAD_REQUEST, "Dossier incomplet"),
-    PIECE_REFUSEE(HttpStatus.BAD_REQUEST, "Pièce refusée");
+    PIECE_REFUSEE(HttpStatus.BAD_REQUEST, "Pièce refusée"),
+    SECOND_FACTEUR_REQUIS(HttpStatus.FORBIDDEN, "Confirmation par code SMS requise");
 
     private final HttpStatus statut;
     private final String titre;
