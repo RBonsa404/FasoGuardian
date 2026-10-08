@@ -7,11 +7,11 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 (fin de l'étape 1 « Socle ») : 0 user story terminée sur 43 ; socle technique en place.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001, US-PAR-019, US-SYS-006).
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
-| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console |  |  | À faire |
+| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `ControleurAuthentification` | `InscriptionEtSessionsIT`, `ReglesIdentiteTest` | En cours : inscription et session du parent ; KYC et écrans à faire |
 | US-PAR-002 | MUST | REQ-MUST-02 | identite, audit | parents |  |  | À faire |
 | US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents |  |  | À faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents |  |  | À faire |
@@ -34,7 +34,7 @@ Bilan au 8 octobre 2026 (fin de l'étape 1 « Socle ») : 0 user story terminée
 | US-TRS-001 | MUST | REQ-MUST-06 | famille | public-qr, site |  |  | À faire |
 | US-PAR-012 | MUST | REQ-MUST-17 | alertes, dispositifs | parents, firmware |  |  | À faire |
 | US-ADM-001 | MUST | REQ-MUST-23 | identite | console |  |  | À faire |
-| US-SYS-006 | MUST | REQ-MUST-24 | plateforme, identite, famille | site |  |  | Socle : schéma par module et ports de chiffrement à venir avec `identite` |
+| US-SYS-006 | MUST | REQ-MUST-24 | plateforme, identite, famille | site | `ServiceChiffrement` | `ServiceChiffrementTest`, `InscriptionEtSessionsIT` | En cours : téléphone chiffré ; pièces KYC et santé à venir avec leurs modules |
 | US-ADM-002 | MUST | REQ-MUST-25 | audit | console |  |  | À faire |
 | US-ADM-003 | MUST | REQ-MUST-26 | audit | console, site |  |  | À faire |
 | US-ADM-004 | SHOULD | REQ-SHOULD-02 | plateforme | console |  |  | À faire |
@@ -52,7 +52,7 @@ Bilan au 8 octobre 2026 (fin de l'étape 1 « Socle ») : 0 user story terminée
 | US-SYS-010 | SHOULD | REQ-MUST-06 (sécurité) | famille | public-qr, console |  |  | À faire |
 | US-PAR-018 | SHOULD | REQ-MUST-11 (ergonomie) | alertes | parents |  |  | À faire |
 | US-SYS-011 | MUST | REQ-MUST-07 (sécurité) | dispositifs | firmware |  |  | À faire |
-| US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents |  |  | À faire |
+| US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents | `Sessions` | `InscriptionEtSessionsIT` | En cours : rotation et révocation côté serveur ; écran 14 et consultation hors ligne à faire |
 | US-KYC-001 | SHOULD | REQ-MUST-01 (exception) | identite | console |  |  | À faire |
 
 ## Exigences système vérifiées par le socle

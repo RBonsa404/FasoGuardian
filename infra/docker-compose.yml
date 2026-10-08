@@ -38,6 +38,8 @@ services:
       FG_DB_URL: jdbc:postgresql://postgres:5432/${FG_DB_NAME}
       FG_DB_USER: ${FG_DB_USER}
       FG_DB_PASSWORD: ${FG_DB_PASSWORD}
+      FG_JWT_SECRET: ${FG_JWT_SECRET:?définir FG_JWT_SECRET dans .env}
+      FG_SMS_ADAPTATEUR: ${FG_SMS_ADAPTATEUR:-bac-a-sable}
       FG_CLE_EMPREINTE: ${FG_CLE_EMPREINTE:?définir FG_CLE_EMPREINTE dans .env}
       FG_CLE_TELEPHONE: ${FG_CLE_TELEPHONE:?définir FG_CLE_TELEPHONE dans .env}
       FG_CLE_PIECE_KYC: ${FG_CLE_PIECE_KYC:?définir FG_CLE_PIECE_KYC dans .env}

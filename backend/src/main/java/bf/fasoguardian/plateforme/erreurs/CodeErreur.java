@@ -14,7 +14,17 @@ public enum CodeErreur {
     REQUETE_INVALIDE(HttpStatus.BAD_REQUEST, "Requête invalide"),
     CONFLIT(HttpStatus.CONFLICT, "Conflit avec l'état de la ressource"),
     TROP_DE_REQUETES(HttpStatus.TOO_MANY_REQUESTS, "Trop de requêtes"),
-    ERREUR_INTERNE(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur interne");
+    ERREUR_INTERNE(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur interne"),
+
+    TELEPHONE_INVALIDE(HttpStatus.BAD_REQUEST, "Numéro de téléphone invalide"),
+    CODE_INCORRECT(HttpStatus.BAD_REQUEST, "Code incorrect"),
+    CODE_EXPIRE(HttpStatus.BAD_REQUEST, "Code expiré"),
+    CODE_EPUISE(HttpStatus.BAD_REQUEST, "Nombre d'essais dépassé"),
+    MOT_DE_PASSE_REFUSE(HttpStatus.BAD_REQUEST, "Mot de passe refusé"),
+    CONSENTEMENT_REQUIS(HttpStatus.BAD_REQUEST, "Consentement obligatoire manquant"),
+    IDENTIFIANTS_INVALIDES(HttpStatus.UNAUTHORIZED, "Identifiants invalides"),
+    COMPTE_VERROUILLE(HttpStatus.LOCKED, "Compte temporairement verrouillé"),
+    SESSION_EXPIREE(HttpStatus.UNAUTHORIZED, "Session expirée");
 
     private final HttpStatus statut;
     private final String titre;

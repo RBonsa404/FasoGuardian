@@ -34,6 +34,8 @@ public abstract class TestIntegration {
     @DynamicPropertySource
     static void clesDeChiffrement(DynamicPropertyRegistry registre) {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
+        registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
+        registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
         for (CategorieDonnee categorie : CategorieDonnee.values()) {
             String cle = cleAleatoire();
             registre.add("fasoguardian.chiffrement.cles." + categorie + ".1", () -> cle);

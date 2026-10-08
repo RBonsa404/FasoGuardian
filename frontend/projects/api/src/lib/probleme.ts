@@ -16,7 +16,16 @@ export type CodeErreur =
   | 'REQUETE_INVALIDE'
   | 'CONFLIT'
   | 'TROP_DE_REQUETES'
-  | 'ERREUR_INTERNE';
+  | 'ERREUR_INTERNE'
+  | 'TELEPHONE_INVALIDE'
+  | 'CODE_INCORRECT'
+  | 'CODE_EXPIRE'
+  | 'CODE_EPUISE'
+  | 'MOT_DE_PASSE_REFUSE'
+  | 'CONSENTEMENT_REQUIS'
+  | 'IDENTIFIANTS_INVALIDES'
+  | 'COMPTE_VERROUILLE'
+  | 'SESSION_EXPIREE';
 
 const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'NON_AUTHENTIFIE',
@@ -26,6 +35,15 @@ const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'CONFLIT',
   'TROP_DE_REQUETES',
   'ERREUR_INTERNE',
+  'TELEPHONE_INVALIDE',
+  'CODE_INCORRECT',
+  'CODE_EXPIRE',
+  'CODE_EPUISE',
+  'MOT_DE_PASSE_REFUSE',
+  'CONSENTEMENT_REQUIS',
+  'IDENTIFIANTS_INVALIDES',
+  'COMPTE_VERROUILLE',
+  'SESSION_EXPIREE',
 ]);
 
 export function estProbleme(corps: unknown): corps is Probleme {

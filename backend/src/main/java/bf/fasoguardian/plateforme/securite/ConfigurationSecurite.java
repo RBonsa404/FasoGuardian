@@ -1,6 +1,7 @@
 package bf.fasoguardian.plateforme.securite;
 
 import java.io.IOException;
+import java.time.Clock;
 
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
 import bf.fasoguardian.plateforme.erreurs.Problemes;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import tools.jackson.databind.json.JsonMapper;
@@ -40,13 +43,33 @@ class ConfigurationSecurite {
                 .authorizeHttpRequests(regles -> regles
                         .requestMatchers("/actuator/health/**", "/actuator/prometheus").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/public/**").permitAll()
                         .anyRequest().authenticated())
+                .oauth2ResourceServer(ressources -> ressources
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(convertisseur()))
+                        .authenticationEntryPoint((requete, reponse, erreur) -> ecrire(reponse, json,
+                                CodeErreur.NON_AUTHENTIFIE, "Jeton d'accès absent, invalide ou expiré.")))
                 .exceptionHandling(erreurs -> erreurs
                         .authenticationEntryPoint((requete, reponse, erreur) -> ecrire(reponse, json,
                                 CodeErreur.NON_AUTHENTIFIE, "Une authentification est requise pour accéder à cette ressource."))
                         .accessDeniedHandler((requete, reponse, erreur) -> ecrire(reponse, json,
                                 CodeErreur.ACCES_REFUSE, "Vous n'êtes pas autorisé à accéder à cette ressource.")));
         return http.build();
+    }
+
+    /** Les rôles du jeton (revendication « roles ») deviennent des autorités ROLE_*. */
+    private static JwtAuthenticationConverter convertisseur() {
+        JwtGrantedAuthoritiesConverter roles = new JwtGrantedAuthoritiesConverter();
+        roles.setAuthoritiesClaimName("roles");
+        roles.setAuthorityPrefix("ROLE_");
+        JwtAuthenticationConverter convertisseur = new JwtAuthenticationConverter();
+        convertisseur.setJwtGrantedAuthoritiesConverter(roles);
+        return convertisseur;
+    }
+
+    @Bean
+    Clock horloge() {
+        return Clock.systemUTC();
     }
 
     private static void ecrire(HttpServletResponse reponse, JsonMapper json, CodeErreur code, String detail)
