@@ -26,6 +26,11 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  servlet:
+    multipart:
+      # Pièces KYC : 5 Mo au plus (photos compressées côté client à 400 Ko environ).
+      max-file-size: 5MB
+      max-request-size: 6MB
   modulith:
     events:
       republish-outstanding-events-on-restart: true

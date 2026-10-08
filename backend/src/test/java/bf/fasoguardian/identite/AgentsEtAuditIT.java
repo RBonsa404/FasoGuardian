@@ -3,32 +3,25 @@ package bf.fasoguardian.identite;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Instant;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import bf.fasoguardian.Acteurs;
 import bf.fasoguardian.TestIntegration;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.identite.domaine.Totp;
 import bf.fasoguardian.notifications.infrastructure.SmsBacASable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 /** Agents internes, second facteur obligatoire, cloisonnement des rôles et journal d'audit (US-ADM-001, US-ADM-002). */
 class AgentsEtAuditIT extends TestIntegration {
 
-    private static final AtomicInteger SUITE = new AtomicInteger();
-    private static final String MOT_DE_PASSE_AGENT = "phrase-de-passe-agent-2026";
-    private static String jetonAdmin;
+    private static final String MOT_DE_PASSE_AGENT = Acteurs.MOT_DE_PASSE_AGENT;
 
     @Autowired
     MockMvc mvc;
@@ -44,25 +37,25 @@ class AgentsEtAuditIT extends TestIntegration {
 
     @Test
     void laPremiereConnexionImposeLActivationDuSecondFacteurPuisChaqueConnexionExigeUnCodeNeuf() throws Exception {
-        String identifiant = creerAgent("[\"KYC\"]");
+        String identifiant = acteurs().creerAgent("[\"KYC\"]");
 
-        String corps = connecter(identifiant, MOT_DE_PASSE_AGENT, null)
+        String corps = acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, null)
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.code").value("TOTP_A_ACTIVER"))
                 .andExpect(jsonPath("$.uriTotp").value(org.hamcrest.Matchers.startsWith("otpauth://totp/FasoGuardian:")))
                 .andReturn().getResponse().getContentAsString();
-        byte[] secret = Totp.depuisBase32(extraire(corps, "\"secretTotp\":\"([A-Z2-7]+)\""));
+        byte[] secret = Totp.depuisBase32(Acteurs.extraire(corps, "\"secretTotp\":\"([A-Z2-7]+)\""));
         long pas = Instant.now().getEpochSecond() / Totp.PAS_SECONDES;
 
-        connecter(identifiant, MOT_DE_PASSE_AGENT, "000000").andExpect(status().isUnauthorized());
-        connecter(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas - 1))
+        acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, "000000").andExpect(status().isUnauthorized());
+        acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas - 1))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.expireDansSecondes").value(600));
 
-        connecter(identifiant, MOT_DE_PASSE_AGENT, null)
+        acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, null)
                 .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value("CODE_TOTP_REQUIS"));
-        connecter(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas - 1))
+        acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas - 1))
                 .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value("IDENTIFIANTS_INVALIDES"));
-        connecter(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas)).andExpect(status().isOk());
+        acteurs().connecterAgent(identifiant, MOT_DE_PASSE_AGENT, Totp.code(secret, pas)).andExpect(status().isOk());
         assertThat(jdbc.queryForObject(
                 "SELECT count(*) FROM audit.entree WHERE action = 'CONNEXION_AGENT' AND role = 'KYC'", Long.class))
                 .isGreaterThanOrEqualTo(2);
@@ -70,8 +63,8 @@ class AgentsEtAuditIT extends TestIntegration {
 
     @Test
     void unAgentKycNePeutPasAdministrerLesComptesEtSonRefusEstJournalise() throws Exception {
-        String identifiant = creerAgent("[\"KYC\"]");
-        String jetonKyc = activerEtConnecter(identifiant);
+        String identifiant = acteurs().creerAgent("[\"KYC\"]");
+        String jetonKyc = acteurs().activerEtConnecter(identifiant, MOT_DE_PASSE_AGENT);
 
         mvc.perform(get("/api/v1/admin/agents").header("Authorization", "Bearer " + jetonKyc))
                 .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ACCES_REFUSE"));
@@ -87,27 +80,27 @@ class AgentsEtAuditIT extends TestIntegration {
 
     @Test
     void unParentNAccedePasALAdministrationEtLAdministrateurVoitLesAgents() throws Exception {
-        mvc.perform(get("/api/v1/admin/agents").header("Authorization", "Bearer " + jetonParent()))
+        mvc.perform(get("/api/v1/admin/agents").header("Authorization", "Bearer " + acteurs().parent().jeton()))
                 .andExpect(status().isForbidden());
         mvc.perform(get("/api/v1/admin/agents")).andExpect(status().isUnauthorized());
 
-        mvc.perform(get("/api/v1/admin/agents").header("Authorization", "Bearer " + jetonAdmin()))
+        mvc.perform(get("/api/v1/admin/agents").header("Authorization", "Bearer " + acteurs().jetonAdmin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.identifiant == '" + ADMIN_IDENTIFIANT + "')].roles[0]").value("ADMIN"));
     }
 
     @Test
     void laCreationDUnAgentEstValideeEtJournalisee() throws Exception {
-        String identifiant = creerAgent("[\"SUPPORT\",\"SAV\"]");
+        String identifiant = acteurs().creerAgent("[\"SUPPORT\",\"SAV\"]");
 
         assertThat(jdbc.queryForObject("""
                 SELECT count(*) FROM audit.entree e JOIN identite.utilisateur u ON u.id::text = e.cible_id
                 WHERE e.action = 'AGENT_CREE' AND e.role = 'ADMIN' AND u.identifiant = ?
                 """, Long.class, identifiant)).isEqualTo(1);
-        creer(identifiant, MOT_DE_PASSE_AGENT, "[\"KYC\"]").andExpect(status().isConflict());
-        creer("agent.court", "trop-court", "[\"KYC\"]")
+        acteurs().creerAgent(identifiant, MOT_DE_PASSE_AGENT, "[\"KYC\"]").andExpect(status().isConflict());
+        acteurs().creerAgent("agent.court", "trop-court", "[\"KYC\"]")
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("MOT_DE_PASSE_REFUSE"));
-        creer("agent.sans.role", MOT_DE_PASSE_AGENT, "[]").andExpect(status().isBadRequest());
+        acteurs().creerAgent("agent.sans.role", MOT_DE_PASSE_AGENT, "[]").andExpect(status().isBadRequest());
     }
 
     @Test
@@ -135,64 +128,7 @@ class AgentsEtAuditIT extends TestIntegration {
         assertThat(journal.premiereEntreeAlteree()).isEmpty();
     }
 
-    private String creerAgent(String roles) throws Exception {
-        String identifiant = "agent.essai." + SUITE.incrementAndGet();
-        creer(identifiant, MOT_DE_PASSE_AGENT, roles).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.secondFacteurActif").value(false));
-        return identifiant;
-    }
-
-    private ResultActions creer(String identifiant, String motDePasse, String roles) throws Exception {
-        return mvc.perform(post("/api/v1/admin/agents").header("Authorization", "Bearer " + jetonAdmin())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"identifiant\":\"" + identifiant + "\",\"motDePasseProvisoire\":\"" + motDePasse
-                        + "\",\"roles\":" + roles + "}"));
-    }
-
-    private ResultActions connecter(String identifiant, String motDePasse, String code) throws Exception {
-        return mvc.perform(post("/api/v1/auth/agents/connexion").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"identifiant\":\"" + identifiant + "\",\"motDePasse\":\"" + motDePasse + "\""
-                        + (code == null ? "" : ",\"codeTotp\":\"" + code + "\"") + "}"));
-    }
-
-    private String activerEtConnecter(String identifiant) throws Exception {
-        return activerEtConnecter(identifiant, MOT_DE_PASSE_AGENT);
-    }
-
-    private String activerEtConnecter(String identifiant, String motDePasse) throws Exception {
-        String corps = connecter(identifiant, motDePasse, null).andExpect(status().isForbidden())
-                .andReturn().getResponse().getContentAsString();
-        byte[] secret = Totp.depuisBase32(extraire(corps, "\"secretTotp\":\"([A-Z2-7]+)\""));
-        String session = connecter(identifiant, motDePasse, Totp.code(secret, Instant.now().getEpochSecond() / 30))
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        return extraire(session, "\"jetonAcces\":\"([^\"]+)\"");
-    }
-
-    private synchronized String jetonAdmin() throws Exception {
-        if (jetonAdmin == null) {
-            jetonAdmin = activerEtConnecter(ADMIN_IDENTIFIANT, ADMIN_MOT_DE_PASSE);
-        }
-        return jetonAdmin;
-    }
-
-    private String jetonParent() throws Exception {
-        String telephone = "76" + String.format("%06d", SUITE.incrementAndGet());
-        mvc.perform(post("/api/v1/auth/inscription/numero").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"telephone\":\"" + telephone + "\"}")).andExpect(status().isAccepted());
-        String code = extraire(sms.dernierPour("+226" + telephone).orElseThrow().texte(), "code est (\\d{6})");
-        String preuve = extraire(mvc.perform(post("/api/v1/auth/inscription/code").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"telephone\":\"" + telephone + "\",\"code\":\"" + code + "\"}"))
-                .andReturn().getResponse().getContentAsString(), "\"preuve\":\"([^\"]+)\"");
-        return extraire(mvc.perform(post("/api/v1/auth/inscription/terminer").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"preuve\":\"" + preuve + "\",\"motDePasse\":\"soleil-de-ouaga-2026\","
-                        + "\"consentements\":[\"CONDITIONS_GENERALES\",\"DONNEES_ENFANT\"]}"))
-                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(),
-                "\"jetonAcces\":\"([^\"]+)\"");
-    }
-
-    private static String extraire(String texte, String motif) {
-        Matcher correspondance = Pattern.compile(motif).matcher(texte);
-        assertThat(correspondance.find()).as("motif %s dans %s", motif, texte).isTrue();
-        return correspondance.group(1);
+    private Acteurs acteurs() {
+        return new Acteurs(mvc, sms);
     }
 }

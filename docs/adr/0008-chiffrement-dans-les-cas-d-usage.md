@@ -21,3 +21,9 @@ lecture. L'algorithme, les clés par catégorie et les colonnes sont ceux des do
   explicite, au seul endroit où l'autorisation est contrôlée et l'accès journalisé.
 - Un test d'intégration lit la base pour vérifier que les colonnes sensibles sont illisibles.
 - Écart de forme par rapport à FG-DOC-06 et FG-DOC-07, à reporter lors de leur prochaine révision.
+
+## Complément — statut BROUILLON du dossier KYC
+
+FG-DOC-07 fait débuter le cycle du dossier à DEPOSE. Un statut BROUILLON le précède : il porte le dossier
+pendant que le parent ajoute ses pièces une à une (réseau 2G, reprise possible). Un brouillon n'est jamais
+visible des agents.

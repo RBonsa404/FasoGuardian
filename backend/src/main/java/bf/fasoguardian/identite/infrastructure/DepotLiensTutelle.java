@@ -1,0 +1,12 @@
+package bf.fasoguardian.identite.infrastructure;
+
+import java.util.List;
+import java.util.UUID;
+
+import bf.fasoguardian.identite.domaine.LienTutelle;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DepotLiensTutelle extends JpaRepository<LienTutelle, UUID> {
+
+    List<LienTutelle> findByTuteurId(UUID tuteurId);
+}

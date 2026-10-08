@@ -27,7 +27,9 @@ export type CodeErreur =
   | 'COMPTE_VERROUILLE'
   | 'SESSION_EXPIREE'
   | 'TOTP_A_ACTIVER'
-  | 'CODE_TOTP_REQUIS';
+  | 'CODE_TOTP_REQUIS'
+  | 'DOSSIER_INCOMPLET'
+  | 'PIECE_REFUSEE';
 
 const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'NON_AUTHENTIFIE',
@@ -48,6 +50,8 @@ const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'SESSION_EXPIREE',
   'TOTP_A_ACTIVER',
   'CODE_TOTP_REQUIS',
+  'DOSSIER_INCOMPLET',
+  'PIECE_REFUSEE',
 ]);
 
 export function estProbleme(corps: unknown): corps is Probleme {

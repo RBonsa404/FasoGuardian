@@ -26,7 +26,9 @@ public enum CodeErreur {
     COMPTE_VERROUILLE(HttpStatus.LOCKED, "Compte temporairement verrouillé"),
     SESSION_EXPIREE(HttpStatus.UNAUTHORIZED, "Session expirée"),
     TOTP_A_ACTIVER(HttpStatus.FORBIDDEN, "Second facteur à activer"),
-    CODE_TOTP_REQUIS(HttpStatus.UNAUTHORIZED, "Code de l'application d'authentification requis");
+    CODE_TOTP_REQUIS(HttpStatus.UNAUTHORIZED, "Code de l'application d'authentification requis"),
+    DOSSIER_INCOMPLET(HttpStatus.BAD_REQUEST, "Dossier incomplet"),
+    PIECE_REFUSEE(HttpStatus.BAD_REQUEST, "Pièce refusée");
 
     private final HttpStatus statut;
     private final String titre;
