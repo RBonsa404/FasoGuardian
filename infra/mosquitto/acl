@@ -1,0 +1,14 @@
+# Serveur d'application (CN = serveur-fasoguardian) : lit les flux montants, écrit les commandes.
+user serveur-fasoguardian
+topic read fg/+/telemetry
+topic read fg/+/alert
+topic read fg/+/status
+topic read fg/+/ack
+topic write fg/+/cmd
+
+# Bracelets (CN = identifiant d'appareil) : uniquement leurs propres topics.
+pattern write fg/%u/telemetry
+pattern write fg/%u/alert
+pattern write fg/%u/status
+pattern write fg/%u/ack
+pattern read fg/%u/cmd

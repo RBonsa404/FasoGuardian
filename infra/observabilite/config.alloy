@@ -1,0 +1,30 @@
+// Collecte les journaux des conteneurs du projet et les envoie à Loki.
+discovery.docker "conteneurs" {
+  host = "unix:///var/run/docker.sock"
+
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=fasoguardian"]
+  }
+}
+
+discovery.relabel "conteneurs" {
+  targets = discovery.docker.conteneurs.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+loki.source.docker "conteneurs" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.conteneurs.output
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

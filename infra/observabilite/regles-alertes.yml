@@ -1,0 +1,21 @@
+# Seuils d'alerte d'exploitation (FG-DOC-06, tableau 20). Les règles portant sur des métriques
+# métier (délai événement → notification, messages MQTT en erreur, bracelets muets) sont ajoutées
+# avec les modules qui publient ces métriques.
+groups:
+  - name: plateforme
+    rules:
+      - alert: ServeurIndisponible
+        expr: up{job="serveur"} == 0
+        for: 2m
+        labels:
+          gravite: critique
+        annotations:
+          resume: "Le serveur d'application ne répond plus à la collecte des métriques."
+
+      - alert: LatenceApiElevee
+        expr: histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{job="serveur"}[10m]))) > 0.8
+        for: 10m
+        labels:
+          gravite: avertissement
+        annotations:
+          resume: "Latence des API au 95e centile supérieure à 800 ms sur 10 minutes (objectif : 500 ms)."

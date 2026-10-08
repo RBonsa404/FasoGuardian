@@ -1,0 +1,99 @@
+# Environnement de développement FasoGuardian : base, broker, serveur, proxy et observabilité.
+# Prérequis : copier .env.example en .env à la racine, puis exécuter infra/generer-certificats-dev.sh.
+# Démarrage : docker compose --env-file .env -f infra/docker-compose.yml up --build
+name: fasoguardian
+
+services:
+  postgres:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: ${FG_DB_NAME:?définir FG_DB_NAME dans .env}
+      POSTGRES_USER: ${FG_DB_USER:?définir FG_DB_USER dans .env}
+      POSTGRES_PASSWORD: ${FG_DB_PASSWORD:?définir FG_DB_PASSWORD dans .env}
+    ports:
+      - "127.0.0.1:${FG_DB_PORT:-5432}:5432"
+    volumes:
+      - donnees-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "127.0.0.1:${FG_MQTT_PORT:-8883}:8883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/acl:/mosquitto/config/acl:ro
+      - ./certs:/mosquitto/certs:ro
+      - donnees-mosquitto:/mosquitto/data
+
+  serveur:
+    build:
+      context: ../backend
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      FG_DB_URL: jdbc:postgresql://postgres:5432/${FG_DB_NAME}
+      FG_DB_USER: ${FG_DB_USER}
+      FG_DB_PASSWORD: ${FG_DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/actuator/health/readiness || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  proxy:
+    image: nginx:1.28-alpine
+    ports:
+      - "127.0.0.1:${FG_PROXY_PORT:-8443}:8443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs/proxy.crt:/etc/nginx/certs/proxy.crt:ro
+      - ./certs/proxy.key:/etc/nginx/certs/proxy.key:ro
+    depends_on:
+      serveur:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./observabilite/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observabilite/regles-alertes.yml:/etc/prometheus/regles-alertes.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  loki:
+    image: grafana/loki:3.5.3
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+
+  alloy:
+    image: grafana/alloy:v1.10.0
+    command: ["run", "/etc/alloy/config.alloy"]
+    volumes:
+      - ./observabilite/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:12.1.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${FG_GRAFANA_ADMIN_PASSWORD:?définir FG_GRAFANA_ADMIN_PASSWORD dans .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./observabilite/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+
+volumes:
+  donnees-postgres:
+  donnees-mosquitto:
