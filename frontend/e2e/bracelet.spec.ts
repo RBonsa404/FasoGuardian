@@ -32,10 +32,11 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
 
   // Mon bracelet : état et mode économie
   await page.getByRole('button', { name: 'Voir le bracelet' }).click();
-  await expect(page.getByText('Actif', { exact: true })).toBeVisible();
-  await expect(page.getByText('toutes les 5 min')).toBeVisible();
+  await expect(page.getByText(carte.numeroSerie)).toBeVisible();
+  await expect(page.getByText('en attente du premier contact')).toHaveCount(3);
+  await expect(page.getByText('Position toutes les 5 min')).toBeVisible();
   await page.getByRole('switch', { name: 'Mode économie' }).click();
-  await expect(page.getByText('toutes les 15 min')).toBeVisible();
+  await expect(page.getByText('Position toutes les 15 min')).toBeVisible();
   await page.reload();
   await expect(page.getByRole('switch', { name: 'Mode économie' })).toBeChecked();
 
@@ -55,7 +56,7 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
 
   // Retrouvé pendant le suivi
   await page.getByRole('button', { name: "Je l'ai retrouvé" }).click();
-  await expect(page.getByText('Actif', { exact: true })).toBeVisible();
+  await expect(page.getByText(/Déclaré perdu/)).toHaveCount(0);
   expect(await pageQr()).toContain('Vous avez trouvé un enfant');
 
   // Désappairage sans déclaration, après confirmation

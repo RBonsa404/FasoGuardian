@@ -49,9 +49,17 @@ services:
       FG_CLE_SECRET_MFA: ${FG_CLE_SECRET_MFA:?définir FG_CLE_SECRET_MFA dans .env}
       FG_CLE_IMEI: ${FG_CLE_IMEI:?définir FG_CLE_IMEI dans .env}
       FG_CLE_PROFIL_ENFANT: ${FG_CLE_PROFIL_ENFANT:?définir FG_CLE_PROFIL_ENFANT dans .env}
+      FG_MQTT_URL: ssl://mosquitto:8883
+      FG_MQTT_AUTORITE: /run/certs/ca.crt
+      FG_MQTT_CERTIFICAT: /run/certs/serveur.crt
+      FG_MQTT_CLE: /run/certs/serveur.key
+    volumes:
+      - ./certs:/run/certs:ro
     depends_on:
       postgres:
         condition: service_healthy
+      mosquitto:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/actuator/health/readiness || exit 1"]
       interval: 10s

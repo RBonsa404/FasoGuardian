@@ -20,7 +20,7 @@ class BraceletSimuleTest {
 
         assertThat(premier).matches(
                 "\\{\"t\":1791374400,\"seq\":1,\"lat\":-?\\d+\\.\\d{5},\"lon\":-?\\d+\\.\\d{5},\"acc\":\\d+,"
-                        + "\"src\":\"gnss\",\"bat\":\\d+,\"rssi\":-\\d+,\"mv\":1}");
+                        + "\"src\":\"gnss\",\"bat\":\\d+,\"rssi\":-\\d+,\"net\":\"4g\",\"op\":\"Orange BF\",\"mv\":1}");
         assertThat(second).contains("\"t\":1791374700", "\"seq\":2");
         assertThat(bracelet.sequence()).isEqualTo(2);
     }

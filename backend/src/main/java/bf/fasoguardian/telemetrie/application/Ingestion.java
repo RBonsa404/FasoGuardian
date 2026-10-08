@@ -29,7 +29,7 @@ import tools.jackson.databind.json.JsonMapper;
  * pas révoqué. Un message rejoué (QoS 1, tampon hors ligne) est ignoré sans erreur (US-SYS-002).
  */
 @Service
-public class Ingestion {
+public class Ingestion implements ReceptionMessages {
 
     /** Taille maximale d'un message : le format compact tient en une centaine d'octets. */
     public static final int TAILLE_MAXIMALE = 512;
@@ -58,6 +58,15 @@ public class Ingestion {
         this.json = json;
         this.metriques = metriques;
         this.horloge = horloge;
+    }
+
+    @Override
+    public void recevoir(Flux flux, String identifiantAppareil, byte[] message) {
+        switch (flux) {
+            case TELEMETRY -> telemetrie(identifiantAppareil, message);
+            case STATUS -> etat(identifiantAppareil, message);
+            case ALERT -> alerte(identifiantAppareil, message);
+        }
     }
 
     /** Message du flux {@code telemetry} : une position et l'état radio du bracelet. */

@@ -18,6 +18,7 @@
     <description>Serveur d'application FasoGuardian : monolithe modulaire Spring Boot (FG-DOC-06)</description>
 
     <properties>
+        <paho.version>1.2.5</paho.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-modulith.version>2.0.8</spring-modulith.version>
@@ -89,6 +90,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>${paho.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>

@@ -60,6 +60,14 @@ springdoc:
 # Une clé = 32 octets en base64 (openssl rand -base64 32). Pour une rotation, ajouter la version 2 et
 # conserver la version 1 tant que des données chiffrées avec elle subsistent.
 fasoguardian:
+  mqtt:
+    # Sans adresse, le serveur ne s'abonne pas au broker (poste de développement sans Mosquitto).
+    url: ${FG_MQTT_URL:}
+    autorite: ${FG_MQTT_AUTORITE:}
+    certificat: ${FG_MQTT_CERTIFICAT:}
+    cle: ${FG_MQTT_CLE:}
+    identifiant-client: ${FG_MQTT_IDENTIFIANT_CLIENT:serveur-fasoguardian-1}
+    groupe: ${FG_MQTT_GROUPE:fg-serveur}
   amorcage:
     # Premier administrateur, créé seulement si aucun agent n'existe (voir AmorcageAdministrateur).
     admin:

@@ -60,7 +60,7 @@ final class BraceletSimule {
         int precisionMetres = 5 + hasard.nextInt(16);
         int signalDbm = -95 + hasard.nextInt(31);
         return String.format(Locale.ROOT,
-                "{\"t\":%d,\"seq\":%d,\"lat\":%.5f,\"lon\":%.5f,\"acc\":%d,\"src\":\"gnss\",\"bat\":%d,\"rssi\":%d,\"mv\":1}",
+                "{\"t\":%d,\"seq\":%d,\"lat\":%.5f,\"lon\":%.5f,\"acc\":%d,\"src\":\"gnss\",\"bat\":%d,\"rssi\":%d,\"net\":\"4g\",\"op\":\"Orange BF\",\"mv\":1}",
                 mesure.getEpochSecond(), sequence, latitude, longitude, precisionMetres, batterie(), signalDbm);
     }
 

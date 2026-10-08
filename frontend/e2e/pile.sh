@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Pile locale des tests de bout en bout : PostgreSQL vierge (Docker), serveur sous le profil dev avec
-# l'adaptateur SMS bac à sable, applications Parents (4201) et Console (4202).
+# l'adaptateur SMS bac à sable, broker Mosquitto en TLS mutuel (8883), applications Parents (4201) et Console (4202).
 # Les secrets de la pile sont tirés au hasard à chaque démarrage et gardés dans e2e/.etat (ignoré par Git).
 #
 #   sh e2e/pile.sh demarrer   démarre la pile (JAVA_HOME doit pointer sur un JDK 21)
@@ -39,6 +39,8 @@ lancer_serveur() {
   (
     set -a && . "$ENV" && set +a
     export FG_DB_URL="jdbc:postgresql://localhost:55432/fasoguardian" FG_SMS_ADAPTATEUR=bac-a-sable SPRING_PROFILES_ACTIVE=dev
+    export FG_MQTT_URL="ssl://localhost:${FG_MQTT_PORT:-8883}" FG_MQTT_AUTORITE="$RACINE/infra/certs/ca.crt" \
+      FG_MQTT_CERTIFICAT="$RACINE/infra/certs/serveur.crt" FG_MQTT_CLE="$RACINE/infra/certs/serveur.key"
     nohup "${JAVA_HOME:?JAVA_HOME doit pointer sur un JDK 21}/bin/java" -jar "$RACINE"/backend/target/fasoguardian-backend-*.jar \
       > "$ETAT/serveur.log" 2>&1 &
   )
@@ -67,7 +69,10 @@ case "${1:-}" in
         echo "FG_CLE_$cle=$(openssl rand -base64 32)"
       done
     } > "$ENV"
+    # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).
+    [ -f "$RACINE/infra/certs/ca.crt" ] || sh "$RACINE/infra/generer-certificats-dev.sh"
     $COMPOSE up -d --wait postgres
+    $COMPOSE up -d mosquitto
     lancer_serveur
     (cd "$FRONTEND" && nohup npx ng serve parents --port 4201 --proxy-config proxy.dev.json > "$ETAT/parents.log" 2>&1 &)
     (cd "$FRONTEND" && nohup npx ng serve console --port 4202 --proxy-config proxy.dev.json > "$ETAT/console.log" 2>&1 &)

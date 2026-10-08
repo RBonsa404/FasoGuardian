@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { Bracelet, ClientBracelet } from 'api';
+import { Bracelet, ClientBracelet, EtatBracelet } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
@@ -45,7 +45,7 @@ import { VisuelBracelet } from './visuel';
 
       <fg-switch class="rounded-lg border border-line bg-surface p-3.5" [formControl]="economie" i18n-libelle="@@bracelet.economie" libelle="Mode économie">
         <strong class="text-body font-semibold" i18n="@@bracelet.economie">Mode économie</strong>
-        <span class="text-caption text-text-3" i18n="@@bracelet.economie.texte">Position toutes les 15 min au lieu de 5 · autonomie prolongée</span>
+        <span class="text-caption text-text-3" i18n="@@bracelet.economie.texte">Position toutes les {{ minutes() }} min · le mode économie prolonge l'autonomie</span>
       </fg-switch>
 
       @if (erreur(); as message) {
@@ -84,21 +84,34 @@ export class MonBracelet {
   private readonly router = inject(Router);
 
   protected readonly bracelet = signal<Bracelet | null>(null);
+  protected readonly etat = signal<EtatBracelet | null>(null);
   protected readonly absent = signal(false);
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly economie = new FormControl(false, { nonNullable: true });
+  protected readonly minutes = computed(() => Math.round((this.bracelet()?.intervalleS ?? 0) / 60));
   protected readonly cartes = computed(() => {
     const b = this.bracelet();
     if (!b) {
       return [];
     }
+    const etat = this.etat();
+    const attente = $localize`:@@bracelet.attente:en attente du premier contact`;
     return [
-      { cle: $localize`:@@bracelet.etat:État`, valeur: ETATS[b.statut] ?? b.statut, detail: $localize`:@@bracelet.etat.detail:Numéro ${b.numeroSerie}:numero:` },
       {
-        cle: $localize`:@@bracelet.positions:Positions`,
-        valeur: $localize`:@@bracelet.positions.valeur:toutes les ${Math.round(b.intervalleS / 60)}:minutes: min`,
-        detail: b.modeEconomie ? $localize`:@@bracelet.positions.economie:mode économie` : $localize`:@@bracelet.positions.normal:mode normal`,
+        cle: $localize`:@@bracelet.batterie:Batterie`,
+        valeur: etat?.batterie != null ? `${etat.batterie} %` : '—',
+        detail: etat?.batterie == null ? attente : etat.batterie < 20 ? $localize`:@@bracelet.batterie.faible:batterie faible` : $localize`:@@bracelet.batterie.bonne:niveau suffisant`,
+      },
+      {
+        cle: $localize`:@@bracelet.signal:Signal`,
+        valeur: etat?.signalDbm != null ? [etat.reseau, force(etat.signalDbm)].filter(Boolean).join(' · ') : '—',
+        detail: etat?.signalDbm == null ? attente : (etat.operateur ?? $localize`:@@bracelet.signal.operateur:opérateur inconnu`),
+      },
+      {
+        cle: $localize`:@@bracelet.contact:Dernier contact`,
+        valeur: etat ? heure(etat.dernierContact) : '—',
+        detail: etat ? ilYA(etat.dernierContact) : attente,
       },
       { cle: $localize`:@@bracelet.logiciel:Logiciel`, valeur: b.versionLogiciel, detail: $localize`:@@bracelet.logiciel.detail:révision ${b.revisionMaterielle}:revision:` },
       { cle: $localize`:@@bracelet.etancheite:Étanchéité`, valeur: 'IP67', detail: $localize`:@@bracelet.etancheite.detail:1 m pendant 30 min` },
@@ -151,7 +164,10 @@ export class MonBracelet {
     this.absent.set(false);
     this.erreur.set(null);
     this.client.bracelet(id).subscribe({
-      next: (bracelet) => this.afficher(bracelet),
+      next: (bracelet) => {
+        this.afficher(bracelet);
+        this.chargerEtat(id);
+      },
       error: (cause: unknown) => {
         const lisible = erreurLisible(cause);
         if (lisible.code === 'RESSOURCE_INTROUVABLE') {
@@ -163,16 +179,42 @@ export class MonBracelet {
     });
   }
 
+  /** L'état transmis par le bracelet complète l'écran ; son absence ne l'empêche pas de s'afficher. */
+  private chargerEtat(id: string): void {
+    this.etat.set(null);
+    this.client.situation(id).subscribe({ next: (situation) => this.etat.set(situation.etat), error: () => undefined });
+  }
+
   private afficher(bracelet: Bracelet): void {
     this.bracelet.set(bracelet);
     this.economie.setValue(bracelet.modeEconomie, { emitEvent: false });
   }
 }
 
-const ETATS: Partial<Record<Bracelet['statut'], string>> = {
-  ACTIF: $localize`:@@bracelet.etat.actif:Actif`,
-  PERDU: $localize`:@@bracelet.etat.perdu:Perdu`,
-};
+/** Force du signal à partir de sa puissance reçue, en dBm. */
+function force(signalDbm: number): string {
+  if (signalDbm >= -85) {
+    return $localize`:@@bracelet.signal.fort:fort`;
+  }
+  return signalDbm >= -100 ? $localize`:@@bracelet.signal.moyen:moyen` : $localize`:@@bracelet.signal.faible:faible`;
+}
+
+function heure(instantIso: string): string {
+  return new Date(instantIso).toLocaleTimeString('fr', { hour: '2-digit', minute: '2-digit' });
+}
+
+/** Ancienneté lisible d'un instant passé : « à l'instant », « il y a 12 min », « il y a 3 h », « il y a 2 j ». */
+export function ilYA(instantIso: string, maintenant = new Date()): string {
+  const minutes = Math.max(0, Math.floor((maintenant.getTime() - new Date(instantIso).getTime()) / 60_000));
+  if (minutes < 1) {
+    return $localize`:@@duree.instant:à l'instant`;
+  }
+  if (minutes < 60) {
+    return $localize`:@@duree.minutes:il y a ${minutes}:minutes: min`;
+  }
+  const heures = Math.floor(minutes / 60);
+  return heures < 24 ? $localize`:@@duree.heures:il y a ${heures}:heures: h` : $localize`:@@duree.jours:il y a ${Math.floor(heures / 24)}:jours: j`;
+}
 
 /** « 10/27 » à partir d'une date ISO. */
 function moisAnnee(dateIso: string): string {
