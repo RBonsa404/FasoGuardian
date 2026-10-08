@@ -24,6 +24,7 @@ public final class Acteurs {
     public static final String MOT_DE_PASSE_PARENT = "soleil-de-ouaga-2026";
     public static final String MOT_DE_PASSE_AGENT = "phrase-de-passe-agent-2026";
     private static final AtomicInteger SUITE = new AtomicInteger(500_000);
+    private static final java.security.SecureRandom ALEA = new java.security.SecureRandom();
     // L'administrateur de test ne se connecte qu'une fois : un code TOTP ne se rejoue pas.
     private static String jetonAdmin;
 
@@ -94,6 +95,65 @@ public final class Acteurs {
             enfantId[0] = extraire(corps, "\"id\":\"([0-9a-f-]{36})\"");
         });
         return new ParentAvecEnfant(parent, enfantId[0]);
+    }
+
+    /** Carte d'activation d'un bracelet enregistré au parc. */
+    public record Carte(String numeroSerie, String code, String jetonQr) {
+    }
+
+    private static String jetonSav;
+
+    public String jetonSav() throws Exception {
+        synchronized (Acteurs.class) {
+            if (jetonSav == null) {
+                jetonSav = agent("[\"SAV\"]").jeton();
+            }
+            return jetonSav;
+        }
+    }
+
+    /** Enregistre au parc un bracelet neuf (IMEI et certificat fictifs). */
+    public Carte braceletAuParc() throws Exception {
+        String numero = "FG-" + (70_000 + SUITE.incrementAndGet() % 10_000_000);
+        byte[] empreinte = new byte[32];
+        ALEA.nextBytes(empreinte);
+        String corps = mvc.perform(post("/api/v1/console/parc").header("Authorization", "Bearer " + jetonSav())
+                .contentType(MediaType.APPLICATION_JSON).content("{\"numeroSerie\":\"" + numero + "\",\"imei\":\""
+                        + imeiFictif() + "\",\"revisionMaterielle\":\"V1\",\"versionLogiciel\":\"2.4.1\","
+                        + "\"empreinteCertificat\":\"" + java.util.HexFormat.of().formatHex(empreinte) + "\"}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        return new Carte(numero, extraire(corps, "\"codeAppairage\":\"([A-Z0-9-]{8})\""),
+                extraire(corps, "\"jetonQr\":\"([A-Za-z0-9_-]{22})\""));
+    }
+
+    /** Appaire un bracelet neuf à l'enfant de la famille ; renvoie sa carte d'activation. */
+    public Carte equiper(ParentAvecEnfant famille) throws Exception {
+        Carte carte = braceletAuParc();
+        mvc.perform(post("/api/v1/enfants/" + famille.enfantId() + "/bracelet/appairage")
+                .header("Authorization", "Bearer " + famille.parent().jeton())
+                .contentType(MediaType.APPLICATION_JSON).content("{\"code\":\"" + carte.code() + "\"}"))
+                .andExpect(status().isOk());
+        return carte;
+    }
+
+    /** IMEI fictif de 15 chiffres à clé de Luhn valide. */
+    private static String imeiFictif() {
+        StringBuilder chiffres = new StringBuilder("35");
+        for (int i = 0; i < 12; i++) {
+            chiffres.append(ALEA.nextInt(10));
+        }
+        int somme = 0;
+        for (int i = 0; i < 14; i++) {
+            int chiffre = chiffres.charAt(13 - i) - '0';
+            if (i % 2 == 0) {
+                chiffre *= 2;
+                if (chiffre > 9) {
+                    chiffre -= 9;
+                }
+            }
+            somme += chiffre;
+        }
+        return chiffres.append((10 - somme % 10) % 10).toString();
     }
 
     /** Crée un agent aux rôles donnés (tableau JSON, par exemple {@code ["KYC"]}) sans le connecter. */
