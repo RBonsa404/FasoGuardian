@@ -1,4 +1,26 @@
-@import '../../ui/src/styles/index.css';
+/*
+ * La page QR n'importe que les jetons et ne fait analyser que ses propres gabarits et les icônes : son CSS ne
+ * dépend pas des autres composants de la bibliothèque ui, et le gabarit du serveur reste stable.
+ */
+@import '../../ui/src/styles/tokens.css';
+@import '../../ui/src/styles/tokens-derives.css';
+
+@source '../../ui/src/lib/icone';
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+}
 
 /* Page QR : polices du système uniquement, aucune police ni image à télécharger. */
 @layer base {
