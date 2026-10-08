@@ -11,3 +11,4 @@ export * from './lib/saisie/telephone';
 export * from './lib/saisie/code';
 export * from './lib/saisie/champ';
 export * from './lib/interrupteur/interrupteur';
+export * from './lib/feuille/feuille';

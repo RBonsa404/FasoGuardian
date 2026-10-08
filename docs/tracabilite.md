@@ -7,12 +7,12 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 6 en cours (US-PAR-001, US-PAR-005, US-PAR-019, US-SYS-006, US-ADM-001, US-ADM-002). Étape 1 « Socle » close.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 7 en cours (US-PAR-001, 002, 005, 019, US-SYS-006, US-ADM-001, 002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
 | US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `InstructionKyc`, `Verification`, console `FileKyc` et `InstructionKyc` | `InscriptionEtSessionsIT`, `KycIT`, `inscription.spec.ts`, `verification.spec.ts`, e2e `inscription-kyc.spec.ts` et `console-kyc.spec.ts` | En cours : critères d'acceptation couverts de bout en bout, parent et agent ; contrôle visuel complet des écrans 10, 11, 59 et 60 à faire |
-| US-PAR-002 | MUST | REQ-MUST-02 | identite, audit | parents |  |  | À faire |
+| US-PAR-002 | MUST | REQ-MUST-02 | identite | parents | `ProfilParent`, `CodesSms`, `ControleurProfil`, `MotDePasseOublie`, `Reglages`, `SecondFacteur` | `ProfilIT`, e2e `compte.spec.ts` | En cours : coordonnées modifiées et horodatées, réinitialisation par code, clôture avec second facteur et accusé ; purge effective des données sous 30 jours à faire (module audit) |
 | US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents |  |  | À faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents |  |  | À faire |
 | US-PAR-005 | SHOULD | REQ-SHOULD-01 | identite | parents, console | `Verification` (choix « en point d'inscription ») | `KycIT`, `verification.spec.ts` | En cours : parcours accompagné sans photo ; prise de rendez-vous et saisie par l'agent à faire ; critère « sans aide dans la majorité des cas » à valider au pilote |

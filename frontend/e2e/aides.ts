@@ -109,18 +109,26 @@ export const PNG = Buffer.from(
   'base64',
 );
 
-/** Inscrit un parent et dépose pour lui un dossier KYC complet, par l'API ; renvoie la référence du dossier. */
-export async function parentAvecDossierDepose(api: APIRequestContext): Promise<{ telephone: string; reference: string }> {
-  const telephone = `72${String(Date.now()).slice(-6)}`;
+export const MOT_DE_PASSE_PARENT = 'soleil-de-ouaga-2026';
+
+/** Inscrit un parent par l'API ; renvoie son numéro et son jeton d'accès. */
+export async function parentInscrit(api: APIRequestContext, prefixe = '73'): Promise<{ telephone: string; jetonAcces: string }> {
+  const telephone = `${prefixe}${String(Date.now()).slice(-6)}`;
   const auth = `${SERVEUR}/api/v1/auth/inscription`;
   expect((await api.post(`${auth}/numero`, { data: { telephone } })).status()).toBe(202);
   const code = await dernierCodeSms(api, telephone);
   const { preuve } = await (await api.post(`${auth}/code`, { data: { telephone, code } })).json();
   const { jetonAcces } = await (
     await api.post(`${auth}/terminer`, {
-      data: { preuve, motDePasse: 'soleil-de-ouaga-2026', consentements: ['CONDITIONS_GENERALES', 'DONNEES_ENFANT'] },
+      data: { preuve, motDePasse: MOT_DE_PASSE_PARENT, consentements: ['CONDITIONS_GENERALES', 'DONNEES_ENFANT'] },
     })
   ).json();
+  return { telephone, jetonAcces };
+}
+
+/** Inscrit un parent et dépose pour lui un dossier KYC complet, par l'API ; renvoie la référence du dossier. */
+export async function parentAvecDossierDepose(api: APIRequestContext): Promise<{ telephone: string; reference: string }> {
+  const { telephone, jetonAcces } = await parentInscrit(api, '72');
   const entetes = { Authorization: `Bearer ${jetonAcces}` };
   const kyc = `${SERVEUR}/api/v1/kyc/dossiers`;
   const dossier = await (

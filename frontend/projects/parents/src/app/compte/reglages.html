@@ -1,0 +1,64 @@
+<a class="-ml-2.5 grid size-11 place-items-center rounded-md text-text focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
+  <fg-icon nom="retour" [taille]="22" />
+</a>
+<h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@reglages.titre">Paramètres</h1>
+@if (succes(); as message) {
+  <fg-banner ton="info" icone="valider">{{ message }}</fg-banner>
+}
+
+<div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
+  <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" (click)="ouvrir('mot-de-passe')">
+    <fg-icon nom="cadenas" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@reglages.mdp">Changer mon mot de passe</span>
+  </button>
+  <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" (click)="ouvrir('telephone')">
+    <fg-icon nom="telephone" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@reglages.telephone">Changer mon numéro de téléphone</span>
+  </button>
+</div>
+
+<button fg-button variante="danger" type="button" class="mt-auto" (click)="ouvrir('cloture')" i18n="@@reglages.cloture">Clôturer le compte</button>
+
+<fg-sheet i18n-titre="@@reglages.mdp" titre="Changer mon mot de passe" [ouverte]="feuille() === 'mot-de-passe'" (fermee)="feuille.set(null)">
+  <form class="contents" (submit)="$event.preventDefault(); changerMotDePasse()">
+    <fg-input type="password" autocomplete="current-password" [longueurMax]="128" i18n-libelle="@@reglages.mdp.actuel" libelle="Mot de passe actuel" [formControl]="actuel" />
+    <fg-input
+      type="password"
+      autocomplete="new-password"
+      [longueurMax]="128"
+      i18n-libelle="@@oublie.nouveau"
+      libelle="Nouveau mot de passe"
+      i18n-aide="@@inscription.mdp.texte"
+      aide="10 caractères minimum, avec un chiffre."
+      [formControl]="nouveau"
+    />
+    @if (erreur(); as message) {
+      <fg-banner ton="erreur">{{ message }}</fg-banner>
+    }
+    <button fg-button type="submit" [chargement]="enCours()" i18n="@@commun.enregistrer">Enregistrer</button>
+  </form>
+</fg-sheet>
+
+<fg-sheet i18n-titre="@@reglages.telephone" titre="Changer mon numéro de téléphone" [ouverte]="feuille() === 'telephone'" (fermee)="feuille.set(null)">
+  <form class="contents" (submit)="$event.preventDefault(); codeEnvoye() ? changerTelephone() : demanderCodeTelephone()">
+    <fg-phone-input i18n-libelle="@@reglages.telephone.nouveau" libelle="Nouveau numéro mobile" [formControl]="telephone" />
+    @if (codeEnvoye()) {
+      <fg-otp i18n-libelle="@@reglages.telephone.code" libelle="Code reçu sur le nouveau numéro" [formControl]="code" />
+      <fg-input type="password" autocomplete="current-password" [longueurMax]="128" i18n-libelle="@@reglages.mdp.actuel" libelle="Mot de passe actuel" [formControl]="actuel" />
+    }
+    @if (erreur(); as message) {
+      <fg-banner ton="erreur">{{ message }}</fg-banner>
+    }
+    <button fg-button type="submit" [chargement]="enCours()">
+      @if (codeEnvoye()) {
+        <ng-container i18n="@@commun.enregistrer">Enregistrer</ng-container>
+      } @else {
+        <ng-container i18n="@@inscription.numero.action">Recevoir le code</ng-container>
+      }
+    </button>
+  </form>
+</fg-sheet>
+
+@if (feuille() === 'cloture') {
+  <app-second-facteur action="CLORE_COMPTE" [ouverte]="true" [explication]="explicationCloture" [erreur]="erreur()" (saisi)="clore($event)" (annule)="feuille.set(null)" />
+}

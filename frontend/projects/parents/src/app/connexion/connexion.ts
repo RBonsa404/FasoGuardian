@@ -39,6 +39,7 @@ import { erreurLisible } from '../commun/erreurs';
       <button fg-button taille="lg" type="submit" form="connexion" [chargement]="enCours()" i18n="@@connexion.action">
         Se connecter
       </button>
+      <a class="py-2 text-center text-label font-semibold text-accent" routerLink="/mot-de-passe-oublie" i18n="@@connexion.oublie">Mot de passe oublié ?</a>
       <a class="py-2 text-center text-label font-medium text-text-3" [routerLink]="['/inscription', 'numero']" i18n="@@connexion.pied">
         Pas encore de compte ? S'inscrire
       </a>

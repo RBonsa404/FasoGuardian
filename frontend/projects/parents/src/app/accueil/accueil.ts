@@ -43,7 +43,8 @@ import { erreurLisible } from '../commun/erreurs';
     } @else {
       <fg-skeleton forme="carte" />
     }
-    <button fg-button variante="secondary" type="button" class="mt-auto" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">
+    <a class="mt-auto self-start py-2 text-label font-semibold text-accent" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
+    <button fg-button variante="secondary" type="button" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">
       Se déconnecter
     </button>
   `,

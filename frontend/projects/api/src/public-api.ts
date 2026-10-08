@@ -7,3 +7,4 @@ export * from './lib/intercepteur-jeton';
 export * from './lib/erreurs';
 export * from './lib/kyc';
 export * from './lib/console';
+export * from './lib/profil';

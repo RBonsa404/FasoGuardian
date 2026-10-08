@@ -29,6 +29,15 @@ export const routes: Routes = [
     loadComponent: () => import('./accueil/accueil').then((m) => m.Accueil),
   },
   { path: 'connexion', loadComponent: () => import('./connexion/connexion').then((m) => m.Connexion) },
+  {
+    path: 'mot-de-passe-oublie',
+    loadComponent: () => import('./compte/mot-de-passe-oublie').then((m) => m.MotDePasseOublie),
+  },
+  {
+    path: 'reglages',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./compte/reglages').then((m) => m.Reglages),
+  },
   { path: 'inscription', pathMatch: 'full', redirectTo: 'inscription/numero' },
   { path: 'inscription/:etape', loadComponent: () => import('./inscription/inscription').then((m) => m.Inscription) },
   { path: 'verification', pathMatch: 'full', redirectTo: 'verification/instruction' },
