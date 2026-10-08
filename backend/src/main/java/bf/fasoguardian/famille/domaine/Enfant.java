@@ -35,6 +35,9 @@ public class Enfant {
     @Column(name = "photo_ref")
     private String photoRef;
 
+    @Column(name = "profil_chiffre")
+    private byte[] profilChiffre;
+
     @Column(name = "cree_le", nullable = false)
     private Instant creeLe;
 
@@ -71,6 +74,15 @@ public class Enfant {
             modifieLe = maintenant;
         }
         return modifies;
+    }
+
+    public void definirProfil(byte[] nouveauProfilChiffre, Instant maintenant) {
+        this.profilChiffre = nouveauProfilChiffre;
+        this.modifieLe = maintenant;
+    }
+
+    public byte[] profilChiffre() {
+        return profilChiffre;
     }
 
     public UUID id() {

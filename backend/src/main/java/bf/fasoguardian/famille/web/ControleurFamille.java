@@ -55,7 +55,11 @@ class ControleurFamille {
         this.medical = medical;
     }
 
-    record DemandeModification(@Size(max = 80) String prenom, @Size(max = 80) String nom) {
+    record ProfilDto(@Size(max = 80) String ecole, @Size(max = 80) String quartier, Integer tailleCm,
+            @Size(max = 200) String signesDistinctifs) {
+    }
+
+    record DemandeModification(@Size(max = 80) String prenom, @Size(max = 80) String nom, @Valid ProfilDto profil) {
     }
 
     record ElementDto(@NotNull DossierMedical.TypeElement type, @NotBlank @Size(max = 120) String libelle, boolean critique) {
@@ -85,7 +89,9 @@ class ControleurFamille {
     @PatchMapping("/{enfantId}")
     ResponseEntity<FicheEnfant> modifier(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId,
             @Valid @RequestBody DemandeModification demande) {
-        return sansCache(familles.modifier(id(jeton), enfantId, demande.prenom(), demande.nom()));
+        ProfilDto p = demande.profil();
+        return sansCache(familles.modifier(id(jeton), enfantId, demande.prenom(), demande.nom(),
+                p == null ? null : new Familles.ProfilEnfant(p.ecole(), p.quartier(), p.tailleCm(), p.signesDistinctifs())));
     }
 
     @Operation(summary = "Historique des modifications de la fiche enfant")

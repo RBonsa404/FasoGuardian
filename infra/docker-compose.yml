@@ -48,6 +48,7 @@ services:
       FG_CLE_SANTE: ${FG_CLE_SANTE:?définir FG_CLE_SANTE dans .env}
       FG_CLE_SECRET_MFA: ${FG_CLE_SECRET_MFA:?définir FG_CLE_SECRET_MFA dans .env}
       FG_CLE_IMEI: ${FG_CLE_IMEI:?définir FG_CLE_IMEI dans .env}
+      FG_CLE_PROFIL_ENFANT: ${FG_CLE_PROFIL_ENFANT:?définir FG_CLE_PROFIL_ENFANT dans .env}
     depends_on:
       postgres:
         condition: service_healthy

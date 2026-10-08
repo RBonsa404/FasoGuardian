@@ -45,7 +45,7 @@ case "${1:-}" in
       echo "FG_JWT_SECRET=$(openssl rand -base64 32)"
       echo "FG_ADMIN_IDENTIFIANT=admin.e2e"
       echo "FG_ADMIN_MOT_DE_PASSE=$(openssl rand -hex 12)"
-      for cle in EMPREINTE TELEPHONE PIECE_KYC SANTE SECRET_MFA IMEI; do
+      for cle in EMPREINTE TELEPHONE PIECE_KYC SANTE SECRET_MFA IMEI PROFIL_ENFANT; do
         echo "FG_CLE_$cle=$(openssl rand -base64 32)"
       done
     } > "$ENV"

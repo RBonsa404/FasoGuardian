@@ -58,6 +58,19 @@ class FamilleIT extends TestIntegration {
                 .andExpect(jsonPath("$.nom").value("Ouédraogo"));
         appel(get(base + "/historique"), jeton).andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].champ").value("prenom")).andExpect(jsonPath("$[0].modifieLe").isNotEmpty());
+
+        // Profil descriptif : chiffré en base, historisé sans valeur, jamais projeté sur la page publique.
+        appel(patch(base).contentType(MediaType.APPLICATION_JSON).content("""
+                {"profil":{"ecole":"Les Manguiers MARQUEUR-PROFIL","quartier":"Ouaga 2000","tailleCm":128,
+                           "signesDistinctifs":"Petite cicatrice au menton"}}
+                """), jeton).andExpect(status().isOk())
+                .andExpect(jsonPath("$.profil.ecole").value("Les Manguiers MARQUEUR-PROFIL"))
+                .andExpect(jsonPath("$.profil.tailleCm").value(128));
+        assertThat(new String(jdbc.queryForObject("SELECT profil_chiffre FROM famille.enfant WHERE id = ?::uuid",
+                byte[].class, famille.enfantId()), StandardCharsets.ISO_8859_1)).doesNotContain("MARQUEUR", "cicatrice");
+        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$[0].champ").value("profil"));
+        appel(patch(base).contentType(MediaType.APPLICATION_JSON).content("{\"profil\":{\"tailleCm\":400}}"), jeton)
+                .andExpect(status().isBadRequest());
     }
 
     @Test

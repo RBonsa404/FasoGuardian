@@ -6,5 +6,6 @@ public enum CategorieDonnee {
     PIECE_KYC,
     SANTE,
     SECRET_MFA,
-    IMEI
+    IMEI,
+    PROFIL_ENFANT
 }
