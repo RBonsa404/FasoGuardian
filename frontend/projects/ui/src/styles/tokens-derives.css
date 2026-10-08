@@ -16,6 +16,8 @@
   --color-on-danger: #0a0e1a;
 
   --radius-banner: 14px;
+  --text-saisie: 16px;
+  --text-saisie--line-height: 1.4;
   --border-width-trait: 1.5px;
   --border-width-spinner: 2.5px;
   --animate-spinner: spin 800ms linear infinite;

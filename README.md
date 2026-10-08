@@ -6,7 +6,7 @@ et toute personne qui trouve un enfant. Projet du Collectif Dedsec (Ouagadougou)
 
 ## État d'avancement
 
-Étape 1 « Socle » terminée le 8 octobre 2026. Les fonctionnalités métier ne sont pas encore développées :
+Étape 1 « Socle » close le 8 octobre 2026 ; étape 2 en cours (module `identite` : inscription et sessions).
 voir [docs/tracabilite.md](docs/tracabilite.md) pour le statut de chacune des 43 user stories.
 
 ## Organisation du dépôt

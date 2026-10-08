@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001, US-PAR-019, US-SYS-006).
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001, US-PAR-019, US-SYS-006). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -61,5 +61,5 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 3 en cours (US-PAR-001,
 |---|---|
 | REQ-SYS-010 (modules vérifiés à la construction) | `ModulariteTest`, `ArchitectureHexagonaleTest` |
 | REQ-SYS-011 (PostgreSQL 17 / PostGIS 3.5) | `SocleIT` sur conteneur `postgis/postgis:17-3.5` |
-| REQ-SYS-012 (mTLS et contrôle d'accès par bracelet) | Vérifié manuellement sur Mosquitto (4 scénarios) ; test automatisé à ajouter avec `telemetrie` |
+| REQ-SYS-012 (mTLS et contrôle d'accès par bracelet) | Vérifié manuellement sur Mosquitto (4 scénarios) et par le simulateur ; test automatisé à ajouter avec `telemetrie` |
 | REQ-SYS-009 (budget de 250 Ko de la PWA) | `tools/verifier-budgets.mjs parents`, bloquant en intégration continue |
