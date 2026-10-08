@@ -29,7 +29,9 @@ public enum CodeErreur {
     CODE_TOTP_REQUIS(HttpStatus.UNAUTHORIZED, "Code de l'application d'authentification requis"),
     DOSSIER_INCOMPLET(HttpStatus.BAD_REQUEST, "Dossier incomplet"),
     PIECE_REFUSEE(HttpStatus.BAD_REQUEST, "Pièce refusée"),
-    SECOND_FACTEUR_REQUIS(HttpStatus.FORBIDDEN, "Confirmation par code SMS requise");
+    SECOND_FACTEUR_REQUIS(HttpStatus.FORBIDDEN, "Confirmation par code SMS requise"),
+    CODE_APPAIRAGE_INVALIDE(HttpStatus.BAD_REQUEST, "Code d'appairage invalide"),
+    ENFANT_DEJA_EQUIPE(HttpStatus.CONFLICT, "L'enfant porte déjà un bracelet");
 
     private final HttpStatus statut;
     private final String titre;

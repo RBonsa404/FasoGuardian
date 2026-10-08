@@ -15,6 +15,7 @@ public interface SecondFacteur {
         MODIFIER_SAFE_ZONE,
         ESCALADER_FORCES_SECURITE,
         AJOUTER_TUTEUR,
+        DECLARER_BRACELET,
         CLORE_COMPTE
     }
 

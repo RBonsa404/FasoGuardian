@@ -20,4 +20,10 @@ public interface ProfilsQr {
     void suspendre(UUID enfantId);
 
     void reactiver(UUID enfantId);
+
+    /**
+     * Détache le jeton de l'enfant qui le portait : le bracelet est revenu au service après-vente ou a été
+     * désappairé. La page publique redevient la page générique des jetons inconnus.
+     */
+    void dissocier(String jetonSha256);
 }

@@ -200,6 +200,12 @@ public class PagePubliqueQr implements ProfilsQr {
         profils.findById(enfantId).ifPresent(ProfilQr::reactiver);
     }
 
+    @Override
+    @Transactional
+    public void dissocier(String jetonSha256) {
+        profils.findByJetonSha256(jetonSha256).ifPresent(profils::delete);
+    }
+
     // -------------------------------------------------------------------- aides
 
     private VuePublique vue(ProfilQr profil) {
