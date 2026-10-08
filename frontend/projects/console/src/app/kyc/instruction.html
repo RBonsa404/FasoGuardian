@@ -1,0 +1,146 @@
+<a class="self-start text-label font-semibold text-accent" routerLink="/kyc" i18n="@@kyc.retourFile">← File KYC</a>
+@if (dossier(); as d) {
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div class="flex flex-col gap-1">
+      <h1 class="m-0 text-titre-ecran font-bold tracking-tight">
+        <span class="font-mono text-h3">{{ d.reference }}</span> · {{ d.demandeur.nom }} {{ d.demandeur.prenoms }} → {{ d.enfant.prenom }}
+      </h1>
+      <span class="text-label text-text-2">
+        @if (d.canal === 'EN_LIGNE') {
+          <ng-container i18n="@@kyc.canal.enLigne">En ligne</ng-container>
+        } @else {
+          <ng-container i18n="@@kyc.canal.point">Point d'inscription</ng-container>
+        }
+        · <ng-container i18n="@@kyc.deposeLe">déposé le {{ d.deposeLe | date: 'd MMM à HH:mm' }}</ng-container>
+      </span>
+    </div>
+    @switch (d.statut) {
+      @case ('DEPOSE') {
+        <button fg-button type="button" [chargement]="enCours()" (click)="prendreEnCharge()" i18n="@@kyc.prendre">Prendre en charge</button>
+      }
+      @case ('EN_INSTRUCTION') {
+        <fg-badge ton="accent" icone="horloge" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
+      }
+      @case ('APPROUVE') {
+        <fg-badge ton="succes" icone="valider" i18n="@@kyc.statut.approuve">Validé</fg-badge>
+      }
+      @case ('COMPLEMENT_DEMANDE') {
+        <fg-badge ton="attention" icone="info" i18n="@@kyc.statut.complement">Complément demandé</fg-badge>
+      }
+      @case ('REJETE') {
+        <fg-badge ton="attention" icone="info" i18n="@@kyc.statut.rejete">Rejeté</fg-badge>
+      }
+    }
+  </div>
+
+  @if (termine(); as message) {
+    <fg-banner ton="info">{{ message }} <a class="font-semibold text-accent" routerLink="/kyc" i18n="@@kyc.suivant">Revenir à la file</a></fg-banner>
+  }
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+
+  <div class="grid min-h-0 flex-1 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+    <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4" i18n-aria-label="@@kyc.pieces" aria-label="Pièces du dossier">
+      <div class="flex flex-wrap gap-2">
+        @for (piece of d.pieces; track piece.id) {
+          <button
+            type="button"
+            class="h-10 rounded-sm px-3 text-label font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+            [class]="pieceOuverte()?.piece?.id === piece.id ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong'"
+            [attr.aria-pressed]="pieceOuverte()?.piece?.id === piece.id"
+            (click)="ouvrirPiece(piece)"
+          >
+            {{ libellesPieces[piece.type] }}
+          </button>
+        } @empty {
+          <span class="text-label text-text-2" i18n="@@kyc.sansPiece">Aucune pièce numérisée : dossier à instruire sur originaux, en point d'inscription.</span>
+        }
+      </div>
+      @if (pieceOuverte(); as ouverte) {
+        @if (ouverte.piece.typeMime === 'application/pdf') {
+          <iframe class="min-h-120 w-full flex-1 rounded-md border border-line bg-white" sandbox [src]="ouverte.sure" [title]="libellesPieces[ouverte.piece.type]"></iframe>
+        } @else {
+          <img class="max-h-150 w-full rounded-md object-contain" [src]="ouverte.sure" [alt]="libellesPieces[ouverte.piece.type]" />
+        }
+      } @else if (d.pieces.length > 0) {
+        <p class="m-0 grid min-h-60 place-items-center rounded-md bg-surface-2 text-label text-text-3" i18n="@@kyc.choisirPiece">
+          Choisissez une pièce à afficher. Chaque consultation est journalisée.
+        </p>
+      }
+    </section>
+
+    <div class="flex flex-col gap-4">
+      <section class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4">
+        <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.declare">Identités déclarées</h2>
+        <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-label">
+          <dt class="text-text-3" i18n="@@kyc.demandeur">Demandeur</dt>
+          <dd class="m-0 font-medium">{{ d.demandeur.nom }} {{ d.demandeur.prenoms }}</dd>
+          <dt class="text-text-3" i18n="@@kyc.piece">Pièce</dt>
+          <dd class="m-0 font-medium">{{ d.demandeur.typePiece }} · {{ d.demandeur.numeroPiece }}</dd>
+          <dt class="text-text-3" i18n="@@kyc.lien">Lien déclaré</dt>
+          <dd class="m-0 font-medium">
+            @if (d.natureLien === 'TUTEUR') {
+              <ng-container i18n="@@kyc.lien.tuteurCourt">Tuteur légal</ng-container>
+            } @else {
+              <ng-container i18n="@@kyc.lien.parentCourt">Parent</ng-container>
+            }
+          </dd>
+          <dt class="text-text-3" i18n="@@kyc.enfant">Enfant</dt>
+          <dd class="m-0 font-medium">{{ d.enfant.prenom }} {{ d.enfant.nom }}, <ng-container i18n="@@kyc.neLe">né le {{ d.enfant.dateNaissance | date: 'longDate' }}</ng-container></dd>
+        </dl>
+      </section>
+
+      @if (enInstruction()) {
+        <section class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4">
+          <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.controles">Contrôles</h2>
+          @for (controle of controles; track controle.libelle) {
+            <label class="flex min-h-11 cursor-pointer items-center gap-3 text-label font-medium">
+              <input type="checkbox" class="size-5 accent-(--color-accent)" [checked]="controle.coche()" (change)="controle.coche.set($any($event.target).checked)" />
+              {{ controle.libelle }}
+            </label>
+          }
+        </section>
+
+        <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+          <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.decision">Décision</h2>
+          <div role="radiogroup" class="flex flex-wrap gap-2" i18n-aria-label="@@kyc.decision" aria-label="Décision">
+            @for (choix of decisions; track choix.valeur) {
+              <button
+                type="button"
+                role="radio"
+                class="h-10 rounded-sm px-3 text-label font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+                [class]="decision() === choix.valeur ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong'"
+                [attr.aria-checked]="decision() === choix.valeur"
+                (click)="decision.set(choix.valeur)"
+              >
+                {{ choix.libelle }}
+              </button>
+            }
+          </div>
+          <label class="flex flex-col gap-1.5 text-label font-semibold">
+            <ng-container i18n="@@kyc.motif">Motif</ng-container>
+            <textarea
+              class="min-h-24 rounded-md border-(length:--border-width-trait) border-line-strong bg-bg p-3 text-label font-medium outline-none focus:border-2 focus:border-accent"
+              maxlength="500"
+              [formControl]="motif"
+              i18n-placeholder="@@kyc.motif.aide"
+              placeholder="Obligatoire pour un rejet ou une demande de complément. Le parent le lira dans l'application."
+            ></textarea>
+          </label>
+          <button fg-button type="button" [disabled]="!decision()" [chargement]="enCours()" (click)="confirmer()">{{ libelleAction() }}</button>
+        </section>
+      } @else if (d.motif) {
+        <section class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4">
+          <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.motif">Motif</h2>
+          <p class="m-0 text-label text-text-2">{{ d.motif }}</p>
+        </section>
+      }
+    </div>
+  </div>
+} @else if (erreur(); as message) {
+  <fg-banner ton="erreur">{{ message }}</fg-banner>
+} @else {
+  <fg-skeleton forme="ligne" class="w-1/3" />
+  <fg-skeleton forme="carte" />
+}

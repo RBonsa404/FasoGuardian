@@ -17,6 +17,8 @@ export interface Compte {
   readonly id: string;
   readonly statut: 'EN_INSTRUCTION' | 'ACTIF' | 'SUSPENDU' | 'CLOS';
   readonly telephoneMasque: string | null;
+  /** Identifiant de connexion d'un agent interne ; absent pour un parent. */
+  readonly identifiant: string | null;
   readonly roles: readonly string[];
 }
 
@@ -37,6 +39,23 @@ export class Session {
 
   readonly jetonAcces = this.jeton.asReadonly();
   readonly ouverte = computed(() => this.jeton() !== null);
+  /**
+   * Rôles lus dans le jeton d'accès, pour adapter l'affichage. Le serveur reste seul juge des droits :
+   * masquer un écran ici ne protège rien.
+   */
+  readonly roles = computed<readonly string[]>(() => {
+    const jeton = this.jeton();
+    if (!jeton) {
+      return [];
+    }
+    try {
+      const charge = jeton.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const roles = JSON.parse(atob(charge)).roles;
+      return Array.isArray(roles) ? roles : [];
+    } catch {
+      return [];
+    }
+  });
   /** Vrai lorsque le rafraîchissement a échoué : une réauthentification complète est demandée (US-PAR-019). */
   readonly reauthentificationRequise = this.expiree.asReadonly();
 

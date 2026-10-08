@@ -3,6 +3,7 @@ package bf.fasoguardian.identite.application;
 import java.util.Set;
 import java.util.UUID;
 
+import bf.fasoguardian.identite.domaine.AgentInterne;
 import bf.fasoguardian.identite.domaine.NumeroTelephone;
 import bf.fasoguardian.identite.domaine.StatutCompte;
 import bf.fasoguardian.identite.domaine.Utilisateur;
@@ -26,7 +27,7 @@ public class ConsultationCompte {
         this.chiffrement = chiffrement;
     }
 
-    public record Compte(UUID id, StatutCompte statut, String telephoneMasque, Set<String> roles) {
+    public record Compte(UUID id, StatutCompte statut, String telephoneMasque, String identifiant, Set<String> roles) {
     }
 
     @Transactional(readOnly = true)
@@ -37,6 +38,7 @@ public class ConsultationCompte {
         String masque = utilisateur.telephoneChiffre() == null ? null
                 : new NumeroTelephone(chiffrement.dechiffrerTexte(CategorieDonnee.TELEPHONE, utilisateur.telephoneChiffre()))
                         .masque();
-        return new Compte(utilisateur.id(), utilisateur.statut(), masque, utilisateur.roles());
+        String identifiant = utilisateur instanceof AgentInterne agent ? agent.identifiant() : null;
+        return new Compte(utilisateur.id(), utilisateur.statut(), masque, identifiant, utilisateur.roles());
     }
 }

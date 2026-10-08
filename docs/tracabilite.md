@@ -11,7 +11,7 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 6 en cours (US-PAR-001,
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
-| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `InstructionKyc`, `ControleurKyc`, `Verification` | `InscriptionEtSessionsIT`, `KycIT`, `inscription.spec.ts`, `verification.spec.ts`, e2e `inscription-kyc.spec.ts` | En cours : les trois critères d'acceptation sont couverts de bout en bout côté parent ; écrans 59 et 60 de la console et contrôle visuel complet des écrans 10 et 11 à faire |
+| US-PAR-001 | MUST | REQ-MUST-01 | identite | parents, console | `InscriptionParent`, `InstructionKyc`, `Verification`, console `FileKyc` et `InstructionKyc` | `InscriptionEtSessionsIT`, `KycIT`, `inscription.spec.ts`, `verification.spec.ts`, e2e `inscription-kyc.spec.ts` et `console-kyc.spec.ts` | En cours : critères d'acceptation couverts de bout en bout, parent et agent ; contrôle visuel complet des écrans 10, 11, 59 et 60 à faire |
 | US-PAR-002 | MUST | REQ-MUST-02 | identite, audit | parents |  |  | À faire |
 | US-PAR-003 | MUST | REQ-MUST-03 | identite, famille | parents |  |  | À faire |
 | US-PAR-004 | MUST | REQ-MUST-04 | famille | parents |  |  | À faire |
@@ -33,7 +33,7 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 6 en cours (US-PAR-001,
 | US-PAR-011 | MUST | REQ-MUST-05 | famille | parents |  |  | À faire |
 | US-TRS-001 | MUST | REQ-MUST-06 | famille | public-qr, site |  |  | À faire |
 | US-PAR-012 | MUST | REQ-MUST-17 | alertes, dispositifs | parents, firmware |  |  | À faire |
-| US-ADM-001 | MUST | REQ-MUST-23 | identite, plateforme, audit | console | `AgentsInternes`, `ControleurAgents`, `ControleurKyc`, `JournalisationRefus` | `AgentsEtAuditIT`, `KycIT` | En cours : comptes d'agents, TOTP obligatoire, cloisonnement KYC / support vérifié, refus journalisés ; cloisonnement des positions (module telemetrie) et écrans 55 à 58 et 69 à faire |
+| US-ADM-001 | MUST | REQ-MUST-23 | identite, plateforme, audit | console | `AgentsInternes`, `ControleurAgents`, `JournalisationRefus`, console `Connexion`, `Structure`, `Refuse` | `AgentsEtAuditIT`, `KycIT`, e2e `console-kyc.spec.ts` | En cours : agents, TOTP obligatoire, cloisonnement, refus journalisés, écrans 55, 56 et 58 ; gestion des agents (écran 69), verrouillage après inactivité et cloisonnement des positions à faire |
 | US-SYS-006 | MUST | REQ-MUST-24 | plateforme, identite, famille | site | `ServiceChiffrement`, `InstructionKyc` | `ServiceChiffrementTest`, `InscriptionEtSessionsIT`, `KycIT` | En cours : téléphone, identités et pièces KYC chiffrés ; santé à venir avec son module |
 | US-ADM-002 | MUST | REQ-MUST-25 | audit | console | `ServiceJournalAudit`, V3 (table en ajout seul) | `AgentsEtAuditIT`, `KycIT` | En cours : journal chaîné, contrôle quotidien, altération détectée, consultations KYC journalisées ; consultation du journal (écran 70) à faire |
 | US-ADM-003 | MUST | REQ-MUST-26 | audit | console, site |  |  | À faire |

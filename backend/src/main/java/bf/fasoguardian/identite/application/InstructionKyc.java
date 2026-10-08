@@ -72,8 +72,10 @@ public class InstructionKyc {
             String motif, Instant deposeLe, Instant decideLe, List<PieceVue> pieces) {
     }
 
-    /** Ligne de la file d'instruction : aucune donnée d'identité. */
-    public record DossierFile(UUID id, String reference, Statut statut, Canal canal, Instant deposeLe, boolean prisEnCharge) {
+    /** Ligne de la file d'instruction, réservée aux agents KYC (identité du parent, prénom et âge de l'enfant). */
+    public record DossierFile(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
+            String demandeur, String enfantPrenom, int enfantAge, Instant deposeLe, boolean prisEnCharge,
+            boolean prisEnChargeParMoi) {
     }
 
     public record DossierInstruction(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
@@ -178,11 +180,20 @@ public class InstructionKyc {
 
     // ----------------------------------------------------------------- agent
 
-    @Transactional(readOnly = true)
-    public Page<DossierFile> file(Set<Statut> statuts, int page, int taille) {
+    /** La consultation de la file expose des identités : elle est journalisée (REQ-SYS-019). */
+    @Transactional
+    public Page<DossierFile> file(UUID agentId, Set<Statut> statuts, int page, int taille) {
         Set<Statut> filtre = statuts == null || statuts.isEmpty() ? EnumSet.of(Statut.DEPOSE, Statut.EN_INSTRUCTION) : statuts;
+        journal.consigner(agentId, RoleInterne.KYC.name(), "CONSULTATION_FILE_KYC", "DOSSIER_KYC", null, Resultat.SUCCES);
         return dossiers.findByStatutInOrderByDeposeLeAsc(filtre, PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, 100)))
-                .map(d -> new DossierFile(d.id(), d.reference(), d.statut(), d.canal(), d.deposeLe(), d.agentId() != null));
+                .map(d -> {
+                    IdentiteDeclaree demandeur = dechiffrerJson(d.identiteChiffree(), IdentiteDeclaree.class);
+                    EnfantDeclare enfant = dechiffrerJson(d.enfantChiffre(), EnfantDeclare.class);
+                    return new DossierFile(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(),
+                            demandeur.nom() + " " + demandeur.prenoms(), enfant.prenom(),
+                            java.time.Period.between(enfant.dateNaissance(), LocalDate.now(horloge)).getYears(),
+                            d.deposeLe(), d.agentId() != null, agentId.equals(d.agentId()));
+                });
     }
 
     @Transactional

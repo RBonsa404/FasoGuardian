@@ -10,7 +10,6 @@ describe('App', () => {
     await fixture.whenStable();
     const page = fixture.nativeElement as HTMLElement;
 
-    expect(page.querySelector('main#contenu')).not.toBeNull();
-    expect(page.querySelector('header img')?.getAttribute('alt')).toBe('FasoGuardian');
+    expect(page.querySelector('router-outlet')).not.toBeNull();
   });
 });

@@ -118,9 +118,10 @@ class ControleurKyc {
     @Operation(summary = "File d'instruction : dossiers déposés ou en instruction, sans donnée d'identité")
     @PreAuthorize(AGENT_KYC)
     @GetMapping("/api/v1/console/kyc/dossiers")
-    ResponseEntity<PageDto<DossierFile>> file(@RequestParam(required = false) Set<Statut> statut,
+    ResponseEntity<PageDto<DossierFile>> file(@AuthenticationPrincipal Jwt jeton,
+            @RequestParam(required = false) Set<Statut> statut,
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        var resultat = kyc.file(statut, page, size);
+        var resultat = kyc.file(id(jeton), statut, page, size);
         return sansCache().body(new PageDto<>(resultat.getContent(), resultat.getNumber(), resultat.getSize(),
                 resultat.getTotalElements()));
     }

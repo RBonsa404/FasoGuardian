@@ -58,7 +58,11 @@ class KycIT extends TestIntegration {
         mvc.perform(get("/api/v1/console/kyc/dossiers").header("Authorization", "Bearer " + agent.jeton()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].statut").value("DEPOSE"))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Ouédraogo"))));
+                .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].demandeur").value("Ouédraogo Mariam"))
+                .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].enfantPrenom").value("Awa"))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("B12345678"))));
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM audit.entree WHERE action = 'CONSULTATION_FILE_KYC'",
+                Long.class)).isPositive();
         agentPost(agent, dossier, "prise-en-charge", null).andExpect(status().isOk())
                 .andExpect(jsonPath("$.statut").value("EN_INSTRUCTION"))
                 .andExpect(jsonPath("$.demandeur.nom").value("Ouédraogo"))

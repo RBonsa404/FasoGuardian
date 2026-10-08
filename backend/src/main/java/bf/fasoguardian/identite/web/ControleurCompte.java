@@ -25,13 +25,14 @@ class ControleurCompte {
         this.comptes = comptes;
     }
 
-    record CompteDto(String id, String statut, String telephoneMasque, Set<String> roles) {
+    record CompteDto(String id, String statut, String telephoneMasque, String identifiant, Set<String> roles) {
     }
 
     @Operation(summary = "Compte de l'utilisateur authentifié")
     @GetMapping
     CompteDto moi(@AuthenticationPrincipal Jwt jeton) {
         Compte compte = comptes.de(java.util.UUID.fromString(jeton.getSubject()));
-        return new CompteDto(compte.id().toString(), compte.statut().name(), compte.telephoneMasque(), compte.roles());
+        return new CompteDto(compte.id().toString(), compte.statut().name(), compte.telephoneMasque(),
+                compte.identifiant(), compte.roles());
     }
 }
