@@ -54,6 +54,21 @@ export const routes: Routes = [
     canActivate: [sessionRequise],
     loadComponent: () => import('./enfants/contacts').then((m) => m.Contacts),
   },
+  {
+    path: 'enfants/:id/bracelet',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./bracelet/mon-bracelet').then((m) => m.MonBracelet),
+  },
+  {
+    path: 'enfants/:id/bracelet/perte',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./bracelet/perte').then((m) => m.PerteBracelet),
+  },
+  {
+    path: 'bracelet/associer',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./bracelet/associer').then((m) => m.AssocierBracelet),
+  },
   { path: 'inscription', pathMatch: 'full', redirectTo: 'inscription/numero' },
   { path: 'inscription/:etape', loadComponent: () => import('./inscription/inscription').then((m) => m.Inscription) },
   { path: 'verification', pathMatch: 'full', redirectTo: 'verification/instruction' },

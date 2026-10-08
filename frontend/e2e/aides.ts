@@ -169,3 +169,37 @@ export async function parentAvecEnfant(api: APIRequestContext): Promise<{ teleph
   expect((await api.post(`${base}/decision`, { headers: entetes, data: { decision: 'APPROUVER' } })).status()).toBe(200);
   return { telephone };
 }
+
+export interface CarteActivation {
+  numeroSerie: string;
+  codeAppairage: string;
+  jetonQr: string;
+}
+
+/** IMEI fictif de 15 chiffres à clé de Luhn valide. */
+function imeiFictif(): string {
+  const chiffres = [3, 5, ...Array.from({ length: 12 }, () => Math.floor(Math.random() * 10))];
+  const somme = chiffres.reduce((total, chiffre, index) => {
+    const double = index % 2 === 1 ? chiffre * 2 : chiffre;
+    return total + (double > 9 ? double - 9 : double);
+  }, 0);
+  return chiffres.join('') + ((10 - (somme % 10)) % 10);
+}
+
+/** Enregistre au parc un bracelet neuf par l'API du service après-vente ; renvoie sa carte d'activation. */
+export async function braceletAuParc(api: APIRequestContext): Promise<CarteActivation> {
+  const agent = await creerAgent(api, ['SAV']);
+  const jeton = await connecterAgent(api, agent.identifiant, agent.motDePasse);
+  const reponse = await api.post(`${SERVEUR}/api/v1/console/parc`, {
+    headers: { Authorization: `Bearer ${jeton}` },
+    data: {
+      numeroSerie: `FG-${1000 + Math.floor(Math.random() * 9000)}`,
+      imei: imeiFictif(),
+      revisionMaterielle: 'V1',
+      versionLogiciel: '2.4.1',
+      empreinteCertificat: Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+    },
+  });
+  expect(reponse.status()).toBe(201);
+  return reponse.json();
+}

@@ -5,6 +5,7 @@
 #
 #   sh e2e/pile.sh demarrer   démarre la pile (JAVA_HOME doit pointer sur un JDK 21)
 #   sh e2e/pile.sh tester     joue les tests Playwright contre la pile
+#   sh e2e/pile.sh serveur    reconstruit et relance le seul serveur (base conservée)
 #   sh e2e/pile.sh arreter    arrête la pile et supprime la base
 set -eu
 
@@ -33,7 +34,24 @@ arreter_port() { # port
   fi
 }
 
+lancer_serveur() {
+  (cd "$RACINE/backend" && ./mvnw -B -q package -DskipTests)
+  (
+    set -a && . "$ENV" && set +a
+    export FG_DB_URL="jdbc:postgresql://localhost:55432/fasoguardian" FG_SMS_ADAPTATEUR=bac-a-sable SPRING_PROFILES_ACTIVE=dev
+    nohup "${JAVA_HOME:?JAVA_HOME doit pointer sur un JDK 21}/bin/java" -jar "$RACINE"/backend/target/fasoguardian-backend-*.jar \
+      > "$ETAT/serveur.log" 2>&1 &
+  )
+}
+
 case "${1:-}" in
+  serveur)
+    # Reconstruit et relance le seul serveur, en conservant la base et les clients en cours.
+    arreter_port 8080
+    lancer_serveur
+    attendre http://localhost:8080/api/v1/dev/sms
+    echo "Serveur relancé"
+    ;;
   demarrer)
     rm -rf "$ETAT" && mkdir -p "$ETAT"
     {
@@ -50,13 +68,7 @@ case "${1:-}" in
       done
     } > "$ENV"
     $COMPOSE up -d --wait postgres
-    (cd "$RACINE/backend" && ./mvnw -B -q package -DskipTests)
-    (
-      set -a && . "$ENV" && set +a
-      export FG_DB_URL="jdbc:postgresql://localhost:55432/fasoguardian" FG_SMS_ADAPTATEUR=bac-a-sable SPRING_PROFILES_ACTIVE=dev
-      nohup "${JAVA_HOME:?JAVA_HOME doit pointer sur un JDK 21}/bin/java" -jar "$RACINE"/backend/target/fasoguardian-backend-*.jar \
-        > "$ETAT/serveur.log" 2>&1 &
-    )
+    lancer_serveur
     (cd "$FRONTEND" && nohup npx ng serve parents --port 4201 --proxy-config proxy.dev.json > "$ETAT/parents.log" 2>&1 &)
     (cd "$FRONTEND" && nohup npx ng serve console --port 4202 --proxy-config proxy.dev.json > "$ETAT/console.log" 2>&1 &)
     attendre http://localhost:8080/api/v1/dev/sms
@@ -75,7 +87,7 @@ case "${1:-}" in
     rm -rf "$ETAT"
     ;;
   *)
-    echo "Usage : sh e2e/pile.sh demarrer | tester [arguments Playwright] | arreter"
+    echo "Usage : sh e2e/pile.sh demarrer | serveur | tester [arguments Playwright] | arreter"
     exit 1
     ;;
 esac

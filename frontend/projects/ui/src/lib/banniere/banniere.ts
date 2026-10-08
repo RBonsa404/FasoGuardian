@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FgIcon } from '../icone/icone';
 import { NomIcone } from '../icone/icones';
 
-export type TonBanniere = 'info' | 'hors-ligne' | 'attention' | 'erreur';
+export type TonBanniere = 'info' | 'hors-ligne' | 'attention' | 'erreur' | 'succes';
 
 const TONS: Record<TonBanniere, { classes: string; icone: NomIcone }> = {
   info: { classes: 'bg-surface-2 text-text', icone: 'info' },
@@ -11,6 +11,7 @@ const TONS: Record<TonBanniere, { classes: string; icone: NomIcone }> = {
   // Violet « attention » : avertissements non critiques (batterie, muet, impayé). Jamais d'ambre ici.
   attention: { classes: 'bg-attention-soft text-attention-text', icone: 'info' },
   erreur: { classes: 'bg-surface-2 text-danger', icone: 'info' },
+  succes: { classes: 'bg-success-soft text-success', icone: 'valider' },
 };
 
 /** Bannière d'information non bloquante, annoncée aux lecteurs d'écran sans voler le focus. */

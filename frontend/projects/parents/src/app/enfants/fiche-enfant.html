@@ -31,6 +31,9 @@
   <button fg-button variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
 
   <nav class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" i18n-aria-label="@@enfant.rubriques" aria-label="Rubriques de la fiche">
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'bracelet']">
+      <fg-icon nom="bracelet" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.bracelet">Bracelet</span>
+    </a>
     <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'medical']">
       <fg-icon nom="medical" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.medical">Fiche médicale</span>
     </a>

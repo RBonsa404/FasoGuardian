@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 12 en cours (US-PAR-001 à 005, 011, 019, US-TRS-001, US-SYS-006, 010, US-ADM-001, 002). Étape 1 « Socle » close.
+Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 15 en cours (US-PAR-001 à 005, 011, 013, 014, 019, US-TRS-001, US-SYS-006, 010, US-ADM-001, 002, US-SAV-002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -38,11 +38,11 @@ Bilan au 8 octobre 2026 : 0 user story terminée sur 43, 12 en cours (US-PAR-001
 | US-ADM-002 | MUST | REQ-MUST-25 | audit | console | `ServiceJournalAudit`, V3 (table en ajout seul) | `AgentsEtAuditIT`, `KycIT` | En cours : journal chaîné, contrôle quotidien, altération détectée, consultations KYC journalisées ; consultation du journal (écran 70) à faire |
 | US-ADM-003 | MUST | REQ-MUST-26 | audit | console, site |  |  | À faire |
 | US-ADM-004 | SHOULD | REQ-SHOULD-02 | plateforme | console |  |  | À faire |
-| US-PAR-013 | MUST | REQ-MUST-07 | dispositifs | parents, console, firmware |  |  | À faire |
-| US-PAR-014 | MUST | REQ-MUST-08 | dispositifs, famille | parents, console, public-qr |  |  | À faire |
+| US-PAR-013 | MUST | REQ-MUST-07 | dispositifs | parents, console, firmware | `FabriqueBracelet`, `ConfigurationBracelet`, `Appairages` (activation, mode économie), `MonBracelet` | `ReglesBraceletTest`, `DispositifsIT`, e2e `bracelet.spec.ts` | En cours : bracelet actif dès l'appairage, configuration par défaut de la révision, mode économie journalisé et notifié, écran 37 ; mise à jour signée du logiciel embarqué, envoi de la configuration au bracelet (télémétrie) et aperçu 3D à faire |
+| US-PAR-014 | MUST | REQ-MUST-08 | dispositifs, famille | parents, console, public-qr | `Appairages`, `CodeAppairage`, `Bracelet`, `ProfilsQr`, `ControleurBracelet`, `AssocierBracelet`, `PerteBracelet` | `ReglesBraceletTest`, `DispositifsIT`, `code-appairage.spec.ts`, e2e `bracelet.spec.ts` | En cours : les deux critères sont couverts (code distinct du QR ; vol → page désactivée et certificat révoqué), perte avec suivi 72 h, désappairage, écrans 36 et 39 (ADR 0009) ; application de la révocation par le broker et demande de remplacement à faire |
 | US-SYS-007 | MUST | REQ-MUST-18 | dispositifs, notifications | parents, firmware, site |  |  | À faire |
 | US-SAV-001 | MUST | REQ-MUST-19 | dispositifs, telemetrie | console, parents |  |  | À faire |
-| US-SAV-002 | MUST | REQ-MUST-20 | dispositifs | console |  |  | À faire |
+| US-SAV-002 | MUST | REQ-MUST-20 | dispositifs | console | `Parc`, `ControleurParc` | `DispositifsIT` | En cours : API du parc (enregistrement, vue par statut, retour « En SAV », remise en stock, réforme, fiche journalisée) ; écrans 64 et 65 de la console à faire |
 | US-PAR-015 | MUST | REQ-MUST-21 | abonnements | parents, site |  |  | À faire |
 | US-SYS-008 | MUST | REQ-MUST-22 | abonnements, famille | parents, public-qr |  |  | À faire |
 | US-PAR-016 | COULD | REQ-COULD-01 | abonnements, notifications | parents |  |  | À faire |

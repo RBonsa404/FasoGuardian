@@ -20,6 +20,8 @@
   --text-titre-ecran--line-height: 1.2;
   --text-saisie: 16px;
   --text-saisie--line-height: 1.4;
+  --text-code: 22px;
+  --text-code--line-height: 1;
   --border-width-trait: 1.5px;
   --border-width-spinner: 2.5px;
   --animate-spinner: spin 800ms linear infinite;

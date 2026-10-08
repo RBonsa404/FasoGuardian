@@ -10,6 +10,7 @@ export type ActionSensible =
   | 'MODIFIER_SAFE_ZONE'
   | 'ESCALADER_FORCES_SECURITE'
   | 'AJOUTER_TUTEUR'
+  | 'DECLARER_BRACELET'
   | 'CLORE_COMPTE';
 
 /** Client du profil du parent : récupération d'accès, coordonnées, second facteur, clôture (US-PAR-002). */

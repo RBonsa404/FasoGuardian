@@ -16,3 +16,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0006](0006-rendu-de-la-page-qr.md) | Page QR rendue par le serveur à partir d'un gabarit produit par Angular, sans script | Acceptée |
 | [0007](0007-politique-de-mot-de-passe.md) | Mot de passe des parents : 10 caractères dont un chiffre (écart ASVS) | Acceptée |
 | [0008](0008-chiffrement-dans-les-cas-d-usage.md) | Chiffrement appelé par les cas d'usage plutôt que par convertisseurs JPA | Acceptée |
+| [0009](0009-cycle-de-vie-du-bracelet.md) | Identifiant d'appareil, perte (suivi 72 h), vol (révocation immédiate), casse et liste de révocation | Acceptée |
