@@ -3,6 +3,7 @@ package bf.fasoguardian.telemetrie.infrastructure;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -89,6 +90,17 @@ public class DepotTelemetrie {
                 rs.getInt("precision_m"), Mesure.Source.valueOf(rs.getString("source")),
                 rs.getTimestamp("mesuree_le").toInstant()), braceletId, Timestamp.from(depuis))
                 .stream().findFirst();
+    }
+
+    /** Positions mesurées dans l'intervalle, dans l'ordre chronologique, bornées à {@code limite} points. */
+    public List<PositionConnue> positionsEntre(UUID braceletId, Instant debut, Instant fin, int limite) {
+        return jdbc.query("""
+                SELECT ST_Y(point::geometry) AS latitude, ST_X(point::geometry) AS longitude, precision_m, source, mesuree_le
+                FROM telemetrie.position WHERE bracelet_id = ? AND mesuree_le >= ? AND mesuree_le < ?
+                ORDER BY mesuree_le LIMIT ?
+                """, (rs, i) -> new PositionConnue(rs.getDouble("latitude"), rs.getDouble("longitude"),
+                rs.getInt("precision_m"), Mesure.Source.valueOf(rs.getString("source")),
+                rs.getTimestamp("mesuree_le").toInstant()), braceletId, Timestamp.from(debut), Timestamp.from(fin), limite);
     }
 
     public void creerPartitions(LocalDate jour) {

@@ -4,7 +4,9 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,15 +36,25 @@ public class Positions {
     public record Situation(String numeroSerie, PositionConnue position, EtatBracelet etat) {
     }
 
+    /** Un point toutes les 60 s pendant 24 h, cas le plus dense (mode alerte). */
+    private static final int POINTS_PAR_JOUR = 1440;
+
+    /** @param joursConserves durée de conservation de l'historique, en jours */
+    public record Trajet(LocalDate jour, List<PositionConnue> points, int joursConserves) {
+    }
+
     private final Bracelets bracelets;
     private final DepotTelemetrie depot;
     private final AccesEnfant acces;
     private final JournalAudit journal;
     private final Clock horloge;
     private final Duration conservation;
+    private final ZoneId fuseau;
 
     Positions(Bracelets bracelets, DepotTelemetrie depot, AccesEnfant acces, JournalAudit journal, Clock horloge,
-            @Value("${fasoguardian.telemetrie.conservation-positions:P30D}") Duration conservation) {
+            @Value("${fasoguardian.telemetrie.conservation-positions:P30D}") Duration conservation,
+            @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
+        this.fuseau = fuseau;
         this.bracelets = bracelets;
         this.depot = depot;
         this.acces = acces;
@@ -60,6 +72,25 @@ public class Positions {
                 depot.dernierePosition(connu.id(), connu.appaireDepuis()).orElse(null),
                 depot.etat(connu.id()).filter(etat -> !etat.dernierContact().isBefore(connu.appaireDepuis()))
                         .orElse(null)));
+    }
+
+    /**
+     * Trajet d'une journée locale (US-PAR-008) : positions de l'appairage en cours, dans la limite de la durée
+     * de conservation. Consultation journalisée.
+     */
+    @Transactional
+    public Trajet trajet(UUID tuteurId, UUID enfantId, LocalDate jour) {
+        acces.exigerTuteur(tuteurId, enfantId);
+        journal.consigner(tuteurId, "PARENT", "TRAJET_CONSULTE", "ENFANT", enfantId.toString(), Resultat.SUCCES);
+        Instant maintenant = horloge.instant();
+        Instant plancher = maintenant.minus(conservation);
+        Instant debut = jour.atStartOfDay(fuseau).toInstant();
+        Instant fin = jour.plusDays(1).atStartOfDay(fuseau).toInstant();
+        List<PositionConnue> points = bracelets.deLEnfant(enfantId).map(connu -> {
+            Instant depuis = debut.isBefore(connu.appaireDepuis()) ? connu.appaireDepuis() : debut;
+            return depot.positionsEntre(connu.id(), depuis.isBefore(plancher) ? plancher : depuis, fin, POINTS_PAR_JOUR);
+        }).orElse(List.of());
+        return new Trajet(jour, points, (int) conservation.toDays());
     }
 
     /** Prépare les partitions à venir et applique la durée de conservation des positions (FG-DOC-06 tableau 18). */
