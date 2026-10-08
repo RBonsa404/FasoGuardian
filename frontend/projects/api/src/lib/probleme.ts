@@ -32,7 +32,8 @@ export type CodeErreur =
   | 'PIECE_REFUSEE'
   | 'SECOND_FACTEUR_REQUIS'
   | 'CODE_APPAIRAGE_INVALIDE'
-  | 'ENFANT_DEJA_EQUIPE';
+  | 'ENFANT_DEJA_EQUIPE'
+  | 'ZONES_MAXIMUM_ATTEINT';
 
 const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'NON_AUTHENTIFIE',
@@ -58,6 +59,7 @@ const CODES: ReadonlySet<string> = new Set<CodeErreur>([
   'SECOND_FACTEUR_REQUIS',
   'CODE_APPAIRAGE_INVALIDE',
   'ENFANT_DEJA_EQUIPE',
+  'ZONES_MAXIMUM_ATTEINT',
 ]);
 
 export function estProbleme(corps: unknown): corps is Probleme {

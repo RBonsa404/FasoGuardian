@@ -1,21 +1,38 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientAuthentification, Compte } from 'api';
+import { ClientAuthentification, ClientFamille, Compte, FicheEnfant } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
+import { ApercuEnfant } from './apercu-enfant';
 
 /**
  * Accueil du parent connecté. Tant que le dossier KYC n'est pas validé, il n'affiche que l'état du
- * compte ; le tableau de bord des enfants (écran 16) s'y ajoute avec les modules famille et telemetrie.
+ * compte ; une fois le compte actif, il devient le tableau de bord (écran 16) : un aperçu par enfant.
  */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, FgBadge, FgBanniere, FgBouton, FgSquelette],
+  imports: [RouterLink, ApercuEnfant, FgBadge, FgBanniere, FgBouton, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@accueil.titre">Mon compte</h1>
+    @if (compte()?.statut === 'ACTIF') {
+      <h1 class="sr-only" i18n="@@accueil.tableau">Tableau de bord</h1>
+      @if (enfants(); as liste) {
+        @if (liste.length > 1) {
+          <div class="flex gap-1.5" role="group" i18n-aria-label="@@accueil.choixEnfant" aria-label="Enfant affiché">
+            @for (enfant of liste; track enfant.id) {
+              <button type="button" class="h-11 flex-1 truncate rounded-full px-3 text-label font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [class]="enfant.id === choisi()?.id ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong text-text-2'" [attr.aria-pressed]="enfant.id === choisi()?.id" (click)="choix.set(enfant.id)">{{ enfant.prenom }}</button>
+            }
+          </div>
+        }
+        @if (choisi(); as enfant) {
+          <app-apercu-enfant [enfant]="enfant" />
+        }
+      }
+    } @else {
+      <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@accueil.titre">Mon compte</h1>
+    }
     @if (compte(); as c) {
       <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
         <div class="flex items-center justify-between gap-3">
@@ -57,7 +74,16 @@ export class Accueil {
   private readonly client = inject(ClientAuthentification);
   private readonly router = inject(Router);
 
+  private readonly famille = inject(ClientFamille);
+
   protected readonly compte = signal<Compte | null>(null);
+  protected readonly enfants = signal<FicheEnfant[] | null>(null);
+  /** Enfant choisi par le parent ; à défaut, le premier. */
+  protected readonly choix = signal<string | null>(null);
+  protected readonly choisi = computed(() => {
+    const liste = this.enfants() ?? [];
+    return liste.find((enfant) => enfant.id === this.choix()) ?? liste[0] ?? null;
+  });
   protected readonly erreur = signal<string | null>(null);
   protected readonly sortie = signal(false);
 
@@ -68,7 +94,12 @@ export class Accueil {
   protected charger(): void {
     this.erreur.set(null);
     this.client.moi().subscribe({
-      next: (compte) => this.compte.set(compte),
+      next: (compte) => {
+        this.compte.set(compte);
+        if (compte.statut === 'ACTIF') {
+          this.famille.mesEnfants().subscribe({ next: (enfants) => this.enfants.set(enfants), error: () => this.enfants.set([]) });
+        }
+      },
       error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),
     });
   }

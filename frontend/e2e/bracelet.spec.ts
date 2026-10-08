@@ -11,6 +11,8 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
+  // Tableau de bord sans bracelet : invitation à l'appairage
+  await expect(page.getByRole('heading', { name: 'Associez le bracelet de Yacouba' })).toBeVisible();
   await page.getByRole('link', { name: 'Mes enfants' }).click();
   await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
 

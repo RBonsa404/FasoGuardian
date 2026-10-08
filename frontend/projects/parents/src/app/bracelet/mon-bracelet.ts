@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Bracelet, ClientBracelet, EtatBracelet } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette } from 'ui';
 
+import { forceDuSignal } from '../carte/lecture';
 import { erreurLisible } from '../commun/erreurs';
 import { heure, ilYA } from '../commun/temps';
 import { VisuelBracelet } from './visuel';
@@ -106,7 +107,7 @@ export class MonBracelet {
       },
       {
         cle: $localize`:@@bracelet.signal:Signal`,
-        valeur: etat?.signalDbm != null ? [etat.reseau, force(etat.signalDbm)].filter(Boolean).join(' · ') : '—',
+        valeur: etat?.signalDbm != null ? [etat.reseau, forceDuSignal(etat.signalDbm)].filter(Boolean).join(' · ') : '—',
         detail: etat?.signalDbm == null ? attente : (etat.operateur ?? $localize`:@@bracelet.signal.operateur:opérateur inconnu`),
       },
       {
@@ -190,14 +191,6 @@ export class MonBracelet {
     this.bracelet.set(bracelet);
     this.economie.setValue(bracelet.modeEconomie, { emitEvent: false });
   }
-}
-
-/** Force du signal à partir de sa puissance reçue, en dBm. */
-function force(signalDbm: number): string {
-  if (signalDbm >= -85) {
-    return $localize`:@@bracelet.signal.fort:fort`;
-  }
-  return signalDbm >= -100 ? $localize`:@@bracelet.signal.moyen:moyen` : $localize`:@@bracelet.signal.faible:faible`;
 }
 
 /** « 10/27 » à partir d'une date ISO. */

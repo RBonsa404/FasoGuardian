@@ -6,11 +6,10 @@ import { ClientBracelet, ClientFamille, ClientZones, FicheEnfant, SafeZone, Situ
 import { FgBadge, FgBanniere, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
-import { heure, ilYA, minutesDepuis } from '../commun/temps';
-import { Carte, PositionSurCarte } from './fond';
+import { heure, ilYA } from '../commun/temps';
+import { Carte } from './fond';
+import { positionAncienne, repereDe, titrePosition } from './lecture';
 
-/** Au-delà, la position n'est plus présentée comme actuelle (trois intervalles normaux de 5 minutes). */
-const MINUTES_AVANT_ATTENUATION = 15;
 const RAFRAICHISSEMENT_MS = 60_000;
 
 /**
@@ -78,34 +77,9 @@ export class CarteEnfant {
   /** Horloge de l'écran : fait vieillir « il y a 2 min » entre deux rafraîchissements. */
   private readonly maintenant = signal(new Date());
 
-  protected readonly ancienne = computed(() => {
-    const position = this.situation()?.position;
-    return !!position && minutesDepuis(position.mesureeLe, this.maintenant()) > MINUTES_AVANT_ATTENUATION;
-  });
-  protected readonly repere = computed((): PositionSurCarte | null => {
-    const position = this.situation()?.position;
-    return position
-      ? {
-          latitude: position.latitude,
-          longitude: position.longitude,
-          precisionM: position.precisionM,
-          initiale: this.enfant()?.prenom.charAt(0) ?? '',
-          attenuee: this.ancienne() || position.source !== 'GNSS',
-        }
-      : null;
-  });
-  protected readonly titre = computed(() => {
-    const sortie = this.zones().find((zone) => zone.sortieEnCours);
-    if (sortie) {
-      return $localize`:@@carte.titre.sortie:Hors de « ${sortie.nom}:zone: »`;
-    }
-    const dedans = this.zones().find((zone) => zone.enfantDedans);
-    if (dedans) {
-      return $localize`:@@carte.titre.dedans:Dans « ${dedans.nom}:zone: »`;
-    }
-    const prenom = this.enfant()?.prenom;
-    return prenom ? $localize`:@@carte.titre.position:Position de ${prenom}:prenom:` : $localize`:@@carte.titre.defaut:Dernière position`;
-  });
+  protected readonly ancienne = computed(() => positionAncienne(this.situation(), this.maintenant()));
+  protected readonly repere = computed(() => repereDe(this.situation(), this.enfant()?.prenom, this.maintenant()));
+  protected readonly titre = computed(() => titrePosition(this.zones(), this.enfant()?.prenom));
   protected readonly quand = computed(() => {
     const situation = this.situation();
     if (!situation?.position) {
