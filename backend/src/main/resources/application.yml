@@ -91,6 +91,13 @@ fasoguardian:
   parents:
     # Adresse publique de l'application Parents, pour les liens envoyés par SMS.
     url: ${FG_URL_PARENTS:http://localhost:4201}
+  alertes:
+    cascade:
+      # Délai sans prise en charge au bout duquel les contacts d'urgence sont sollicités, puis l'institution.
+      delai-contact: ${FG_CASCADE_DELAI_CONTACT:PT5M}
+      delai-institution: ${FG_CASCADE_DELAI_INSTITUTION:PT10M}
+      # Numéro du point de contact institutionnel convenu ; vide : la cascade s'arrête aux contacts d'urgence.
+      contact-institutionnel: ${FG_CASCADE_CONTACT_INSTITUTIONNEL:}
   conformite:
     # Analyse d'impact (AIPD) : sans ces trois valeurs, le profil prod refuse de démarrer (US-ADM-003).
     aipd:

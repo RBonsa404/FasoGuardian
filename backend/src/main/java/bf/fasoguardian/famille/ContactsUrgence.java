@@ -1,5 +1,6 @@
 package bf.fasoguardian.famille;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,7 @@ public interface ContactsUrgence {
     }
 
     Optional<Contact> contact(UUID enfantId, UUID contactId);
+
+    /** Contacts d'urgence de l'enfant, dans l'ordre où le parent les a classés. */
+    List<Contact> contactsDe(UUID enfantId);
 }

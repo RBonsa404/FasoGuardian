@@ -24,7 +24,11 @@ public class ActionAlerte {
         LEVEE,
         FAUSSE_ALERTE,
         /** Clôture par le système, la cause ayant disparu. */
-        RESOLUTION
+        RESOLUTION,
+        /** Le contact d'urgence a été sollicité faute de réponse des parents (US-SYS-005). */
+        CONTACT_SOLLICITE,
+        /** Le point de contact institutionnel a été sollicité à son tour. */
+        INSTITUTION_SOLLICITEE
     }
 
     @Id

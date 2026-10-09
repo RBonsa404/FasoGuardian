@@ -171,6 +171,20 @@ public class Alerte {
         return action;
     }
 
+    /**
+     * Faute de réponse des parents, un tiers est sollicité (US-SYS-005). L'alerte ne change pas d'état : elle
+     * attend toujours d'être prise en charge.
+     *
+     * @param etape {@link ActionAlerte.Type#CONTACT_SOLLICITE} ou {@link ActionAlerte.Type#INSTITUTION_SOLLICITEE}
+     */
+    public ActionAlerte solliciter(ActionAlerte.Type etape, String motif, Instant maintenant) {
+        exiger(statut == Statut.OUVERTE, "solliciter un tiers");
+        if (etape != ActionAlerte.Type.CONTACT_SOLLICITE && etape != ActionAlerte.Type.INSTITUTION_SOLLICITEE) {
+            throw new IllegalArgumentException("Étape de sollicitation inconnue : " + etape);
+        }
+        return new ActionAlerte(id, etape, null, exigerMotif(motif), maintenant);
+    }
+
     private void exiger(boolean permis, String action) {
         if (!permis) {
             throw new TransitionIllegaleException(statut, action);

@@ -2,12 +2,16 @@ package bf.fasoguardian.alertes.infrastructure;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import bf.fasoguardian.alertes.domaine.ActionAlerte;
+import bf.fasoguardian.alertes.domaine.ActionAlerte.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DepotActions extends JpaRepository<ActionAlerte, UUID> {
 
     List<ActionAlerte> findByAlerteIdInOrderByEffectueeLe(Collection<UUID> alerteIds);
+
+    Optional<ActionAlerte> findFirstByAlerteIdAndType(UUID alerteId, Type type);
 }

@@ -216,6 +216,8 @@ public class Escalades {
             case LEVEE -> "alerte levée";
             case FAUSSE_ALERTE -> "classée fausse alerte";
             case RESOLUTION -> "levée automatiquement";
+            case CONTACT_SOLLICITE -> "contacts d'urgence sollicités faute de réponse";
+            case INSTITUTION_SOLLICITEE -> "point de contact institutionnel sollicité";
         };
         return action.motif() == null ? quoi : quoi + " (" + action.motif() + ")";
     }

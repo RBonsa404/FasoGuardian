@@ -103,6 +103,8 @@ export function actionLisible(action: ActionAlerte): string {
     LEVEE: $localize`:@@alerte.action.levee:Levée`,
     FAUSSE_ALERTE: $localize`:@@alerte.action.fausse:Classée fausse alerte`,
     RESOLUTION: $localize`:@@alerte.action.resolution:Levée automatiquement`,
+    CONTACT_SOLLICITE: $localize`:@@alerte.action.contact:Sans réponse de votre part`,
+    INSTITUTION_SOLLICITEE: $localize`:@@alerte.action.institution:Toujours sans réponse`,
   }[action.type];
   const qui = action.auteur === 'VOUS' ? $localize`:@@alerte.auteur.vous:par vous` : action.auteur === 'AUTRE_TUTEUR' ? $localize`:@@alerte.auteur.autre:par un autre tuteur` : '';
   return [quoi, qui, action.motif].filter(Boolean).join(' · ');

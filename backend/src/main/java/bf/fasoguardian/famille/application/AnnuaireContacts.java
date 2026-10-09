@@ -1,5 +1,6 @@
 package bf.fasoguardian.famille.application;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,13 @@ class AnnuaireContacts implements ContactsUrgence {
     AnnuaireContacts(DepotContacts contacts, ServiceChiffrement chiffrement) {
         this.contacts = contacts;
         this.chiffrement = chiffrement;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Contact> contactsDe(UUID enfantId) {
+        return contacts.findByEnfantIdOrderByRang(enfantId).stream().map(contact -> new Contact(contact.id(), contact.lien(),
+                chiffrement.dechiffrerTexte(CategorieDonnee.TELEPHONE, contact.telephoneChiffre()))).toList();
     }
 
     @Override

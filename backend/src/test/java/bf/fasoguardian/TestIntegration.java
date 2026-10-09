@@ -77,6 +77,9 @@ public abstract class TestIntegration {
         // La supervision des bracelets muets ne tourne que lorsqu'un essai l'appelle.
         registre.add("fasoguardian.telemetrie.supervision", () -> "PT24H");
         registre.add("fasoguardian.supervision.sonde", () -> "PT24H");
+        // La cascade ne tourne que lorsqu'un essai l'appelle ; un point de contact institutionnel fictif est convenu.
+        registre.add("fasoguardian.alertes.cascade.cadence", () -> "PT24H");
+        registre.add("fasoguardian.alertes.cascade.contact-institutionnel", () -> "70 99 00 17");
         registre.add("fasoguardian.sms.secret-passerelle", () -> SECRET_PASSERELLE_SMS);
         registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);

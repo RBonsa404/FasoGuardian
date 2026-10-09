@@ -1,10 +1,12 @@
 package bf.fasoguardian.alertes.infrastructure;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import bf.fasoguardian.alertes.domaine.Alerte;
+import bf.fasoguardian.alertes.domaine.Alerte.Gravite;
 import bf.fasoguardian.alertes.domaine.Alerte.Statut;
 import bf.fasoguardian.alertes.domaine.Alerte.Type;
 import org.springframework.data.domain.Limit;
@@ -19,4 +21,6 @@ public interface DepotAlertes extends JpaRepository<Alerte, UUID> {
     List<Alerte> findByEnfantIdAndTypeAndStatutIn(UUID enfantId, Type type, Collection<Statut> statuts);
 
     List<Alerte> findByEnfantIdAndStatut(UUID enfantId, Statut statut);
+
+    List<Alerte> findByStatutAndGraviteAndOuverteLeBefore(Statut statut, Gravite gravite, Instant limite);
 }

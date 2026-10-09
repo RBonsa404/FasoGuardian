@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 export type TypeAlerte = 'SOS' | 'RETRAIT' | 'SIGNALEMENT' | 'SORTIE_ZONE' | 'BATTERIE_CRITIQUE' | 'CHUTE';
 export type GraviteAlerte = 'CRITIQUE' | 'IMPORTANTE';
 export type StatutAlerte = 'OUVERTE' | 'ACQUITTEE' | 'ESCALADEE' | 'LEVEE' | 'FAUSSE_ALERTE';
-export type TypeActionAlerte = 'OUVERTURE' | 'ACQUITTEMENT' | 'ESCALADE' | 'LEVEE' | 'FAUSSE_ALERTE' | 'RESOLUTION';
+/** Les deux dernières valeurs sont les étapes de la cascade : un tiers a été sollicité faute de réponse (US-SYS-005). */
+export type TypeActionAlerte = 'OUVERTURE' | 'ACQUITTEMENT' | 'ESCALADE' | 'LEVEE' | 'FAUSSE_ALERTE' | 'RESOLUTION' | 'CONTACT_SOLLICITE' | 'INSTITUTION_SOLLICITEE';
 
 /** Ligne du journal d'acquittement. L'identité d'un autre tuteur n'est jamais transmise. */
 export interface ActionAlerte {
