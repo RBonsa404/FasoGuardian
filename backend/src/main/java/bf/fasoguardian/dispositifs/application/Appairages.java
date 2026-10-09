@@ -23,7 +23,9 @@ import bf.fasoguardian.dispositifs.infrastructure.DepotConfigurations;
 import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.famille.ProfilsQr;
 import bf.fasoguardian.identite.LiensTutelle;
-import bf.fasoguardian.identite.MessagesTuteurs;
+import bf.fasoguardian.notifications.Notifications;
+import bf.fasoguardian.notifications.Notifications.Message;
+import bf.fasoguardian.notifications.Notifications.Urgence;
 import bf.fasoguardian.identite.SecondFacteur;
 import bf.fasoguardian.identite.SecondFacteur.ActionSensible;
 import bf.fasoguardian.plateforme.chiffrement.ServiceChiffrement;
@@ -66,7 +68,7 @@ public class Appairages {
     private final ProfilsQr profilsQr;
     private final SecondFacteur secondFacteur;
     private final LiensTutelle liens;
-    private final MessagesTuteurs messages;
+    private final Notifications notifications;
     private final ServiceChiffrement chiffrement;
     private final CommandesBracelet commandes;
     private final JournalAudit journal;
@@ -79,7 +81,7 @@ public class Appairages {
 
     Appairages(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
             AccesEnfant acces, ProfilsQr profilsQr, SecondFacteur secondFacteur, LiensTutelle liens,
-            MessagesTuteurs messages, ServiceChiffrement chiffrement, CommandesBracelet commandes, JournalAudit journal,
+            Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, JournalAudit journal,
             Clock horloge) {
         this.commandes = commandes;
         this.bracelets = bracelets;
@@ -89,7 +91,7 @@ public class Appairages {
         this.profilsQr = profilsQr;
         this.secondFacteur = secondFacteur;
         this.liens = liens;
-        this.messages = messages;
+        this.notifications = notifications;
         this.chiffrement = chiffrement;
         this.journal = journal;
         this.horloge = horloge;
@@ -130,7 +132,7 @@ public class Appairages {
         profilsQr.associer(enfantId, bracelet.jetonQrSha256(), bracelet.numeroSerie());
         essaisRates.invalidate(tuteurId);
         journal.consigner(tuteurId, ROLE, "BRACELET_APPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
-        prevenir(enfantId, "FasoGuardian : le bracelet " + bracelet.numeroSerie() + " est associé à votre enfant.");
+        prevenir(enfantId, "BRACELET_ASSOCIE", "Bracelet associé", "le bracelet " + bracelet.numeroSerie() + " est associé à votre enfant.");
         return vue(appairage);
     }
 
@@ -167,7 +169,7 @@ public class Appairages {
         }
         journal.consigner(tuteurId, ROLE, "BRACELET_DECLARE_" + motif, "BRACELET", bracelet.id().toString(),
                 Resultat.SUCCES);
-        prevenir(enfantId, "FasoGuardian : le bracelet " + bracelet.numeroSerie() + " a été déclaré "
+        prevenir(enfantId, "BRACELET_DECLARE", "Bracelet déclaré", "le bracelet " + bracelet.numeroSerie() + " a été déclaré "
                 + switch (motif) {
                     case PERDU -> "perdu. Sa page QR est désactivée ; le suivi continue 72 h.";
                     case VOLE -> "volé. Sa page QR est désactivée et il ne peut plus se connecter.";
@@ -189,7 +191,7 @@ public class Appairages {
         }
         profilsQr.reactiver(enfantId);
         journal.consigner(tuteurId, ROLE, "BRACELET_RETROUVE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
-        prevenir(enfantId, "FasoGuardian : le bracelet " + bracelet.numeroSerie() + " est de nouveau actif.");
+        prevenir(enfantId, "BRACELET_RETROUVE", "Bracelet retrouvé", "le bracelet " + bracelet.numeroSerie() + " est de nouveau actif.");
         return vue(bracelet, appairage);
     }
 
@@ -209,7 +211,7 @@ public class Appairages {
         }
         appairage.clore(MotifFin.DESAPPAIRAGE, maintenant);
         journal.consigner(tuteurId, ROLE, "BRACELET_DESAPPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
-        prevenir(enfantId, "FasoGuardian : le bracelet " + bracelet.numeroSerie()
+        prevenir(enfantId, "BRACELET_DESAPPAIRE", "Bracelet désappairé", "le bracelet " + bracelet.numeroSerie()
                 + " n'est plus associé à votre enfant.");
     }
 
@@ -224,7 +226,7 @@ public class Appairages {
             commandes.configurer(bracelet, configuration, tuteurId);
             journal.consigner(tuteurId, ROLE, actif ? "MODE_ECONOMIE_ACTIVE" : "MODE_ECONOMIE_DESACTIVE", "BRACELET",
                     bracelet.id().toString(), Resultat.SUCCES);
-            prevenir(enfantId, "FasoGuardian : le mode économie du bracelet " + bracelet.numeroSerie() + " est "
+            prevenir(enfantId, "MODE_ECONOMIE", "Mode économie", "le mode économie du bracelet " + bracelet.numeroSerie() + " est "
                     + (actif ? "activé" : "désactivé") + ".");
         }
         return vue(bracelet, appairage);
@@ -281,8 +283,9 @@ public class Appairages {
                 () -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun bracelet n'est associé à cet enfant."));
     }
 
-    private void prevenir(UUID enfantId, String texte) {
-        liens.tuteursActifsDe(enfantId).forEach(tuteur -> messages.envoyerSms(tuteur, texte));
+    private void prevenir(UUID enfantId, String modele, String titre, String texte) {
+        Message message = new Message(modele, titre, texte, "/enfants/" + enfantId + "/bracelet", null);
+        liens.tuteursActifsDe(enfantId).forEach(tuteur -> notifications.notifier(tuteur, Urgence.INFORMATION, message));
     }
 
     private BraceletVue vue(Appairage appairage) {

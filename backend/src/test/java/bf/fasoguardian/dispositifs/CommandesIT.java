@@ -170,7 +170,7 @@ class CommandesIT extends TestIntegration {
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_AUTORISER_RETRAIT'");
         mvc.perform(post("/api/v1/moi/second-facteur").header("Authorization", "Bearer " + jeton).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"action\":\"AUTORISER_RETRAIT\"}")).andExpect(status().isAccepted());
-        String code = Acteurs.extraire(acteurs.dernierSms(famille.parent().telephone()), "(\\d{6}) est votre code de confirmation");
+        String code = acteurs.dernierCodeDeConfirmation(famille.parent().telephone());
 
         mvc.perform(post(retrait).header("Authorization", "Bearer " + jeton).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"motif\":\"TOILETTE\",\"dureeMinutes\":30,\"codeSecondFacteur\":\"" + code + "\"}")).andExpect(status().isCreated());

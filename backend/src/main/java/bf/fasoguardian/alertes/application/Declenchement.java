@@ -75,6 +75,9 @@ class Declenchement {
     }
 
     private void resoudre(List<Alerte> concernees, String motif) {
-        concernees.forEach(alerte -> actions.save(alerte.resoudre(motif, horloge.instant())));
+        concernees.forEach(alerte -> {
+            actions.save(alerte.resoudre(motif, horloge.instant()));
+            ouverture.accuser(alerte);
+        });
     }
 }

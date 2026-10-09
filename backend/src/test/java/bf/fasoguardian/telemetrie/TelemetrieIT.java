@@ -142,7 +142,7 @@ class TelemetrieIT extends TestIntegration {
         // Volé : le certificat est révoqué, plus rien n'est accepté de cet appareil.
         mvc.perform(post("/api/v1/moi/second-facteur").header("Authorization", "Bearer " + famille.parent().jeton())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"DECLARER_BRACELET\"}")).andExpect(status().isAccepted());
-        String code = Acteurs.extraire(acteurs.dernierSms(famille.parent().telephone()), "(\\d{6}) est votre code de confirmation");
+        String code = acteurs.dernierCodeDeConfirmation(famille.parent().telephone());
         mvc.perform(post("/api/v1/enfants/" + famille.enfantId() + "/bracelet/declaration")
                 .header("Authorization", "Bearer " + famille.parent().jeton()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"motif\":\"VOLE\",\"codeSecondFacteur\":\"" + code + "\"}")).andExpect(status().isOk());

@@ -156,6 +156,7 @@ public class Alertes {
             throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE, "Indiquez le motif.");
         }
         journal.consigner(tuteurId, ROLE, action, "ALERTE", alerte.id().toString(), Resultat.SUCCES);
+        ouverture.accuser(alerte);
     }
 
     /** L'alerte, si le tuteur est rattaché à l'enfant ; sinon elle est introuvable et le refus est journalisé. */

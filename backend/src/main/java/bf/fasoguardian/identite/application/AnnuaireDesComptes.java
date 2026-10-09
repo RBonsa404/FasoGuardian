@@ -1,36 +1,33 @@
 package bf.fasoguardian.identite.application;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import bf.fasoguardian.identite.MessagesTuteurs;
 import bf.fasoguardian.identite.domaine.Utilisateur;
 import bf.fasoguardian.identite.infrastructure.DepotUtilisateurs;
-import bf.fasoguardian.notifications.ServiceSms;
+import bf.fasoguardian.notifications.Annuaire;
 import bf.fasoguardian.plateforme.chiffrement.CategorieDonnee;
 import bf.fasoguardian.plateforme.chiffrement.ServiceChiffrement;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** Fournit au module notifications le numéro d'un compte, déchiffré à la demande. */
 @Service
-class ServiceMessagesTuteurs implements MessagesTuteurs {
+class AnnuaireDesComptes implements Annuaire {
 
     private final DepotUtilisateurs utilisateurs;
     private final ServiceChiffrement chiffrement;
-    private final ServiceSms sms;
 
-    ServiceMessagesTuteurs(DepotUtilisateurs utilisateurs, ServiceChiffrement chiffrement, ServiceSms sms) {
+    AnnuaireDesComptes(DepotUtilisateurs utilisateurs, ServiceChiffrement chiffrement) {
         this.utilisateurs = utilisateurs;
         this.chiffrement = chiffrement;
-        this.sms = sms;
     }
 
-    /** Sans effet pour un compte clos ou sans téléphone. */
     @Override
     @Transactional(readOnly = true)
-    public void envoyerSms(UUID tuteurId, String texte) {
-        utilisateurs.findById(tuteurId).filter(Utilisateur::peutSAuthentifier)
+    public Optional<String> telephoneE164(UUID utilisateurId) {
+        return utilisateurs.findById(utilisateurId).filter(Utilisateur::peutSAuthentifier)
                 .filter(utilisateur -> utilisateur.telephoneChiffre() != null)
-                .ifPresent(utilisateur -> sms.envoyer(
-                        chiffrement.dechiffrerTexte(CategorieDonnee.TELEPHONE, utilisateur.telephoneChiffre()), texte));
+                .map(utilisateur -> chiffrement.dechiffrerTexte(CategorieDonnee.TELEPHONE, utilisateur.telephoneChiffre()));
     }
 }

@@ -18,7 +18,9 @@ import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
 import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.identite.LiensTutelle;
-import bf.fasoguardian.identite.MessagesTuteurs;
+import bf.fasoguardian.notifications.Notifications;
+import bf.fasoguardian.notifications.Notifications.Message;
+import bf.fasoguardian.notifications.Notifications.Urgence;
 import bf.fasoguardian.identite.SecondFacteur;
 import bf.fasoguardian.identite.SecondFacteur.ActionSensible;
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
@@ -48,13 +50,13 @@ public class Retraits {
     private final AccesEnfant acces;
     private final SecondFacteur secondFacteur;
     private final LiensTutelle liens;
-    private final MessagesTuteurs messages;
+    private final Notifications notifications;
     private final JournalAudit journal;
     private final Clock horloge;
 
     Retraits(DepotAutorisations autorisations, OuvertureAlertes ouverture, Bracelets bracelets, Commandes commandes,
             AccesEnfant acces,
-            SecondFacteur secondFacteur, LiensTutelle liens, MessagesTuteurs messages, JournalAudit journal,
+            SecondFacteur secondFacteur, LiensTutelle liens, Notifications notifications, JournalAudit journal,
             Clock horloge) {
         this.autorisations = autorisations;
         this.ouverture = ouverture;
@@ -63,7 +65,7 @@ public class Retraits {
         this.acces = acces;
         this.secondFacteur = secondFacteur;
         this.liens = liens;
-        this.messages = messages;
+        this.notifications = notifications;
         this.journal = journal;
         this.horloge = horloge;
     }
@@ -93,8 +95,8 @@ public class Retraits {
         autorisations.save(autorisation);
         commandes.fenetreDeRetrait(enfantId, autorisation.fin());
         journal.consigner(tuteurId, ROLE, "RETRAIT_AUTORISE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
-        prevenir(enfantId, "FasoGuardian : le retrait du bracelet " + bracelet.numeroSerie() + " est autorisé pendant "
-                + duree(dureeMinutes) + ".");
+        prevenir(enfantId, Urgence.INFORMATION, "RETRAIT_AUTORISE", "Retrait autorisé", "le retrait du bracelet "
+                + bracelet.numeroSerie() + " est autorisé pendant " + duree(dureeMinutes) + ".");
         return vue(autorisation);
     }
 
@@ -163,8 +165,9 @@ public class Retraits {
                 maintenant.plus(AutorisationRetrait.AVANCE_DU_RAPPEL)).stream()
                 .filter(autorisation -> autorisation.rappelDu(maintenant)).forEach(autorisation -> {
                     autorisation.noterRappel();
-                    prevenir(autorisation.enfantId(), "FasoGuardian : le retrait autorisé du bracelet se termine dans "
-                            + "quelques minutes. Remettez-le à votre enfant pour éviter une alerte.");
+                    prevenir(autorisation.enfantId(), Urgence.IMPORTANTE, "RAPPEL_RETRAIT", "Fin du retrait autorisé",
+                            "le retrait autorisé du bracelet se termine dans quelques minutes. Remettez-le à votre enfant "
+                                    + "pour éviter une alerte.");
                 });
         for (AutorisationRetrait autorisation : autorisations.findByStatutAndFinBefore(Statut.ACTIVE, maintenant)) {
             if (autorisation.echoir(maintenant)) {
@@ -180,8 +183,9 @@ public class Retraits {
                 () -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun retrait n'est autorisé en ce moment."));
     }
 
-    private void prevenir(UUID enfantId, String texte) {
-        liens.tuteursActifsDe(enfantId).forEach(tuteur -> messages.envoyerSms(tuteur, texte));
+    private void prevenir(UUID enfantId, Urgence urgence, String modele, String titre, String texte) {
+        Message message = new Message(modele, titre, texte, "/enfants/" + enfantId + "/bracelet/retrait", null);
+        liens.tuteursActifsDe(enfantId).forEach(tuteur -> notifications.notifier(tuteur, urgence, message));
     }
 
     private static String duree(int minutes) {

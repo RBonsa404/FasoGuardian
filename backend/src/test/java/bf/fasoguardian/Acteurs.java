@@ -204,6 +204,30 @@ public final class Acteurs {
         return sms.dernierPour("+226" + telephone).orElseThrow().texte();
     }
 
+    /** Dernier code de confirmation reçu par ce numéro, quels que soient les SMS de notification arrivés depuis. */
+    public String dernierCodeDeConfirmation(String telephone) {
+        return sms.tous().stream().filter(message -> message.destinataire().equals("+226" + telephone))
+                .map(SmsBacASable.SmsEnvoye::texte).filter(texte -> texte.contains("est votre code de confirmation"))
+                .reduce((premier, dernier) -> dernier).map(texte -> extraire(texte, "(\\d{6}) est votre code de confirmation"))
+                .orElseThrow();
+    }
+
+    /**
+     * Attend le SMS de notification contenant tous les fragments donnés : les notifications partent après la
+     * validation de la transaction qui les a créées.
+     */
+    public String attendreSms(String telephone, String... fragments) {
+        String[] trouve = new String[1];
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            trouve[0] = sms.tous().stream().filter(message -> message.destinataire().equals("+226" + telephone))
+                    .map(SmsBacASable.SmsEnvoye::texte)
+                    .filter(texte -> java.util.Arrays.stream(fragments).allMatch(texte::contains))
+                    .reduce((premier, dernier) -> dernier).orElse(null);
+            assertThat(trouve[0]).as("SMS contenant %s", java.util.Arrays.toString(fragments)).isNotNull();
+        });
+        return trouve[0];
+    }
+
     private ResultActions json(String chemin, String corps) throws Exception {
         return mvc.perform(post(chemin).contentType(MediaType.APPLICATION_JSON).content(corps));
     }

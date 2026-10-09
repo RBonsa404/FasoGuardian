@@ -257,8 +257,7 @@ class GeolocalisationIT extends TestIntegration {
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_MODIFIER_SAFE_ZONE'");
         json(post("/api/v1/moi/second-facteur"), "{\"action\":\"MODIFIER_SAFE_ZONE\"}", parent.jeton())
                 .andExpect(status().isAccepted());
-        return "\"codeSecondFacteur\":\"" + Acteurs.extraire(acteurs.dernierSms(parent.telephone()),
-                "(\\d{6}) est votre code de confirmation") + "\"";
+        return "\"codeSecondFacteur\":\"" + acteurs.dernierCodeDeConfirmation(parent.telephone()) + "\"";
     }
 
     private Carte equiper(ParentAvecEnfant famille) throws Exception {

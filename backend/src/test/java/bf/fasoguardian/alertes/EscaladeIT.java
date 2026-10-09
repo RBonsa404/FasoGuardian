@@ -191,8 +191,7 @@ class EscaladeIT extends TestIntegration {
     private String code(Parent parent) throws Exception {
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_ESCALADER_FORCES_SECURITE'");
         json(post("/api/v1/moi/second-facteur"), "{\"action\":\"ESCALADER_FORCES_SECURITE\"}", parent.jeton()).andExpect(status().isAccepted());
-        return "\"codeSecondFacteur\":\"" + Acteurs.extraire(acteurs.dernierSms(parent.telephone()),
-                "(\\d{6}) est votre code de confirmation") + "\"";
+        return "\"codeSecondFacteur\":\"" + acteurs.dernierCodeDeConfirmation(parent.telephone()) + "\"";
     }
 
     private static String texteDe(byte[] pdf) throws Exception {

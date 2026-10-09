@@ -1,6 +1,5 @@
 package bf.fasoguardian.alertes.infrastructure;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +19,4 @@ public interface DepotAlertes extends JpaRepository<Alerte, UUID> {
     List<Alerte> findByEnfantIdAndTypeAndStatutIn(UUID enfantId, Type type, Collection<Statut> statuts);
 
     List<Alerte> findByEnfantIdAndStatut(UUID enfantId, Statut statut);
-
-    /** Alertes ouvertes, sans prise en charge ni SMS, antérieures à l'instant donné. */
-    List<Alerte> findByStatutAndSmsEnvoyeLeIsNullAndOuverteLeBefore(Statut statut, Instant limite);
 }

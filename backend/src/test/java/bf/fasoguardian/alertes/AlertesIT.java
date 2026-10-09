@@ -20,7 +20,6 @@ import bf.fasoguardian.Acteurs.Carte;
 import bf.fasoguardian.Acteurs.Parent;
 import bf.fasoguardian.Acteurs.ParentAvecEnfant;
 import bf.fasoguardian.TestIntegration;
-import bf.fasoguardian.alertes.application.OuvertureAlertes;
 import bf.fasoguardian.alertes.application.Retraits;
 import bf.fasoguardian.notifications.infrastructure.SmsBacASable;
 import bf.fasoguardian.telemetrie.application.ReceptionMessages;
@@ -52,9 +51,6 @@ class AlertesIT extends TestIntegration {
     ReceptionMessages reception;
 
     @Autowired
-    OuvertureAlertes ouverture;
-
-    @Autowired
     Retraits retraits;
 
     Acteurs acteurs;
@@ -75,7 +71,7 @@ class AlertesIT extends TestIntegration {
         // Un second appui pendant l'alerte ne la double pas.
         evenement(carte, "sos", "");
 
-        assertThat(acteurs.dernierSms(famille.parent().telephone())).contains("ALERTE SOS", "Ouvrez l'application")
+        assertThat(acteurs.attendreSms(famille.parent().telephone(), "ALERTE SOS", "Ouvrez l'application"))
                 .doesNotContain("12.37");
         avec(get("/api/v1/alertes").param("enCours", "true"), jeton).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
@@ -130,7 +126,7 @@ class AlertesIT extends TestIntegration {
         json(post(retrait), "{\"motif\":\"TOILETTE\",\"dureeMinutes\":30," + code(parent) + "}", parent.jeton())
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.motif").value("TOILETTE"))
                 .andExpect(jsonPath("$.retire").value(false));
-        assertThat(acteurs.dernierSms(parent.telephone())).contains("retrait du bracelet", "autorisé pendant 30 min");
+        acteurs.attendreSms(parent.telephone(), "retrait du bracelet", "autorisé pendant 30 min");
         json(post(retrait), "{\"motif\":\"NUIT\",\"dureeMinutes\":600," + code(parent) + "}", parent.jeton())
                 .andExpect(status().isConflict());
 
@@ -145,7 +141,7 @@ class AlertesIT extends TestIntegration {
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> avec(get(retrait), parent.jeton()).andExpect(status().isNotFound()));
         evenement(carte, "skin", "");
         attendreAlerte(famille, "RETRAIT");
-        assertThat(acteurs.dernierSms(parent.telephone())).contains("retiré sans autorisation");
+        acteurs.attendreSms(parent.telephone(), "retiré sans autorisation");
     }
 
     @Test
@@ -170,7 +166,7 @@ class AlertesIT extends TestIntegration {
         jdbc.update("UPDATE alertes.autorisation_retrait SET debut = now() - INTERVAL '146 minutes', fin = now() + INTERVAL '4 minutes' WHERE enfant_id = ?::uuid",
                 famille.enfantId());
         retraits.surveillerEcheances();
-        assertThat(acteurs.dernierSms(parent.telephone())).contains("se termine dans quelques minutes", "Remettez-le");
+        acteurs.attendreSms(parent.telephone(), "se termine dans quelques minutes", "Remettez-le");
         avec(get("/api/v1/alertes"), parent.jeton()).andExpect(jsonPath("$.length()").value(0));
 
         jdbc.update("UPDATE alertes.autorisation_retrait SET debut = now() - INTERVAL '151 minutes', fin = now() - INTERVAL '1 minute' WHERE enfant_id = ?::uuid",
@@ -185,24 +181,15 @@ class AlertesIT extends TestIntegration {
     }
 
     @Test
-    void uneAlerteImportanteNEstDoubleeParSmsQuApres60SecondesSansPriseEnCharge() throws Exception {
+    void uneAlerteImportanteEstNotifieePuisSeClotDElleMemeQuandSaCauseDisparait() throws Exception {
         ParentAvecEnfant famille = acteurs.parentAvecEnfant();
         Carte carte = acteurs.equiper(famille);
         Parent parent = famille.parent();
-        String avant = acteurs.dernierSms(parent.telephone());
 
         evenement(carte, "batcrit", "");
         String id = attendreAlerte(famille, "BATTERIE_CRITIQUE");
-        ouverture.relancerParSms();
-        assertThat(acteurs.dernierSms(parent.telephone())).as("moins de 60 secondes").isEqualTo(avant);
-
-        jdbc.update("UPDATE alertes.alerte SET ouverte_le = now() - INTERVAL '61 seconds' WHERE id = ?::uuid", id);
-        ouverture.relancerParSms();
-        assertThat(acteurs.dernierSms(parent.telephone())).contains("batterie", "critique");
-        String apres = acteurs.dernierSms(parent.telephone());
-        ouverture.relancerParSms();
-        assertThat(sms.tous().stream().filter(m -> m.destinataire().equals("+226" + parent.telephone()) && m.texte().equals(apres)).count())
-                .as("un seul SMS par alerte").isEqualTo(1);
+        // Sans abonnement push, le SMS est le seul canal : il part sans attendre (le repli à 60 s est éprouvé par NotificationsIT).
+        acteurs.attendreSms(parent.telephone(), "batterie", "critique");
 
         // Le bracelet est posé sur son chargeur : l'alerte se clôt d'elle-même.
         evenement(carte, "charge", "");
@@ -221,7 +208,7 @@ class AlertesIT extends TestIntegration {
         jdbc.update("UPDATE dispositifs.appairage SET debut = now() - INTERVAL '3 days' WHERE enfant_id = ?::uuid", famille.enfantId());
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_MODIFIER_SAFE_ZONE'");
         json(post("/api/v1/moi/second-facteur"), "{\"action\":\"MODIFIER_SAFE_ZONE\"}", parent.jeton()).andExpect(status().isAccepted());
-        String codeZone = Acteurs.extraire(acteurs.dernierSms(parent.telephone()), "(\\d{6}) est votre code de confirmation");
+        String codeZone = acteurs.dernierCodeDeConfirmation(parent.telephone());
         json(post("/api/v1/enfants/" + famille.enfantId() + "/zones"), "{\"forme\":\"CERCLE\",\"nom\":\"École\",\"categorie\":\"ECOLE\","
                 + "\"centre\":{\"latitude\":12.3714,\"longitude\":-1.5197},\"rayonM\":200,\"jours\":[1,2,3,4,5,6,7],\"debut\":\"00:00\","
                 + "\"fin\":\"00:00\",\"toleranceS\":0,\"codeSecondFacteur\":\"" + codeZone + "\"}", parent.jeton()).andExpect(status().isCreated());
@@ -323,8 +310,7 @@ class AlertesIT extends TestIntegration {
     private String code(Parent parent) throws Exception {
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_AUTORISER_RETRAIT'");
         json(post("/api/v1/moi/second-facteur"), "{\"action\":\"AUTORISER_RETRAIT\"}", parent.jeton()).andExpect(status().isAccepted());
-        return "\"codeSecondFacteur\":\"" + Acteurs.extraire(acteurs.dernierSms(parent.telephone()),
-                "(\\d{6}) est votre code de confirmation") + "\"";
+        return "\"codeSecondFacteur\":\"" + acteurs.dernierCodeDeConfirmation(parent.telephone()) + "\"";
     }
 
     private ResultActions avec(MockHttpServletRequestBuilder requete, String jeton) throws Exception {

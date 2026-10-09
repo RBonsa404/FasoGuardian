@@ -31,7 +31,9 @@ import bf.fasoguardian.dispositifs.infrastructure.DepotBracelets;
 import bf.fasoguardian.dispositifs.infrastructure.DepotConfigurations;
 import bf.fasoguardian.famille.ProfilsQr;
 import bf.fasoguardian.identite.LiensTutelle;
-import bf.fasoguardian.identite.MessagesTuteurs;
+import bf.fasoguardian.notifications.Notifications;
+import bf.fasoguardian.notifications.Notifications.Message;
+import bf.fasoguardian.notifications.Notifications.Urgence;
 import bf.fasoguardian.plateforme.chiffrement.CategorieDonnee;
 import bf.fasoguardian.plateforme.chiffrement.ServiceChiffrement;
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
@@ -84,21 +86,21 @@ public class Parc {
     private final DepotConfigurations configurations;
     private final ProfilsQr profilsQr;
     private final LiensTutelle liens;
-    private final MessagesTuteurs messages;
+    private final Notifications notifications;
     private final ServiceChiffrement chiffrement;
     private final JournalAudit journal;
     private final Clock horloge;
     private final SecureRandom alea = new SecureRandom();
 
     Parc(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations, ProfilsQr profilsQr,
-            LiensTutelle liens, MessagesTuteurs messages, ServiceChiffrement chiffrement, JournalAudit journal,
+            LiensTutelle liens, Notifications notifications, ServiceChiffrement chiffrement, JournalAudit journal,
             Clock horloge) {
         this.bracelets = bracelets;
         this.appairages = appairages;
         this.configurations = configurations;
         this.profilsQr = profilsQr;
         this.liens = liens;
-        this.messages = messages;
+        this.notifications = notifications;
         this.chiffrement = chiffrement;
         this.journal = journal;
         this.horloge = horloge;
@@ -172,9 +174,9 @@ public class Parc {
         }
         appairages.findByBraceletIdAndFinIsNull(bracelet.id()).ifPresent(appairage -> {
             appairage.clore(MotifFin.PANNE, maintenant);
-            liens.tuteursActifsDe(appairage.enfantId()).forEach(tuteur -> messages.envoyerSms(tuteur,
-                    "FasoGuardian : le bracelet " + bracelet.numeroSerie() + " est pris en charge par le service "
-                            + "après-vente. Il n'est plus associé à votre enfant."));
+            Message message = Message.simple("BRACELET_EN_SAV", "Bracelet au service après-vente", "le bracelet "
+                    + bracelet.numeroSerie() + " est pris en charge par le service après-vente. Il n'est plus associé à votre enfant.");
+            liens.tuteursActifsDe(appairage.enfantId()).forEach(tuteur -> notifications.notifier(tuteur, Urgence.INFORMATION, message));
         });
         profilsQr.dissocier(bracelet.jetonQrSha256());
         consigner(agentId, "BRACELET_RETOURNE", bracelet);

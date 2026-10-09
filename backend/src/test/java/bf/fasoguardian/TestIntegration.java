@@ -28,6 +28,25 @@ public abstract class TestIntegration {
     /** Paire de clés jetable de la plateforme : la clé publique sert aux tests à vérifier les commandes signées. */
     protected static final java.security.KeyPair CLE_COMMANDES = cleDeSignature();
 
+    /** Clés jetables du serveur d'application pour les notifications push (VAPID). */
+    protected static final java.security.KeyPair CLE_PUSH = cleDeSignature();
+
+    /** Point non compressé (65 octets, base64url) de la clé publique, comme le navigateur l'attend. */
+    protected static String clePubliquePush() {
+        java.security.spec.ECPoint point = ((java.security.interfaces.ECPublicKey) CLE_PUSH.getPublic()).getW();
+        byte[] octets = new byte[65];
+        octets[0] = 4;
+        copier(point.getAffineX(), octets, 1);
+        copier(point.getAffineY(), octets, 33);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(octets);
+    }
+
+    protected static void copier(java.math.BigInteger coordonnee, byte[] cible, int position) {
+        byte[] octets = coordonnee.toByteArray();
+        int debut = Math.max(0, octets.length - 32);
+        System.arraycopy(octets, debut, cible, position + 32 - (octets.length - debut), octets.length - debut);
+    }
+
     private static java.security.KeyPair cleDeSignature() {
         try {
             java.security.KeyPairGenerator generateur = java.security.KeyPairGenerator.getInstance("EC");
@@ -52,6 +71,11 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        registre.add("fasoguardian.push.cle-privee", () -> Base64.getEncoder().encodeToString(CLE_PUSH.getPrivate().getEncoded()));
+        registre.add("fasoguardian.push.cle-publique", TestIntegration::clePubliquePush);
+        registre.add("fasoguardian.push.sujet", () -> "mailto:essais@fasoguardian.test");
+        // Le service de push des essais est un serveur HTTP local.
+        registre.add("fasoguardian.push.http-local-admis", () -> "true");
         registre.add("fasoguardian.commandes.cle-privee",
                 () -> Base64.getEncoder().encodeToString(CLE_COMMANDES.getPrivate().getEncoded()));
         // Délai plancher de la page publique QR réduit pour les tests.

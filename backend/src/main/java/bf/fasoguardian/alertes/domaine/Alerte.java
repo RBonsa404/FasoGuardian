@@ -100,9 +100,6 @@ public class Alerte {
 
     private Double longitude;
 
-    @Column(name = "sms_envoye_le")
-    private Instant smsEnvoyeLe;
-
     @Version
     private long version;
 
@@ -174,10 +171,6 @@ public class Alerte {
         return action;
     }
 
-    public void noterSmsEnvoye(Instant maintenant) {
-        smsEnvoyeLe = maintenant;
-    }
-
     private void exiger(boolean permis, String action) {
         if (!permis) {
             throw new TransitionIllegaleException(statut, action);
@@ -234,9 +227,5 @@ public class Alerte {
 
     public Double longitude() {
         return longitude;
-    }
-
-    public boolean smsEnvoye() {
-        return smsEnvoyeLe != null;
     }
 }

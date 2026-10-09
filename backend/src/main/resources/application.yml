@@ -60,6 +60,12 @@ springdoc:
 # Une clé = 32 octets en base64 (openssl rand -base64 32). Pour une rotation, ajouter la version 2 et
 # conserver la version 1 tant que des données chiffrées avec elle subsistent.
 fasoguardian:
+  push:
+    # Clés du serveur d'application (VAPID). Sans elles, les notifications passent par SMS seulement.
+    cle-publique: ${FG_PUSH_CLE_PUBLIQUE:}
+    cle-privee: ${FG_PUSH_CLE_PRIVEE:}
+    # Contact transmis aux services de push (mailto: ou https:).
+    sujet: ${FG_PUSH_SUJET:}
   commandes:
     # Clé privée ECDSA P-256 (PKCS#8, base64) qui signe les commandes envoyées aux bracelets.
     cle-privee: ${FG_CLE_COMMANDES:}

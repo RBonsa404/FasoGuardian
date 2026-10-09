@@ -81,7 +81,7 @@ class DispositifsIT extends TestIntegration {
                 .andExpect(jsonPath("$.intervalleS").value(300))
                 .andExpect(jsonPath("$.garantieJusquAu").isNotEmpty());
 
-        assertThat(acteurs.dernierSms(famille.parent().telephone())).contains(carte.numeroSerie(), "est associé");
+        acteurs.attendreSms(famille.parent().telephone(), carte.numeroSerie(), "est associé");
         assertThat(pageQr(carte.jetonQr())).contains(carte.numeroSerie(), "Vous avez trouvé un enfant");
         avec(get(base), famille.parent().jeton()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.statut").value("ACTIF"));
@@ -130,7 +130,7 @@ class DispositifsIT extends TestIntegration {
         avec(get("/api/v1/console/parc/certificats-revoques"), jetonSav).andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.numeroSerie == '" + carte.numeroSerie() + "')]").isNotEmpty());
         avec(get(base), famille.parent().jeton()).andExpect(status().isNotFound());
-        assertThat(acteurs.dernierSms(famille.parent().telephone())).contains("déclaré volé");
+        acteurs.attendreSms(famille.parent().telephone(), "déclaré volé");
         assertThat(actionsJournalisees(carte)).contains("BRACELET_DECLARE_VOLE");
     }
 
@@ -209,10 +209,10 @@ class DispositifsIT extends TestIntegration {
         json(put(base + "/configuration"), "{\"modeEconomie\":true}", famille.parent().jeton())
                 .andExpect(status().isOk()).andExpect(jsonPath("$.modeEconomie").value(true))
                 .andExpect(jsonPath("$.intervalleS").value(900));
-        assertThat(acteurs.dernierSms(famille.parent().telephone())).contains("mode économie", "activé");
+        acteurs.attendreSms(famille.parent().telephone(), "mode économie", "activé");
 
         avec(delete(base), famille.parent().jeton()).andExpect(status().isNoContent());
-        assertThat(acteurs.dernierSms(famille.parent().telephone())).contains("n'est plus associé");
+        acteurs.attendreSms(famille.parent().telephone(), "n'est plus associé");
         avec(get(base), famille.parent().jeton()).andExpect(status().isNotFound());
         assertThat(pageQr(carte.jetonQr())).contains("Ce code n'est pas reconnu");
         avec(get("/api/v1/console/parc/" + carte.numeroSerie()), jetonSav)
@@ -288,7 +288,7 @@ class DispositifsIT extends TestIntegration {
         jdbc.update("DELETE FROM identite.code_usage_unique WHERE finalite = '2F_DECLARER_BRACELET'");
         json(post("/api/v1/moi/second-facteur"), "{\"action\":\"DECLARER_BRACELET\"}", parent.jeton())
                 .andExpect(status().isAccepted());
-        return Acteurs.extraire(acteurs.dernierSms(parent.telephone()), "(\\d{6}) est votre code de confirmation");
+        return acteurs.dernierCodeDeConfirmation(parent.telephone());
     }
 
     private String pageQr(String jeton) throws Exception {
