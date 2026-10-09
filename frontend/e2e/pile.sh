@@ -73,6 +73,12 @@ case "${1:-}" in
       openssl pkey -in "$ETAT/commandes-privee.pem" -pubout -out "$ETAT/commandes-publique.pem" 2>/dev/null
       echo "FG_CLE_COMMANDES=$(openssl pkcs8 -topk8 -nocrypt -in "$ETAT/commandes-privee.pem" -outform DER | openssl base64 -A)"
       rm -f "$ETAT/commandes-privee.pem"
+      # Clés du serveur d'application pour les notifications push (VAPID) : privée en PKCS#8, publique en point brut.
+      openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out "$ETAT/push-privee.pem" 2>/dev/null
+      echo "FG_PUSH_CLE_PRIVEE=$(openssl pkcs8 -topk8 -nocrypt -in "$ETAT/push-privee.pem" -outform DER | openssl base64 -A)"
+      echo "FG_PUSH_CLE_PUBLIQUE=$(openssl pkey -in "$ETAT/push-privee.pem" -pubout -outform DER | tail -c 65 | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+      echo "FG_PUSH_SUJET=mailto:essais@fasoguardian.test"
+      rm -f "$ETAT/push-privee.pem"
     } > "$ENV"
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).
     [ -f "$RACINE/infra/certs/ca.crt" ] || sh "$RACINE/infra/generer-certificats-dev.sh"

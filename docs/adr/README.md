@@ -21,3 +21,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0011](0011-alertes-et-retrait.md) | Gravité et notification des alertes, résolution par le système, journal en ajout seul, fenêtre de retrait | Acceptée |
 | [0012](0012-commandes-signees.md) | Commandes vers le bracelet : signature ECDSA, destinataire, expiration, anti-rejeu, accusé et réémission | Acceptée |
 | [0013](0013-escalade-et-dossier-de-signalement.md) | Escalade sous second facteur ; sans convention, dossier PDF remis par le parent, chiffré et gardé 30 jours | Acceptée |
+| [0014](0014-notifications-push-et-repli-sms.md) | Notifications : choix du canal, Web Push chiffré, accusé et repli SMS à 60 s, adresses de livraison limitées | Acceptée |

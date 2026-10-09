@@ -51,6 +51,9 @@ services:
       FG_CLE_PROFIL_ENFANT: ${FG_CLE_PROFIL_ENFANT:?définir FG_CLE_PROFIL_ENFANT dans .env}
       FG_CLE_SIGNALEMENT: ${FG_CLE_SIGNALEMENT:?définir FG_CLE_SIGNALEMENT dans .env}
       FG_CLE_COMMANDES: ${FG_CLE_COMMANDES:?définir FG_CLE_COMMANDES dans .env}
+      FG_PUSH_CLE_PUBLIQUE: ${FG_PUSH_CLE_PUBLIQUE:-}
+      FG_PUSH_CLE_PRIVEE: ${FG_PUSH_CLE_PRIVEE:-}
+      FG_PUSH_SUJET: ${FG_PUSH_SUJET:-}
       FG_MQTT_URL: ssl://mosquitto:8883
       FG_MQTT_AUTORITE: /run/certs/ca.crt
       FG_MQTT_CERTIFICAT: /run/certs/serveur.crt

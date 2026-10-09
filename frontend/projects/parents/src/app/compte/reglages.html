@@ -15,6 +15,10 @@
     <fg-icon nom="telephone" [taille]="20" />
     <span class="flex-1 text-body font-medium" i18n="@@reglages.telephone">Changer mon numéro de téléphone</span>
   </button>
+  <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" routerLink="/installer">
+    <fg-icon nom="cloche" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@reglages.notifications">Notifications et installation</span>
+  </a>
 </div>
 
 <button fg-button variante="danger" type="button" class="mt-auto" (click)="ouvrir('cloture')" i18n="@@reglages.cloture">Clôturer le compte</button>

@@ -34,6 +34,11 @@ export const routes: Routes = [
     loadComponent: () => import('./compte/mot-de-passe-oublie').then((m) => m.MotDePasseOublie),
   },
   {
+    path: 'installer',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./compte/installer').then((m) => m.Installer),
+  },
+  {
     path: 'reglages',
     canActivate: [sessionRequise],
     loadComponent: () => import('./compte/reglages').then((m) => m.Reglages),

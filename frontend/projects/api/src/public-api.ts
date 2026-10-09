@@ -12,3 +12,4 @@ export * from './lib/famille';
 export * from './lib/bracelet';
 export * from './lib/geolocalisation';
 export * from './lib/alertes';
+export * from './lib/notifications';

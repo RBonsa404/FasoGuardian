@@ -12,6 +12,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `bracelet.spec.ts` | Appairage par code, mode économie, perte confirmée par SMS, bracelet retrouvé, désappairage ; effet sur la page QR | US-PAR-013, 014 |
 | `signalement.spec.ts` | Signalement par le parent, aperçu du dossier, escalade confirmée par code SMS, téléchargement du PDF, levée | US-PAR-010 |
 | `zones.spec.ts` | Carte sans position, Safe Zone tracée sur la carte, suspendue, réactivée, modifiée et supprimée sous code SMS, trajets | US-PAR-006, 007, 008 |
+| `notifications.spec.ts` | Écran d'installation et de notifications ; message poussé au service worker, accusé de livraison envoyé au serveur | US-ENF-001 |
 | `page-qr.spec.ts` | Page publique QR sans JavaScript : page générique, une seule requête, moins de 60 Ko | US-TRS-001, US-SYS-010 |
 | `console-kyc.spec.ts` | Enrôlement TOTP d'un agent, instruction et validation d'un dossier dans la console ; refus opposé à un opérateur support | US-ADM-001, US-PAR-001 |
 
