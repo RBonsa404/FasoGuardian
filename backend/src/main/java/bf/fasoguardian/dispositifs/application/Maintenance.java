@@ -5,12 +5,14 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import bf.fasoguardian.audit.JournalAudit;
+import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.SuiviBracelets;
 import bf.fasoguardian.dispositifs.domaine.Appairage;
@@ -51,19 +53,29 @@ public class Maintenance implements SuiviBracelets {
             Resolution resolution, String note, Instant resoluLe) {
     }
 
+    /**
+     * Ce que le parent voit du ticket ouvert pour le bracelet de son enfant : ni l'agent ni ses notes.
+     *
+     * @param prisEnChargeLe moment où un agent du service après-vente s'en est saisi, ou {@code null}
+     */
+    public record SuiviParent(String reference, String numeroSerie, Statut statut, Instant ouvertLe, Instant dernierContact,
+            Integer batterie, String reseau, Instant prisEnChargeLe) {
+    }
+
     private final DepotTickets tickets;
     private final DepotBracelets bracelets;
     private final DepotAppairages appairages;
     private final DepotConfigurations configurations;
     private final CommandesBracelet commandes;
     private final LiensTutelle liens;
+    private final AccesEnfant acces;
     private final Notifications notifications;
     private final JournalAudit journal;
     private final Clock horloge;
     private final DateTimeFormatter heure;
 
     Maintenance(DepotTickets tickets, DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
-            CommandesBracelet commandes, LiensTutelle liens, Notifications notifications, JournalAudit journal, Clock horloge,
+            CommandesBracelet commandes, LiensTutelle liens, AccesEnfant acces, Notifications notifications, JournalAudit journal, Clock horloge,
             @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
         this.tickets = tickets;
         this.bracelets = bracelets;
@@ -71,10 +83,22 @@ public class Maintenance implements SuiviBracelets {
         this.configurations = configurations;
         this.commandes = commandes;
         this.liens = liens;
+        this.acces = acces;
         this.notifications = notifications;
         this.journal = journal;
         this.horloge = horloge;
         this.heure = DateTimeFormatter.ofPattern("HH:mm", Locale.FRENCH).withZone(fuseau);
+    }
+
+    /** Ticket en cours pour le bracelet que porte l'enfant, s'il y en a un (écran 40). */
+    @Transactional(readOnly = true)
+    public Optional<SuiviParent> suiviPour(UUID tuteurId, UUID enfantId) {
+        acces.exigerTuteur(tuteurId, enfantId);
+        return appairages.findByEnfantIdAndFinIsNull(enfantId)
+                .flatMap(appairage -> tickets.findByBraceletIdAndMotifAndStatutIn(appairage.braceletId(), Motif.MUET, EN_COURS))
+                .map(ticket -> new SuiviParent(ticket.reference(), bracelets.findById(ticket.braceletId()).orElseThrow().numeroSerie(),
+                        ticket.statut(), ticket.ouvertLe(), ticket.dernierContact(), ticket.batterie(), ticket.reseau(),
+                        ticket.prisEnChargeLe()));
     }
 
     // --------------------------------------------------------------- supervision
@@ -89,7 +113,7 @@ public class Maintenance implements SuiviBracelets {
         TicketMaintenance ticket = tickets.save(new TicketMaintenance(tickets.prochainNumero(), braceletId, Motif.MUET,
                 dernierContact, batterie, reseau, horloge.instant()));
         journal.consigner(null, "SYSTEME", "TICKET_OUVERT", "BRACELET", braceletId.toString(), Resultat.SUCCES);
-        prevenir(braceletId, Urgence.IMPORTANTE, "BRACELET_MUET", "Bracelet sans nouvelles",
+        prevenir(braceletId, Urgence.IMPORTANTE, "BRACELET_MUET", "/maintenance", "Bracelet sans nouvelles",
                 "le bracelet " + bracelet.numeroSerie() + " ne donne plus de nouvelles"
                         + (dernierContact == null ? "" : " depuis " + heure.format(dernierContact))
                         + ". Vérifiez qu'il est chargé et porté. Le service après-vente est prévenu (" + ticket.reference() + ").");
@@ -101,7 +125,7 @@ public class Maintenance implements SuiviBracelets {
         tickets.findByBraceletIdAndMotifAndStatutIn(braceletId, Motif.MUET, EN_COURS).ifPresent(ticket -> {
             if (ticket.resoudre(Resolution.REPRISE_SPONTANEE, null, null, horloge.instant())) {
                 journal.consigner(null, "SYSTEME", "TICKET_RESOLU", "BRACELET", braceletId.toString(), Resultat.SUCCES);
-                prevenir(braceletId, Urgence.INFORMATION, "BRACELET_DE_RETOUR", "Bracelet de retour",
+                prevenir(braceletId, Urgence.INFORMATION, "BRACELET_DE_RETOUR", "", "Bracelet de retour",
                         "le bracelet " + bracelets.findById(braceletId).orElseThrow().numeroSerie() + " donne de nouveau des nouvelles.");
             }
         });
@@ -125,7 +149,7 @@ public class Maintenance implements SuiviBracelets {
                 commandes.configurer(bracelet, configuration, appairage.enfantId(), null);
                 journal.consigner(null, "SYSTEME", "MODE_ECONOMIE_ACTIVE", "BRACELET", braceletId.toString(), Resultat.SUCCES);
             }
-            prevenir(braceletId, Urgence.IMPORTANTE, "BATTERIE_FAIBLE", "Batterie faible",
+            prevenir(braceletId, Urgence.IMPORTANTE, "BATTERIE_FAIBLE", "", "Batterie faible",
                     "la batterie du bracelet " + bracelet.numeroSerie() + " est à " + niveau + " %. "
                             + (active ? "Le mode économie est activé pour la préserver. " : "") + "Pensez à le recharger.");
         });
@@ -183,9 +207,10 @@ public class Maintenance implements SuiviBracelets {
                 .orElseThrow(() -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Ticket introuvable."));
     }
 
-    private void prevenir(UUID braceletId, Urgence urgence, String modele, String titre, String texte) {
+    /** @param ecran suite du lien ouvert par la notification, sous l'écran du bracelet */
+    private void prevenir(UUID braceletId, Urgence urgence, String modele, String ecran, String titre, String texte) {
         appairages.findByBraceletIdAndFinIsNull(braceletId).map(Appairage::enfantId).ifPresent(enfant -> {
-            Message message = new Message(modele, titre, texte, "/enfants/" + enfant + "/bracelet", null);
+            Message message = new Message(modele, titre, texte, "/enfants/" + enfant + "/bracelet" + ecran, null);
             liens.tuteursActifsDe(enfant).forEach(tuteur -> notifications.notifier(tuteur, urgence, message));
         });
     }

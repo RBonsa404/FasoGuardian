@@ -3,6 +3,8 @@ package bf.fasoguardian.dispositifs.web;
 import java.util.UUID;
 
 import bf.fasoguardian.dispositifs.application.Appairages;
+import bf.fasoguardian.dispositifs.application.Maintenance;
+import bf.fasoguardian.dispositifs.application.Maintenance.SuiviParent;
 import bf.fasoguardian.dispositifs.application.Appairages.BraceletVue;
 import bf.fasoguardian.dispositifs.application.Appairages.Motif;
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
@@ -38,8 +40,11 @@ class ControleurBracelet {
 
     private final Appairages appairages;
 
-    ControleurBracelet(Appairages appairages) {
+    private final Maintenance maintenance;
+
+    ControleurBracelet(Appairages appairages, Maintenance maintenance) {
         this.appairages = appairages;
+        this.maintenance = maintenance;
     }
 
     record DemandeAppairage(@NotBlank @Size(max = 16) String code) {
@@ -56,6 +61,13 @@ class ControleurBracelet {
     ResponseEntity<BraceletVue> bracelet(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
         return sansCache(appairages.braceletDe(id(jeton), enfantId).orElseThrow(
                 () -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun bracelet n'est associé à cet enfant.")));
+    }
+
+    @Operation(summary = "Ticket de maintenance en cours pour le bracelet de l'enfant, ouvert quand il ne répond plus")
+    @GetMapping("/maintenance")
+    ResponseEntity<SuiviParent> maintenance(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return sansCache(maintenance.suiviPour(id(jeton), enfantId).orElseThrow(
+                () -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun ticket de maintenance n'est ouvert pour ce bracelet.")));
     }
 
     @Operation(summary = "Associe un bracelet par le code de sa carte d'activation (distinct du QR gravé)")

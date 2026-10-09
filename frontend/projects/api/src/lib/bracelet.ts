@@ -52,6 +52,21 @@ export interface Situation {
   readonly etat: EtatBracelet | null;
 }
 
+/** Ticket de maintenance ouvert pour le bracelet de l'enfant, tel que le parent le suit (US-SAV-001). */
+export interface SuiviMaintenance {
+  /** SAV-007731. */
+  readonly reference: string;
+  readonly numeroSerie: string;
+  readonly statut: 'OUVERT' | 'EN_COURS';
+  readonly ouvertLe: string;
+  /** État du bracelet à son dernier contact. */
+  readonly dernierContact: string | null;
+  readonly batterie: number | null;
+  readonly reseau: string | null;
+  /** Moment où le service après-vente s'en est saisi. */
+  readonly prisEnChargeLe: string | null;
+}
+
 /** Client du bracelet d'un enfant : appairage, configuration, perte, vol, désappairage (US-PAR-013, 014). */
 @Injectable({ providedIn: 'root' })
 export class ClientBracelet {
@@ -60,6 +75,11 @@ export class ClientBracelet {
   /** Échoue en RESSOURCE_INTROUVABLE si l'enfant ne porte aucun bracelet. */
   bracelet(enfantId: string): Observable<Bracelet> {
     return this.http.get<Bracelet>(this.base(enfantId));
+  }
+
+  /** Échoue en RESSOURCE_INTROUVABLE quand aucun ticket n'est ouvert : le bracelet répond. */
+  maintenance(enfantId: string): Observable<SuiviMaintenance> {
+    return this.http.get<SuiviMaintenance>(`${this.base(enfantId)}/maintenance`);
   }
 
   /** Associe le bracelet dont le code figure sur la carte d'activation. */

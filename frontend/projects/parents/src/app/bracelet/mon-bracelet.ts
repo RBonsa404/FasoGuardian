@@ -30,6 +30,9 @@ import { VisuelBracelet } from './visuel';
         <app-visuel-bracelet [numero]="b.numeroSerie" [grand]="true" />
       </div>
 
+      @if (ticket(); as reference) {
+        <fg-banner ton="attention"><ng-container i18n="@@bracelet.muet">Le bracelet ne répond plus. Le service après-vente est prévenu</ng-container> ({{ reference }}). <a class="font-semibold underline" [routerLink]="['/enfants', id(), 'bracelet', 'maintenance']" i18n="@@bracelet.suivre">Suivre le ticket</a></fg-banner>
+      }
       @if (b.statut === 'PERDU') {
         <fg-banner ton="attention" i18n="@@bracelet.perdu">Déclaré perdu. La page QR est désactivée ; le suivi continue jusqu'au {{ b.suiviJusquAu | date: "d MMM 'à' HH:mm" }}.</fg-banner>
         <button fg-button variante="secondary" type="button" [chargement]="enCours()" (click)="retrouver()" i18n="@@bracelet.retrouve">Je l'ai retrouvé</button>
@@ -90,6 +93,8 @@ export class MonBracelet {
   private readonly router = inject(Router);
 
   protected readonly bracelet = signal<Bracelet | null>(null);
+  /** Référence du ticket de maintenance ouvert pour ce bracelet, s'il ne répond plus. */
+  protected readonly ticket = signal<string | null>(null);
   protected readonly etat = signal<EtatBracelet | null>(null);
   protected readonly absent = signal(false);
   protected readonly enCours = signal(false);
@@ -188,6 +193,9 @@ export class MonBracelet {
   /** L'état transmis par le bracelet complète l'écran ; son absence ne l'empêche pas de s'afficher. */
   private chargerEtat(id: string): void {
     this.etat.set(null);
+    this.ticket.set(null);
+    // Aucun ticket ouvert est le cas courant : le bracelet répond.
+    this.client.maintenance(id).subscribe({ next: (suivi) => this.ticket.set(suivi.reference), error: () => undefined });
     this.client.situation(id).subscribe({ next: (situation) => this.etat.set(situation.etat), error: () => undefined });
   }
 

@@ -163,6 +163,10 @@ public class TicketMaintenance {
         return reseau;
     }
 
+    public Instant prisEnChargeLe() {
+        return prisEnChargeLe;
+    }
+
     public UUID agentId() {
         return agentId;
     }

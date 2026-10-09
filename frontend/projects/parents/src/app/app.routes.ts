@@ -5,6 +5,7 @@ import { catchError, from, map } from 'rxjs';
 import { ClientAuthentification, Session } from 'api';
 
 import { CopieLocale } from './commun/copie-locale';
+import { entreeSansSession, noterIntroductionVue } from './commun/introduction';
 
 /**
  * Réserve une route aux parents connectés. Le jeton d'accès ne vit qu'en mémoire : après un rechargement,
@@ -14,16 +15,24 @@ export const sessionRequise: CanActivateFn = () => {
   const router = inject(Router);
   const copie = inject(CopieLocale);
   if (inject(Session).ouverte()) {
+    // Un appareil sur lequel un parent s'est connecté n'a plus à montrer l'introduction.
+    noterIntroductionVue();
     return true;
   }
   return inject(ClientAuthentification)
     .rafraichir()
     .pipe(
-      map(() => true),
+      map(() => {
+        noterIntroductionVue();
+        return true;
+      }),
       // Sans session : la fiche gardée sur l'appareil reste consultable en attendant la reconnexion (US-PAR-019).
       catchError(() =>
         from(copie.fiches()).pipe(
-          map((fiches) => router.createUrlTree([fiches.length > 0 ? '/session' : '/connexion'])),
+          // Première ouverture sur cet appareil : l'introduction passe avant la connexion (écran 9).
+          map((fiches) =>
+            router.createUrlTree([fiches.length > 0 ? '/session' : entreeSansSession()]),
+          ),
         ),
       ),
     );
@@ -33,6 +42,10 @@ export const routes: Routes = [
   {
     path: 'session',
     loadComponent: () => import('./connexion/session-expiree').then((m) => m.SessionExpiree),
+  },
+  {
+    path: 'bienvenue',
+    loadComponent: () => import('./connexion/bienvenue').then((m) => m.Bienvenue),
   },
   {
     path: 'connexion',
@@ -80,6 +93,10 @@ export const routes: Routes = [
         loadComponent: () => import('./enfants/enfants').then((m) => m.FicheEnfantEcran),
       },
       {
+        path: 'enfants/:id/qr',
+        loadComponent: () => import('./enfants/apercu-qr').then((m) => m.ApercuQr),
+      },
+      {
         path: 'enfants/:id/medical',
         loadComponent: () => import('./enfants/medical').then((m) => m.Medical),
       },
@@ -118,6 +135,10 @@ export const routes: Routes = [
       {
         path: 'enfants/:id/journal',
         loadComponent: () => import('./alertes/journal').then((m) => m.JournalAlertes),
+      },
+      {
+        path: 'enfants/:id/bracelet/maintenance',
+        loadComponent: () => import('./bracelet/maintenance').then((m) => m.MaintenanceBracelet),
       },
       {
         path: 'enfants/:id/bracelet/retrait',

@@ -83,8 +83,23 @@ class MaintenanceIT extends TestIntegration {
         String ticketId = jdbc.queryForObject("SELECT t.id::text FROM dispositifs.ticket_maintenance t JOIN dispositifs.bracelet b"
                 + " ON b.id = t.bracelet_id WHERE b.numero_serie = ?", String.class, carte.numeroSerie());
 
+        // Le parent suit le ticket depuis la fiche du bracelet : ni l'agent ni ses notes ne lui sont montrés.
+        String suivi = "/api/v1/enfants/" + famille.enfantId() + "/bracelet/maintenance";
+        avec(get(suivi), famille.parent().jeton()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.reference").value(org.hamcrest.Matchers.startsWith("SAV-")))
+                .andExpect(jsonPath("$.numeroSerie").value(carte.numeroSerie()))
+                .andExpect(jsonPath("$.statut").value("OUVERT")).andExpect(jsonPath("$.batterie").value(64))
+                .andExpect(jsonPath("$.dernierContact").isNotEmpty()).andExpect(jsonPath("$.prisEnChargeLe").isEmpty())
+                .andExpect(jsonPath("$.agentId").doesNotExist()).andExpect(jsonPath("$.note").doesNotExist());
+        avec(get(suivi), acteurs.parent().jeton()).andExpect(status().isNotFound());
+        avec(get(suivi), sav).andExpect(status().isForbidden());
+        assertThat(jdbc.queryForObject("SELECT lien FROM notifications.notification WHERE modele = 'BRACELET_MUET' AND lien LIKE ?",
+                String.class, "%" + famille.enfantId() + "%")).isEqualTo("/enfants/" + famille.enfantId() + "/bracelet/maintenance");
+
         avec(post(TICKETS + "/" + ticketId + "/prise-en-charge"), sav).andExpect(status().isOk())
                 .andExpect(jsonPath("$.statut").value("EN_COURS")).andExpect(jsonPath("$.prisEnChargeParMoi").value(true));
+        avec(get(suivi), famille.parent().jeton()).andExpect(jsonPath("$.statut").value("EN_COURS"))
+                .andExpect(jsonPath("$.prisEnChargeLe").isNotEmpty());
         avec(post(TICKETS + "/" + ticketId + "/prise-en-charge"), sav).andExpect(status().isConflict());
 
         // Le bracelet redonne des nouvelles : la supervision clôt le ticket et le dit au parent.
@@ -92,6 +107,7 @@ class MaintenanceIT extends TestIntegration {
         supervision.superviser();
 
         assertThat(ticketsDe(carte)).containsExactly("RESOLU");
+        avec(get(suivi), famille.parent().jeton()).andExpect(status().isNotFound());
         acteurs.attendreSms(famille.parent().telephone(), "donne de nouveau des nouvelles");
         avec(get(TICKETS + "?resolus=true"), sav).andExpect(jsonPath("$[0].resolution").value("REPRISE_SPONTANEE"));
         assertThat(jdbc.queryForList("SELECT action FROM audit.entree WHERE action LIKE 'TICKET_%' AND cible_id IN (?, ("

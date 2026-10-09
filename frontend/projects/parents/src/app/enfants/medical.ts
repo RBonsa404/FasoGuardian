@@ -84,6 +84,7 @@ interface Ligne {
         }
         <button fg-button taille="lg" type="submit" [chargement]="enCours()" i18n="@@commun.enregistrer">Enregistrer</button>
       </form>
+      <a class="self-start py-2 text-label font-semibold text-accent" [routerLink]="['/enfants', id(), 'qr']" i18n="@@medical.voirQr">Voir la page QR</a>
 
       @if (revisions().length > 0) {
         <section class="flex flex-col gap-2">

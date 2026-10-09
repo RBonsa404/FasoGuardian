@@ -4,6 +4,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { Session } from 'api';
 
 import { CopieLocale } from './commun/copie-locale';
+import { entreeSansSession } from './commun/introduction';
 
 @Component({
   imports: [RouterOutlet],
@@ -21,7 +22,11 @@ export class App {
     // retrouve en attendant la fiche de son enfant gardée sur l'appareil, s'il y en a une.
     effect(() => {
       if (session.reauthentificationRequise()) {
-        void copie.fiches().then((fiches) => router.navigate([fiches.length > 0 ? '/session' : '/connexion']));
+        void copie
+          .fiches()
+          .then((fiches) =>
+            router.navigate([fiches.length > 0 ? '/session' : entreeSansSession()]),
+          );
       }
     });
   }
