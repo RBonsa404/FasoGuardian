@@ -50,7 +50,6 @@ test('un parent partage la position avec un contact, qui la voit par son lien ju
   // Rien sur l'enfant : ni son prénom, ni un lien vers le reste de l'application.
   await expect(contact.getByText('Yacouba')).toHaveCount(0);
   await expect(contact.getByRole('link')).toHaveCount(0);
-  await contact.waitForLoadState('networkidle');
   await contact.screenshot({ path: 'e2e/.etat/ecran-50-vue-contact.png', fullPage: true });
 
   // Le parent voit que le lien a été ouvert, puis révoque

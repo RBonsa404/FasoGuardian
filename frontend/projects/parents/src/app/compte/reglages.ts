@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ClientConformite, ClientProfil } from 'api';
 import { FgBanniere, FgBouton, FgChamp, FgCode, FgFeuille, FgIcon, FgTelephone } from 'ui';
 
+import { CopieLocale } from '../commun/copie-locale';
 import { erreurLisible } from '../commun/erreurs';
 import { SecondFacteur } from '../commun/second-facteur';
 
@@ -25,6 +26,7 @@ export class Reglages {
   private readonly client = inject(ClientProfil);
   private readonly router = inject(Router);
   private readonly conformite = inject(ClientConformite);
+  private readonly copie = inject(CopieLocale);
 
   protected readonly feuille = signal<Feuille>(null);
   protected readonly enCours = signal(false);
@@ -100,7 +102,11 @@ export class Reglages {
   }
 
   protected clore(code: string): void {
-    this.appeler(this.client.clore(code), () => void this.router.navigate(['/connexion'], { queryParams: { compteClos: 1 } }));
+    this.appeler(this.client.clore(code), () => {
+      // Compte clos : plus rien ne doit rester sur l'appareil.
+      void this.copie.vider();
+      void this.router.navigate(['/connexion'], { queryParams: { compteClos: 1 } });
+    });
   }
 
   private terminer(message: string): void {

@@ -6,6 +6,7 @@ import { FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { BandeauAbonnement } from '../abonnement/bandeau';
+import { CopieLocale } from '../commun/copie-locale';
 import { ApercuEnfant } from './apercu-enfant';
 
 /**
@@ -110,8 +111,16 @@ export class Accueil {
   protected readonly erreur = signal<string | null>(null);
   protected readonly sortie = signal(false);
 
+  private readonly copie = inject(CopieLocale);
+
   constructor() {
     this.charger();
+    // À chaque ouverture du tableau de bord, la copie locale des fiches est rafraîchie et l'application est
+    // mise en cache pour s'ouvrir sans réseau (US-PAR-019).
+    void this.copie.synchroniser();
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      void navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+    }
     const minuterie = setInterval(() => {
       if (this.compte()?.statut === 'ACTIF') {
         this.lireAlertes();
@@ -140,6 +149,8 @@ export class Accueil {
 
   protected deconnecter(): void {
     this.sortie.set(true);
+    // Un appareil dont le parent se déconnecte ne garde aucune fiche.
+    void this.copie.vider();
     // La session locale est fermée même si le serveur est injoignable.
     this.client.deconnecter().subscribe({
       next: () => void this.router.navigate(['/connexion']),

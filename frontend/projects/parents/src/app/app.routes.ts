@@ -1,8 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, Routes } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
+import { catchError, from, map } from 'rxjs';
 
 import { ClientAuthentification, Session } from 'api';
+
+import { CopieLocale } from './commun/copie-locale';
 
 /**
  * Réserve une route aux parents connectés. Le jeton d'accès ne vit qu'en mémoire : après un rechargement,
@@ -10,6 +12,7 @@ import { ClientAuthentification, Session } from 'api';
  */
 export const sessionRequise: CanActivateFn = () => {
   const router = inject(Router);
+  const copie = inject(CopieLocale);
   if (inject(Session).ouverte()) {
     return true;
   }
@@ -17,7 +20,8 @@ export const sessionRequise: CanActivateFn = () => {
     .rafraichir()
     .pipe(
       map(() => true),
-      catchError(() => of(router.createUrlTree(['/connexion']))),
+      // Sans session : la fiche gardée sur l'appareil reste consultable en attendant la reconnexion (US-PAR-019).
+      catchError(() => from(copie.fiches()).pipe(map((fiches) => router.createUrlTree([fiches.length > 0 ? '/session' : '/connexion'])))),
     );
 };
 
@@ -28,6 +32,7 @@ export const routes: Routes = [
     canActivate: [sessionRequise],
     loadComponent: () => import('./accueil/accueil').then((m) => m.Accueil),
   },
+  { path: 'session', loadComponent: () => import('./connexion/session-expiree').then((m) => m.SessionExpiree) },
   { path: 'connexion', loadComponent: () => import('./connexion/connexion').then((m) => m.Connexion) },
   {
     path: 'mot-de-passe-oublie',

@@ -27,3 +27,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0017](0017-partage-temporaire-de-la-position.md) | Partage de la position par lien personnel envoyé à un contact d'urgence, borné dans le temps, révocable, sans rien montrer de l'enfant | Acceptée |
 | [0018](0018-supervision-et-alertes-d-exploitation.md) | Disponibilité mesurée par minutes répondues, délai événement → notification au 95e centile, alerte d'exploitation au journal et dans Prometheus | Acceptée |
 | [0019](0019-litige-de-filiation.md) | Litige sur un lien de tutelle : gel appliqué par un intercepteur, suspension conservatoire de la position, décision fondée, sécurité jamais suspendue | Acceptée |
+| [0020](0020-session-expiree-et-copie-locale.md) | Réauthentification complète, copie locale minimale de la fiche effacée à la déconnexion, application gardée pour l'ouverture hors ligne | Acceptée |

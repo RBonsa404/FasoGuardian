@@ -13,8 +13,9 @@ import { AbonnementPush, ClientNotifications } from 'api';
 export type EtatPush = 'inconnu' | 'indisponibles' | 'a-activer' | 'refusees' | 'actives';
 
 /**
- * Abonnement de ce navigateur aux notifications push. Le service worker n'est enregistré qu'à l'activation :
- * rien n'est installé tant que le parent ne l'a pas demandé.
+ * Abonnement de ce navigateur aux notifications push. L'autorisation de notifier n'est demandée qu'à
+ * l'activation par le parent ; le service worker, lui, est aussi enregistré à l'ouverture du tableau de bord
+ * pour que l'application s'ouvre hors ligne.
  */
 @Injectable({ providedIn: 'root' })
 export class NotificationsPush {
