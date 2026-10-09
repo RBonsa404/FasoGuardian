@@ -158,8 +158,11 @@ export async function parentAvecDossierDepose(api: APIRequestContext): Promise<{
   return { telephone, reference: dossier.reference };
 }
 
-/** Parent dont le dossier KYC vient d'être approuvé par un agent : la fiche de son enfant (Yacouba) existe. */
-export async function parentAvecEnfant(api: APIRequestContext): Promise<{ telephone: string }> {
+/**
+ * Parent dont le dossier KYC vient d'être approuvé par un agent : la fiche de son enfant (Yacouba) existe.
+ * `reference` est celle du dossier KYC approuvé.
+ */
+export async function parentAvecEnfant(api: APIRequestContext): Promise<{ telephone: string; reference: string }> {
   const { telephone, reference } = await parentAvecDossierDepose(api);
   const entetes = { Authorization: `Bearer ${await agentKyc(api)}` };
   const file = await (await api.get(`${SERVEUR}/api/v1/console/kyc/dossiers?size=100`, { headers: entetes })).json();
@@ -168,7 +171,7 @@ export async function parentAvecEnfant(api: APIRequestContext): Promise<{ teleph
   const base = `${SERVEUR}/api/v1/console/kyc/dossiers/${dossier.id}`;
   expect((await api.post(`${base}/prise-en-charge`, { headers: entetes })).status()).toBe(200);
   expect((await api.post(`${base}/decision`, { headers: entetes, data: { decision: 'APPROUVER' } })).status()).toBe(200);
-  return { telephone };
+  return { telephone, reference };
 }
 
 export interface CarteActivation {

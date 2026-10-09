@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 36 en cours (US-PAR-001 à 016, 018, 019, US-ENF-001, 002, US-TRS-001, US-SEC-001, US-SYS-001 à 003, 006 à 008, 010, 011, US-ADM-001 à 004, US-SAV-001, 002). Étape 1 « Socle » close.
+Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 37 en cours (US-PAR-001 à 016, 018, 019, US-ENF-001, 002, US-TRS-001, US-SEC-001, US-KYC-001, US-SYS-001 à 003, 006 à 008, 010, 011, US-ADM-001 à 004, US-SAV-001, 002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -53,7 +53,7 @@ Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 36 en cours (US-PAR-001
 | US-PAR-018 | SHOULD | REQ-MUST-11 (ergonomie) | alertes | parents | `CentreAlertes` (regroupement par enfant et par gravité), `Alertes.prendreEnCharge` | `AlertesIT` | En cours : alertes regroupées, SOS en tête, une seule prise en charge ; test d'interface du regroupement à écrire |
 | US-SYS-011 | MUST | REQ-MUST-07 (sécurité) | dispositifs | firmware | `CommandesBracelet`, `SignataireEcdsa`, `Commande`, simulateur `VerificateurCommandes` | `CommandesIT`, `VerificateurCommandesTest`, e2e `commandes.spec.ts` | En cours : commandes signées, numérotées et datées ; le bracelet simulé rejette et signale toute commande non authentifiée, la tentative est journalisée (ADR 0012) ; vérification à porter dans le firmware |
 | US-PAR-019 | SHOULD | REQ-MUST-02 (sécurité) | identite | parents | `Sessions` | `InscriptionEtSessionsIT` | En cours : rotation et révocation côté serveur, réauthentification à l'écran de connexion ; écran 14 et consultation hors ligne à faire |
-| US-KYC-001 | SHOULD | REQ-MUST-01 (exception) | identite | console |  |  | À faire |
+| US-KYC-001 | SHOULD | REQ-MUST-01 (exception) | identite | console, parents | `Litiges`, `Litige`, `GelPendantLitige` (intercepteur), `ControleurLitiges` ; console `kyc/{litiges,litige}` | `LitigesIT`, `litiges.spec.ts` (Vitest), e2e `console-litiges.spec.ts` | En cours : ouverture sur un dossier approuvé, réglages gelés, suspension conservatoire de la position, sécurité maintenue, décision fondée appliquée, journalisée et notifiée, écran 61. Reste : message dédié dans l'application Parents pendant le gel, contrôle du thème clair (ADR 0019) |
 
 ## Exigences système vérifiées par le socle
 

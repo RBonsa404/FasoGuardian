@@ -11,6 +11,12 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', loadComponent: () => import('./pages/pages').then((m) => m.Tableau) },
       { path: 'refuse', loadComponent: () => import('./pages/pages').then((m) => m.Refuse) },
+      { path: 'kyc/litiges', canActivate: [roleRequis('KYC')], loadComponent: () => import('./kyc/litiges').then((m) => m.Litiges) },
+      {
+        path: 'kyc/litiges/:id',
+        canActivate: [roleRequis('KYC')],
+        loadComponent: () => import('./kyc/litige').then((m) => m.EcranLitige),
+      },
       { path: 'kyc', canActivate: [roleRequis('KYC')], loadComponent: () => import('./kyc/file').then((m) => m.FileKyc) },
       {
         path: 'kyc/:id',
