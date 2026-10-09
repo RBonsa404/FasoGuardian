@@ -76,6 +76,11 @@ export const routes: Routes = [
   },
   { path: 'alertes', canActivate: [sessionRequise], loadComponent: () => import('./alertes/centre').then((m) => m.CentreAlertes) },
   {
+    path: 'alertes/:aid/signalement',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./alertes/signalement').then((m) => m.EcranSignalement),
+  },
+  {
     path: 'alertes/:aid',
     canActivate: [sessionRequise],
     loadComponent: () => import('./alertes/alerte').then((m) => m.EcranAlerte),

@@ -24,6 +24,8 @@ import bf.fasoguardian.alertes.infrastructure.DepotAlertes;
 import bf.fasoguardian.alertes.infrastructure.DepotSignalements;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
+import bf.fasoguardian.dispositifs.Bracelets;
+import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
 import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.famille.DossiersEnfants;
 import bf.fasoguardian.famille.DossiersEnfants.Identification;
@@ -72,6 +74,7 @@ public class Escalades {
     private final SecondFacteur secondFacteur;
     private final DossiersEnfants enfants;
     private final TrajetsRecents trajets;
+    private final Bracelets bracelets;
     private final RedacteurDossier redacteur;
     private final PasserelleFds passerelle;
     private final ServiceChiffrement chiffrement;
@@ -80,7 +83,8 @@ public class Escalades {
     private final DateTimeFormatter dateHeure;
 
     Escalades(DepotAlertes alertes, DepotActions actions, DepotSignalements signalements, AccesEnfant acces,
-            SecondFacteur secondFacteur, DossiersEnfants enfants, TrajetsRecents trajets, RedacteurDossier redacteur,
+            SecondFacteur secondFacteur, DossiersEnfants enfants, TrajetsRecents trajets, Bracelets bracelets,
+            RedacteurDossier redacteur,
             PasserelleFds passerelle, ServiceChiffrement chiffrement, JournalAudit journal, Clock horloge,
             @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
         this.alertes = alertes;
@@ -90,6 +94,7 @@ public class Escalades {
         this.secondFacteur = secondFacteur;
         this.enfants = enfants;
         this.trajets = trajets;
+        this.bracelets = bracelets;
         this.redacteur = redacteur;
         this.passerelle = passerelle;
         this.chiffrement = chiffrement;
@@ -128,7 +133,8 @@ public class Escalades {
         List<String> lignesDuJournal = actions.findByAlerteIdInOrderByEffectueeLe(List.of(alerteId)).stream()
                 .map(action -> dateHeure.format(action.effectueeLe()) + " — " + libelle(action)).toList();
         byte[] pdf = redacteur.rediger(new Contenu(reference, maintenant, enfants.pourSignalement(alerte.enfantId()),
-                libelle(alerte), alerte.ouverteLe(), lignesDuJournal,
+                bracelets.deLEnfant(alerte.enfantId()).map(BraceletConnu::numeroSerie).orElse(null), libelle(alerte),
+                alerte.ouverteLe(), lignesDuJournal,
                 trajets.depuis(alerte.enfantId(), maintenant.minus(TRAJET_JOINT))));
 
         Canal canal = passerelle.conventionActive() ? Canal.PASSERELLE : Canal.REMISE_PAR_LE_PARENT;

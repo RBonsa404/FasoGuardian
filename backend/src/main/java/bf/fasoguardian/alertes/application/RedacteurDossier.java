@@ -10,11 +10,13 @@ import bf.fasoguardian.telemetrie.TrajetsRecents.Point;
 public interface RedacteurDossier {
 
     /**
+     * @param numeroBracelet numéro gravé sur le bracelet que porte l'enfant, ou {@code null} sans bracelet
      * @param typeAlerte   nature de l'alerte à l'origine du signalement, en clair
      * @param journal      lignes horodatées du journal de l'alerte
      * @param trajet       positions des deux dernières heures, dans l'ordre chronologique
      */
-    record Contenu(String reference, Instant etabliLe, Identification enfant, String typeAlerte, Instant alerteOuverteLe,
+    record Contenu(String reference, Instant etabliLe, Identification enfant, String numeroBracelet, String typeAlerte,
+            Instant alerteOuverteLe,
             List<String> journal, List<Point> trajet) {
     }
 

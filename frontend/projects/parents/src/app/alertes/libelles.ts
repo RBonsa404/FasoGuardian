@@ -85,7 +85,7 @@ export function explication(alerte: Alerte): string {
 const STATUTS: Record<StatutAlerte, string> = {
   OUVERTE: $localize`:@@alerte.statut.ouverte:En attente`,
   ACQUITTEE: $localize`:@@alerte.statut.acquittee:Prise en charge`,
-  ESCALADEE: $localize`:@@alerte.statut.escaladee:Transmise`,
+  ESCALADEE: $localize`:@@alerte.statut.escaladee:Signalée`,
   LEVEE: $localize`:@@alerte.statut.levee:Levée`,
   FAUSSE_ALERTE: $localize`:@@alerte.statut.fausse:Fausse alerte`,
 };
@@ -99,7 +99,7 @@ export function actionLisible(action: ActionAlerte): string {
   const quoi = {
     OUVERTURE: $localize`:@@alerte.action.ouverture:Déclenchée`,
     ACQUITTEMENT: $localize`:@@alerte.action.acquittement:Prise en charge`,
-    ESCALADE: $localize`:@@alerte.action.escalade:Transmise aux forces de sécurité`,
+    ESCALADE: $localize`:@@alerte.action.escalade:Signalée aux forces de sécurité`,
     LEVEE: $localize`:@@alerte.action.levee:Levée`,
     FAUSSE_ALERTE: $localize`:@@alerte.action.fausse:Classée fausse alerte`,
     RESOLUTION: $localize`:@@alerte.action.resolution:Levée automatiquement`,

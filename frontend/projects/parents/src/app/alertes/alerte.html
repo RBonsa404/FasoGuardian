@@ -46,6 +46,11 @@
       }
       <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'carte']" i18n="@@alerte.direct">Voir en direct</a>
       <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'contacts']" i18n="@@alerte.contacts">Appeler un contact</a>
+      @if (a.statut === 'ACQUITTEE') {
+        <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-alert text-body font-semibold text-alert-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/alertes', a.id, 'signalement']" i18n="@@alerte.signaler">Signaler une disparition</a>
+      } @else if (a.statut === 'ESCALADEE') {
+        <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/alertes', a.id, 'signalement']" i18n="@@alerte.dossier">Dossier de signalement</a>
+      }
       @if (a.statut !== 'ESCALADEE') {
         <button fg-button variante="ghost" type="button" (click)="ouvrirCloture('fausse')" i18n="@@alerte.fausse">C'est une fausse alerte</button>
       }

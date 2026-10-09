@@ -71,6 +71,8 @@ class RedacteurDossierPdf implements RedacteurDossier {
         ligne(document, "Signes distinctifs", enfant.signesDistinctifs());
         ligne(document, "École", enfant.ecole());
         ligne(document, "Quartier", enfant.quartier());
+        ligne(document, "Bracelet porté", contenu.numeroBracelet() == null ? "aucun bracelet associé"
+                : contenu.numeroBracelet() + " (numéro gravé sur le bracelet FasoGuardian)");
 
         rubrique(document, "Informations médicales à connaître");
         if (enfant.informationsMedicales().isEmpty()) {

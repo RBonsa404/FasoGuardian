@@ -1,0 +1,101 @@
+<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/alertes', aid()]" i18n-aria-label="@@etape.retour" aria-label="Retour">
+  <fg-icon nom="retour" [taille]="22" />
+</a>
+
+@if (signalement(); as s) {
+  <div class="flex flex-col gap-1.5">
+    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.pret.titre">Dossier {{ s.reference }}</h1>
+    @if (s.canal === 'REMISE_PAR_LE_PARENT') {
+      <p class="m-0 text-body text-text-2" i18n="@@signalement.pret.remise">Remettez ce dossier au commissariat ou à la brigade de gendarmerie la plus proche. Il réunit ce qu'il faut pour reconnaître votre enfant et retracer son trajet récent.</p>
+    } @else {
+      <p class="m-0 text-body text-text-2" i18n="@@signalement.pret.transmis">Le dossier a été transmis au point de contact des forces de sécurité.</p>
+    }
+  </div>
+
+  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@signalement.etabli">Établi le</dt>
+      <dd class="m-0 text-right text-label font-semibold tabular-nums">{{ s.creeLe | date: "d MMM y 'à' HH:mm" }}</dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-label text-text-2" i18n="@@signalement.disponible">Téléchargeable jusqu'au</dt>
+      <dd class="m-0 text-right text-label font-semibold tabular-nums">{{ s.disponibleJusquAu | date: 'd MMM y' }}</dd>
+    </div>
+  </dl>
+
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+  @if (s.dossierDisponible) {
+    <button fg-button taille="lg" type="button" [chargement]="telechargement()" (click)="telecharger()" i18n="@@signalement.telecharger">Télécharger le PDF</button>
+  } @else {
+    <fg-banner ton="info" i18n="@@signalement.efface">Le dossier a été effacé au bout de 30 jours. Sa référence reste dans le journal de l'alerte.</fg-banner>
+  }
+  <p class="m-0 text-caption text-text-3" i18n="@@signalement.trace">La génération du dossier et chaque téléchargement sont inscrits au journal. Levez l'alerte dès que votre enfant est retrouvé.</p>
+} @else if (apercu(); as a) {
+  <div class="flex flex-col gap-1.5">
+    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.titre">Signaler une disparition</h1>
+    @if (a.conventionActive) {
+      <p class="m-0 text-body text-text-2" i18n="@@signalement.texte.convention">Le point de contact des forces de sécurité recevra ces informations.</p>
+    } @else {
+      <p class="m-0 text-body text-text-2" i18n="@@signalement.texte.remise">Aucun commissariat n'est encore relié à FasoGuardian : nous préparons un dossier PDF que vous remettrez vous-même aux autorités.</p>
+    }
+  </div>
+
+  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
+    <div class="flex flex-col gap-0.5 py-3">
+      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.enfant">Enfant</dt>
+      <dd class="m-0 text-body font-semibold">{{ identite() }}</dd>
+      @if (signes()) {
+        <dd class="m-0 text-label text-text-2">{{ signes() }}</dd>
+      }
+    </div>
+    <div class="flex flex-col gap-0.5 py-3">
+      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.medical">Informations médicales</dt>
+      @for (information of a.enfant.informationsMedicales; track information) {
+        <dd class="m-0 text-label font-semibold">{{ information }}</dd>
+      } @empty {
+        <dd class="m-0 text-label text-text-2" i18n="@@signalement.medical.aucune">Aucune information marquée critique</dd>
+      }
+    </div>
+    <div class="flex flex-col gap-0.5 py-3">
+      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.trajet">Trajet récent</dt>
+      <dd class="m-0 text-label font-semibold" i18n="@@signalement.trajet.valeur">2 h · {{ a.positionsDuTrajet }} position(s)</dd>
+    </div>
+    <div class="flex flex-col gap-0.5 py-3">
+      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.position">Dernière position</dt>
+      @if (a.dernierePosition; as p) {
+        <dd class="m-0 text-label font-semibold tabular-nums">{{ heure(p.mesureeLe) }} · {{ ilYA(p.mesureeLe) }} · ± {{ p.precisionM }} m</dd>
+      } @else {
+        <dd class="m-0 text-label text-text-2" i18n="@@signalement.position.aucune">Aucune depuis deux heures</dd>
+      }
+    </div>
+  </dl>
+
+  <fg-banner ton="attention" i18n="@@signalement.loi">Un faux signalement est puni par la loi. Le dossier reste téléchargeable pendant 30 jours.</fg-banner>
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+  <button fg-button class="mt-auto" variante="alert" taille="lg" type="button" (click)="erreurCode.set(null); confirmation.set(true)" i18n="@@signalement.confirmer">Confirmer par code SMS</button>
+
+  <app-second-facteur
+    action="ESCALADER_FORCES_SECURITE"
+    [ouverte]="confirmation()"
+    i18n-explication="@@signalement.code"
+    explication="Saisissez le code reçu par SMS pour confirmer le signalement."
+    [erreur]="erreurCode()"
+    (saisi)="confirmer($event)"
+    (annule)="confirmation.set(false)"
+  />
+} @else if (erreur(); as message) {
+  <fg-banner ton="erreur">{{ message }}</fg-banner>
+} @else if (alerte()?.statut === 'OUVERTE') {
+  <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.titre">Signaler une disparition</h1>
+  <fg-banner ton="info" i18n="@@signalement.indisponible">Prenez d'abord l'alerte en charge : seule une alerte prise en charge peut être signalée aux autorités.</fg-banner>
+} @else if (sansDossier()) {
+  <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.titre">Signaler une disparition</h1>
+  <fg-banner ton="info" i18n="@@signalement.aucun">Cette alerte est close et n'a pas donné lieu à un dossier de signalement.</fg-banner>
+} @else {
+  <fg-skeleton forme="carte" />
+  <fg-skeleton forme="carte" />
+}

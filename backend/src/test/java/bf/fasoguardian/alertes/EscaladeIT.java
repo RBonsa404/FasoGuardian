@@ -112,7 +112,7 @@ class EscaladeIT extends TestIntegration {
                 .isEqualTo(empreinte);
         String texte = texteDe(pdf);
         assertThat(texte).contains(reference, "OUÉDRAOGO Awa", "14/03/2018", "128 cm", "tresses courtes, cicatrice au genou droit",
-                "Les Manguiers", "Tampouy", "Allergie : Arachide", "Signalement par un tuteur", "12.37140, -1.51970",
+                "Les Manguiers", "Tampouy", "Bracelet porté : " + carte.numeroSerie(), "Allergie : Arachide", "Signalement par un tuteur", "12.37140, -1.51970",
                 "Trajet des deux dernières heures (2 positions)", "12.36500, -1.52500");
         assertThat(texte).as("ni information médicale non critique, ni position hors des deux heures")
                 .doesNotContain("orthophonique", "12.36000");
@@ -139,7 +139,8 @@ class EscaladeIT extends TestIntegration {
         json(post(base + "/escalade"), "{" + code(parent) + "}", parent.jeton()).andExpect(status().isCreated());
         // Sans bracelet ni fiche médicale, le dossier reste lisible et le dit.
         assertThat(texteDe(avec(get(base + "/signalement/dossier"), parent.jeton()).andReturn().getResponse().getContentAsByteArray()))
-                .contains("Aucune information médicale critique", "aucune position au cours des deux dernières heures", "non renseigné");
+                .contains("Aucune information médicale critique", "aucune position au cours des deux dernières heures", "non renseigné",
+                        "aucun bracelet associé");
 
         escalades.effacerLesDossiersEchus();
         avec(get(base + "/signalement/dossier"), parent.jeton()).andExpect(status().isOk());

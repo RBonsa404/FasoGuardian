@@ -42,6 +42,38 @@ export interface AutorisationRetrait {
   readonly retire: boolean;
 }
 
+/** Ce que le dossier de signalement contiendra, montré au parent avant qu'il confirme. */
+export interface ApercuSignalement {
+  readonly enfant: {
+    readonly prenom: string;
+    readonly nom: string;
+    /** Date ISO (AAAA-MM-JJ). */
+    readonly dateNaissance: string;
+    readonly tailleCm: number | null;
+    readonly signesDistinctifs: string | null;
+    readonly ecole: string | null;
+    readonly quartier: string | null;
+    /** Seulement les informations marquées critiques par le parent. */
+    readonly informationsMedicales: readonly string[];
+  };
+  /** Nombre de positions des deux dernières heures jointes au dossier. */
+  readonly positionsDuTrajet: number;
+  readonly dernierePosition: { readonly latitude: number; readonly longitude: number; readonly precisionM: number; readonly mesureeLe: string } | null;
+  /** Faux tant qu'aucune convention n'est signée : le dossier est alors remis par le parent. */
+  readonly conventionActive: boolean;
+}
+
+export interface Signalement {
+  /** Référence du dossier (FG-SIG-000412). */
+  readonly reference: string;
+  readonly canal: 'REMISE_PAR_LE_PARENT' | 'PASSERELLE';
+  readonly creeLe: string;
+  readonly disponibleJusquAu: string;
+  /** Faux une fois le dossier effacé, au bout de 30 jours. */
+  readonly dossierDisponible: boolean;
+  readonly empreinteDossier: string;
+}
+
 /** Client des alertes et de l'autorisation de retrait (US-ENF-001, US-PAR-008, 010, 012). */
 @Injectable({ providedIn: 'root' })
 export class ClientAlertes {
@@ -75,6 +107,26 @@ export class ClientAlertes {
 
   signaler(enfantId: string): Observable<Alerte> {
     return this.http.post<Alerte>(`/api/v1/enfants/${enfantId}/signalement`, {});
+  }
+
+  /** Aperçu du dossier de signalement ; consultation journalisée. */
+  apercuSignalement(id: string): Observable<ApercuSignalement> {
+    return this.http.get<ApercuSignalement>(`/api/v1/alertes/${id}/signalement/apercu`);
+  }
+
+  /** Escalade vers les forces de sécurité ; second facteur ESCALADER_FORCES_SECURITE requis. */
+  escalader(id: string, codeSecondFacteur: string): Observable<Signalement> {
+    return this.http.post<Signalement>(`/api/v1/alertes/${id}/escalade`, { codeSecondFacteur });
+  }
+
+  /** Échoue en RESSOURCE_INTROUVABLE si l'alerte n'a pas été escaladée. */
+  signalement(id: string): Observable<Signalement> {
+    return this.http.get<Signalement>(`/api/v1/alertes/${id}/signalement`);
+  }
+
+  /** Dossier PDF à remettre aux autorités ; téléchargement journalisé. */
+  dossierSignalement(id: string): Observable<Blob> {
+    return this.http.get(`/api/v1/alertes/${id}/signalement/dossier`, { responseType: 'blob' });
   }
 
   /** Journal des alertes de l'enfant ; consultation journalisée. */
