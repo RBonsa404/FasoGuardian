@@ -7,7 +7,9 @@ public interface ReceptionMessages {
     enum Flux {
         TELEMETRY,
         STATUS,
-        ALERT
+        ALERT,
+        /** Accusé d'exécution d'une commande. */
+        ACK
     }
 
     /**

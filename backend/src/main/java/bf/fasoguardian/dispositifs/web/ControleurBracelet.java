@@ -85,6 +85,13 @@ class ControleurBracelet {
         return sansCache(appairages.reglerModeEconomie(id(jeton), enfantId, demande.modeEconomie()));
     }
 
+    @Operation(summary = "Localiser maintenant : demande une position immédiate au bracelet (une fois par minute)")
+    @PostMapping("/localisation")
+    ResponseEntity<Void> localiser(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        appairages.localiserMaintenant(id(jeton), enfantId);
+        return ResponseEntity.accepted().build();
+    }
+
     @Operation(summary = "Désappaire le bracelet sans déclaration")
     @DeleteMapping
     ResponseEntity<Void> desappairer(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {

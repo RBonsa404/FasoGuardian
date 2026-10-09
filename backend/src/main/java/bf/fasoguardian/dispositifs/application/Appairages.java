@@ -68,15 +68,20 @@ public class Appairages {
     private final LiensTutelle liens;
     private final MessagesTuteurs messages;
     private final ServiceChiffrement chiffrement;
+    private final CommandesBracelet commandes;
     private final JournalAudit journal;
     private final Clock horloge;
     // Le code d'appairage est court : les essais infructueux d'un même parent sont comptés.
+    private final Cache<UUID, Boolean> demandesRecentes =
+            Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(1)).maximumSize(100_000).build();
     private final Cache<UUID, AtomicInteger> essaisRates =
             Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(15)).maximumSize(100_000).build();
 
     Appairages(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
             AccesEnfant acces, ProfilsQr profilsQr, SecondFacteur secondFacteur, LiensTutelle liens,
-            MessagesTuteurs messages, ServiceChiffrement chiffrement, JournalAudit journal, Clock horloge) {
+            MessagesTuteurs messages, ServiceChiffrement chiffrement, CommandesBracelet commandes, JournalAudit journal,
+            Clock horloge) {
+        this.commandes = commandes;
         this.bracelets = bracelets;
         this.appairages = appairages;
         this.configurations = configurations;
@@ -216,12 +221,29 @@ public class Appairages {
         Bracelet bracelet = bracelets.findById(appairage.braceletId()).orElseThrow();
         ConfigurationBracelet configuration = configurations.findById(bracelet.id()).orElseThrow();
         if (configuration.reglerModeEconomie(actif)) {
+            commandes.configurer(bracelet, configuration, tuteurId);
             journal.consigner(tuteurId, ROLE, actif ? "MODE_ECONOMIE_ACTIVE" : "MODE_ECONOMIE_DESACTIVE", "BRACELET",
                     bracelet.id().toString(), Resultat.SUCCES);
             prevenir(enfantId, "FasoGuardian : le mode économie du bracelet " + bracelet.numeroSerie() + " est "
                     + (actif ? "activé" : "désactivé") + ".");
         }
         return vue(bracelet, appairage);
+    }
+
+    /**
+     * « Localiser maintenant » : demande au bracelet une position immédiate, au plus une fois par minute et par
+     * enfant. La position arrive ensuite par le flux habituel.
+     */
+    @Transactional
+    public void localiserMaintenant(UUID tuteurId, UUID enfantId) {
+        acces.exigerTuteur(tuteurId, enfantId);
+        if (demandesRecentes.asMap().putIfAbsent(enfantId, Boolean.TRUE) != null) {
+            throw new ErreurMetier(CodeErreur.TROP_DE_REQUETES, "Une localisation vient d'être demandée. Patientez une minute.");
+        }
+        if (!commandes.localiser(tuteurId, enfantId)) {
+            demandesRecentes.invalidate(enfantId);
+            throw new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun bracelet en service n'est associé à cet enfant.");
+        }
     }
 
     /** Fin du suivi de 72 h des bracelets perdus : appairage clos, certificat révoqué. */

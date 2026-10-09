@@ -25,6 +25,19 @@ public abstract class TestIntegration {
     protected static final String ADMIN_IDENTIFIANT = "admin.test";
     protected static final String ADMIN_MOT_DE_PASSE = "mot-de-passe-de-test-" + java.util.UUID.randomUUID();
 
+    /** Paire de clés jetable de la plateforme : la clé publique sert aux tests à vérifier les commandes signées. */
+    protected static final java.security.KeyPair CLE_COMMANDES = cleDeSignature();
+
+    private static java.security.KeyPair cleDeSignature() {
+        try {
+            java.security.KeyPairGenerator generateur = java.security.KeyPairGenerator.getInstance("EC");
+            generateur.initialize(new java.security.spec.ECGenParameterSpec("secp256r1"));
+            return generateur.generateKeyPair();
+        } catch (java.security.GeneralSecurityException erreur) {
+            throw new IllegalStateException(erreur);
+        }
+    }
+
     @ServiceConnection
     static final PostgreSQLContainer postgres = new PostgreSQLContainer(
             DockerImageName.parse("postgis/postgis:17-3.5").asCompatibleSubstituteFor("postgres"));
@@ -39,6 +52,8 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        registre.add("fasoguardian.commandes.cle-privee",
+                () -> Base64.getEncoder().encodeToString(CLE_COMMANDES.getPrivate().getEncoded()));
         // Délai plancher de la page publique QR réduit pour les tests.
         registre.add("fasoguardian.qr.delai-minimal", () -> "PT0.08S");
         registre.add("fasoguardian.amorcage.admin.identifiant", () -> ADMIN_IDENTIFIANT);

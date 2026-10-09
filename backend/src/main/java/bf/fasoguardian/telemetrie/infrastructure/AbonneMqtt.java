@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 public class AbonneMqtt implements MqttCallbackExtended {
 
     private static final Logger journalTechnique = LoggerFactory.getLogger(AbonneMqtt.class);
-    private static final Pattern SUJET = Pattern.compile("fg/([A-Za-z0-9-]{1,32})/(telemetry|status|alert)");
+    private static final Pattern SUJET = Pattern.compile("fg/([A-Za-z0-9-]{1,32})/(telemetry|status|alert|ack)");
     private static final Map<String, Flux> FLUX =
-            Map.of("telemetry", Flux.TELEMETRY, "status", Flux.STATUS, "alert", Flux.ALERT);
+            Map.of("telemetry", Flux.TELEMETRY, "status", Flux.STATUS, "alert", Flux.ALERT, "ack", Flux.ACK);
     private static final int QOS = 1;
 
     private final ProprietesMqtt proprietes;
@@ -70,6 +70,15 @@ public class AbonneMqtt implements MqttCallbackExtended {
         } catch (MqttException erreur) {
             journalTechnique.warn("Fermeture de la connexion MQTT : {}", erreur.getMessage());
         }
+    }
+
+    /**
+     * Publie une commande signée vers un bracelet, en QoS 1 : le broker la garde pour un bracelet hors ligne.
+     *
+     * @throws MqttException si le broker est injoignable ; la commande sera réémise
+     */
+    public void publierCommande(String numeroSerie, byte[] message) throws MqttException {
+        client.publish("fg/" + numeroSerie + "/cmd", message, QOS, false);
     }
 
     public boolean connecte() {
@@ -129,7 +138,7 @@ public class AbonneMqtt implements MqttCallbackExtended {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken jeton) {
-        // Le serveur ne publie rien par cette connexion.
+        // Rien à faire : une commande n'est tenue pour reçue qu'à l'accusé du bracelet.
     }
 
     private String prefixe() {

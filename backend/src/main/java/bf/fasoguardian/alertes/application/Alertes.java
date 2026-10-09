@@ -118,6 +118,7 @@ public class Alertes {
     public AlerteVue lever(UUID tuteurId, UUID alerteId, String motif) {
         Alerte alerte = pourTuteur(tuteurId, alerteId);
         transition(tuteurId, alerte, "ALERTE_LEVEE", () -> alerte.lever(tuteurId, motif, horloge.instant()));
+        ouverture.relacherModeAlerte(alerte.enfantId());
         return vues(tuteurId, List.of(alerte)).get(0);
     }
 
@@ -126,6 +127,7 @@ public class Alertes {
         Alerte alerte = pourTuteur(tuteurId, alerteId);
         transition(tuteurId, alerte, "ALERTE_CLASSEE_FAUSSE",
                 () -> alerte.classerFausseAlerte(tuteurId, motif, horloge.instant()));
+        ouverture.relacherModeAlerte(alerte.enfantId());
         return vues(tuteurId, List.of(alerte)).get(0);
     }
 
@@ -147,7 +149,7 @@ public class Alertes {
 
     private void transition(UUID tuteurId, Alerte alerte, String action, java.util.function.Supplier<ActionAlerte> effet) {
         try {
-            actions.save(effet.get());
+            actions.saveAndFlush(effet.get());
         } catch (TransitionIllegaleException erreur) {
             throw new ErreurMetier(CodeErreur.CONFLIT, "Cette action n'est plus possible : l'alerte a changé d'état.");
         } catch (IllegalArgumentException erreur) {

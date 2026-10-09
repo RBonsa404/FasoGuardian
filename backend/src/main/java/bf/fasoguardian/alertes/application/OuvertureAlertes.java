@@ -14,6 +14,7 @@ import bf.fasoguardian.alertes.domaine.Alerte.Statut;
 import bf.fasoguardian.alertes.domaine.Alerte.Type;
 import bf.fasoguardian.alertes.infrastructure.DepotActions;
 import bf.fasoguardian.alertes.infrastructure.DepotAlertes;
+import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.identite.LiensTutelle;
 import bf.fasoguardian.identite.MessagesTuteurs;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -36,15 +37,17 @@ public class OuvertureAlertes {
 
     private final DepotAlertes alertes;
     private final DepotActions actions;
+    private final Commandes commandes;
     private final LiensTutelle liens;
     private final MessagesTuteurs messages;
     private final MeterRegistry metriques;
     private final Clock horloge;
 
-    OuvertureAlertes(DepotAlertes alertes, DepotActions actions, LiensTutelle liens, MessagesTuteurs messages,
+    OuvertureAlertes(DepotAlertes alertes, DepotActions actions, Commandes commandes, LiensTutelle liens, MessagesTuteurs messages,
             MeterRegistry metriques, Clock horloge) {
         this.alertes = alertes;
         this.actions = actions;
+        this.commandes = commandes;
         this.liens = liens;
         this.messages = messages;
         this.metriques = metriques;
@@ -73,8 +76,21 @@ public class OuvertureAlertes {
         metriques.counter("fasoguardian.alertes.ouvertes", "type", type.name()).increment();
         if (alerte.gravite() == Gravite.CRITIQUE) {
             prevenir(alerte, acteurId, maintenant);
+            // Le bracelet passe à une position toutes les 60 secondes (US-ENF-002).
+            commandes.modeAlerte(enfantId, true);
         }
         return Optional.of(alerte);
+    }
+
+    /** Une alerte vient d'être close : le bracelet quitte le mode alerte s'il ne reste aucune alerte critique. */
+    @Transactional
+    public void relacherModeAlerte(UUID enfantId) {
+        boolean critiqueEnCours = NON_CLOSES.stream()
+                .flatMap(statut -> alertes.findByEnfantIdAndStatut(enfantId, statut).stream())
+                .anyMatch(alerte -> alerte.gravite() == Gravite.CRITIQUE);
+        if (!critiqueEnCours) {
+            commandes.modeAlerte(enfantId, false);
+        }
     }
 
     /** Repli SMS des alertes importantes restées sans prise en charge (US-ENF-001). */

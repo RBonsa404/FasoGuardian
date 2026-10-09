@@ -15,6 +15,7 @@ import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
+import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.identite.LiensTutelle;
 import bf.fasoguardian.identite.MessagesTuteurs;
@@ -43,6 +44,7 @@ public class Retraits {
     private final DepotAutorisations autorisations;
     private final OuvertureAlertes ouverture;
     private final Bracelets bracelets;
+    private final Commandes commandes;
     private final AccesEnfant acces;
     private final SecondFacteur secondFacteur;
     private final LiensTutelle liens;
@@ -50,12 +52,14 @@ public class Retraits {
     private final JournalAudit journal;
     private final Clock horloge;
 
-    Retraits(DepotAutorisations autorisations, OuvertureAlertes ouverture, Bracelets bracelets, AccesEnfant acces,
+    Retraits(DepotAutorisations autorisations, OuvertureAlertes ouverture, Bracelets bracelets, Commandes commandes,
+            AccesEnfant acces,
             SecondFacteur secondFacteur, LiensTutelle liens, MessagesTuteurs messages, JournalAudit journal,
             Clock horloge) {
         this.autorisations = autorisations;
         this.ouverture = ouverture;
         this.bracelets = bracelets;
+        this.commandes = commandes;
         this.acces = acces;
         this.secondFacteur = secondFacteur;
         this.liens = liens;
@@ -87,6 +91,7 @@ public class Retraits {
         }
         secondFacteur.exiger(tuteurId, ActionSensible.AUTORISER_RETRAIT, codeSecondFacteur);
         autorisations.save(autorisation);
+        commandes.fenetreDeRetrait(enfantId, autorisation.fin());
         journal.consigner(tuteurId, ROLE, "RETRAIT_AUTORISE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
         prevenir(enfantId, "FasoGuardian : le retrait du bracelet " + bracelet.numeroSerie() + " est autorisé pendant "
                 + duree(dureeMinutes) + ".");
@@ -104,6 +109,7 @@ public class Retraits {
         } catch (IllegalArgumentException erreur) {
             throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE, erreur.getMessage() + ".");
         }
+        commandes.fenetreDeRetrait(enfantId, autorisation.fin());
         journal.consigner(tuteurId, ROLE, "RETRAIT_PROLONGE", "BRACELET", autorisation.braceletId().toString(),
                 Resultat.SUCCES);
         return vue(autorisation);
@@ -115,6 +121,7 @@ public class Retraits {
         acces.exigerTuteur(tuteurId, enfantId);
         AutorisationRetrait autorisation = active(enfantId);
         autorisation.terminer(horloge.instant());
+        commandes.fenetreDeRetrait(enfantId, null);
         journal.consigner(tuteurId, ROLE, "RETRAIT_TERMINE", "BRACELET", autorisation.braceletId().toString(),
                 Resultat.SUCCES);
     }
@@ -141,6 +148,7 @@ public class Retraits {
         autorisations.findByBraceletIdAndStatut(braceletId, Statut.ACTIVE).filter(AutorisationRetrait::retire)
                 .ifPresent(autorisation -> {
                     autorisation.terminer(horloge.instant());
+                    commandes.fenetreDeRetrait(autorisation.enfantId(), null);
                     journal.consigner(null, "SYSTEME", "BRACELET_REMIS", "BRACELET", braceletId.toString(), Resultat.SUCCES);
                 });
     }

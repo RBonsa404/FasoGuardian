@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
+import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.telemetrie.EvenementBraceletRecu;
 import bf.fasoguardian.telemetrie.PositionRecue;
 import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
@@ -44,15 +45,17 @@ public class Ingestion implements ReceptionMessages {
     private static final Logger journalTechnique = LoggerFactory.getLogger(Ingestion.class);
 
     private final Bracelets bracelets;
+    private final Commandes commandes;
     private final DepotTelemetrie depot;
     private final ApplicationEventPublisher evenements;
     private final JsonMapper json;
     private final MeterRegistry metriques;
     private final Clock horloge;
 
-    Ingestion(Bracelets bracelets, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
+    Ingestion(Bracelets bracelets, Commandes commandes, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
             MeterRegistry metriques, Clock horloge) {
         this.bracelets = bracelets;
+        this.commandes = commandes;
         this.depot = depot;
         this.evenements = evenements;
         this.json = json;
@@ -71,6 +74,7 @@ public class Ingestion implements ReceptionMessages {
             case TELEMETRY -> telemetrie(identifiantAppareil, message);
             case STATUS -> etat(identifiantAppareil, message);
             case ALERT -> alerte(identifiantAppareil, message);
+            case ACK -> accuse(identifiantAppareil, message);
         }
     }
 
@@ -154,6 +158,22 @@ public class Ingestion implements ReceptionMessages {
             }
             evenements.publishEvent(new EvenementBraceletRecu(connu.id(), connu.enfantId(), type, latitude, longitude,
                     mesureLe));
+            return Resultat.ACCEPTE;
+        });
+    }
+
+    /**
+     * Message du flux {@code ack} : {@code {"id":"…","ok":true}}. Avec {@code "ok":false}, le bracelet signale
+     * une commande qu'il a refusée, faute de signature valide par exemple (US-SYS-011).
+     */
+    @Transactional
+    public Resultat accuse(String identifiantAppareil, byte[] message) {
+        return compter("ack", () -> {
+            JsonNode corps = lire(message);
+            if (corps == null || !corps.path("id").isString() || !corps.path("ok").isBoolean()) {
+                return Resultat.INVALIDE;
+            }
+            commandes.accuser(identifiantAppareil, corps.path("id").asString(), corps.path("ok").asBoolean());
             return Resultat.ACCEPTE;
         });
     }
