@@ -14,7 +14,8 @@ import { erreurLisible } from '../commun/erreurs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col gap-2 px-5 pt-10">
-      <img src="logo-sombre.svg" alt="FasoGuardian" class="mb-6 h-8 w-auto self-start" />
+      <img src="logo-sombre.svg" alt="FasoGuardian" class="mb-6 h-8 w-auto self-start clair:hidden" />
+      <img src="logo-clair.svg" alt="FasoGuardian" class="mb-6 hidden h-8 w-auto self-start clair:block" />
       <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@connexion.titre">Connexion</h1>
       <p class="m-0 text-body text-text-2" i18n="@@connexion.texte">Retrouvez la position et les alertes de votre enfant.</p>
     </div>

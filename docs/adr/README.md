@@ -35,3 +35,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0025](0025-essai-en-temperature-hors-perimetre-logiciel.md) | US-SYS-009 : la tenue au-delà de 50 °C se prouve par un essai en étuve sur prototype, pas par du code | Acceptée |
 | [0026](0026-espace-parent-sur-grand-ecran.md) | Version web de l'espace parent : même application, barre latérale et cartes plein cadre à partir de 1024 px, téléphone inchangé | Acceptée |
 | [0027](0027-mise-a-jour-signee-du-logiciel-embarque.md) | Mise à jour du logiciel embarqué : manifeste signé par une clé de publication distincte, vérifié par la plateforme puis par le bracelet ; quatre vagues manuelles ; parents informés ; notifications relues dans l'application | Acceptée |
+| [0028](0028-theme-clair-et-choix-de-l-apparence.md) | Le thème suit le système ; la personne peut imposer sombre ou clair ; choix gardé sur l'appareil et appliqué avant le premier affichage | Acceptée |

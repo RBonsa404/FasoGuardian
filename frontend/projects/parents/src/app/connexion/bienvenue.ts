@@ -55,7 +55,8 @@ const VOLETS: readonly Volet[] = [
       <fg-icon [nom]="volets[volet()].icone" [taille]="96" />
     </div>
     <div class="flex flex-col gap-2.5 px-6 pt-7" aria-live="polite">
-      <img src="logo-sombre.svg" alt="FasoGuardian" class="h-6 w-auto self-start" />
+      <img src="logo-sombre.svg" alt="FasoGuardian" class="h-6 w-auto self-start clair:hidden" />
+      <img src="logo-clair.svg" alt="FasoGuardian" class="hidden h-6 w-auto self-start clair:block" />
       <h1 class="m-0 text-h2 font-bold tracking-tight">{{ volets[volet()].titre }}</h1>
       <p class="m-0 text-body text-text-2">{{ volets[volet()].texte }}</p>
     </div>

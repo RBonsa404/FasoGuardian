@@ -5,8 +5,12 @@
 /* Les classes utilitaires des composants fg-* vivent dans la bibliothèque. */
 @source '../lib';
 
+/* Variante « clair: » pour ce qui change avec le thème sans passer par un jeton (les logos, par exemple). */
+@custom-variant clair (&:where([data-theme='clair'], [data-theme='clair'] *));
+
 @layer base {
   html {
+    color-scheme: dark;
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
@@ -24,5 +28,11 @@
   h2,
   h3 {
     font-family: var(--font-display);
+  }
+}
+
+@layer base {
+  html[data-theme='clair'] {
+    color-scheme: light;
   }
 }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { ClientAuthentification, Compte, RoleInterne, Session } from 'api';
-import { FgBouton } from 'ui';
+import { FgBouton, FgChoixTheme } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
 
@@ -33,14 +33,14 @@ const ENTREES: readonly Entree[] = [
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */
 @Component({
   selector: 'app-structure',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgChoixTheme],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside class="flex w-62 flex-none flex-col gap-1 border-r border-line bg-surface px-3.5 py-5">
-      <div class="flex items-center gap-2.5 px-2 pb-4.5">
+      <div class="flex flex-wrap items-center gap-2.5 px-2 pb-4.5">
         <img src="favicon.svg" alt="" class="size-6" />
         <strong class="font-display text-body font-bold" i18n="@@console.titre">Console</strong>
-        <span class="ml-auto flex gap-1">
+        <span class="ml-auto flex flex-wrap justify-end gap-1">
           @for (role of session.roles(); track role) {
             <span class="rounded-xs bg-surface-2 px-1.5 py-0.5 text-caption font-semibold text-text-2">{{ role }}</span>
           }
@@ -57,7 +57,8 @@ const ENTREES: readonly Entree[] = [
           >
         }
       </nav>
-      <div class="mt-auto flex flex-col gap-2.5 rounded-md border border-line bg-bg p-3">
+      <fg-theme class="mt-auto" />
+      <div class="flex flex-col gap-2.5 rounded-md border border-line bg-bg p-3">
         <div class="flex flex-col gap-0.5">
           <strong class="text-label font-semibold break-all">{{ compte()?.identifiant }}</strong>
           <span class="text-caption text-text-3">{{ fonctions() }}</span>

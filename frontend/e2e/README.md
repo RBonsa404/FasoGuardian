@@ -20,6 +20,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `grand-ecran.spec.ts` | Espace parent sur un poste de travail : barre latérale, cartes plein cadre (tableau de bord, position, tracé d'une zone, trajets), retour à l'affichage téléphone | US-PAR-006, 007 |
 | `ecrans-parents.spec.ts` | Introduction à la première visite ; aperçu de la page QR conforme à la page publique ; état de maintenance du bracelet | US-PAR-001, US-TRS-001, US-SAV-001 |
 | `console-ota.spec.ts` | Image non signée refusée ; image signée déployée par vagues, vérifiée par le bracelet simulé qui redémarre sur la nouvelle version ; parent informé | US-PAR-013 |
+| `theme.spec.ts` | Thème clair : suivi du système, choix dans les paramètres, persistance ; captures en clair de l'espace parent et de la console | transverse |
 
 ## Lancer les tests
 

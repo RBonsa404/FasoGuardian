@@ -13,3 +13,5 @@ export * from './lib/saisie/code-appairage';
 export * from './lib/saisie/champ';
 export * from './lib/interrupteur/interrupteur';
 export * from './lib/feuille/feuille';
+export * from './lib/theme/theme';
+export * from './lib/theme/choix-theme';
