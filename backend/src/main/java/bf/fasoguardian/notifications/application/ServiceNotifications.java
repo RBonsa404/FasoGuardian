@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import bf.fasoguardian.audit.RegistrePurges;
 import bf.fasoguardian.notifications.Annuaire;
 import bf.fasoguardian.notifications.Notifications;
 import bf.fasoguardian.notifications.ServiceSms;
@@ -45,11 +46,14 @@ public class ServiceNotifications implements Notifications {
     private final ApplicationEventPublisher evenements;
     private final JsonMapper json;
     private final MeterRegistry metriques;
+    private final RegistrePurges registre;
     private final Clock horloge;
 
     ServiceNotifications(DepotNotifications notifications, DepotAbonnementsPush abonnements, CanalPush push, ServiceSms sms,
-            Annuaire annuaire, ApplicationEventPublisher evenements, JsonMapper json, MeterRegistry metriques, Clock horloge) {
+            Annuaire annuaire, ApplicationEventPublisher evenements, JsonMapper json, MeterRegistry metriques,
+            RegistrePurges registre, Clock horloge) {
         this.notifications = notifications;
+        this.registre = registre;
         this.abonnements = abonnements;
         this.push = push;
         this.sms = sms;
@@ -144,7 +148,7 @@ public class ServiceNotifications implements Notifications {
     @SchedulerLock(name = "notifications-purge")
     @Transactional
     public void purger() {
-        notifications.deleteByCreeeLeBefore(horloge.instant().minus(CONSERVATION));
+        registre.consigner("NOTIFICATIONS", notifications.deleteByCreeeLeBefore(horloge.instant().minus(CONSERVATION)));
     }
 
     // -------------------------------------------------------------------- aides

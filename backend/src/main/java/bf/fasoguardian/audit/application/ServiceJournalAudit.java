@@ -35,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 class ServiceJournalAudit implements JournalAudit {
 
     static final String GENESE = "0".repeat(64);
+    /** Actions consignées par chaque contrôle de la chaîne : l'écran du journal en tire l'état affiché. */
+    static final String CHAINE_VERIFIEE = "CHAINE_VERIFIEE";
+    static final String CHAINE_ROMPUE = "CHAINE_ROMPUE";
     private static final long VERROU = 0x4647_4155_4449_54L;
     private static final Logger journal = LoggerFactory.getLogger(ServiceJournalAudit.class);
 
@@ -122,7 +125,8 @@ class ServiceJournalAudit implements JournalAudit {
         premiereEntreeAlteree().ifPresentOrElse(id -> {
             ruptures.increment();
             journal.error("Journal d'audit altéré : chaîne rompue à l'entrée {}", id);
-        }, () -> journal.info("Journal d'audit intègre"));
+            consigner(null, "SYSTEME", CHAINE_ROMPUE, "JOURNAL", Long.toString(id), Resultat.REFUS);
+        }, () -> consigner(null, "SYSTEME", CHAINE_VERIFIEE, "JOURNAL", null, Resultat.SUCCES));
     }
 
     /** Chaque accès refusé par le contrôle d'accès est journalisé (REQ-SYS-016). */

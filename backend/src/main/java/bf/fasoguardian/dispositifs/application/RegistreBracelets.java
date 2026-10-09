@@ -1,5 +1,6 @@
 package bf.fasoguardian.dispositifs.application;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +36,13 @@ class RegistreBracelets implements Bracelets {
     public Optional<BraceletConnu> deLEnfant(UUID enfantId) {
         return appairages.findByEnfantIdAndFinIsNull(enfantId).flatMap(
                 appairage -> bracelets.findById(appairage.braceletId()).map(bracelet -> connu(bracelet, appairage)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Periode> periodesDe(UUID enfantId) {
+        return appairages.findByEnfantIdOrderByDebut(enfantId).stream().map(appairage -> new Periode(appairage.braceletId(),
+                bracelets.findById(appairage.braceletId()).orElseThrow().numeroSerie(), appairage.debut(), appairage.fin())).toList();
     }
 
     /** Un bracelet perdu émet encore pendant les 72 h de suivi ; un certificat révoqué ferme tout. */

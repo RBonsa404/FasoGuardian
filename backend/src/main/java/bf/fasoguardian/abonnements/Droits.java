@@ -1,6 +1,6 @@
 package bf.fasoguardian.abonnements;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -21,6 +21,9 @@ public interface Droits {
 
     DroitsEnfant de(UUID enfantId);
 
-    /** Enfants dont l'abonnement ouvre un historique plus long que le nombre de jours donné. */
-    Set<UUID> enfantsAHistoriqueDePlusDe(int jours);
+    /**
+     * Durée de conservation des positions fixée par l'offre, en jours, pour chaque enfant couvert par un
+     * abonnement. Un impayé ne la raccourcit pas : les positions reviennent au paiement.
+     */
+    Map<UUID, Integer> joursDeConservation();
 }

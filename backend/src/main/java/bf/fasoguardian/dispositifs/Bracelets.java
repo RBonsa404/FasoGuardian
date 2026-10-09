@@ -1,6 +1,7 @@
 package bf.fasoguardian.dispositifs;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,4 +26,11 @@ public interface Bracelets {
 
     /** Bracelet actuellement appairé à l'enfant. */
     Optional<BraceletConnu> deLEnfant(UUID enfantId);
+
+    /** @param fin fin de l'appairage, ou {@code null} s'il est en cours */
+    record Periode(UUID braceletId, String numeroSerie, Instant debut, Instant fin) {
+    }
+
+    /** Tous les appairages de l'enfant, passés et en cours : les données d'un bracelet ne sont les siennes que sur ces périodes. */
+    List<Periode> periodesDe(UUID enfantId);
 }

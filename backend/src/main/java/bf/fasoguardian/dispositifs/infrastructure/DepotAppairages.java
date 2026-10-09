@@ -11,6 +11,8 @@ public interface DepotAppairages extends JpaRepository<Appairage, UUID> {
 
     Optional<Appairage> findByEnfantIdAndFinIsNull(UUID enfantId);
 
+    List<Appairage> findByEnfantIdOrderByDebut(UUID enfantId);
+
     Optional<Appairage> findByBraceletIdAndFinIsNull(UUID braceletId);
 
     List<Appairage> findByBraceletIdOrderByDebutDesc(UUID braceletId);

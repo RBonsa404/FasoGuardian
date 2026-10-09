@@ -60,8 +60,9 @@ class InscriptionEtSessionsIT extends TestIntegration {
         String telephone = nouveauNumero();
         inscrire(telephone).andExpect(status().isCreated());
 
-        var lignes = jdbc.queryForList(
-                "SELECT telephone_chiffre, telephone_hash, mdp_argon2id FROM identite.utilisateur WHERE type = 'TUTEUR'");
+        // Un compte effacé à la demande de son titulaire ne garde ni numéro ni mot de passe.
+        var lignes = jdbc.queryForList("SELECT telephone_chiffre, telephone_hash, mdp_argon2id FROM identite.utilisateur"
+                + " WHERE type = 'TUTEUR' AND efface_le IS NULL");
         assertThat(lignes).isNotEmpty().allSatisfy(ligne -> {
             assertThat(new String((byte[]) ligne.get("telephone_chiffre"), StandardCharsets.ISO_8859_1))
                     .doesNotContain(telephone);

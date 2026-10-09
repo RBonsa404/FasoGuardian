@@ -157,6 +157,11 @@ public class SafeZones {
         journal.consigner(tuteurId, ROLE, "SAFE_ZONE_SUPPRIMEE", "SAFE_ZONE", zone.id().toString(), Resultat.SUCCES);
     }
 
+    /** Les zones de l'enfant viennent d'être effacées hors de ce service : le cache ne doit plus les servir. */
+    void oublier(UUID enfantId) {
+        parEnfant.invalidate(enfantId);
+    }
+
     /** Zones de l'enfant pour l'évaluation des positions, servies depuis le cache. */
     List<SafeZone> pourEvaluation(UUID enfantId) {
         return parEnfant.get(enfantId, depot::deLEnfant);

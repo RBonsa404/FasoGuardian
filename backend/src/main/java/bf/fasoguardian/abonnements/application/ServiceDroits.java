@@ -1,9 +1,9 @@
 package bf.fasoguardian.abonnements.application;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 import bf.fasoguardian.abonnements.Droits;
@@ -33,6 +33,7 @@ class ServiceDroits implements Droits {
     /** Offre dont l'abonnement couvre aussi les autres enfants du tuteur qui la paie. */
     static final String OFFRE_FAMILIALE = "PREMIUM";
     private static final List<Statut> SERVIS = List.of(Statut.ACTIF, Statut.EN_RETARD);
+    private static final List<Statut> PAYES = List.of(Statut.ACTIF, Statut.EN_RETARD, Statut.RESTREINT);
 
     private final DepotAbonnements abonnements;
     private final DepotOffres offres;
@@ -67,17 +68,16 @@ class ServiceDroits implements Droits {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<UUID> enfantsAHistoriqueDePlusDe(int jours) {
-        Set<UUID> enfants = new HashSet<>();
-        for (Abonnement abonnement : abonnements.findByStatutIn(SERVIS)) {
-            if (offres.findById(abonnement.offreCode()).orElseThrow().historiqueJours() > jours) {
-                enfants.add(abonnement.enfantId());
-                if (OFFRE_FAMILIALE.equals(abonnement.offreCode())) {
-                    enfants.addAll(liens.enfantsDe(abonnement.tuteurId()));
-                }
+    public Map<UUID, Integer> joursDeConservation() {
+        Map<UUID, Integer> parEnfant = new HashMap<>();
+        for (Abonnement abonnement : abonnements.findByStatutIn(PAYES)) {
+            int jours = offres.findById(abonnement.offreCode()).orElseThrow().historiqueJours();
+            parEnfant.merge(abonnement.enfantId(), jours, Math::max);
+            if (OFFRE_FAMILIALE.equals(abonnement.offreCode()) && abonnement.statut() != Statut.RESTREINT) {
+                liens.enfantsDe(abonnement.tuteurId()).forEach(enfant -> parEnfant.merge(enfant, jours, Math::max));
             }
         }
-        return enfants;
+        return parEnfant;
     }
 
     private static DroitsEnfant pleins(Offre offre) {

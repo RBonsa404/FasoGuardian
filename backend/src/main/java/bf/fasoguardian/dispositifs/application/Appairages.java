@@ -209,20 +209,35 @@ public class Appairages {
     @Transactional
     public void desappairer(UUID tuteurId, UUID enfantId) {
         acces.exigerTuteur(tuteurId, enfantId);
-        Appairage appairage = appairageActif(enfantId);
+        Bracelet bracelet = rompre(appairageActif(enfantId));
+        journal.consigner(tuteurId, ROLE, "BRACELET_DESAPPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
+        prevenir(enfantId, "BRACELET_DESAPPAIRE", "Bracelet désappairé", "le bracelet " + bracelet.numeroSerie()
+                + " n'est plus associé à votre enfant.");
+    }
+
+    /** Effacement des données de l'enfant : son bracelet, s'il en porte un, est désappairé d'office. */
+    @Transactional
+    public boolean desappairerPourEffacement(UUID enfantId) {
+        return appairages.findByEnfantIdAndFinIsNull(enfantId).map(appairage -> {
+            Bracelet bracelet = rompre(appairage);
+            journal.consigner(null, "SYSTEME", "BRACELET_DESAPPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
+            return true;
+        }).orElse(false);
+    }
+
+    /** Clôt l'appairage : un bracelet perdu termine son suivi, les autres reviennent au service après-vente. */
+    private Bracelet rompre(Appairage appairage) {
         Bracelet bracelet = bracelets.findById(appairage.braceletId()).orElseThrow();
         Instant maintenant = horloge.instant();
         if (bracelet.statut() == StatutBracelet.PERDU) {
             bracelet.cloreSuivi(maintenant);
-            profilsQr.suspendre(enfantId);
+            profilsQr.suspendre(appairage.enfantId());
         } else {
             bracelet.retournerAuSav(maintenant);
             profilsQr.dissocier(bracelet.jetonQrSha256());
         }
         appairage.clore(MotifFin.DESAPPAIRAGE, maintenant);
-        journal.consigner(tuteurId, ROLE, "BRACELET_DESAPPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
-        prevenir(enfantId, "BRACELET_DESAPPAIRE", "Bracelet désappairé", "le bracelet " + bracelet.numeroSerie()
-                + " n'est plus associé à votre enfant.");
+        return bracelet;
     }
 
     /** Toute modification de configuration est journalisée et notifiée (US-PAR-013). */

@@ -6,12 +6,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import bf.fasoguardian.abonnements.Droits;
 import bf.fasoguardian.audit.JournalAudit;
+import bf.fasoguardian.audit.RegistrePurges;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
@@ -53,9 +56,11 @@ public class Positions implements TrajetsRecents {
     private final Duration conservation;
     private final Duration conservationMaximale;
     private final Droits droits;
+    private final RegistrePurges registre;
     private final ZoneId fuseau;
 
     Positions(Bracelets bracelets, DepotTelemetrie depot, AccesEnfant acces, JournalAudit journal, Clock horloge, Droits droits,
+            RegistrePurges registre,
             @Value("${fasoguardian.telemetrie.conservation-positions:P30D}") Duration conservation,
             @Value("${fasoguardian.telemetrie.conservation-maximale:P90D}") Duration conservationMaximale,
             @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
@@ -68,6 +73,7 @@ public class Positions implements TrajetsRecents {
         this.conservation = conservation;
         this.conservationMaximale = conservationMaximale;
         this.droits = droits;
+        this.registre = registre;
     }
 
     @Transactional
@@ -121,7 +127,7 @@ public class Positions implements TrajetsRecents {
 
     /**
      * Prépare les partitions à venir et applique la durée de conservation des positions (FG-DOC-04, FG-DOC-06
-     * tableau 18) : 30 jours par défaut, 90 jours au plus pour les enfants dont l'offre ouvre l'historique étendu.
+     * tableau 18) : 30 jours par défaut, 24 heures pour l'offre sans historique, 90 jours au plus pour l'offre à historique étendu.
      */
     @Scheduled(cron = "${fasoguardian.telemetrie.entretien:0 20 2 * * *}")
     @SchedulerLock(name = "telemetrie-entretien")
@@ -131,9 +137,19 @@ public class Positions implements TrajetsRecents {
         for (int mois = 0; mois <= 2; mois++) {
             depot.creerPartitions(jour.plusMonths(mois));
         }
-        depot.purgerPositions(maintenant.minus(conservationMaximale));
-        List<UUID> conserves = droits.enfantsAHistoriqueDePlusDe((int) conservation.toDays()).stream()
-                .map(bracelets::deLEnfant).flatMap(Optional::stream).map(BraceletConnu::id).toList();
-        depot.purgerPositionsSauf(maintenant.minus(conservation), conserves);
+        long supprimees = depot.purgerPositions(maintenant.minus(conservationMaximale));
+        // Les enfants dont l'offre fixe une autre durée que la durée par défaut sont purgés à part.
+        int parDefaut = (int) conservation.toDays();
+        Map<UUID, Integer> particuliers = new HashMap<>();
+        droits.joursDeConservation().forEach((enfant, jours) -> {
+            if (jours != parDefaut) {
+                bracelets.deLEnfant(enfant).ifPresent(connu -> particuliers.put(connu.id(), jours));
+            }
+        });
+        supprimees += depot.purgerPositionsSauf(maintenant.minus(conservation), List.copyOf(particuliers.keySet()));
+        for (Map.Entry<UUID, Integer> particulier : particuliers.entrySet()) {
+            supprimees += depot.purgerPositionsDe(particulier.getKey(), maintenant.minus(Duration.ofDays(particulier.getValue())));
+        }
+        registre.consigner("POSITIONS", supprimees);
     }
 }

@@ -88,6 +88,14 @@ fasoguardian:
   qr:
     # Délai de réponse plancher de la page publique, identique pour un jeton valide ou non.
     delai-minimal: PT0.3S
+  conformite:
+    # Analyse d'impact (AIPD) : sans ces trois valeurs, le profil prod refuse de démarrer (US-ADM-003).
+    aipd:
+      reference: ${FG_AIPD_REFERENCE:}
+      # Date de validation, au format AAAA-MM-JJ.
+      validee-le: ${FG_AIPD_VALIDEE_LE:}
+    # Contact du délégué à la protection des données.
+    delegue: ${FG_DELEGUE_PROTECTION_DONNEES:}
   abonnements:
     # Offre dont les droits s'appliquent à un enfant sans abonnement payé. Vide : droits restreints (ADR 0015).
     offre-d-accueil: ${FG_OFFRE_D_ACCUEIL:}

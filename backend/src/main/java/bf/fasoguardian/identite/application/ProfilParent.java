@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import bf.fasoguardian.audit.DemandesDroits;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.identite.SecondFacteur;
@@ -41,10 +42,11 @@ public class ProfilParent implements SecondFacteur {
     private final ServiceChiffrement chiffrement;
     private final ServiceSms sms;
     private final JournalAudit journal;
+    private final DemandesDroits demandes;
     private final Clock horloge;
 
     ProfilParent(DepotUtilisateurs utilisateurs, CodesSms codes, Sessions sessions, HacheurMotDePasse hacheur,
-            ServiceChiffrement chiffrement, ServiceSms sms, JournalAudit journal, Clock horloge) {
+            ServiceChiffrement chiffrement, ServiceSms sms, JournalAudit journal, DemandesDroits demandes, Clock horloge) {
         this.utilisateurs = utilisateurs;
         this.codes = codes;
         this.sessions = sessions;
@@ -52,6 +54,7 @@ public class ProfilParent implements SecondFacteur {
         this.chiffrement = chiffrement;
         this.sms = sms;
         this.journal = journal;
+        this.demandes = demandes;
         this.horloge = horloge;
     }
 
@@ -146,7 +149,7 @@ public class ProfilParent implements SecondFacteur {
 
     /**
      * Clôt le compte après second facteur : il ne peut plus s'authentifier, ses sessions sont fermées et
-     * un accusé est envoyé. La purge des données sous 30 jours est exécutée par le module audit.
+     * un accusé est envoyé. La clôture vaut demande d'effacement : le module audit l'exécute sous 30 jours.
      */
     @Transactional
     public void clore(UUID tuteurId, String codeSecondFacteur) {
@@ -157,7 +160,8 @@ public class ProfilParent implements SecondFacteur {
         tuteur.clore(maintenant);
         sessions.fermerToutes(tuteurId, maintenant);
         journal.consigner(tuteurId, Tuteur.ROLE, "COMPTE_CLOS", "COMPTE", tuteurId.toString(), Resultat.SUCCES);
-        sms.envoyer(numero.e164(), "FasoGuardian : votre demande de clôture est enregistrée. "
+        String reference = demandes.enregistrerEffacement(tuteurId);
+        sms.envoyer(numero.e164(), "FasoGuardian : votre demande de clôture est enregistrée (" + reference + "). "
                 + "Vos données seront supprimées sous 30 jours.");
     }
 

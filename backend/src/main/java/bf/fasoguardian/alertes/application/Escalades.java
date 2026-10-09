@@ -23,6 +23,7 @@ import bf.fasoguardian.alertes.infrastructure.DepotActions;
 import bf.fasoguardian.alertes.infrastructure.DepotAlertes;
 import bf.fasoguardian.alertes.infrastructure.DepotSignalements;
 import bf.fasoguardian.audit.JournalAudit;
+import bf.fasoguardian.audit.RegistrePurges;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
@@ -78,6 +79,7 @@ public class Escalades {
     private final RedacteurDossier redacteur;
     private final PasserelleFds passerelle;
     private final ServiceChiffrement chiffrement;
+    private final RegistrePurges registre;
     private final JournalAudit journal;
     private final Clock horloge;
     private final DateTimeFormatter dateHeure;
@@ -85,9 +87,10 @@ public class Escalades {
     Escalades(DepotAlertes alertes, DepotActions actions, DepotSignalements signalements, AccesEnfant acces,
             SecondFacteur secondFacteur, DossiersEnfants enfants, TrajetsRecents trajets, Bracelets bracelets,
             RedacteurDossier redacteur,
-            PasserelleFds passerelle, ServiceChiffrement chiffrement, JournalAudit journal, Clock horloge,
+            PasserelleFds passerelle, ServiceChiffrement chiffrement, JournalAudit journal, RegistrePurges registre, Clock horloge,
             @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
         this.alertes = alertes;
+        this.registre = registre;
         this.actions = actions;
         this.signalements = signalements;
         this.acces = acces;
@@ -171,12 +174,14 @@ public class Escalades {
     @Transactional
     public void effacerLesDossiersEchus() {
         Instant maintenant = horloge.instant();
-        signalements.findByDossierChiffreIsNotNullAndCreeLeBefore(maintenant.minus(SignalementFds.CONSERVATION_DU_DOSSIER))
-                .forEach(signalement -> {
-                    signalement.effacerDossier(maintenant);
-                    journal.consigner(null, "SYSTEME", "DOSSIER_SIGNALEMENT_EFFACE", "ALERTE", signalement.alerteId().toString(),
-                            Resultat.SUCCES);
-                });
+        List<SignalementFds> echus = signalements.findByDossierChiffreIsNotNullAndCreeLeBefore(
+                maintenant.minus(SignalementFds.CONSERVATION_DU_DOSSIER));
+        echus.forEach(signalement -> {
+            signalement.effacerDossier(maintenant);
+            journal.consigner(null, "SYSTEME", "DOSSIER_SIGNALEMENT_EFFACE", "ALERTE", signalement.alerteId().toString(),
+                    Resultat.SUCCES);
+        });
+        registre.consigner("DOSSIERS_DE_SIGNALEMENT", echus.size());
     }
 
     // -------------------------------------------------------------------- aides

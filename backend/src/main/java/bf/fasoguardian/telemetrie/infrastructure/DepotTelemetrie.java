@@ -116,7 +116,12 @@ public class DepotTelemetrie {
         return jdbc.update("DELETE FROM telemetrie.position WHERE mesuree_le < ?", Timestamp.from(limite));
     }
 
-    /** Efface les positions antérieures à la limite, sauf celles des bracelets dont l'historique est étendu. */
+    /** Efface les positions d'un bracelet antérieures à la limite. */
+    public int purgerPositionsDe(UUID braceletId, Instant limite) {
+        return jdbc.update("DELETE FROM telemetrie.position WHERE bracelet_id = ? AND mesuree_le < ?", braceletId, Timestamp.from(limite));
+    }
+
+    /** Efface les positions antérieures à la limite, sauf celles des bracelets purgés à part. */
     public int purgerPositionsSauf(Instant limite, List<UUID> braceletsConserves) {
         return jdbc.update("DELETE FROM telemetrie.position WHERE mesuree_le < ? AND bracelet_id <> ALL (?::uuid[])",
                 Timestamp.from(limite), braceletsConserves.stream().map(UUID::toString).toArray(String[]::new));
