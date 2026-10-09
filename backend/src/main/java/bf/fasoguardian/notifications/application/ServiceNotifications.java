@@ -73,6 +73,20 @@ public class ServiceNotifications implements Notifications {
         evenements.publishEvent(new NotificationCreee(notification.id()));
     }
 
+    /** Ce que le destinataire relit d'une notification dans l'application. */
+    public record Recue(UUID id, String modele, String titre, String texte, String lien, Instant creeeLe) {
+    }
+
+    /**
+     * Trente dernières notifications du destinataire, hors alertes : celles-ci ont leur propre écran. Une
+     * notification reste ainsi lisible dans l'application même si le push n'a pas été reçu.
+     */
+    @Transactional(readOnly = true)
+    public List<Recue> recues(UUID destinataireId) {
+        return notifications.findTop30ByDestinataireIdAndModeleNotLikeOrderByCreeeLeDesc(destinataireId, "ALERTE%").stream()
+                .map(n -> new Recue(n.id(), n.modele(), n.titre(), n.texte(), n.lien(), n.creeeLe())).toList();
+    }
+
     @Override
     @Transactional
     public void accuser(String reference) {

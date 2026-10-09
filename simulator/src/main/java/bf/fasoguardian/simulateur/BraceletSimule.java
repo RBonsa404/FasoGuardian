@@ -22,6 +22,7 @@ final class BraceletSimule {
     private double longitude;
     private double batterie;
     private long sequence;
+    private String versionLogiciel = "sim-0.1.0";
 
     BraceletSimule(String identifiant, long graine) {
         this.identifiant = identifiant;
@@ -65,7 +66,16 @@ final class BraceletSimule {
     }
 
     String etat(boolean enLigne) {
-        return String.format(Locale.ROOT, "{\"online\":%b,\"fw\":\"sim-0.1.0\"}", enLigne);
+        return String.format(Locale.ROOT, "{\"online\":%b,\"fw\":\"%s\"}", enLigne, versionLogiciel);
+    }
+
+    /** Le bracelet redémarre sur l'image qu'il vient de vérifier. */
+    void installer(String version) {
+        versionLogiciel = version;
+    }
+
+    String versionLogiciel() {
+        return versionLogiciel;
     }
 
     private double ecart(double amplitude) {

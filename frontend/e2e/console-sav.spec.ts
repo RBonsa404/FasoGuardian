@@ -28,7 +28,7 @@ test('un agent SAV suit un bracelet du parc, enregistre son retour puis le remet
   await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
   const navigation = page.getByRole('navigation', { name: 'Navigation principale' });
   // Le rôle SAV ne voit ni la file KYC ni la conformité.
-  await expect(navigation.getByRole('link')).toHaveText(['Tableau de bord', 'Parc de bracelets', 'Bracelets muets']);
+  await expect(navigation.getByRole('link')).toHaveText(['Tableau de bord', 'Parc de bracelets', 'Bracelets muets', 'Campagnes OTA']);
 
   // Écran 64 : le bracelet est actif et porté, sans que l'agent sache par qui
   await navigation.getByRole('link', { name: 'Parc de bracelets' }).click();

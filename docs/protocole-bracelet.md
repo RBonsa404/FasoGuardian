@@ -81,7 +81,7 @@ ECDSA P-256 / SHA-256 au format brut R‖S (64 octets) calculée sur les octets 
 |---|---|
 | `id` | identifiant de la commande, repris dans l'accusé |
 | `dev` | bracelet destinataire |
-| `cmd` | `alert`, `cfg`, `rm` ou `loc` |
+| `cmd` | `alert`, `cfg`, `rm`, `loc` ou `ota` |
 | `n` | numéro strictement croissant par bracelet |
 | `exp` | expiration, en secondes Unix (15 minutes après l'émission) |
 | `p` | paramètres de la commande |
@@ -92,10 +92,23 @@ ECDSA P-256 / SHA-256 au format brut R‖S (64 octets) calculée sur les octets 
 | `cfg` | `int`, `alr` : intervalles en secondes ; `eco` : 1 ou 0 | applique les intervalles et le mode économie ; `int` à 0 suspend l'émission périodique (abonnement restreint) : le bracelet ne publie plus de position qu'en mode alerte ou sur `loc`, et continue de signaler SOS et retrait |
 | `rm` | `until` : fin de la fenêtre en secondes Unix, 0 pour la refermer | autorise le retrait sans alerte jusqu'à cette heure |
 | `loc` | aucun | mesure et publie une position tout de suite |
+| `ota` | `v` : version ; `url` : adresse https de l'image ; `size` : taille en octets ; `sha` : SHA-256 en hexadécimal ; `sig` : signature du manifeste | télécharge et installe l'image si son manifeste est signé par la clé de publication (voir ci-dessous) |
 
 Le bracelet n'exécute une commande que si **tous** ces contrôles passent : signature de la plateforme valide,
 `dev` égal à son identifiant, `exp` non dépassé, `n` supérieur au dernier numéro accepté. Une commande déjà
 exécutée (même `id`) est accusée de nouveau sans être rejouée.
+
+#### Mise à jour du logiciel embarqué (`ota`, ADR 0027)
+
+La commande est signée par la plateforme, mais elle ne suffit pas : l'image n'est installée que si son
+**manifeste** porte la signature de la clé de publication du logiciel, dont le bracelet garde la partie
+publique dans son élément sécurisé. Le manifeste est le texte `FG-OTA|<v>|<size>|<sha>` (empreinte en
+minuscules) ; `sig` en est la signature ECDSA P-256 / SHA-256, au format brut R‖S, en base64url.
+
+Le bracelet : vérifie `sig` ; télécharge l'image ; contrôle sa taille et son SHA-256 ; l'écrit dans la banque
+inactive ; redémarre ; annonce la nouvelle version par un message `status` (`"fw"`). Un manifeste invalide
+est accusé par `"ok":false` et rien n'est téléchargé. Tant que la version annoncée n'est pas celle de la
+campagne, la plateforme renvoie la demande toutes les heures.
 
 ### `ack`
 

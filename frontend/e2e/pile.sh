@@ -72,6 +72,10 @@ case "${1:-}" in
       openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out "$ETAT/commandes-privee.pem" 2>/dev/null
       openssl pkey -in "$ETAT/commandes-privee.pem" -pubout -out "$ETAT/commandes-publique.pem" 2>/dev/null
       echo "FG_CLE_COMMANDES=$(openssl pkcs8 -topk8 -nocrypt -in "$ETAT/commandes-privee.pem" -outform DER | openssl base64 -A)"
+      # Clé de publication du logiciel embarqué : la privée reste dans e2e/.etat, où les tests signent leurs images.
+      openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out "$ETAT/ota-privee.pem" 2>/dev/null
+      openssl pkey -in "$ETAT/ota-privee.pem" -pubout -out "$ETAT/ota-publique.pem" 2>/dev/null
+      echo "FG_OTA_CLE_PUBLIQUE=$(openssl pkey -in "$ETAT/ota-privee.pem" -pubout -outform DER | openssl base64 -A)"
       rm -f "$ETAT/commandes-privee.pem"
       # Clés du serveur d'application pour les notifications push (VAPID) : privée en PKCS#8, publique en point brut.
       openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out "$ETAT/push-privee.pem" 2>/dev/null

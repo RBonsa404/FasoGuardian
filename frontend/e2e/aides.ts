@@ -249,6 +249,7 @@ export function simulerBracelet(numeroSerie: string): BraceletSimule {
     '-Dstdout.encoding=UTF-8', '-Dstderr.encoding=UTF-8',
     '-jar', jar, `--certificats=${join(racine, 'infra', 'certs')}`, `--bracelets=${numeroSerie}`, '--intervalle=PT10M',
     `--cle-plateforme=${join(__dirname, '.etat', 'commandes-publique.pem')}`,
+    `--cle-ota=${join(__dirname, '.etat', 'ota-publique.pem')}`,
   ]);
   let sortie = '';
   processus.stdout?.on('data', (morceau: Buffer) => (sortie += morceau.toString()));

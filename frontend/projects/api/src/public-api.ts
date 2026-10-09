@@ -22,3 +22,4 @@ export * from './lib/litiges';
 export * from './lib/support';
 export * from './lib/fds';
 export * from './lib/passerelles';
+export * from './lib/ota';

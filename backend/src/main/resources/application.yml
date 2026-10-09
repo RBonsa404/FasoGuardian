@@ -69,6 +69,10 @@ fasoguardian:
   commandes:
     # Clé privée ECDSA P-256 (PKCS#8, base64) qui signe les commandes envoyées aux bracelets.
     cle-privee: ${FG_CLE_COMMANDES:}
+  ota:
+    # Clé publique ECDSA P-256 (X.509, base64) de la clé qui signe les images du logiciel embarqué. Sans elle,
+    # aucune image n'est acceptée. La clé privée ne quitte jamais le poste de publication.
+    cle-publique: ${FG_OTA_CLE_PUBLIQUE:}
   mqtt:
     # Sans adresse, le serveur ne s'abonne pas au broker (poste de développement sans Mosquitto).
     url: ${FG_MQTT_URL:}

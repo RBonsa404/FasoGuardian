@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import { Alerte, ClientAlertes, ClientFamille, FicheEnfant } from 'api';
+import { Alerte, ClientAlertes, ClientFamille, ClientNotifications, FicheEnfant, NotificationRecue } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
@@ -97,6 +97,22 @@ interface Groupe {
           <p class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2" i18n="@@alertes.jamais">Aucune alerte n'a été enregistrée.</p>
         }
       }
+      @if (!toutes() && informations().length > 0) {
+        <section class="flex flex-col gap-2" aria-labelledby="titre-informations">
+          <h2 id="titre-informations" class="m-0 text-h3 font-semibold" i18n="@@alertes.informations">Informations</h2>
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            @for (information of informations(); track information.id) {
+              <li>
+                <a class="flex flex-col gap-0.5 rounded-lg border border-line bg-surface p-4 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="information.lien ?? '/'">
+                  <strong class="text-body font-semibold">{{ information.titre }}</strong>
+                  <span class="text-label text-text-2">{{ phrase(information.texte) }}</span>
+                  <span class="text-caption text-text-3 tabular-nums">{{ ilYA(information.creeeLe) }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+      }
       @if (enfants().length > 0) {
         <button fg-button class="mt-auto" variante="secondary" type="button" (click)="signalement.set(true)" i18n="@@alertes.signaler">Signaler une disparition</button>
       }
@@ -121,6 +137,7 @@ interface Groupe {
 export class CentreAlertes {
   private readonly client = inject(ClientAlertes);
   private readonly famille = inject(ClientFamille);
+  private readonly notifications = inject(ClientNotifications);
   private readonly router = inject(Router);
   protected readonly signalement = signal(false);
 
@@ -132,6 +149,8 @@ export class CentreAlertes {
 
   protected readonly alertes = signal<Alerte[] | null>(null);
   protected readonly enfants = signal<FicheEnfant[]>([]);
+  /** Notifications reçues hors alertes : elles restent lisibles ici même si le push n'est pas arrivé. */
+  protected readonly informations = signal<readonly NotificationRecue[]>([]);
   protected readonly toutes = signal(false);
   protected readonly enTraitement = signal<string | null>(null);
   protected readonly erreur = signal<string | null>(null);
@@ -154,6 +173,11 @@ export class CentreAlertes {
     this.charger();
     const minuterie = setInterval(() => this.charger(), RAFRAICHISSEMENT_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(minuterie));
+  }
+
+  /** Les textes sont rédigés pour suivre « FasoGuardian : » dans un SMS : à l'écran, ils prennent une majuscule. */
+  protected phrase(texte: string): string {
+    return texte.charAt(0).toUpperCase() + texte.slice(1);
   }
 
   protected filtre(actif: boolean): string {
@@ -197,6 +221,7 @@ export class CentreAlertes {
   }
 
   protected charger(): void {
+    this.notifications.recues().subscribe({ next: (recues) => this.informations.set(recues), error: () => undefined });
     forkJoin({ alertes: this.client.mesAlertes(false), enfants: this.famille.mesEnfants() }).subscribe({
       next: ({ alertes, enfants }) => {
         this.erreur.set(null);

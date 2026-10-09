@@ -114,6 +114,21 @@ public class CommandesBracelet implements Commandes {
         }
     }
 
+    /**
+     * Demande au bracelet d'installer une image du logiciel embarqué. Il n'installe que si le manifeste porte
+     * la signature de la clé de publication, qu'il vérifie lui-même.
+     *
+     * @return {@code false} si le bracelet n'est pas en service
+     */
+    @Transactional
+    public boolean mettreAJour(Bracelet bracelet, Map<String, Object> manifeste) {
+        if (!enService(bracelet)) {
+            return false;
+        }
+        emettre(bracelet, Type.MISE_A_JOUR, manifeste, null);
+        return true;
+    }
+
     /** L'abonnement de l'enfant a changé : son bracelet reçoit l'intervalle qui en découle. */
     @ApplicationModuleListener
     void surDroitsModifies(DroitsModifies evenement) {

@@ -108,6 +108,14 @@ public class Notification {
         return id;
     }
 
+    public String modele() {
+        return modele;
+    }
+
+    public Instant creeeLe() {
+        return creeeLe;
+    }
+
     public UUID destinataireId() {
         return destinataireId;
     }

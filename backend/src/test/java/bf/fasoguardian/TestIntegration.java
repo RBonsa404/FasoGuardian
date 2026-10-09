@@ -37,6 +37,9 @@ public abstract class TestIntegration {
     /** Clés jetables du serveur d'application pour les notifications push (VAPID). */
     protected static final java.security.KeyPair CLE_PUSH = cleDeSignature();
 
+    /** Clé de publication du logiciel embarqué, jetable : les essais signent leurs images avec elle. */
+    protected static final java.security.KeyPair CLE_OTA = cleDeSignature();
+
     /** Point non compressé (65 octets, base64url) de la clé publique, comme le navigateur l'attend. */
     protected static String clePubliquePush() {
         java.security.spec.ECPoint point = ((java.security.interfaces.ECPublicKey) CLE_PUSH.getPublic()).getW();
@@ -89,6 +92,9 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);
         // Les essais existants supposent les droits du palier intermédiaire ; AbonnementsIT les fait varier.
         registre.add("fasoguardian.abonnements.offre-d-accueil", () -> "INTERMEDIAIRE");
+        registre.add("fasoguardian.ota.cle-publique", () -> Base64.getEncoder().encodeToString(CLE_OTA.getPublic().getEncoded()));
+        // Les relances de mise à jour ne tournent que lorsqu'un essai les appelle.
+        registre.add("fasoguardian.ota.relance", () -> "PT24H");
         registre.add("fasoguardian.push.cle-privee", () -> Base64.getEncoder().encodeToString(CLE_PUSH.getPrivate().getEncoded()));
         registre.add("fasoguardian.push.cle-publique", TestIntegration::clePubliquePush);
         registre.add("fasoguardian.push.sujet", () -> "mailto:essais@fasoguardian.test");

@@ -38,7 +38,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  * <pre>
  * java -jar fasoguardian-simulateur.jar --broker=ssl://localhost:8883 --certificats=infra/certs \
  *      --bracelets=FG-DEV-0001,FG-DEV-0002 --intervalle=PT5M [--duree=PT10M] \
- *      [--cle-plateforme=infra/certs/commandes-publique.pem]
+ *      [--cle-plateforme=infra/certs/commandes-publique.pem] [--cle-ota=infra/certs/ota-publique.pem]
  * </pre>
  */
 public final class Simulateur {
@@ -57,10 +57,14 @@ public final class Simulateur {
         volatile boolean suspendu;
         volatile Instant prochaineEmission = Instant.EPOCH;
 
-        Connexion(BraceletSimule bracelet, MqttClient client, VerificateurCommandes verificateur) {
+        /** Clé de publication du logiciel embarqué ; sans elle, toute mise à jour est refusée. */
+        final PublicKey clePublication;
+
+        Connexion(BraceletSimule bracelet, MqttClient client, VerificateurCommandes verificateur, PublicKey clePublication) {
             this.bracelet = bracelet;
             this.client = client;
             this.verificateur = verificateur;
+            this.clePublication = clePublication;
         }
     }
 
@@ -76,6 +80,7 @@ public final class Simulateur {
         Duration duree = options.containsKey("duree") ? Duration.parse(options.get("duree")) : null;
         long graine = Long.parseLong(options.getOrDefault("graine", "20261007"));
         PublicKey clePlateforme = options.containsKey("cle-plateforme") ? lireClePublique(Path.of(options.get("cle-plateforme"))) : null;
+        PublicKey clePublication = options.containsKey("cle-ota") ? lireClePublique(Path.of(options.get("cle-ota"))) : null;
 
         ScheduledExecutorService planificateur = Executors.newScheduledThreadPool(2);
         List<Connexion> connexions = new ArrayList<>();
@@ -84,7 +89,8 @@ public final class Simulateur {
         for (String identifiant : identifiants) {
             BraceletSimule bracelet = new BraceletSimule(identifiant.trim(), graine);
             MqttClient client = connecter(broker, certificats, bracelet);
-            Connexion connexion = new Connexion(bracelet, client, new VerificateurCommandes(bracelet.identifiant(), clePlateforme));
+            Connexion connexion = new Connexion(bracelet, client, new VerificateurCommandes(bracelet.identifiant(), clePlateforme),
+                    clePublication);
             client.subscribe(topic(bracelet.identifiant(), "cmd"), QOS,
                     (sujet, message) -> recevoirCommande(connexion, new String(message.getPayload(), StandardCharsets.US_ASCII), publies));
             connexions.add(connexion);
@@ -147,6 +153,8 @@ public final class Simulateur {
     private static void recevoirCommande(Connexion connexion, String message, AtomicLong publies) {
         Resultat resultat = connexion.verificateur.verifier(message, Instant.now());
         String id = connexion.bracelet.identifiant();
+        boolean redemarre = false;
+        boolean imageRefusee = false;
         if (resultat.dejaExecutee()) {
             System.out.printf("%s : commande déjà exécutée, accusée de nouveau%n", id);
         } else if (!resultat.acceptee()) {
@@ -155,19 +163,35 @@ public final class Simulateur {
             connexion.modeAlerte = resultat.commande().parametre("on", 0) == 1;
             connexion.prochaineEmission = Instant.now();
             System.out.printf("%s : mode alerte %s%n", id, connexion.modeAlerte ? "activé" : "désactivé");
+        } else if ("ota".equals(resultat.commande().code())) {
+            VerificateurCommandes.Commande demande = resultat.commande();
+            String version = demande.texte("v");
+            if (ManifesteOta.valide(connexion.clePublication, version, demande.parametre("size", 0), demande.texte("sha"), demande.texte("sig"))) {
+                connexion.bracelet.installer(version);
+                redemarre = true;
+                System.out.printf("%s : image %s vérifiée, redémarrage sur la nouvelle version%n", id, version);
+            } else {
+                imageRefusee = true;
+                System.out.printf("%s : mise à jour refusée (manifeste non signé par la clé de publication)%n", id);
+            }
         } else if ("cfg".equals(resultat.commande().code())) {
             connexion.suspendu = resultat.commande().parametre("int", 1) == 0;
             System.out.printf("%s : configuration reçue, émission périodique %s%n", id, connexion.suspendu ? "suspendue" : "active");
         } else {
             System.out.printf("%s : commande %s exécutée%n", id, resultat.commande().code());
         }
-        String accuse = "{\"id\":\"" + (resultat.idLu() == null ? "inconnue" : resultat.idLu()) + "\",\"ok\":" + resultat.accusePositif() + "}";
+        String accuse = "{\"id\":\"" + (resultat.idLu() == null ? "inconnue" : resultat.idLu()) + "\",\"ok\":" + (resultat.accusePositif() && !imageRefusee) + "}";
+        boolean nouvelleVersion = redemarre;
         // L'accusé part d'un autre fil : le client synchrone ne publie pas depuis sa propre fonction de rappel.
         new Thread(() -> {
             try {
                 connexion.client.publish(topic(id, "ack"), accuse.getBytes(StandardCharsets.UTF_8), QOS, false);
                 if (resultat.acceptee() && "loc".equals(resultat.commande().code())) {
                     publier(connexion, publies);
+                }
+                if (nouvelleVersion) {
+                    // Après redémarrage, le bracelet annonce la version qu'il exécute.
+                    connexion.client.publish(topic(id, "status"), connexion.bracelet.etat(true).getBytes(StandardCharsets.UTF_8), QOS, true);
                 }
             } catch (MqttException erreur) {
                 System.err.printf("%s : accusé impossible (%s)%n", id, erreur.getMessage());

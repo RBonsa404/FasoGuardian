@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
-import { Alerte, ClientAlertes, ClientFamille, FicheEnfant } from 'api';
+import { Alerte, ClientAlertes, ClientFamille, ClientNotifications, FicheEnfant, NotificationRecue } from 'api';
 
 import { CentreAlertes } from './centre';
 
@@ -25,6 +25,18 @@ function alerte(partiel: Partial<Alerte>): Alerte {
 
 const AWA = { id: 'e-1', prenom: 'Awa' } as FicheEnfant;
 const YACOUBA = { id: 'e-2', prenom: 'Yacouba' } as FicheEnfant;
+
+/** Notifications hors alertes, relues dans le centre. */
+const INFORMATIONS: NotificationRecue[] = [
+  {
+    id: 'n-1',
+    modele: 'MISE_A_JOUR_BRACELET',
+    titre: 'Mise à jour du bracelet',
+    texte: 'une mise à jour (2.4.2) va être installée sur le bracelet FG-2291. Il reste utilisable ; gardez-le chargé.',
+    lien: '/enfants/e-1/bracelet',
+    creeeLe: new Date(Date.now() - 120_000).toISOString(),
+  },
+];
 
 /** Double du client : rend les alertes réglées par l'essai et retient les prises en charge. */
 class AlertesFactices {
@@ -49,7 +61,12 @@ function lire(element: Element): string {
 describe('alertes simultanées (US-PAR-018)', () => {
   async function monter(client: AlertesFactices) {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: ClientAlertes, useValue: client }, { provide: ClientFamille, useValue: { mesEnfants: () => of([AWA, YACOUBA]) } }],
+      providers: [
+        provideRouter([]),
+        { provide: ClientAlertes, useValue: client },
+        { provide: ClientFamille, useValue: { mesEnfants: () => of([AWA, YACOUBA]) } },
+        { provide: ClientNotifications, useValue: { recues: () => of(INFORMATIONS) } },
+      ],
     });
     const fixture = TestBed.createComponent(CentreAlertes);
     await fixture.whenStable();
@@ -66,7 +83,7 @@ describe('alertes simultanées (US-PAR-018)', () => {
 
     const { page } = await monter(client);
 
-    const groupes = page.querySelectorAll('section');
+    const groupes = page.querySelectorAll('section:not([aria-labelledby])');
     expect(groupes).toHaveLength(1);
     expect(lire(groupes[0].querySelector('h2')!)).toContain('2 alertes · Awa');
     expect(lire(groupes[0])).toContain('Regroupées par ordre de gravité');
@@ -100,8 +117,19 @@ describe('alertes simultanées (US-PAR-018)', () => {
 
     const { page } = await monter(client);
 
-    const titres = [...page.querySelectorAll('section h2')].map((titre) => lire(titre).trim());
+    const titres = [...page.querySelectorAll('section:not([aria-labelledby]) h2')].map((titre) => lire(titre).trim());
     expect(titres).toEqual(['Awa', 'Yacouba']);
     expect(lire(page)).not.toContain('Regroupées par ordre de gravité');
+  });
+
+  it('garde lisibles les notifications reçues hors alertes, même sans push', async () => {
+    const { page } = await monter(new AlertesFactices());
+
+    expect(lire(page)).toContain('Aucune alerte en cours.');
+    const information = page.querySelector('section[aria-labelledby="titre-informations"] a') as HTMLAnchorElement;
+    expect(lire(information)).toContain('Mise à jour du bracelet');
+    expect(lire(information)).toContain('Une mise à jour (2.4.2) va être installée sur le bracelet FG-2291.');
+    expect(lire(information)).toContain('il y a 2 min');
+    expect(information.getAttribute('href')).toBe('/enfants/e-1/bracelet');
   });
 });

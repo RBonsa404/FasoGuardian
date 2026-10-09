@@ -24,7 +24,9 @@ public class Commande {
         MODE_ALERTE("alert"),
         CONFIGURATION("cfg"),
         RETRAIT("rm"),
-        LOCALISER("loc");
+        LOCALISER("loc"),
+        /** Installation d'une image du logiciel embarqué. */
+        MISE_A_JOUR("ota");
 
         private final String code;
 

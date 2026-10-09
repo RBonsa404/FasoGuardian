@@ -11,6 +11,7 @@ import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
 import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.dispositifs.SuiviBracelets;
+import bf.fasoguardian.dispositifs.VersionsLogicielles;
 import bf.fasoguardian.telemetrie.EvenementBraceletRecu;
 import bf.fasoguardian.telemetrie.PositionRecue;
 import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
@@ -52,17 +53,19 @@ public class Ingestion implements ReceptionMessages {
     private final Bracelets bracelets;
     private final Commandes commandes;
     private final SuiviBracelets suivi;
+    private final VersionsLogicielles versions;
     private final DepotTelemetrie depot;
     private final ApplicationEventPublisher evenements;
     private final JsonMapper json;
     private final MeterRegistry metriques;
     private final Clock horloge;
 
-    Ingestion(Bracelets bracelets, Commandes commandes, SuiviBracelets suivi, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
+    Ingestion(Bracelets bracelets, Commandes commandes, SuiviBracelets suivi, VersionsLogicielles versions, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
             MeterRegistry metriques, Clock horloge) {
         this.bracelets = bracelets;
         this.commandes = commandes;
         this.suivi = suivi;
+        this.versions = versions;
         this.depot = depot;
         this.evenements = evenements;
         this.json = json;
@@ -161,6 +164,9 @@ public class Ingestion implements ReceptionMessages {
             String version = corps.path("fw").isString() ? borner(corps.path("fw").asString(), 16) : null;
             depot.enregistrerEtat(bracelet.get().id(), new EtatBracelet(null, null, null, null, null,
                     corps.path("online").asBoolean(), version, horloge.instant()));
+            if (version != null) {
+                versions.versionConstatee(bracelet.get().id(), version);
+            }
             return Resultat.ACCEPTE;
         });
     }

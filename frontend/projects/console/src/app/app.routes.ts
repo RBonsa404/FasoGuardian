@@ -32,6 +32,7 @@ export const routes: Routes = [
         canActivate: [roleRequis('SAV')],
         loadComponent: () => import('./sav/fiche-bracelet').then((m) => m.FicheBracelet),
       },
+      { path: 'sav/ota', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/ota').then((m) => m.CampagnesOta) },
       { path: 'sav/muets', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/muets').then((m) => m.Muets) },
       { path: 'admin/agents', canActivate: [roleRequis('ADMIN')], loadComponent: () => import('./admin/agents').then((m) => m.Agents) },
       {

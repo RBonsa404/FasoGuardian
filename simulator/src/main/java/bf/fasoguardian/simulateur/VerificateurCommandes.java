@@ -32,6 +32,12 @@ final class VerificateurCommandes {
             Matcher valeur = Pattern.compile("\"" + Pattern.quote(nom) + "\":(-?\\d+)").matcher(corps);
             return valeur.find() ? Long.parseLong(valeur.group(1)) : defaut;
         }
+
+        /** Paramètre textuel de la commande, ou {@code null} s'il manque. */
+        String texte(String nom) {
+            Matcher valeur = Pattern.compile("\"" + Pattern.quote(nom) + "\":\"([^\"\\\\]{1,400})\"").matcher(corps);
+            return valeur.find() ? valeur.group(1) : null;
+        }
     }
 
     /**

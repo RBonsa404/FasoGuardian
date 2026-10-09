@@ -1,9 +1,11 @@
 package bf.fasoguardian.notifications.web;
 
 import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 import bf.fasoguardian.notifications.application.ServiceNotifications;
+import bf.fasoguardian.notifications.application.ServiceNotifications.Recue;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,6 +44,15 @@ class ControleurNotifications {
     }
 
     record DemandeDesabonnement(@NotBlank @Size(max = 1024) String endpoint) {
+    }
+
+    @Operation(summary = "Mes dernières notifications, hors alertes")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/api/v1/notifications")
+    ResponseEntity<List<Recue>> recues(@AuthenticationPrincipal Jwt jeton) {
+        return ResponseEntity.ok().header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(notifications.recues(UUID.fromString(jeton.getSubject())));
     }
 
     @Operation(summary = "Clé publique du serveur d'application, à passer à PushManager.subscribe")

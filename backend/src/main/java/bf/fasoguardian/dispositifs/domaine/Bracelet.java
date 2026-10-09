@@ -228,6 +228,15 @@ public class Bracelet {
         return versionLogiciel;
     }
 
+    /** Le bracelet annonce la version qu'il exécute. @return {@code true} si elle a changé */
+    public boolean constaterVersion(String version) {
+        if (version == null || version.isBlank() || version.equals(versionLogiciel)) {
+            return false;
+        }
+        versionLogiciel = version;
+        return true;
+    }
+
     public String empreinteCertificat() {
         return empreinteCertificat;
     }
