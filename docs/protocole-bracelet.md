@@ -121,6 +121,36 @@ au bracelet et compté par motif.
 L'unicité `(bracelet, seq, t)` rend la réception idempotente : un message rejoué par le QoS 1 ou par la vidange
 du tampon hors ligne est ignoré (`resultat="DOUBLON"`).
 
+## Repli SMS
+
+Sans connexion de données au bout de 20 secondes, le bracelet envoie son alerte par SMS au numéro de la
+passerelle FasoGuardian (FG-DOC-08 §8.3). La passerelle remet chaque SMS au serveur par
+`POST /api/v1/public/sms/entrant`, corps `{"de":"+226…","texte":"FG1|…"}`, authentifié par l'en-tête
+`X-FG-Signature: t=<secondes Unix>,v1=<HMAC-SHA-256 de « t.corps »>` calculé avec le secret partagé
+(`FG_SMS_SECRET_PASSERELLE`). Un appel daté de plus de cinq minutes est refusé.
+
+```
+FG1|FG-2291|ALR|SOS|12.37140,-1.51970|G|76|1759651200|<signature>
+```
+
+| Champ | Sens |
+|---|---|
+| `FG1` | version du format |
+| `FG-2291` | identifiant du bracelet |
+| `ALR` | nature du message : alerte, seule admise par SMS |
+| `SOS` | événement : `SOS`, `STRAP`, `SKIN`, `FALL` ou `BATCRIT` |
+| `12.37140,-1.51970` | dernière position connue ; vide si le bracelet n'en a pas |
+| `G` | source de la position : `G` (GNSS) ou `C` (cellule) |
+| `76` | batterie, en pour cent |
+| `1759651200` | heure de l'événement, en secondes Unix |
+| signature | ECDSA P-256 sur SHA-256, R‖S en base64url, calculée par l'élément sécurisé sur tout le texte qui précède, dernier `|` compris |
+
+Le serveur vérifie la signature avec la clé publique du bracelet, relevée sur son certificat à l'atelier et
+enregistrée au parc (`clePublique`, SubjectPublicKeyInfo en base64). Signature invalide, bracelet inconnu ou
+sans clé, certificat révoqué, format inconnu : le SMS est rejeté et le rejet journalisé. Un SMS valide devient
+un message `alert` ordinaire, dont le numéro de séquence est l'heure de l'événement : remis deux fois, il n'a
+d'effet qu'une fois.
+
 ## Conservation
 
 Les positions sont effacées chaque nuit au-delà de 30 jours, et de 90 jours pour les enfants dont l'offre

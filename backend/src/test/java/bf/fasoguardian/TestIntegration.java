@@ -28,6 +28,9 @@ public abstract class TestIntegration {
     /** Paire de clés jetable de la plateforme : la clé publique sert aux tests à vérifier les commandes signées. */
     protected static final java.security.KeyPair CLE_COMMANDES = cleDeSignature();
 
+    /** Secret jetable partagé avec la passerelle des SMS de repli. */
+    protected static final String SECRET_PASSERELLE_SMS = cleAleatoire() + cleAleatoire();
+
     /** Clés jetables du serveur d'application pour les notifications push (VAPID). */
     protected static final java.security.KeyPair CLE_PUSH = cleDeSignature();
 
@@ -73,6 +76,7 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
         // La supervision des bracelets muets ne tourne que lorsqu'un essai l'appelle.
         registre.add("fasoguardian.telemetrie.supervision", () -> "PT24H");
+        registre.add("fasoguardian.sms.secret-passerelle", () -> SECRET_PASSERELLE_SMS);
         registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);
         // Les essais existants supposent les droits du palier intermédiaire ; AbonnementsIT les fait varier.

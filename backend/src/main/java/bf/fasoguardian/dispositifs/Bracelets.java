@@ -27,6 +27,13 @@ public interface Bracelets {
     /** Bracelet actuellement appairé à l'enfant. */
     Optional<BraceletConnu> deLEnfant(UUID enfantId);
 
+    /**
+     * Vérifie une signature du bracelet (ECDSA P-256 sur SHA-256, format brut R‖S) avec la clé publique relevée
+     * sur son certificat. Faux si le bracelet est inconnu, hors service, sans clé enregistrée, ou si la signature
+     * ne correspond pas.
+     */
+    boolean signatureValide(String numeroSerie, byte[] contenu, byte[] signature);
+
     /** @param intervalleS intervalle d'émission attendu en ce moment ; 0 si l'émission périodique est suspendue */
     record EnService(UUID braceletId, String numeroSerie, UUID enfantId, Instant appaireDepuis, int intervalleS) {
     }

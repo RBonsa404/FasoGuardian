@@ -1,5 +1,9 @@
 package bf.fasoguardian.dispositifs.application;
 
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.Signature;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +47,23 @@ class RegistreBracelets implements Bracelets {
     public Optional<BraceletConnu> deLEnfant(UUID enfantId) {
         return appairages.findByEnfantIdAndFinIsNull(enfantId).flatMap(
                 appairage -> bracelets.findById(appairage.braceletId()).map(bracelet -> connu(bracelet, appairage)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean signatureValide(String numeroSerie, byte[] contenu, byte[] signature) {
+        Bracelet bracelet = bracelets.findByNumeroSerie(numeroSerie).orElse(null);
+        if (bracelet == null || bracelet.clePublique() == null || bracelet.certificatRevoque()) {
+            return false;
+        }
+        try {
+            Signature verification = Signature.getInstance("SHA256withECDSAinP1363Format");
+            verification.initVerify(KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(bracelet.clePublique())));
+            verification.update(contenu);
+            return verification.verify(signature);
+        } catch (GeneralSecurityException | IllegalArgumentException erreur) {
+            return false;
+        }
     }
 
     @Override

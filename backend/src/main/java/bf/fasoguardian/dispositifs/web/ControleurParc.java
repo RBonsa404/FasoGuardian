@@ -46,7 +46,7 @@ class ControleurParc {
 
     record DemandeEnregistrement(@NotBlank @Size(max = 16) String numeroSerie, @NotBlank @Size(max = 20) String imei,
             @NotBlank @Size(max = 16) String revisionMaterielle, @NotBlank @Size(max = 16) String versionLogiciel,
-            @NotBlank @Size(max = 100) String empreinteCertificat) {
+            @NotBlank @Size(max = 100) String empreinteCertificat, @Size(max = 400) String clePublique) {
     }
 
     record DemandeRemiseEnStock(@Size(max = 100) String empreinteCertificat) {
@@ -58,7 +58,7 @@ class ControleurParc {
             @Valid @RequestBody DemandeEnregistrement demande) {
         return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.CACHE_CONTROL, "no-store")
                 .body(parc.enregistrer(id(jeton), new Enregistrement(demande.numeroSerie(), demande.imei(),
-                        demande.revisionMaterielle(), demande.versionLogiciel(), demande.empreinteCertificat())));
+                        demande.revisionMaterielle(), demande.versionLogiciel(), demande.empreinteCertificat(), demande.clePublique())));
     }
 
     @Operation(summary = "Vue consolidée du parc, filtrable par statut")

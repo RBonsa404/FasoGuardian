@@ -1,21 +1,15 @@
 package bf.fasoguardian.abonnements.infrastructure;
 
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import bf.fasoguardian.abonnements.application.AgregateurPaiement;
+import bf.fasoguardian.plateforme.securite.SceauWebhook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -28,17 +22,13 @@ import tools.jackson.databind.json.JsonMapper;
  * reçues et fabrique, pour chacune, la notification signée qu'un agrégateur réel enverrait. Activé par
  * {@code fasoguardian.paiements.adaptateur=bac-a-sable} ; sans adaptateur configuré, le serveur ne démarre pas.
  *
- * <p>Signature d'une notification : en-tête {@code t=<secondes Unix>,v1=<HMAC-SHA-256 hexadécimal>}, le sceau
- * portant sur {@code <t>.<corps>} avec le secret partagé. Une notification datée de plus de cinq minutes est
- * refusée : une notification interceptée ne peut pas être rejouée plus tard.
+ * <p>Chaque notification est authentifiée par un {@link SceauWebhook} calculé avec le secret partagé.
  */
 @Component
 @ConditionalOnProperty(name = "fasoguardian.paiements.adaptateur", havingValue = "bac-a-sable")
 public class AgregateurBacASable implements AgregateurPaiement {
 
-    private static final Duration TOLERANCE = Duration.ofMinutes(5);
     private static final int CAPACITE = 500;
-    private static final int LONGUEUR_MINIMALE_DU_SECRET = 32;
 
     /** @param refusee le portefeuille refusera la demande (numéro de test se terminant par 00) */
     public record DemandeRecue(String reference, int montantFcfa, boolean refusee, Instant recueLe) {
@@ -49,16 +39,12 @@ public class AgregateurBacASable implements AgregateurPaiement {
 
     private final Map<String, DemandeRecue> enAttente = new LinkedHashMap<>();
     private final SecureRandom alea = new SecureRandom();
-    private final SecretKeySpec secret;
+    private final SceauWebhook sceau;
     private final JsonMapper json;
     private final Clock horloge;
 
     AgregateurBacASable(@Value("${fasoguardian.paiements.secret-webhook:}") String secret, JsonMapper json, Clock horloge) {
-        if (secret.length() < LONGUEUR_MINIMALE_DU_SECRET) {
-            throw new IllegalStateException("Secret des notifications de paiement absent ou trop court : "
-                    + LONGUEUR_MINIMALE_DU_SECRET + " caractères au moins (fasoguardian.paiements.secret-webhook)");
-        }
-        this.secret = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        this.sceau = new SceauWebhook(secret, "fasoguardian.paiements.secret-webhook");
         this.json = json;
         this.horloge = horloge;
     }
@@ -79,28 +65,9 @@ public class AgregateurBacASable implements AgregateurPaiement {
 
     @Override
     public Notification lire(String signature, byte[] corps) {
-        if (signature == null || corps == null) {
-            throw new NotificationRejetee("signature absente");
-        }
-        String horodatage = null;
-        String sceau = null;
-        for (String partie : signature.split(",")) {
-            if (partie.startsWith("t=")) {
-                horodatage = partie.substring(2);
-            } else if (partie.startsWith("v1=")) {
-                sceau = partie.substring(3);
-            }
-        }
-        if (horodatage == null || sceau == null || !horodatage.matches("\\d{1,12}")) {
-            throw new NotificationRejetee("signature mal formée");
-        }
-        if (Duration.between(Instant.ofEpochSecond(Long.parseLong(horodatage)), horloge.instant()).abs().compareTo(TOLERANCE) > 0) {
-            throw new NotificationRejetee("notification trop ancienne");
-        }
-        // Comparaison en temps constant : la durée de la réponse ne renseigne pas sur le sceau attendu.
-        if (!MessageDigest.isEqual(sceller(horodatage, corps).getBytes(StandardCharsets.US_ASCII),
-                sceau.getBytes(StandardCharsets.US_ASCII))) {
-            throw new NotificationRejetee("signature fausse");
+        String refus = sceau.refus(signature, corps, horloge.instant());
+        if (refus != null) {
+            throw new NotificationRejetee(refus);
         }
         try {
             JsonNode contenu = json.readTree(corps);
@@ -136,18 +103,6 @@ public class AgregateurBacASable implements AgregateurPaiement {
             contenu.put("motif", motif);
         }
         byte[] corps = json.writeValueAsBytes(contenu);
-        String horodatage = Long.toString(horloge.instant().getEpochSecond());
-        return new NotificationSignee("t=" + horodatage + ",v1=" + sceller(horodatage, corps), corps);
-    }
-
-    private String sceller(String horodatage, byte[] corps) {
-        try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(secret);
-            mac.update((horodatage + ".").getBytes(StandardCharsets.US_ASCII));
-            return HexFormat.of().formatHex(mac.doFinal(corps));
-        } catch (GeneralSecurityException erreur) {
-            throw new IllegalStateException("Calcul du sceau impossible", erreur);
-        }
+        return new NotificationSignee(sceau.sceller(corps, horloge.instant()), corps);
     }
 }

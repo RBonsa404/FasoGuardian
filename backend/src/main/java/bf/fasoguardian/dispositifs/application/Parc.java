@@ -55,8 +55,9 @@ public class Parc {
     private static final Pattern EMPREINTE = Pattern.compile("[0-9a-f]{64}");
     private static final Pattern VERSION = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
 
+    /** @param clePublique clé publique du certificat (SubjectPublicKeyInfo, base64), ou {@code null} */
     public record Enregistrement(String numeroSerie, String imei, String revisionMaterielle, String versionLogiciel,
-            String empreinteCertificat) {
+            String empreinteCertificat, String clePublique) {
     }
 
     /**
@@ -136,6 +137,7 @@ public class Parc {
         BraceletPrepare prepare = FabriqueBracelet.preparer(numero, chiffrement.chiffrerTexte(CategorieDonnee.IMEI, imei),
                 imeiEmpreinte, saisie.revisionMaterielle(), saisie.versionLogiciel(), certificat, sha256(jetonQr),
                 empreinteCode(code), horloge.instant());
+        prepare.bracelet().enregistrerClePublique(clePublique(saisie.clePublique()));
         bracelets.save(prepare.bracelet());
         configurations.save(prepare.configuration());
         consigner(agentId, "BRACELET_ENREGISTRE", prepare.bracelet());
@@ -296,5 +298,19 @@ public class Parc {
 
     private static ErreurMetier conflit() {
         return new ErreurMetier(CodeErreur.CONFLIT, "Cette action n'est pas possible dans l'état actuel du bracelet.");
+    }
+
+    /** Clé publique EC P-256 au format SubjectPublicKeyInfo ; absente, les SMS de repli du bracelet seront rejetés. */
+    private static byte[] clePublique(String base64) {
+        if (base64 == null || base64.isBlank()) {
+            return null;
+        }
+        try {
+            byte[] cle = Base64.getDecoder().decode(base64.replaceAll("\\s", ""));
+            java.security.KeyFactory.getInstance("EC").generatePublic(new java.security.spec.X509EncodedKeySpec(cle));
+            return cle;
+        } catch (IllegalArgumentException | java.security.GeneralSecurityException erreur) {
+            throw invalide("La clé publique du bracelet n'est pas une clé EC au format SubjectPublicKeyInfo en base64.");
+        }
     }
 }

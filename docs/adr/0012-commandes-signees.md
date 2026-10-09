@@ -49,3 +49,13 @@ ou son ACL sont compromis.
   embarqué (`simulator/…/VerificateurCommandes.java` et ses tests).
 - La rotation de la clé de la plateforme n'est pas encore prévue : elle demandera un champ de version de clé
   dans le corps et deux clés publiques dans le logiciel embarqué.
+
+## Complément du 9 octobre 2026 — SMS de repli signés par le bracelet
+
+Le sens inverse des commandes : le bracelet signe, la plateforme vérifie (US-SYS-001). La signature est celle
+de l'élément sécurisé, avec la clé du certificat du bracelet ; la plateforme n'en garde que la clé publique,
+fournie à l'enregistrement au parc. Le même format de signature que pour les commandes (ECDSA P-256, R‖S) évite
+au firmware deux implémentations. Deux barrières se suivent : le sceau de la passerelle (secret partagé, anti-
+rejeu de cinq minutes) dit que l'appel vient d'elle, la signature du bracelet dit que l'alerte vient de lui. Un
+tiers qui connaîtrait le numéro de la passerelle ne peut donc pas fabriquer une fausse alerte. Seules les
+alertes passent par SMS ; les positions attendent le retour des données dans le tampon du bracelet.

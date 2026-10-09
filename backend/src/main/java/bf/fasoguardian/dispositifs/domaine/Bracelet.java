@@ -64,6 +64,9 @@ public class Bracelet {
     @Column(name = "jeton_qr_sha256", nullable = false)
     private String jetonQrSha256;
 
+    @Column(name = "cle_publique")
+    private byte[] clePublique;
+
     @Column(name = "code_appairage_empreinte")
     private String codeAppairageEmpreinte;
 
@@ -251,5 +254,14 @@ public class Bracelet {
 
     public Instant modifieLe() {
         return modifieLe;
+    }
+
+    /** Clé publique du certificat (X.509 SubjectPublicKeyInfo), qui authentifie les SMS de repli du bracelet. */
+    public void enregistrerClePublique(byte[] cle) {
+        this.clePublique = cle;
+    }
+
+    public byte[] clePublique() {
+        return clePublique;
     }
 }
