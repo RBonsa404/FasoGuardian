@@ -17,8 +17,10 @@ const ENTREES: readonly Entree[] = [
   { libelle: $localize`:@@nav.kyc:File KYC`, lien: '/kyc', role: 'KYC' },
   { libelle: $localize`:@@nav.parc:Parc de bracelets`, lien: '/sav/parc', role: 'SAV' },
   { libelle: $localize`:@@nav.muets:Bracelets muets`, lien: '/sav/muets', role: 'SAV' },
+  { libelle: $localize`:@@nav.agents:Agents et rôles`, lien: '/admin/agents', role: 'ADMIN' },
   { libelle: $localize`:@@nav.audit:Journal d'audit`, lien: '/admin/audit', role: 'ADMIN' },
   { libelle: $localize`:@@nav.conformite:Conformité CIL`, lien: '/conformite', role: 'ADMIN' },
+  { libelle: $localize`:@@nav.securite:Sécurité`, lien: '/admin/securite', role: 'ADMIN' },
 ];
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */

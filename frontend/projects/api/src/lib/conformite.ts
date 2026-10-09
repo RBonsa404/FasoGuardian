@@ -35,6 +35,8 @@ export interface FiltreAudit {
   readonly action?: string;
   readonly role?: string;
   readonly resultat?: 'SUCCES' | 'REFUS';
+  /** Date ISO : seules les entrées postérieures sont rendues. */
+  readonly depuis?: string;
 }
 
 export interface EtatAipd {

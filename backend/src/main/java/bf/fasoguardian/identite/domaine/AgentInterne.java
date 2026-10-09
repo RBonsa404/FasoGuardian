@@ -47,6 +47,27 @@ public class AgentInterne extends Utilisateur {
         this.roles = roles.stream().map(Enum::name).sorted().collect(Collectors.joining(","));
     }
 
+    /** Nouveau périmètre : il s'applique à la prochaine connexion, les sessions en cours étant fermées par l'appelant. */
+    public void attribuer(Set<RoleInterne> nouveaux) {
+        if (nouveaux == null || nouveaux.isEmpty()) {
+            throw new IllegalArgumentException("Un agent porte au moins un rôle");
+        }
+        this.roles = nouveaux.stream().map(Enum::name).sorted().collect(Collectors.joining(","));
+    }
+
+    /** Un agent suspendu garde son compte et son second facteur, mais ne peut plus se connecter. */
+    public void suspendre() {
+        changerStatut(StatutCompte.SUSPENDU);
+    }
+
+    public void retablir() {
+        changerStatut(StatutCompte.ACTIF);
+    }
+
+    public boolean suspendu() {
+        return statut() == StatutCompte.SUSPENDU;
+    }
+
     @Override
     public Set<String> roles() {
         return rolesInternes().stream().map(Enum::name).collect(Collectors.toUnmodifiableSet());

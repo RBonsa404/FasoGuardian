@@ -23,3 +23,23 @@ la source la moins prioritaire : chaque point est tranché ici.
 
 Les points 2 et 6 dépendent d'éléments externes (prestataire, AIPD) et sont signalés dans la matrice de
 traçabilité.
+
+## Complément du 9 octobre 2026 — écrans d'administration de la console
+
+- **Écran 69, « + Agent (code TOTP admin) ».** Le design demande un code TOTP à chaque création d'agent et dit
+  que « toute modification exige le second facteur ». Tous les agents se connectent déjà avec un second
+  facteur obligatoire, et la session d'un agent est courte (jeton de dix minutes, session de trente). La
+  création, le changement de rôles et la suspension ne redemandent donc pas de code : ils sont réservés au
+  rôle administrateur, journalisés, et un administrateur ne peut pas agir sur son propre compte. Redemander
+  un code à chaque action se heurterait de plus à la protection contre le rejeu (un code ne sert qu'une fois
+  par tranche de trente secondes).
+- **Écran 69, colonne « CIL ».** La matrice du design a une colonne « CIL ». Le délégué à la protection des
+  données n'a pas de compte (FG-DOC-05) : la colonne n'existe pas, ses rapports sont produits par
+  l'administrateur.
+- **Écran 69, matrice.** Elle présente les permissions réellement appliquées par le serveur, en lecture : le
+  cloisonnement est dans le code et vérifié par les tests d'autorisation, il ne se règle pas à l'écran.
+- **Écran 73, sources bloquées.** Le design montre des adresses IP partiellement masquées et un nombre
+  d'essais. La plateforme ne conserve jamais l'adresse d'une source, seulement un pseudonyme (FG-DOC-06,
+  tableau 18) : l'écran montre le début de ce pseudonyme et la date du blocage. Le seuil est celui de
+  US-SYS-010 (plus de 20 jetons invalides en une minute), non les « 10 min » de la maquette.
+- **Écrans 64 et 66, identité de l'enfant.** Voir ADR 0009 : le rôle SAV ne voit que l'état des bracelets.

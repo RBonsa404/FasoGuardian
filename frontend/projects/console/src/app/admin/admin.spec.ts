@@ -2,10 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
-import { ChaineAudit, ClientConformite, DemandeEffacement, EntreeAudit, FiltreAudit, PageAudit, TableauConformite } from 'api';
+import { AgentInterne, ChaineAudit, ClientAgents, ClientConformite, DemandeEffacement, EntreeAudit, FiltreAudit, PageAudit, RoleInterne, Session, TableauConformite } from 'api';
 
+import { Agents } from './agents';
 import { Audit } from './audit';
 import { Conformite, moisPrecedent } from './conformite';
+import { Securite } from './securite';
 
 function entree(partiel: Partial<EntreeAudit> = {}): EntreeAudit {
   return {
@@ -208,5 +210,141 @@ describe('conformité CIL', () => {
   it('propose le rapport du dernier mois complet', () => {
     expect(moisPrecedent(new Date(2026, 9, 9))).toEqual({ code: '2026-09', libelle: 'septembre' });
     expect(moisPrecedent(new Date(2027, 0, 3))).toEqual({ code: '2026-12', libelle: 'décembre' });
+  });
+});
+
+describe('agents et rôles', () => {
+  const MOI = '00000000-0000-4000-8000-0000000000aa';
+
+  function agent(partiel: Partial<AgentInterne> = {}): AgentInterne {
+    return { id: 'a-1', identifiant: 'awa.kyc', roles: ['KYC'], secondFacteurActif: true, suspendu: false, ...partiel };
+  }
+
+  class AgentsFactices {
+    liste: AgentInterne[] = [agent(), agent({ id: MOI, identifiant: 'admin', roles: ['ADMIN'] })];
+    appels: string[] = [];
+
+    agents() {
+      return of(this.liste);
+    }
+
+    creer(identifiant: string, _motDePasse: string, roles: readonly RoleInterne[]) {
+      this.appels.push(`creer ${identifiant} ${roles.join('+')}`);
+      this.liste = [...this.liste, agent({ id: 'a-9', identifiant, roles, secondFacteurActif: false })];
+      return of(this.liste.at(-1)!);
+    }
+
+    attribuer(id: string, roles: readonly RoleInterne[]) {
+      this.appels.push(`roles ${id} ${roles.join('+')}`);
+      return of(agent({ roles }));
+    }
+
+    suspendre(id: string) {
+      this.appels.push(`suspendre ${id}`);
+      this.liste = [agent({ suspendu: true }), this.liste[1]];
+      return of(this.liste[0]);
+    }
+
+    retablir(id: string) {
+      this.appels.push(`retablir ${id}`);
+      return of(agent());
+    }
+  }
+
+  async function monter(client: AgentsFactices) {
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: ClientAgents, useValue: client }, { provide: Session, useValue: { identifiant: () => MOI } }],
+    });
+    const fixture = TestBed.createComponent(Agents);
+    await fixture.whenStable();
+    return { fixture, page: fixture.nativeElement as HTMLElement };
+  }
+
+  function cocher(page: HTMLElement, role: string): void {
+    const libelle = [...page.querySelectorAll('fg-sheet label')].find((l) => lire(l).trim() === role)!;
+    (libelle.querySelector('input') as HTMLInputElement).click();
+  }
+
+  it('montre les agents, la matrice, et ne propose aucune action sur son propre compte', async () => {
+    const { page } = await monter(new AgentsFactices());
+
+    expect(lire(page)).toContain('awa.kyc');
+    expect(lire(page)).toContain('Votre compte');
+    expect([...page.querySelectorAll('button')].filter((b) => lire(b).includes('Suspendre'))).toHaveLength(1);
+    expect(lire(page)).toContain("Aucun rôle interne ne voit la position ni la fiche santé d'un enfant.");
+    // La ligne « position ou fiche santé » ne porte que des « aucun accès ».
+    const ligne = [...page.querySelectorAll('[role="row"]')].find((l) => lire(l).includes('Voir la position'))!;
+    expect([...ligne.querySelectorAll('[aria-label]')].map((c) => c.getAttribute('aria-label'))).toEqual(Array(5).fill('aucun accès'));
+  });
+
+  it('refuse un agent sans rôle, puis le crée', async () => {
+    const client = new AgentsFactices();
+    const { fixture, page } = await monter(client);
+    bouton(page, 'Ajouter un agent').click();
+    await fixture.whenStable();
+    const [identifiant, motDePasse] = [...page.querySelectorAll('fg-sheet input:not([type="checkbox"])')] as HTMLInputElement[];
+    identifiant.value = 'issa.sav';
+    identifiant.dispatchEvent(new Event('input'));
+    motDePasse.value = 'phrase-de-passe-provisoire';
+    motDePasse.dispatchEvent(new Event('input'));
+
+    bouton(page, "Créer l'agent").click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Attribuez au moins un rôle.');
+    expect(client.appels).toEqual([]);
+
+    cocher(page, 'Agent SAV');
+    await fixture.whenStable();
+    bouton(page, "Créer l'agent").click();
+    await fixture.whenStable();
+
+    expect(client.appels).toEqual(['creer issa.sav SAV']);
+    expect(lire(page)).toContain('Second facteur à activer');
+  });
+
+  it('change les rôles d’un agent et le suspend', async () => {
+    const client = new AgentsFactices();
+    const { fixture, page } = await monter(client);
+
+    bouton(page, 'Rôles').click();
+    await fixture.whenStable();
+    cocher(page, 'Agent KYC');
+    cocher(page, 'Opérateur support');
+    await fixture.whenStable();
+    bouton(page, 'Enregistrer les rôles').click();
+    await fixture.whenStable();
+    bouton(page, 'Suspendre').click();
+    await fixture.whenStable();
+
+    expect(client.appels).toEqual(['roles a-1 SUPPORT', 'suspendre a-1']);
+    expect(lire(page)).toContain('Suspendu');
+    expect(bouton(page, 'Rétablir')).toBeDefined();
+  });
+});
+
+describe('sécurité', () => {
+  it('montre les sources bloquées sous pseudonyme et les accès refusés des sept derniers jours', async () => {
+    const client = new ClientFactice();
+    client.entrees = [];
+    const demandes: FiltreAudit[] = [];
+    const journal = (filtre: FiltreAudit, page: number) => {
+      demandes.push(filtre);
+      const entrees =
+        filtre.action === 'ENUMERATION_QR'
+          ? [entree({ id: 40, acteurId: null, role: 'SYSTEME', action: 'ENUMERATION_QR', typeCible: 'SOURCE', cibleId: '9f2c1a7b33de4455667788', resultat: 'REFUS' })]
+          : [entree({ id: 41, role: 'KYC', action: 'ACCES_REFUSE', typeCible: 'ROUTE', cibleId: 'GET /api/v1/console/parc', resultat: 'REFUS' })];
+      return of<PageAudit>({ entrees, total: 1, page, taille: 50, chaine: client.chaine });
+    };
+    TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: ClientConformite, useValue: { journal } }] });
+    const fixture = TestBed.createComponent(Securite);
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+
+    expect(lire(page)).toContain('Source 9f2c1a7b33de');
+    expect(lire(page)).not.toContain('9f2c1a7b33de4455667788');
+    expect(lire(page)).toContain('GET /api/v1/console/parc');
+    expect(lire(page)).toContain('KYC · 6f1c2a90');
+    expect(demandes.map((d) => d.action)).toEqual(['ENUMERATION_QR', 'ACCES_REFUSE']);
+    expect(Date.now() - Date.parse(demandes[0].depuis!)).toBeGreaterThan(6.9 * 86_400_000);
   });
 });

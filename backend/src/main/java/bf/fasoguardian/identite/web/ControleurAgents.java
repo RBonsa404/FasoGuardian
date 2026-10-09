@@ -22,7 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +48,10 @@ class ControleurAgents {
             @NotBlank @Size(max = 256) String motDePasseProvisoire, @NotEmpty Set<RoleInterne> roles) {
     }
 
-    record AgentDto(String id, String identifiant, Set<RoleInterne> roles, boolean secondFacteurActif) {
+    record AgentDto(String id, String identifiant, Set<RoleInterne> roles, boolean secondFacteurActif, boolean suspendu) {
+    }
+
+    record DemandeRoles(@NotEmpty Set<RoleInterne> roles) {
     }
 
     @Operation(summary = "Connexion d'un agent : identifiant, mot de passe et code TOTP",
@@ -77,7 +82,31 @@ class ControleurAgents {
                 .body(agents.lister().stream().map(ControleurAgents::dto).toList());
     }
 
+    @Operation(summary = "Change les rôles d'un agent ; ses sessions sont fermées")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/api/v1/admin/agents/{agentId}/roles")
+    AgentDto attribuer(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID agentId, @Valid @RequestBody DemandeRoles demande) {
+        return dto(agents.attribuer(UUID.fromString(jeton.getSubject()), agentId, demande.roles()));
+    }
+
+    @Operation(summary = "Suspend un agent : il ne peut plus se connecter")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/api/v1/admin/agents/{agentId}/suspension")
+    AgentDto suspendre(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID agentId) {
+        return dto(agents.suspendre(UUID.fromString(jeton.getSubject()), agentId));
+    }
+
+    @Operation(summary = "Rétablit un agent suspendu")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/api/v1/admin/agents/{agentId}/retablissement")
+    AgentDto retablir(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID agentId) {
+        return dto(agents.retablir(UUID.fromString(jeton.getSubject()), agentId));
+    }
+
     private static AgentDto dto(Agent agent) {
-        return new AgentDto(agent.id().toString(), agent.identifiant(), agent.roles(), agent.secondFacteurActif());
+        return new AgentDto(agent.id().toString(), agent.identifiant(), agent.roles(), agent.secondFacteurActif(), agent.suspendu());
     }
 }

@@ -56,6 +56,19 @@ export class Session {
       return [];
     }
   });
+  /** Identifiant technique du compte connecté, lu dans le jeton ; `null` sans session. */
+  readonly identifiant = computed<string | null>(() => {
+    const jeton = this.jeton();
+    if (!jeton) {
+      return null;
+    }
+    try {
+      const sujet = JSON.parse(atob(jeton.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub;
+      return typeof sujet === 'string' ? sujet : null;
+    } catch {
+      return null;
+    }
+  });
   /** Vrai lorsque le rafraîchissement a échoué : une réauthentification complète est demandée (US-PAR-019). */
   readonly reauthentificationRequise = this.expiree.asReadonly();
 

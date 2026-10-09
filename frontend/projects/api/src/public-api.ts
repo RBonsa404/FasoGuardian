@@ -16,3 +16,4 @@ export * from './lib/notifications';
 export * from './lib/abonnements';
 export * from './lib/conformite';
 export * from './lib/sav';
+export * from './lib/agents';

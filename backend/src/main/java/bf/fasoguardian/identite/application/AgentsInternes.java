@@ -50,7 +50,7 @@ public class AgentsInternes {
         this.horloge = horloge;
     }
 
-    public record Agent(UUID id, String identifiant, Set<RoleInterne> roles, boolean secondFacteurActif) {
+    public record Agent(UUID id, String identifiant, Set<RoleInterne> roles, boolean secondFacteurActif, boolean suspendu) {
     }
 
     /** L'échec n'annule pas la transaction : compteur d'échecs et secret d'enrôlement sont conservés. */
@@ -59,7 +59,7 @@ public class AgentsInternes {
         Instant maintenant = horloge.instant();
         AgentInterne agent = identifiant == null ? null
                 : utilisateurs.findAgentByIdentifiant(identifiant.trim().toLowerCase()).orElse(null);
-        if (agent == null || !agent.peutSAuthentifier()) {
+        if (agent == null || !agent.peutSAuthentifier() || agent.suspendu()) {
             hacheur.hacher(motDePasse == null ? "" : motDePasse);
             throw identifiantsInvalides();
         }
@@ -127,6 +127,49 @@ public class AgentsInternes {
         return vue(agent);
     }
 
+    /**
+     * Change le périmètre d'un agent (US-ADM-001). Ses sessions sont fermées : les nouveaux rôles valent dès sa
+     * prochaine connexion, les anciens ne valent plus. Un administrateur ne modifie pas son propre périmètre.
+     */
+    @Transactional
+    public Agent attribuer(UUID administrateurId, UUID agentId, Set<RoleInterne> roles) {
+        AgentInterne agent = autre(administrateurId, agentId);
+        if (roles == null || roles.isEmpty()) {
+            throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE, "Attribuez au moins un rôle à l'agent.");
+        }
+        agent.attribuer(roles);
+        sessions.fermerToutes(agentId, horloge.instant());
+        journal.consigner(administrateurId, RoleInterne.ADMIN.name(), "AGENT_ROLES_MODIFIES", "AGENT", agentId.toString(), Resultat.SUCCES);
+        return vue(agent);
+    }
+
+    /** Suspend un agent : il ne peut plus se connecter et ses sessions sont fermées. */
+    @Transactional
+    public Agent suspendre(UUID administrateurId, UUID agentId) {
+        AgentInterne agent = autre(administrateurId, agentId);
+        agent.suspendre();
+        sessions.fermerToutes(agentId, horloge.instant());
+        journal.consigner(administrateurId, RoleInterne.ADMIN.name(), "AGENT_SUSPENDU", "AGENT", agentId.toString(), Resultat.SUCCES);
+        return vue(agent);
+    }
+
+    @Transactional
+    public Agent retablir(UUID administrateurId, UUID agentId) {
+        AgentInterne agent = autre(administrateurId, agentId);
+        agent.retablir();
+        journal.consigner(administrateurId, RoleInterne.ADMIN.name(), "AGENT_RETABLI", "AGENT", agentId.toString(), Resultat.SUCCES);
+        return vue(agent);
+    }
+
+    /** L'agent visé, qui ne peut pas être l'administrateur lui-même : nul ne se retire ou ne s'ajoute des droits. */
+    private AgentInterne autre(UUID administrateurId, UUID agentId) {
+        if (agentId.equals(administrateurId)) {
+            throw new ErreurMetier(CodeErreur.CONFLIT, "Vous ne pouvez pas modifier votre propre compte : demandez-le à un autre administrateur.");
+        }
+        return utilisateurs.findById(agentId).filter(AgentInterne.class::isInstance).map(AgentInterne.class::cast)
+                .orElseThrow(() -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Agent introuvable."));
+    }
+
     @Transactional(readOnly = true)
     public List<Agent> lister() {
         return utilisateurs.findAllAgents().stream().map(AgentsInternes::vue).toList();
@@ -138,7 +181,7 @@ public class AgentsInternes {
     }
 
     private static Agent vue(AgentInterne agent) {
-        return new Agent(agent.id(), agent.identifiant(), agent.rolesInternes(), agent.totpActif());
+        return new Agent(agent.id(), agent.identifiant(), agent.rolesInternes(), agent.totpActif(), agent.suspendu());
     }
 
     private static ErreurMetier identifiantsInvalides() {

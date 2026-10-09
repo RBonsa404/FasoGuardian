@@ -31,6 +31,14 @@ import { LIBELLES_ROLES } from '../commun/acces';
         </a>
       }
       @if (session.roles().includes('ADMIN')) {
+        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/agents">
+          <strong class="text-body font-semibold" i18n="@@nav.agents">Agents et rôles</strong>
+          <span class="text-label text-text-2" i18n="@@tableau.agents.texte">Périmètre de chaque agent, création et suspension.</span>
+        </a>
+        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/securite">
+          <strong class="text-body font-semibold" i18n="@@nav.securite">Sécurité</strong>
+          <span class="text-label text-text-2" i18n="@@tableau.securite.texte">Sources bloquées pour énumération de QR, accès refusés.</span>
+        </a>
         <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/audit">
           <strong class="text-body font-semibold" i18n="@@nav.audit">Journal d'audit</strong>
           <span class="text-label text-text-2" i18n="@@tableau.audit.texte">Accès sensibles, refus et état de la chaîne d'empreintes.</span>
