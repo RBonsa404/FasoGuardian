@@ -60,6 +60,10 @@ class DonneesIdentite implements DonneesPersonnelles {
                 + " d.depose_le::text AS \"deposeLe\", d.decide_le::text AS \"decideLe\","
                 + " (SELECT count(*) FROM identite.piece_justificative p WHERE p.dossier_id = d.id) AS \"pieces\""
                 + " FROM identite.dossier_kyc d WHERE d.demandeur_id = ? ORDER BY d.cree_le", personne.tuteurId()));
+        export.put("demandesDeSupport", jdbc.queryForList("SELECT d.reference, d.objet, d.statut, d.ouverte_le::text AS \"ouverteLe\","
+                + " (SELECT json_agg(json_build_object('de', m.auteur, 'texte', m.texte, 'le', m.cree_le) ORDER BY m.cree_le)::text"
+                + " FROM identite.message_support m WHERE m.demande_id = d.id) AS messages"
+                + " FROM identite.demande_support d WHERE d.tuteur_id = ? ORDER BY d.ouverte_le", personne.tuteurId()));
         return export;
     }
 
@@ -75,6 +79,7 @@ class DonneesIdentite implements DonneesPersonnelles {
         long supprimes = jdbc.update("DELETE FROM identite.lien_tutelle WHERE tuteur_id = ?", personne.tuteurId());
         supprimes += jdbc.update("DELETE FROM identite.jeton_rafraichissement WHERE utilisateur_id = ?", personne.tuteurId());
         supprimes += jdbc.update("DELETE FROM identite.consentement WHERE utilisateur_id = ?", personne.tuteurId());
+        supprimes += jdbc.update("DELETE FROM identite.demande_support WHERE tuteur_id = ?", personne.tuteurId());
         supprimes += jdbc.update("DELETE FROM identite.code_usage_unique WHERE cible_hash = ?", comptes.get(0).get("telephone_hash"));
         supprimes += jdbc.update("UPDATE identite.utilisateur SET efface_le = ?, telephone_chiffre = NULL, telephone_hash = NULL,"
                 + " mdp_argon2id = NULL, statut = 'CLOS', clos_le = coalesce(clos_le, ?) WHERE id = ?", maintenant, maintenant,
