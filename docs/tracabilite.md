@@ -7,7 +7,7 @@ Une user story n'est « Terminée » que si les cinq critères de la définition
 Statuts : **À faire**, **En cours**, **Terminée**, **À valider en laboratoire** (exigence physique : la partie
 logicielle est livrée, la preuve relève d'un essai décrit dans `docs/essais/`).
 
-Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 28 en cours (US-PAR-001 à 014, 018, 019, US-ENF-001, 002, US-TRS-001, US-SYS-001 à 003, 006, 010, 011, US-ADM-001, 002, US-SAV-002). Étape 1 « Socle » close.
+Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 31 en cours (US-PAR-001 à 016, 018, 019, US-ENF-001, 002, US-TRS-001, US-SYS-001 à 003, 006, 008, 010, 011, US-ADM-001, 002, US-SAV-002). Étape 1 « Socle » close.
 
 | User story | Priorité | Exigence | Modules serveur | Applications | Code | Tests | Statut |
 |---|---|---|---|---|---|---|---|
@@ -43,9 +43,9 @@ Bilan au 9 octobre 2026 : 0 user story terminée sur 43, 28 en cours (US-PAR-001
 | US-SYS-007 | MUST | REQ-MUST-18 | dispositifs, notifications | parents, firmware, site |  |  | À faire |
 | US-SAV-001 | MUST | REQ-MUST-19 | dispositifs, telemetrie | console, parents |  |  | À faire |
 | US-SAV-002 | MUST | REQ-MUST-20 | dispositifs | console | `Parc`, `ControleurParc` | `DispositifsIT` | En cours : API du parc (enregistrement, vue par statut, retour « En SAV », remise en stock, réforme, fiche journalisée) ; écrans 64 et 65 de la console à faire |
-| US-PAR-015 | MUST | REQ-MUST-21 | abonnements | parents, site |  |  | À faire |
-| US-SYS-008 | MUST | REQ-MUST-22 | abonnements, famille | parents, public-qr |  |  | À faire |
-| US-PAR-016 | COULD | REQ-COULD-01 | abonnements, notifications | parents |  |  | À faire |
+| US-PAR-015 | MUST | REQ-MUST-21 | abonnements | parents, site | `Souscriptions`, `ReceptionPaiements`, `AgregateurPaiement` (`AgregateurBacASable`), `Facture`, `RedacteurRecuPdf`, `ControleurAbonnements` ; écrans `abonnement/{abonnement,paiement,recus}` | `ReglesAbonnementTest`, `AbonnementsIT`, `abonnement.spec.ts` (Vitest), e2e `abonnement.spec.ts` | En cours : offres, paiement idempotent, activation sur notification signée seulement, reçu numéroté et PDF, renouvellement à l'échéance, autorisations testées, écrans 41 à 43. Reste : adaptateur de l'agrégateur réel (prestataire à choisir), offre École par convention, page tarifs du site vitrine, contrôle du thème clair (ADR 0015) |
+| US-SYS-008 | MUST | REQ-MUST-22 | abonnements, dispositifs, telemetrie, geolocalisation | parents, public-qr | `Abonnement.relancer`, `Relances`, `Droits` / `ServiceDroits`, `DroitsModifies`, `CommandesBracelet.surDroitsModifies` (cfg, intervalle 0), `Positions.historique` ; bandeau `abonnement/bandeau` | `ReglesAbonnementTest`, `AbonnementsIT` (deux rappels puis restriction, page QR et localisation à la demande maintenues, rétablissement au paiement), `abonnement.spec.ts` (Vitest) | En cours : dégradation J+1, J+8, J+15 réalisée et testée, écrans 44 et 45. Reste : prise en compte de `int` = 0 par le firmware, contrôle du thème clair |
+| US-PAR-016 | COULD | REQ-COULD-01 | abonnements, notifications | parents | `Relances` (rappel J-7), `Abonnement.relancer` | `ReglesAbonnementTest`, `AbonnementsIT` | En cours : rappel sept jours avant l'échéance par push ou SMS, une seule fois. Reste : contrôle du thème clair de l'écran 44 |
 | US-PAR-017 | COULD | REQ-COULD-02 | identite | parents, console |  |  | À faire |
 | US-SUP-001 | COULD | REQ-COULD-03 | identite | console, parents, site |  |  | À faire |
 | US-SYS-009 | COULD | REQ-COULD-04 | dispositifs | firmware |  |  | À faire |

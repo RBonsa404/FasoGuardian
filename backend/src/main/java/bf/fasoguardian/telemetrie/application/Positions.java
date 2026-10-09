@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import bf.fasoguardian.abonnements.Droits;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.Bracelets;
@@ -40,7 +41,7 @@ public class Positions implements TrajetsRecents {
     /** Un point toutes les 60 s pendant 24 h, cas le plus dense (mode alerte). */
     private static final int POINTS_PAR_JOUR = 1440;
 
-    /** @param joursConserves durée de conservation de l'historique, en jours */
+    /** @param joursConserves profondeur de l'historique ouverte par l'abonnement, en jours */
     public record Trajet(LocalDate jour, List<PositionConnue> points, int joursConserves) {
     }
 
@@ -50,10 +51,13 @@ public class Positions implements TrajetsRecents {
     private final JournalAudit journal;
     private final Clock horloge;
     private final Duration conservation;
+    private final Duration conservationMaximale;
+    private final Droits droits;
     private final ZoneId fuseau;
 
-    Positions(Bracelets bracelets, DepotTelemetrie depot, AccesEnfant acces, JournalAudit journal, Clock horloge,
+    Positions(Bracelets bracelets, DepotTelemetrie depot, AccesEnfant acces, JournalAudit journal, Clock horloge, Droits droits,
             @Value("${fasoguardian.telemetrie.conservation-positions:P30D}") Duration conservation,
+            @Value("${fasoguardian.telemetrie.conservation-maximale:P90D}") Duration conservationMaximale,
             @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
         this.fuseau = fuseau;
         this.bracelets = bracelets;
@@ -62,6 +66,8 @@ public class Positions implements TrajetsRecents {
         this.journal = journal;
         this.horloge = horloge;
         this.conservation = conservation;
+        this.conservationMaximale = conservationMaximale;
+        this.droits = droits;
     }
 
     @Transactional
@@ -76,22 +82,30 @@ public class Positions implements TrajetsRecents {
     }
 
     /**
-     * Trajet d'une journée locale (US-PAR-008) : positions de l'appairage en cours, dans la limite de la durée
-     * de conservation. Consultation journalisée.
+     * Trajet d'une journée locale (US-PAR-008) : positions de l'appairage en cours, dans la limite de
+     * l'historique ouvert par l'abonnement (24 heures quand il est restreint pour impayé, US-SYS-008).
+     * Consultation journalisée.
      */
     @Transactional
     public Trajet trajet(UUID tuteurId, UUID enfantId, LocalDate jour) {
         acces.exigerTuteur(tuteurId, enfantId);
         journal.consigner(tuteurId, "PARENT", "TRAJET_CONSULTE", "ENFANT", enfantId.toString(), Resultat.SUCCES);
         Instant maintenant = horloge.instant();
-        Instant plancher = maintenant.minus(conservation);
+        Duration historique = historique(enfantId);
+        Instant plancher = maintenant.minus(historique);
         Instant debut = jour.atStartOfDay(fuseau).toInstant();
         Instant fin = jour.plusDays(1).atStartOfDay(fuseau).toInstant();
         List<PositionConnue> points = bracelets.deLEnfant(enfantId).map(connu -> {
             Instant depuis = debut.isBefore(connu.appaireDepuis()) ? connu.appaireDepuis() : debut;
             return depot.positionsEntre(connu.id(), depuis.isBefore(plancher) ? plancher : depuis, fin, POINTS_PAR_JOUR);
         }).orElse(List.of());
-        return new Trajet(jour, points, (int) conservation.toDays());
+        return new Trajet(jour, points, (int) historique.toDays());
+    }
+
+    /** Historique ouvert par l'offre, sans jamais dépasser la durée maximale de conservation. */
+    private Duration historique(UUID enfantId) {
+        Duration offre = Duration.ofDays(droits.de(enfantId).historiqueJours());
+        return offre.compareTo(conservationMaximale) < 0 ? offre : conservationMaximale;
     }
 
     @Override
@@ -105,7 +119,10 @@ public class Positions implements TrajetsRecents {
                 .toList();
     }
 
-    /** Prépare les partitions à venir et applique la durée de conservation des positions (FG-DOC-06 tableau 18). */
+    /**
+     * Prépare les partitions à venir et applique la durée de conservation des positions (FG-DOC-04, FG-DOC-06
+     * tableau 18) : 30 jours par défaut, 90 jours au plus pour les enfants dont l'offre ouvre l'historique étendu.
+     */
     @Scheduled(cron = "${fasoguardian.telemetrie.entretien:0 20 2 * * *}")
     @SchedulerLock(name = "telemetrie-entretien")
     public void entretenir() {
@@ -114,6 +131,9 @@ public class Positions implements TrajetsRecents {
         for (int mois = 0; mois <= 2; mois++) {
             depot.creerPartitions(jour.plusMonths(mois));
         }
-        depot.purgerPositions(maintenant.minus(conservation));
+        depot.purgerPositions(maintenant.minus(conservationMaximale));
+        List<UUID> conserves = droits.enfantsAHistoriqueDePlusDe((int) conservation.toDays()).stream()
+                .map(bracelets::deLEnfant).flatMap(Optional::stream).map(BraceletConnu::id).toList();
+        depot.purgerPositionsSauf(maintenant.minus(conservation), conserves);
     }
 }

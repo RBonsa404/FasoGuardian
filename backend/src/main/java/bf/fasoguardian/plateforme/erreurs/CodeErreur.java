@@ -32,7 +32,8 @@ public enum CodeErreur {
     SECOND_FACTEUR_REQUIS(HttpStatus.FORBIDDEN, "Confirmation par code SMS requise"),
     CODE_APPAIRAGE_INVALIDE(HttpStatus.BAD_REQUEST, "Code d'appairage invalide"),
     ENFANT_DEJA_EQUIPE(HttpStatus.CONFLICT, "L'enfant porte déjà un bracelet"),
-    ZONES_MAXIMUM_ATTEINT(HttpStatus.CONFLICT, "Nombre maximal de Safe Zones atteint");
+    ZONES_MAXIMUM_ATTEINT(HttpStatus.CONFLICT, "Nombre maximal de Safe Zones atteint"),
+    PAIEMENT_EN_COURS(HttpStatus.CONFLICT, "Un paiement est déjà en attente de validation");
 
     private final HttpStatus statut;
     private final String titre;

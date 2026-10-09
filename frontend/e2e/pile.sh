@@ -78,6 +78,11 @@ case "${1:-}" in
       echo "FG_PUSH_CLE_PRIVEE=$(openssl pkcs8 -topk8 -nocrypt -in "$ETAT/push-privee.pem" -outform DER | openssl base64 -A)"
       echo "FG_PUSH_CLE_PUBLIQUE=$(openssl pkey -in "$ETAT/push-privee.pem" -pubout -outform DER | tail -c 65 | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
       echo "FG_PUSH_SUJET=mailto:essais@fasoguardian.test"
+      # Paiements : bac à sable qui répond de lui-même au bout de trois secondes (numéro en 00 : refus).
+      echo "FG_PAIEMENTS_ADAPTATEUR=bac-a-sable"
+      echo "FG_PAIEMENTS_SECRET_WEBHOOK=$(openssl rand -hex 32)"
+      echo "FG_PAIEMENTS_VALIDATION_APRES=PT3S"
+      echo "FG_OFFRE_D_ACCUEIL=INTERMEDIAIRE"
       rm -f "$ETAT/push-privee.pem"
     } > "$ENV"
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).

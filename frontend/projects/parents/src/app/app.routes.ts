@@ -115,6 +115,21 @@ export const routes: Routes = [
     canActivate: [sessionRequise],
     loadComponent: () => import('./bracelet/associer').then((m) => m.AssocierBracelet),
   },
+  {
+    path: 'abonnement',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./abonnement/abonnement').then((m) => m.EcranAbonnement),
+  },
+  {
+    path: 'abonnement/paiement',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./abonnement/paiement').then((m) => m.EcranPaiement),
+  },
+  {
+    path: 'abonnement/recus',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./abonnement/recus').then((m) => m.Recus),
+  },
   { path: 'inscription', pathMatch: 'full', redirectTo: 'inscription/numero' },
   { path: 'inscription/:etape', loadComponent: () => import('./inscription/inscription').then((m) => m.Inscription) },
   { path: 'verification', pathMatch: 'full', redirectTo: 'verification/instruction' },

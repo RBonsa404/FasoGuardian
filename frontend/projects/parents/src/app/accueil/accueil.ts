@@ -5,6 +5,7 @@ import { Alerte, ClientAlertes, ClientAuthentification, ClientFamille, Compte, F
 import { FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
+import { BandeauAbonnement } from '../abonnement/bandeau';
 import { ApercuEnfant } from './apercu-enfant';
 
 /**
@@ -13,7 +14,7 @@ import { ApercuEnfant } from './apercu-enfant';
  */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, ApercuEnfant, FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette],
+  imports: [RouterLink, ApercuEnfant, BandeauAbonnement, FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (compte()?.statut === 'ACTIF') {
@@ -40,6 +41,7 @@ import { ApercuEnfant } from './apercu-enfant';
           </div>
         }
         @if (choisi(); as enfant) {
+          <app-bandeau-abonnement [enfant]="enfant.id" />
           <app-apercu-enfant [enfant]="enfant" />
         }
       }
@@ -76,6 +78,7 @@ import { ApercuEnfant } from './apercu-enfant';
     @if (compte()?.statut === 'ACTIF') {
       <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n="@@accueil.centre">Alertes</a>
       <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/enfants" i18n="@@accueil.enfants">Mes enfants</a>
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/abonnement" i18n="@@accueil.abonnement">Mon abonnement</a>
     }
     <a class="mt-auto self-start py-2 text-label font-semibold text-accent" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
     <button fg-button variante="secondary" type="button" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">

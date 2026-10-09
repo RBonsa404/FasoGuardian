@@ -53,6 +53,8 @@ public final class Simulateur {
         final MqttClient client;
         final VerificateurCommandes verificateur;
         volatile boolean modeAlerte;
+        /** Émission périodique suspendue par la plateforme (commande cfg, intervalle 0). */
+        volatile boolean suspendu;
         volatile Instant prochaineEmission = Instant.EPOCH;
 
         Connexion(BraceletSimule bracelet, MqttClient client, VerificateurCommandes verificateur) {
@@ -91,7 +93,8 @@ public final class Simulateur {
         planificateur.scheduleAtFixedRate(() -> {
             Instant maintenant = Instant.now();
             for (Connexion connexion : connexions) {
-                if (!maintenant.isBefore(connexion.prochaineEmission)) {
+                // Suspendu, le bracelet n'émet plus qu'en mode alerte ou à la demande (commande loc).
+                if ((!connexion.suspendu || connexion.modeAlerte) && !maintenant.isBefore(connexion.prochaineEmission)) {
                     Duration rythme = connexion.modeAlerte && INTERVALLE_ALERTE.compareTo(intervalle) < 0 ? INTERVALLE_ALERTE : intervalle;
                     connexion.prochaineEmission = maintenant.plus(rythme);
                     publier(connexion, publies);
@@ -152,6 +155,9 @@ public final class Simulateur {
             connexion.modeAlerte = resultat.commande().parametre("on", 0) == 1;
             connexion.prochaineEmission = Instant.now();
             System.out.printf("%s : mode alerte %s%n", id, connexion.modeAlerte ? "activé" : "désactivé");
+        } else if ("cfg".equals(resultat.commande().code())) {
+            connexion.suspendu = resultat.commande().parametre("int", 1) == 0;
+            System.out.printf("%s : configuration reçue, émission périodique %s%n", id, connexion.suspendu ? "suspendue" : "active");
         } else {
             System.out.printf("%s : commande %s exécutée%n", id, resultat.commande().code());
         }

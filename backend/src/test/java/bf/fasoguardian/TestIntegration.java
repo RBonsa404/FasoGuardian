@@ -71,6 +71,10 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
+        registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);
+        // Les essais existants supposent les droits du palier intermédiaire ; AbonnementsIT les fait varier.
+        registre.add("fasoguardian.abonnements.offre-d-accueil", () -> "INTERMEDIAIRE");
         registre.add("fasoguardian.push.cle-privee", () -> Base64.getEncoder().encodeToString(CLE_PUSH.getPrivate().getEncoded()));
         registre.add("fasoguardian.push.cle-publique", TestIntegration::clePubliquePush);
         registre.add("fasoguardian.push.sujet", () -> "mailto:essais@fasoguardian.test");

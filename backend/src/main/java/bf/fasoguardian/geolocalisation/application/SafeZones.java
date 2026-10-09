@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import bf.fasoguardian.abonnements.Droits;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.famille.AccesEnfant;
@@ -76,35 +77,36 @@ public class SafeZones {
     private final JournalAudit journal;
     private final Clock horloge;
     private final ZoneId fuseau;
-    private final int maximum;
+    private final Droits droits;
     // Zones par enfant, consultées à chaque position reçue ; vidées à toute modification (FG-DOC-07 §7.2).
     private final Cache<UUID, List<SafeZone>> parEnfant =
             Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(10)).maximumSize(50_000).build();
 
     SafeZones(DepotZones depot, AccesEnfant acces, SecondFacteur secondFacteur, JournalAudit journal, Clock horloge,
-            @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau,
-            @Value("${fasoguardian.geolocalisation.zones-maximum:3}") int maximum) {
+            Droits droits, @Value("${fasoguardian.fuseau:Africa/Ouagadougou}") ZoneId fuseau) {
         this.depot = depot;
         this.acces = acces;
         this.secondFacteur = secondFacteur;
         this.journal = journal;
         this.horloge = horloge;
         this.fuseau = fuseau;
-        this.maximum = maximum;
+        this.droits = droits;
     }
 
     @Transactional(readOnly = true)
     public ZonesVue zones(UUID tuteurId, UUID enfantId) {
         acces.exigerTuteur(tuteurId, enfantId);
-        return new ZonesVue(depot.deLEnfant(enfantId).stream().map(this::vue).toList(), maximum);
+        return new ZonesVue(depot.deLEnfant(enfantId).stream().map(this::vue).toList(), droits.de(enfantId).zonesMaximum());
     }
 
     @Transactional
     public ZoneVue creer(UUID tuteurId, UUID enfantId, SaisieZone saisie, String codeSecondFacteur) {
         acces.exigerTuteur(tuteurId, enfantId);
+        // Le nombre de zones dépend de l'offre ; celles créées sous une offre plus large sont conservées.
+        int maximum = droits.de(enfantId).zonesMaximum();
         if (depot.deLEnfant(enfantId).size() >= maximum) {
-            throw new ErreurMetier(CodeErreur.ZONES_MAXIMUM_ATTEINT,
-                    "Votre offre permet " + maximum + " Safe Zones. Supprimez-en une pour en créer une autre.");
+            throw new ErreurMetier(CodeErreur.ZONES_MAXIMUM_ATTEINT, "Votre offre permet " + maximum
+                    + (maximum > 1 ? " Safe Zones" : " Safe Zone") + ". Supprimez-en une ou changez d'offre pour en créer une autre.");
         }
         SafeZone zone = construire(UUID.randomUUID(), enfantId, saisie, Statut.ACTIVE, 0);
         secondFacteur.exiger(tuteurId, ActionSensible.MODIFIER_SAFE_ZONE, codeSecondFacteur);

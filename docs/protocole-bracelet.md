@@ -89,7 +89,7 @@ ECDSA P-256 / SHA-256 au format brut R‖S (64 octets) calculée sur les octets 
 | `cmd` | Paramètres | Effet attendu |
 |---|---|---|
 | `alert` | `on` : 1 ou 0 | entre en mode alerte (une position toutes les 60 s) ou en sort |
-| `cfg` | `int`, `alr` : intervalles en secondes ; `eco` : 1 ou 0 | applique les intervalles et le mode économie |
+| `cfg` | `int`, `alr` : intervalles en secondes ; `eco` : 1 ou 0 | applique les intervalles et le mode économie ; `int` à 0 suspend l'émission périodique (abonnement restreint) : le bracelet ne publie plus de position qu'en mode alerte ou sur `loc`, et continue de signaler SOS et retrait |
 | `rm` | `until` : fin de la fenêtre en secondes Unix, 0 pour la refermer | autorise le retrait sans alerte jusqu'à cette heure |
 | `loc` | aucun | mesure et publie une position tout de suite |
 
@@ -123,5 +123,6 @@ du tampon hors ligne est ignoré (`resultat="DOUBLON"`).
 
 ## Conservation
 
-Les positions sont effacées chaque nuit au-delà de 30 jours (FG-DOC-06, tableau 18 ; la durée par offre, 90
-jours au plus, arrive avec le module abonnements). Les événements sont conservés avec les alertes.
+Les positions sont effacées chaque nuit au-delà de 30 jours, et de 90 jours pour les enfants dont l'offre
+ouvre l'historique étendu (FG-DOC-04 ; FG-DOC-06, tableau 18 ; ADR 0015). Les événements sont conservés avec
+les alertes.

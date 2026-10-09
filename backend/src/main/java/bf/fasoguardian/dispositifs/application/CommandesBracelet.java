@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import bf.fasoguardian.abonnements.Droits;
+import bf.fasoguardian.abonnements.Droits.DroitsEnfant;
+import bf.fasoguardian.abonnements.DroitsModifies;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.CommandeAEnvoyer;
@@ -23,9 +26,11 @@ import bf.fasoguardian.dispositifs.domaine.StatutBracelet;
 import bf.fasoguardian.dispositifs.infrastructure.DepotAppairages;
 import bf.fasoguardian.dispositifs.infrastructure.DepotBracelets;
 import bf.fasoguardian.dispositifs.infrastructure.DepotCommandes;
+import bf.fasoguardian.dispositifs.infrastructure.DepotConfigurations;
 import io.micrometer.core.instrument.MeterRegistry;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +52,8 @@ public class CommandesBracelet implements Commandes {
     private final DepotBracelets bracelets;
     private final DepotAppairages appairages;
     private final DepotCommandes commandes;
+    private final DepotConfigurations configurations;
+    private final Droits droits;
     private final Signataire signataire;
     private final ApplicationEventPublisher evenements;
     private final JournalAudit journal;
@@ -55,11 +62,13 @@ public class CommandesBracelet implements Commandes {
     private final Clock horloge;
 
     CommandesBracelet(DepotBracelets bracelets, DepotAppairages appairages, DepotCommandes commandes,
-            Signataire signataire, ApplicationEventPublisher evenements, JournalAudit journal, JsonMapper json,
+            DepotConfigurations configurations, Droits droits, Signataire signataire, ApplicationEventPublisher evenements, JournalAudit journal, JsonMapper json,
             MeterRegistry metriques, Clock horloge) {
         this.bracelets = bracelets;
         this.appairages = appairages;
         this.commandes = commandes;
+        this.configurations = configurations;
+        this.droits = droits;
         this.signataire = signataire;
         this.evenements = evenements;
         this.journal = journal;
@@ -89,16 +98,28 @@ public class CommandesBracelet implements Commandes {
         return bracelet.isPresent();
     }
 
-    /** Envoie au bracelet sa configuration courante (intervalles, mode économie). */
+    /**
+     * Envoie au bracelet sa configuration courante (intervalles, mode économie). L'intervalle tient compte de
+     * l'abonnement de l'enfant ; 0 suspend l'émission périodique (US-SYS-008).
+     */
     @Transactional
-    public void configurer(Bracelet bracelet, ConfigurationBracelet configuration, UUID tuteurId) {
+    public void configurer(Bracelet bracelet, ConfigurationBracelet configuration, UUID enfantId, UUID tuteurId) {
         if (enService(bracelet)) {
+            DroitsEnfant ouverts = droits.de(enfantId);
             Map<String, Object> parametres = new LinkedHashMap<>();
-            parametres.put("int", configuration.intervalleCourantS());
+            parametres.put("int", configuration.intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()));
             parametres.put("alr", configuration.intervalleAlerteS());
             parametres.put("eco", configuration.modeEconomie() ? 1 : 0);
             emettre(bracelet, Type.CONFIGURATION, parametres, tuteurId);
         }
+    }
+
+    /** L'abonnement de l'enfant a changé : son bracelet reçoit l'intervalle qui en découle. */
+    @ApplicationModuleListener
+    void surDroitsModifies(DroitsModifies evenement) {
+        appairages.findByEnfantIdAndFinIsNull(evenement.enfantId()).ifPresent(appairage -> configurer(
+                bracelets.findById(appairage.braceletId()).orElseThrow(),
+                configurations.findById(appairage.braceletId()).orElseThrow(), evenement.enfantId(), null));
     }
 
     @Override

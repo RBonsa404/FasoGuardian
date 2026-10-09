@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import bf.fasoguardian.abonnements.Droits;
+import bf.fasoguardian.abonnements.Droits.DroitsEnfant;
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.domaine.Appairage;
@@ -71,6 +73,7 @@ public class Appairages {
     private final Notifications notifications;
     private final ServiceChiffrement chiffrement;
     private final CommandesBracelet commandes;
+    private final Droits droits;
     private final JournalAudit journal;
     private final Clock horloge;
     // Le code d'appairage est court : les essais infructueux d'un même parent sont comptés.
@@ -81,9 +84,10 @@ public class Appairages {
 
     Appairages(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
             AccesEnfant acces, ProfilsQr profilsQr, SecondFacteur secondFacteur, LiensTutelle liens,
-            Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, JournalAudit journal,
-            Clock horloge) {
+            Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, Droits droits,
+            JournalAudit journal, Clock horloge) {
         this.commandes = commandes;
+        this.droits = droits;
         this.bracelets = bracelets;
         this.appairages = appairages;
         this.configurations = configurations;
@@ -131,6 +135,12 @@ public class Appairages {
         Appairage appairage = appairages.save(new Appairage(bracelet.id(), enfantId, maintenant));
         profilsQr.associer(enfantId, bracelet.jetonQrSha256(), bracelet.numeroSerie());
         essaisRates.invalidate(tuteurId);
+        // Le bracelet sort d'usine avec ses intervalles par défaut : il n'est reconfiguré que si l'offre en demande d'autres.
+        ConfigurationBracelet configuration = configurations.findById(bracelet.id()).orElseThrow();
+        DroitsEnfant ouverts = droits.de(enfantId);
+        if (configuration.intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()) != configuration.intervalleNormalS()) {
+            commandes.configurer(bracelet, configuration, enfantId, null);
+        }
         journal.consigner(tuteurId, ROLE, "BRACELET_APPAIRE", "BRACELET", bracelet.id().toString(), Resultat.SUCCES);
         prevenir(enfantId, "BRACELET_ASSOCIE", "Bracelet associé", "le bracelet " + bracelet.numeroSerie() + " est associé à votre enfant.");
         return vue(appairage);
@@ -223,7 +233,7 @@ public class Appairages {
         Bracelet bracelet = bracelets.findById(appairage.braceletId()).orElseThrow();
         ConfigurationBracelet configuration = configurations.findById(bracelet.id()).orElseThrow();
         if (configuration.reglerModeEconomie(actif)) {
-            commandes.configurer(bracelet, configuration, tuteurId);
+            commandes.configurer(bracelet, configuration, enfantId, tuteurId);
             journal.consigner(tuteurId, ROLE, actif ? "MODE_ECONOMIE_ACTIVE" : "MODE_ECONOMIE_DESACTIVE", "BRACELET",
                     bracelet.id().toString(), Resultat.SUCCES);
             prevenir(enfantId, "MODE_ECONOMIE", "Mode économie", "le mode économie du bracelet " + bracelet.numeroSerie() + " est "
@@ -294,9 +304,10 @@ public class Appairages {
 
     private BraceletVue vue(Bracelet bracelet, Appairage appairage) {
         ConfigurationBracelet configuration = configurations.findById(bracelet.id()).orElseThrow();
+        DroitsEnfant ouverts = droits.de(appairage.enfantId());
         return new BraceletVue(bracelet.numeroSerie(), bracelet.statut(), bracelet.versionLogiciel(),
                 bracelet.revisionMaterielle(), bracelet.garantieJusquAu(), configuration.modeEconomie(),
-                configuration.intervalleCourantS(), appairage.debut(), bracelet.suiviJusquAu());
+                configuration.intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()), appairage.debut(), bracelet.suiviJusquAu());
     }
 
     private static ErreurMetier conflit() {

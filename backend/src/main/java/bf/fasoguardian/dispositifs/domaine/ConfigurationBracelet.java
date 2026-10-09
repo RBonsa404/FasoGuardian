@@ -55,6 +55,18 @@ public class ConfigurationBracelet {
         return modeEconomie ? intervalleEconomieS : intervalleNormalS;
     }
 
+    /**
+     * Intervalle à appliquer compte tenu de l'abonnement : jamais plus court que celui de l'offre, et 0, soit
+     * aucune émission périodique, quand le suivi continu est suspendu. Le mode alerte n'en dépend pas.
+     */
+    public int intervalleS(int intervalleDeLOffreS, boolean suiviContinu) {
+        return suiviContinu ? Math.max(intervalleCourantS(), intervalleDeLOffreS) : 0;
+    }
+
+    public int intervalleNormalS() {
+        return intervalleNormalS;
+    }
+
     public int intervalleAlerteS() {
         return intervalleAlerteS;
     }
