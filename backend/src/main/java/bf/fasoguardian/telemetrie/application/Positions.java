@@ -15,6 +15,7 @@ import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
 import bf.fasoguardian.famille.AccesEnfant;
+import bf.fasoguardian.telemetrie.TrajetsRecents;
 import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
 import bf.fasoguardian.telemetrie.domaine.PositionConnue;
 import bf.fasoguardian.telemetrie.infrastructure.DepotTelemetrie;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
  * bracelet reconditionné ne montre jamais les positions de l'enfant qui le portait avant.
  */
 @Service
-public class Positions {
+public class Positions implements TrajetsRecents {
 
     /** Situation du bracelet de l'enfant ; {@code position} et {@code etat} manquent tant qu'il n'a rien émis. */
     public record Situation(String numeroSerie, PositionConnue position, EtatBracelet etat) {
@@ -91,6 +92,17 @@ public class Positions {
             return depot.positionsEntre(connu.id(), depuis.isBefore(plancher) ? plancher : depuis, fin, POINTS_PAR_JOUR);
         }).orElse(List.of());
         return new Trajet(jour, points, (int) conservation.toDays());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Point> depuis(UUID enfantId, Instant debut) {
+        return bracelets.deLEnfant(enfantId)
+                .map(connu -> depot.positionsEntre(connu.id(), debut.isBefore(connu.appaireDepuis()) ? connu.appaireDepuis() : debut,
+                        horloge.instant().plusSeconds(1), POINTS_PAR_JOUR))
+                .orElse(List.of()).stream().map(p -> new Point(p.latitude(), p.longitude(), p.precisionM(),
+                        p.source() != bf.fasoguardian.telemetrie.domaine.Mesure.Source.GNSS, p.mesureeLe()))
+                .toList();
     }
 
     /** Prépare les partitions à venir et applique la durée de conservation des positions (FG-DOC-06 tableau 18). */

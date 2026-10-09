@@ -49,6 +49,7 @@ services:
       FG_CLE_SECRET_MFA: ${FG_CLE_SECRET_MFA:?définir FG_CLE_SECRET_MFA dans .env}
       FG_CLE_IMEI: ${FG_CLE_IMEI:?définir FG_CLE_IMEI dans .env}
       FG_CLE_PROFIL_ENFANT: ${FG_CLE_PROFIL_ENFANT:?définir FG_CLE_PROFIL_ENFANT dans .env}
+      FG_CLE_SIGNALEMENT: ${FG_CLE_SIGNALEMENT:?définir FG_CLE_SIGNALEMENT dans .env}
       FG_CLE_COMMANDES: ${FG_CLE_COMMANDES:?définir FG_CLE_COMMANDES dans .env}
       FG_MQTT_URL: ssl://mosquitto:8883
       FG_MQTT_AUTORITE: /run/certs/ca.crt

@@ -5,6 +5,10 @@ import java.util.UUID;
 
 import bf.fasoguardian.alertes.application.Alertes;
 import bf.fasoguardian.alertes.application.Alertes.AlerteVue;
+import bf.fasoguardian.alertes.application.Escalades;
+import bf.fasoguardian.alertes.application.Escalades.Apercu;
+import bf.fasoguardian.alertes.application.Escalades.Dossier;
+import bf.fasoguardian.alertes.application.Escalades.SignalementVue;
 import bf.fasoguardian.alertes.application.Retraits;
 import bf.fasoguardian.alertes.application.Retraits.AutorisationVue;
 import bf.fasoguardian.alertes.domaine.AutorisationRetrait.Motif;
@@ -19,6 +23,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,13 +45,18 @@ class ControleurAlertes {
 
     private final Alertes alertes;
     private final Retraits retraits;
+    private final Escalades escalades;
 
-    ControleurAlertes(Alertes alertes, Retraits retraits) {
+    ControleurAlertes(Alertes alertes, Retraits retraits, Escalades escalades) {
+        this.escalades = escalades;
         this.alertes = alertes;
         this.retraits = retraits;
     }
 
     record DemandeMotif(@NotBlank @Size(max = 200) String motif) {
+    }
+
+    record DemandeEscalade(@Size(max = 6) String codeSecondFacteur) {
     }
 
     record DemandeRetrait(@NotNull Motif motif, @NotNull Integer dureeMinutes, @Size(max = 6) String codeSecondFacteur) {
@@ -86,6 +96,36 @@ class ControleurAlertes {
     ResponseEntity<AlerteVue> classerFausseAlerte(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID alerteId,
             @Valid @RequestBody DemandeMotif demande) {
         return sansCache(alertes.classerFausseAlerte(id(jeton), alerteId, demande.motif()));
+    }
+
+    @Operation(summary = "Aperçu du dossier de signalement avant confirmation (consultation journalisée)")
+    @GetMapping("/api/v1/alertes/{alerteId}/signalement/apercu")
+    ResponseEntity<Apercu> apercuDuSignalement(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID alerteId) {
+        return sansCache(escalades.apercu(id(jeton), alerteId));
+    }
+
+    @Operation(summary = "Escalade vers les forces de sécurité (second facteur ESCALADER_FORCES_SECURITE requis) ; "
+            + "sans convention active, génère le dossier que le parent remet lui-même")
+    @PostMapping("/api/v1/alertes/{alerteId}/escalade")
+    ResponseEntity<SignalementVue> escalader(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID alerteId,
+            @Valid @RequestBody DemandeEscalade demande) {
+        return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(escalades.escalader(id(jeton), alerteId, demande.codeSecondFacteur()));
+    }
+
+    @Operation(summary = "Référence et état du dossier de signalement d'une alerte escaladée")
+    @GetMapping("/api/v1/alertes/{alerteId}/signalement")
+    ResponseEntity<SignalementVue> signalement(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID alerteId) {
+        return sansCache(escalades.signalement(id(jeton), alerteId));
+    }
+
+    @Operation(summary = "Dossier de signalement en PDF, disponible 30 jours (téléchargement journalisé)")
+    @GetMapping(value = "/api/v1/alertes/{alerteId}/signalement/dossier", produces = MediaType.APPLICATION_PDF_VALUE)
+    ResponseEntity<byte[]> dossier(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID alerteId) {
+        Dossier dossier = escalades.dossier(id(jeton), alerteId);
+        return ResponseEntity.ok().header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dossier.reference() + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF).body(dossier.pdf());
     }
 
     @Operation(summary = "Prend en charge d'un geste toutes les alertes ouvertes de l'enfant")

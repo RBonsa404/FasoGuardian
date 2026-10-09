@@ -7,5 +7,7 @@ public enum CategorieDonnee {
     SANTE,
     SECRET_MFA,
     IMEI,
-    PROFIL_ENFANT
+    PROFIL_ENFANT,
+    /** Dossiers de signalement générés pour les forces de sécurité. */
+    SIGNALEMENT
 }
