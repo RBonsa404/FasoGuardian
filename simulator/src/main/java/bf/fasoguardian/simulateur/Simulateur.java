@@ -144,7 +144,9 @@ public final class Simulateur {
     private static void recevoirCommande(Connexion connexion, String message, AtomicLong publies) {
         Resultat resultat = connexion.verificateur.verifier(message, Instant.now());
         String id = connexion.bracelet.identifiant();
-        if (!resultat.acceptee()) {
+        if (resultat.dejaExecutee()) {
+            System.out.printf("%s : commande déjà exécutée, accusée de nouveau%n", id);
+        } else if (!resultat.acceptee()) {
             System.out.printf("%s : commande refusée (%s)%n", id, resultat.rejet());
         } else if ("alert".equals(resultat.commande().code())) {
             connexion.modeAlerte = resultat.commande().parametre("on", 0) == 1;
@@ -153,7 +155,7 @@ public final class Simulateur {
         } else {
             System.out.printf("%s : commande %s exécutée%n", id, resultat.commande().code());
         }
-        String accuse = "{\"id\":\"" + (resultat.idLu() == null ? "inconnue" : resultat.idLu()) + "\",\"ok\":" + resultat.acceptee() + "}";
+        String accuse = "{\"id\":\"" + (resultat.idLu() == null ? "inconnue" : resultat.idLu()) + "\",\"ok\":" + resultat.accusePositif() + "}";
         // L'accusé part d'un autre fil : le client synchrone ne publie pas depuis sa propre fonction de rappel.
         new Thread(() -> {
             try {

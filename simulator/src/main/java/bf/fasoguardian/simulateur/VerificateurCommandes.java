@@ -38,13 +38,27 @@ final class VerificateurCommandes {
      * @param commande la commande si elle est acceptée, sinon {@code null}
      * @param rejet    le motif du refus, sinon {@code null}
      * @param idLu     identifiant lu dans le message, même refusé, pour le signaler à la plateforme
+     * @param dejaExecutee la commande, authentique, a déjà été exécutée : elle est accusée de nouveau sans être rejouée
      */
-    record Resultat(Commande commande, Rejet rejet, String idLu) {
+    record Resultat(Commande commande, Rejet rejet, String idLu, boolean dejaExecutee) {
 
+        Resultat(Commande commande, Rejet rejet, String idLu) {
+            this(commande, rejet, idLu, false);
+        }
+
+        /** La commande est à exécuter. */
         boolean acceptee() {
             return commande != null;
         }
+
+        /** Valeur de {@code ok} dans l'accusé : vrai pour une commande exécutée, maintenant ou auparavant. */
+        boolean accusePositif() {
+            return acceptee() || dejaExecutee;
+        }
     }
+
+    /** Nombre d'identifiants de commandes exécutées gardés pour reconnaître une réémission. */
+    private static final int MEMOIRE = 32;
 
     private static final Pattern ID = Pattern.compile("\"id\":\"([0-9a-f-]{36})\"");
     private static final Pattern DESTINATAIRE = Pattern.compile("\"dev\":\"([A-Za-z0-9-]{1,32})\"");
@@ -55,6 +69,7 @@ final class VerificateurCommandes {
     private final String identifiant;
     private final PublicKey clePlateforme;
     private long dernierNumero;
+    private final java.util.ArrayDeque<String> executees = new java.util.ArrayDeque<>();
 
     /** @param clePlateforme clé publique de la plateforme ; sans elle, aucune commande ne peut être authentifiée */
     VerificateurCommandes(String identifiant, PublicKey clePlateforme) {
@@ -94,9 +109,14 @@ final class VerificateurCommandes {
         }
         long n = Long.parseLong(numero);
         if (n <= dernierNumero) {
-            return new Resultat(null, Rejet.REJEU, id);
+            // La plateforme réémet une commande dont l'accusé s'est perdu : elle n'est pas rejouée, mais accusée.
+            return new Resultat(null, Rejet.REJEU, id, executees.contains(id));
         }
         dernierNumero = n;
+        executees.addLast(id);
+        if (executees.size() > MEMOIRE) {
+            executees.removeFirst();
+        }
         return new Resultat(new Commande(id, code, n, corps), null, id);
     }
 

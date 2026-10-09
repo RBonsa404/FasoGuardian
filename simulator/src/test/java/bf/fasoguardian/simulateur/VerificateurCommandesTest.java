@@ -74,9 +74,14 @@ class VerificateurCommandesTest {
 
         String valide = message(corps(ID, "FG-2291", "loc", 100, 600, "{}"), plateforme.getPrivate());
         assertThat(verificateur.verifier(valide, MAINTENANT).acceptee()).isTrue();
-        assertThat(verificateur.verifier(valide, MAINTENANT).rejet()).as("même message rejoué").isEqualTo(Rejet.REJEU);
+        Resultat reemise = verificateur.verifier(valide, MAINTENANT);
+        assertThat(reemise.acceptee()).as("même message : jamais exécuté deux fois").isFalse();
+        assertThat(reemise.dejaExecutee()).isTrue();
+        assertThat(reemise.accusePositif()).as("réémission après un accusé perdu : accusée de nouveau").isTrue();
         assertThat(verificateur.verifier(message(corps(ID, "FG-2291", "loc", 99, 600, "{}"), plateforme.getPrivate()), MAINTENANT).rejet())
                 .as("numéro antérieur").isEqualTo(Rejet.REJEU);
+        assertThat(verificateur.verifier(message(corps("11111111-2222-3333-4444-555555555555", "FG-2291", "loc", 100, 600, "{}"),
+                plateforme.getPrivate()), MAINTENANT).accusePositif()).as("numéro déjà vu sous un autre identifiant").isFalse();
         assertThat(verificateur.verifier(message(corps(ID, "FG-2291", "loc", 101, 600, "{}"), plateforme.getPrivate()), MAINTENANT).acceptee())
                 .isTrue();
     }
