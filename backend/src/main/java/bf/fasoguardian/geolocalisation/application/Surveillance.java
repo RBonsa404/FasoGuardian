@@ -45,6 +45,7 @@ class Surveillance {
         if (position.enfantId() == null) {
             return;
         }
+        depot.verrouillerSuivi(position.enfantId());
         LocalDateTime heureLocale = zones.heureLocale(position.mesureeLe());
         Coordonnee point = new Coordonnee(position.latitude(), position.longitude());
         for (SafeZone zone : zones.pourEvaluation(position.enfantId())) {

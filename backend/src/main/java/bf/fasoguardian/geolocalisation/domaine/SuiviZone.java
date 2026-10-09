@@ -31,8 +31,7 @@ public record SuiviZone(boolean vuDedans, Instant dehorsDepuis, boolean sortieSi
      */
     public static Evaluation evaluer(SuiviZone precedent, boolean dedans, Instant mesureLe, Duration tolerance) {
         if (precedent != null && !mesureLe.isAfter(precedent.derniereMesure())) {
-            // Position plus ancienne que la dernière traitée (vidange du tampon hors ligne) : elle ne rejoue pas le suivi.
-            return new Evaluation(precedent, Constat.RIEN);
+            return evaluerEnRetard(precedent, dedans, tolerance);
         }
         if (dedans) {
             boolean retour = precedent != null && precedent.sortieSignalee();
@@ -45,6 +44,21 @@ public record SuiviZone(boolean vuDedans, Instant dehorsDepuis, boolean sortieSi
         boolean echu = !Duration.between(dehorsDepuis, mesureLe).minus(tolerance).isNegative();
         boolean signaler = echu && !precedent.sortieSignalee();
         return new Evaluation(new SuiviZone(true, dehorsDepuis, precedent.sortieSignalee() || signaler, mesureLe),
+                signaler ? Constat.SORTIE : Constat.RIEN);
+    }
+
+    /**
+     * Position plus ancienne que la dernière traitée (messages traités en parallèle, vidange du tampon hors
+     * ligne). Elle ne rejoue pas le suivi, à une exception près : si elle montre l'enfant dans la zone alors
+     * qu'il n'y avait jamais été vu et que la mesure la plus récente le situe dehors, c'est bien une sortie,
+     * qui commence à cette mesure la plus récente.
+     */
+    private static Evaluation evaluerEnRetard(SuiviZone precedent, boolean dedans, Duration tolerance) {
+        if (!dedans || precedent.vuDedans()) {
+            return new Evaluation(precedent, Constat.RIEN);
+        }
+        boolean signaler = tolerance.isZero();
+        return new Evaluation(new SuiviZone(true, precedent.derniereMesure(), signaler, precedent.derniereMesure()),
                 signaler ? Constat.SORTIE : Constat.RIEN);
     }
 }

@@ -53,7 +53,7 @@ et compté (`fasoguardian_telemetrie_messages_total{resultat="INVALIDE"}`).
 ```
 
 `ev` vaut `sos`, `strap` (coupure de la boucle), `skin` (perte du contact peau), `fall` (chute), `batcrit`
-(batterie critique) ou `charge` (pose sur le chargeur). La position est la dernière connue ; elle peut manquer :
+(batterie critique), `charge` (pose sur le chargeur) ou `worn` (contact peau rétabli : le bracelet est remis). La position est la dernière connue ; elle peut manquer :
 l'alerte part sans attendre un nouveau point (FG-DOC-08 §7.3).
 
 ### `status`

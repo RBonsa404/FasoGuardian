@@ -137,8 +137,24 @@ class ReglesZonesTest {
         Evaluation tamponnee = SuiviZone.evaluer(dedans, false, T0.minusSeconds(600), Duration.ZERO);
         assertThat(tamponnee.constat()).isEqualTo(Constat.RIEN);
         assertThat(tamponnee.suivi()).isEqualTo(dedans);
+        assertThat(SuiviZone.evaluer(dedans, true, T0.minusSeconds(600), Duration.ZERO).suivi()).isEqualTo(dedans);
         assertThat(SuiviZone.evaluer(dedans, false, T0.plusSeconds(1), Duration.ZERO).constat())
                 .as("sans tolérance, la première mesure dehors suffit").isEqualTo(Constat.SORTIE);
+    }
+
+    @Test
+    void deuxPositionsTraiteesDansLeDesordreNeFontPasManquerUneSortie() {
+        // La position « dehors » de 10:01 est évaluée avant la position « dedans » de 10:00.
+        SuiviZone dehorsDAbord = SuiviZone.evaluer(null, false, T0.plusSeconds(60), Duration.ZERO).suivi();
+        Evaluation enRetard = SuiviZone.evaluer(dehorsDAbord, true, T0, Duration.ZERO);
+        assertThat(enRetard.constat()).as("sans tolérance, la sortie est acquise").isEqualTo(Constat.SORTIE);
+        assertThat(enRetard.suivi().dehorsDepuis()).isEqualTo(T0.plusSeconds(60));
+
+        // Avec un délai de tolérance, la sortie commence à la mesure la plus récente et se confirme ensuite.
+        Evaluation avecDelai = SuiviZone.evaluer(dehorsDAbord, true, T0, CINQ_MINUTES);
+        assertThat(avecDelai.constat()).isEqualTo(Constat.RIEN);
+        assertThat(SuiviZone.evaluer(avecDelai.suivi(), false, T0.plusSeconds(420), CINQ_MINUTES).constat())
+                .isEqualTo(Constat.SORTIE);
     }
 
     private static ZoneCirculaire cercle(int rayonM) {

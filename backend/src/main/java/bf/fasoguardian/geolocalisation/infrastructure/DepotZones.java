@@ -90,6 +90,14 @@ public class DepotZones {
         jdbc.update("DELETE FROM geolocalisation.safe_zone WHERE id = ?", zoneId);
     }
 
+    /**
+     * Sérialise, jusqu'à la fin de la transaction, l'évaluation des positions d'un même enfant : deux messages
+     * traités en parallèle ne se marchent pas dessus.
+     */
+    public void verrouillerSuivi(UUID enfantId) {
+        jdbc.query("SELECT pg_advisory_xact_lock(hashtextextended(?, 0))", rs -> { }, "suivi-zone:" + enfantId);
+    }
+
     public Optional<SuiviZone> suivi(UUID zoneId) {
         return jdbc.query("""
                 SELECT vu_dedans, dehors_depuis, sortie_signalee, derniere_mesure FROM geolocalisation.suivi_zone

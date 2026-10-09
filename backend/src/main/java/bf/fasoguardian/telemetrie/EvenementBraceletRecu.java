@@ -16,6 +16,8 @@ public record EvenementBraceletRecu(UUID braceletId, UUID enfantId, Type type, D
         PERTE_CONTACT_PEAU,
         CHUTE,
         BATTERIE_CRITIQUE,
-        MISE_EN_CHARGE
+        MISE_EN_CHARGE,
+        /** Le contact peau est rétabli : le bracelet a été remis. */
+        PORT_RETABLI
     }
 }

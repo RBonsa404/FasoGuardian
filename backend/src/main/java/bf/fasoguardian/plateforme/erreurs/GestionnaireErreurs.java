@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -43,6 +44,13 @@ class GestionnaireErreurs extends ResponseEntityExceptionHandler {
         refus.publier(requete);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Problemes.de(CodeErreur.ACCES_REFUSE, "Vous n'êtes pas autorisé à accéder à cette ressource."));
+    }
+
+    /** Deux acteurs ont modifié la même ressource en même temps : le second doit recharger avant de réessayer. */
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    ResponseEntity<ProblemDetail> modificationConcurrente(OptimisticLockingFailureException erreur) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Problemes.de(CodeErreur.CONFLIT,
+                "Cette ressource vient d'être modifiée par quelqu'un d'autre. Rechargez puis réessayez."));
     }
 
     @ExceptionHandler(Exception.class)

@@ -208,6 +208,7 @@ public class Ingestion implements ReceptionMessages {
             case "fall" -> EvenementBraceletRecu.Type.CHUTE;
             case "batcrit" -> EvenementBraceletRecu.Type.BATTERIE_CRITIQUE;
             case "charge" -> EvenementBraceletRecu.Type.MISE_EN_CHARGE;
+            case "worn" -> EvenementBraceletRecu.Type.PORT_RETABLI;
             default -> null;
         };
     }
