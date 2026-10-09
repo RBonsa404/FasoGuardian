@@ -60,3 +60,19 @@ Autres règles retenues :
   et exposée mais n'est pas encore appliquée par le broker : aucune donnée réelle ne circule avant cette étape.
 - La demande de remplacement de l'écran 37 (30 000 FCFA, ou incluse sous garantie) relève du paiement et du
   suivi après-vente : elle est livrée avec les modules abonnements et console.
+
+## Complément du 9 octobre 2026 — supervision et maintenance
+
+- **Bracelet muet** (US-SAV-001). Chaque minute, la supervision compare le dernier contact de chaque bracelet
+  actif et porté à trois fois son intervalle d'émission du moment (5 min, 15 min en mode économie ou pour
+  l'offre Essentiel). Au-delà, le parent est informé et un ticket `SAV-…` est ouvert, un seul par bracelet. Il
+  se clôt de lui-même quand le bracelet redonne des nouvelles, ou par l'agent qui dit comment il s'est résolu.
+  Un bracelet dont l'émission périodique est suspendue (abonnement restreint) n'est pas attendu.
+- **Ce que voit le service après-vente.** Le design (écrans 64 et 66) montre le prénom de l'enfant, le nom du
+  parent et le quartier. FG-DOC-06 (tableau 17) limite ce rôle à « l'état des bracelets seulement » et prime
+  sur le design : la console SAV montre le numéro de série, l'état, le dernier contact, la batterie et le
+  réseau, et dit seulement si le bracelet est porté. C'est la plateforme qui prévient le parent.
+- **Batterie** (US-SYS-007). Au franchissement de 20 % vers le bas, la plateforme active le mode économie par
+  commande signée et avertit le parent, une fois ; à 30 %, elle lève ce mode. L'écart évite d'osciller autour
+  du seuil. Un mode économie choisi par le parent n'est jamais levé d'office. Sous 10 %, l'alerte « batterie
+  critique » existante prend le relais.

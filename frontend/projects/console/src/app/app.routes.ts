@@ -17,6 +17,13 @@ export const routes: Routes = [
         canActivate: [roleRequis('KYC')],
         loadComponent: () => import('./kyc/instruction').then((m) => m.InstructionKyc),
       },
+      { path: 'sav/parc', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/parc').then((m) => m.Parc) },
+      {
+        path: 'sav/parc/:numero',
+        canActivate: [roleRequis('SAV')],
+        loadComponent: () => import('./sav/fiche-bracelet').then((m) => m.FicheBracelet),
+      },
+      { path: 'sav/muets', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/muets').then((m) => m.Muets) },
       { path: 'admin/audit', canActivate: [roleRequis('ADMIN')], loadComponent: () => import('./admin/audit').then((m) => m.Audit) },
       {
         path: 'conformite',
