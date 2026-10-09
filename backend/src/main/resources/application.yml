@@ -122,6 +122,9 @@ fasoguardian:
     adaptateur: ${FG_SMS_ADAPTATEUR:}
     # Secret partagé avec la passerelle qui remet les SMS de repli des bracelets ; vide : canal fermé.
     secret-passerelle: ${FG_SMS_SECRET_PASSERELLE:}
+  lorawan:
+    # Secret partagé avec le serveur de réseau LoRaWAN qui remet les trames des passerelles ; vide : canal fermé.
+    secret-serveur-reseau: ${FG_LORAWAN_SECRET:}
   chiffrement:
     cle-empreinte: ${FG_CLE_EMPREINTE:}
     cles:

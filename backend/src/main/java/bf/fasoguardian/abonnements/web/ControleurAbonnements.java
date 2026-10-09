@@ -57,9 +57,9 @@ class ControleurAbonnements {
     record DemandeRenouvellement(@NotNull Boolean automatique) {
     }
 
-    @Operation(summary = "Offres qu'une famille peut souscrire")
+    @Operation(summary = "Offres qu'une famille peut souscrire ; l'administrateur les lit à l'écran de paramétrage")
     @SecurityRequirement(name = "jetonAcces")
-    @PreAuthorize(PARENT)
+    @PreAuthorize("hasAnyRole('PARENT', 'ADMIN')")
     @GetMapping("/api/v1/offres")
     List<OffreVue> offres() {
         return souscriptions.offres();

@@ -83,6 +83,8 @@ case "${1:-}" in
       echo "FG_PAIEMENTS_SECRET_WEBHOOK=$(openssl rand -hex 32)"
       echo "FG_PAIEMENTS_VALIDATION_APRES=PT3S"
       echo "FG_OFFRE_D_ACCUEIL=INTERMEDIAIRE"
+      # Sceau du serveur de réseau LoRaWAN simulé par les tests.
+      echo "FG_LORAWAN_SECRET=$(openssl rand -hex 32)"
       rm -f "$ETAT/push-privee.pem"
     } > "$ENV"
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).

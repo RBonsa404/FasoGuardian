@@ -31,6 +31,9 @@ public abstract class TestIntegration {
     /** Secret jetable partagé avec la passerelle des SMS de repli. */
     protected static final String SECRET_PASSERELLE_SMS = cleAleatoire() + cleAleatoire();
 
+    /** Secret jetable du serveur de réseau LoRaWAN simulé par les essais. */
+    protected static final String SECRET_SERVEUR_LORAWAN = cleAleatoire() + cleAleatoire();
+
     /** Clés jetables du serveur d'application pour les notifications push (VAPID). */
     protected static final java.security.KeyPair CLE_PUSH = cleDeSignature();
 
@@ -81,6 +84,7 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.alertes.cascade.cadence", () -> "PT24H");
         registre.add("fasoguardian.alertes.cascade.contact-institutionnel", () -> "70 99 00 17");
         registre.add("fasoguardian.sms.secret-passerelle", () -> SECRET_PASSERELLE_SMS);
+        registre.add("fasoguardian.lorawan.secret-serveur-reseau", () -> SECRET_SERVEUR_LORAWAN);
         registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);
         // Les essais existants supposent les droits du palier intermédiaire ; AbonnementsIT les fait varier.

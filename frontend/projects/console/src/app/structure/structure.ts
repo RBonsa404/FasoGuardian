@@ -26,6 +26,7 @@ const ENTREES: readonly Entree[] = [
   { libelle: $localize`:@@nav.conformite:Conformité CIL`, lien: '/conformite', role: 'ADMIN' },
   { libelle: $localize`:@@nav.supervision:Supervision`, lien: '/admin/supervision', role: 'ADMIN' },
   { libelle: $localize`:@@nav.securite:Sécurité`, lien: '/admin/securite', role: 'ADMIN' },
+  { libelle: $localize`:@@nav.parametres:Paramétrage`, lien: '/admin/parametres', role: 'ADMIN' },
 ];
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */

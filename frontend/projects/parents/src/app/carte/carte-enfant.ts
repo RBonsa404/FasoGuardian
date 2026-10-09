@@ -41,7 +41,9 @@ const DELAIS_DE_RELECTURE_MS = [5_000, 15_000, 30_000];
             }
             <span class="text-label text-text-2 tabular-nums">{{ quand() }}</span>
           </div>
-          @if (p.source !== 'GNSS') {
+          @if (p.source === 'LORA') {
+            <p class="m-0 text-label text-text-2" i18n="@@carte.passerelle">Présence relevée par la passerelle d'un établissement partenaire : votre enfant est dans son enceinte.</p>
+          } @else if (p.source !== 'GNSS') {
             <p class="m-0 text-label text-text-2" i18n="@@carte.antenne">Position par antenne relais : le GPS est indisponible, par exemple à l'intérieur d'un bâtiment.</p>
           }
           @if (ancienne()) {

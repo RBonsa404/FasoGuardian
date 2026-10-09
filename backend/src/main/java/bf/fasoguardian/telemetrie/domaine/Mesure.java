@@ -14,7 +14,9 @@ public record Mesure(Instant mesureeLe, long sequence, double latitude, double l
     public enum Source {
         GNSS,
         CELLULE,
-        WIFI
+        WIFI,
+        /** Présence relevée par une passerelle LoRaWAN : la position est celle de l'enceinte couverte. */
+        LORA
     }
 
     public enum Reseau {

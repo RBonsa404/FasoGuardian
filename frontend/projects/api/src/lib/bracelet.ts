@@ -27,7 +27,8 @@ export interface PositionConnue {
   readonly longitude: number;
   /** Rayon d'incertitude en mètres. */
   readonly precisionM: number;
-  readonly source: 'GNSS' | 'CELLULE' | 'WIFI';
+  /** LORA : présence relevée par la passerelle d'un établissement partenaire ; la position est celle de son enceinte. */
+  readonly source: 'GNSS' | 'CELLULE' | 'WIFI' | 'LORA';
   /** Heure de la mesure par le bracelet (ISO), jamais celle de la réception. */
   readonly mesureeLe: string;
 }

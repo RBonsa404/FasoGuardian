@@ -151,6 +151,27 @@ sans clé, certificat révoqué, format inconnu : le SMS est rejeté et le rejet
 un message `alert` ordinaire, dont le numéro de séquence est l'heure de l'événement : remis deux fois, il n'a
 d'effet qu'une fois.
 
+## Présence par passerelle LoRaWAN
+
+Piste d'évolution (US-SYS-004, ADR 0024) : le bracelet actuel n'a pas de radio LoRa. Quand un bracelet en
+sera équipé, le serveur de réseau LoRaWAN, qui authentifie ses trames, remettra chaque trame entendue par
+`POST /api/v1/public/lorawan/trames`, avec le même en-tête `X-FG-Signature` que la passerelle SMS, calculé
+avec `FG_LORAWAN_SECRET`.
+
+```json
+{"passerelle":"A84041FFFF1F2E3D","bracelet":"FG-2291","compteur":1284,"t":1759651200}
+```
+
+| Champ | Sens |
+|---|---|
+| `passerelle` | identifiant matériel (EUI) de la passerelle qui a entendu la trame, enregistrée à la console |
+| `bracelet` | identifiant du bracelet ; absent, l'appel est un simple signe de vie de la passerelle |
+| `compteur` | compteur de trames du bracelet : avec `t`, il rend la réception idempotente |
+| `t` | heure de réception par la passerelle, en secondes Unix |
+
+La trame est enregistrée comme une position de source `LORA` : le centre de l'enceinte de la passerelle, avec
+son rayon pour précision. Les règles de réception ci-dessus s'appliquent.
+
 ## Conservation
 
 Les positions sont effacées chaque nuit au-delà de 30 jours, et de 90 jours pour les enfants dont l'offre

@@ -85,6 +85,36 @@ public class Ingestion implements ReceptionMessages {
         }
     }
 
+    /**
+     * Présence relevée par une passerelle LoRaWAN (US-SYS-004) : le bracelet a été entendu dans l'enceinte
+     * donnée. La position enregistrée est celle de l'enceinte, avec son rayon pour précision ; l'état radio
+     * cellulaire du bracelet n'est pas touché, seul son dernier contact avance.
+     */
+    @Transactional
+    public Resultat presence(String identifiantAppareil, Instant entenduLe, long compteur, double latitude, double longitude,
+            int rayonM) {
+        return compter("lorawan", () -> {
+            Optional<BraceletConnu> bracelet = appareil(identifiantAppareil);
+            if (bracelet.isEmpty()) {
+                return Resultat.APPAREIL_REFUSE;
+            }
+            Instant maintenant = horloge.instant();
+            Mesure mesure = new Mesure(entenduLe, compteur, latitude, longitude, rayonM, Mesure.Source.LORA, null, null, null, null,
+                    null);
+            BraceletConnu connu = bracelet.get();
+            if (mesure.defaut(maintenant).isPresent() || mesure.mesureeLe().isBefore(connu.appaireDepuis())) {
+                return Resultat.INVALIDE;
+            }
+            depot.enregistrerEtat(connu.id(), new EtatBracelet(null, null, null, null, null, null, null, maintenant));
+            if (!depot.ajouterPosition(connu.id(), mesure, maintenant)) {
+                return Resultat.DOUBLON;
+            }
+            evenements.publishEvent(new PositionRecue(connu.id(), connu.enfantId(), mesure.latitude(), mesure.longitude(),
+                    mesure.precisionM(), mesure.mesureeLe()));
+            return Resultat.ACCEPTE;
+        });
+    }
+
     /** Message du flux {@code telemetry} : une position et l'état radio du bracelet. */
     @Transactional
     public Resultat telemetrie(String identifiantAppareil, byte[] message) {

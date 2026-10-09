@@ -16,6 +16,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `page-qr.spec.ts` | Page publique QR sans JavaScript : page générique, une seule requête, moins de 60 Ko | US-TRS-001, US-SYS-010 |
 | `console-kyc.spec.ts` | Enrôlement TOTP d'un agent, instruction et validation d'un dossier dans la console ; refus opposé à un opérateur support | US-ADM-001, US-PAR-001 |
 | `console-fds.spec.ts` | Signalement retrouvé par sa référence dans l'espace des forces de sécurité, accusé de réception, accusé visible par le parent | US-FDS-001 |
+| `console-parametres.spec.ts` | Écran de paramétrage : tarifs, passerelle LoRaWAN enregistrée, vue en ligne sur un signe de vie scellé, puis retirée | US-SYS-004 |
 
 ## Lancer les tests
 

@@ -31,3 +31,5 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0021](0021-support-et-base-de-connaissances.md) | Demandes de support suivies dans le compte, réponses jamais envoyées par SMS, articles en texte simple publiés par l'opérateur | Acceptée |
 | [0022](0022-cascade-des-alertes-sans-reponse.md) | Alerte critique sans réponse : contacts d'urgence puis point de contact institutionnel, par SMS sans donnée de l'enfant, chaque étape au journal | Acceptée |
 | [0023](0023-accuse-de-reception-des-forces-de-securite.md) | Espace des forces de sécurité : signalement retrouvé par référence exacte, accusé horodaté et notifié, aucune donnée de l'enfant hors dossier transmis par passerelle, accès fermé à 30 jours | Acceptée |
+| [0024](0024-passerelles-lorawan-en-zone-pilote.md) | Registre des passerelles LoRaWAN et réception scellée des trames : une trame entendue vaut présence dans l'enceinte ; non validable sur le bracelet actuel, sans radio LoRa | Acceptée |
+| [0025](0025-essai-en-temperature-hors-perimetre-logiciel.md) | US-SYS-009 : la tenue au-delà de 50 °C se prouve par un essai en étuve sur prototype, pas par du code | Acceptée |
