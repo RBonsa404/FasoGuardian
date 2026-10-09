@@ -20,3 +20,4 @@ export * from './lib/agents';
 export * from './lib/partage';
 export * from './lib/litiges';
 export * from './lib/support';
+export * from './lib/fds';

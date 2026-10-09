@@ -82,14 +82,23 @@ export class Carte {
   private cadre = '';
 
   constructor() {
-    const detruire = inject(DestroyRef);
+    // L'écran peut être quitté pendant le chargement de Leaflet : la carte n'est alors pas montée.
+    let detruit = false;
+    let monte: CarteLeaflet | null = null;
+    inject(DestroyRef).onDestroy(() => {
+      detruit = true;
+      monte?.remove();
+    });
     afterNextRender(async () => {
       const L = await import('leaflet');
+      if (detruit) {
+        return;
+      }
       const carte = L.map(this.hote().nativeElement, { zoomControl: false, attributionControl: true }).setView(OUAGADOUGOU, 13);
       carte.attributionControl.setPrefix(false);
       L.tileLayer(this.fond.url, { attribution: this.fond.attribution, maxZoom: this.fond.zoomMaximal }).addTo(carte);
       carte.on('click', (evenement) => this.touche.emit({ latitude: evenement.latlng.lat, longitude: evenement.latlng.lng }));
-      detruire.onDestroy(() => carte.remove());
+      monte = carte;
       this.pret.set({ L, carte, calque: L.layerGroup().addTo(carte) });
     });
     effect(() => this.dessiner());

@@ -23,6 +23,9 @@
     </div>
   </dl>
 
+  @if (s.accuseLe) {
+    <fg-banner ton="succes"><ng-container i18n="@@signalement.accuse">Les forces de sécurité ont accusé réception le</ng-container> {{ s.accuseLe | date: "d MMM y 'à' HH:mm" }}.</fg-banner>
+  }
   @if (erreur(); as message) {
     <fg-banner ton="erreur">{{ message }}</fg-banner>
   }

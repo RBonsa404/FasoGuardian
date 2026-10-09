@@ -25,6 +25,7 @@ export const routes: Routes = [
       },
       { path: 'support/tickets', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/tickets').then((m) => m.Tickets) },
       { path: 'support/faq', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/faq').then((m) => m.Faq) },
+      { path: 'fds', canActivate: [roleRequis('FDS')], loadComponent: () => import('./fds/signalement').then((m) => m.SignalementFds) },
       { path: 'sav/parc', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/parc').then((m) => m.Parc) },
       {
         path: 'sav/parc/:numero',

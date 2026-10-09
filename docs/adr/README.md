@@ -30,3 +30,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0020](0020-session-expiree-et-copie-locale.md) | Réauthentification complète, copie locale minimale de la fiche effacée à la déconnexion, application gardée pour l'ouverture hors ligne | Acceptée |
 | [0021](0021-support-et-base-de-connaissances.md) | Demandes de support suivies dans le compte, réponses jamais envoyées par SMS, articles en texte simple publiés par l'opérateur | Acceptée |
 | [0022](0022-cascade-des-alertes-sans-reponse.md) | Alerte critique sans réponse : contacts d'urgence puis point de contact institutionnel, par SMS sans donnée de l'enfant, chaque étape au journal | Acceptée |
+| [0023](0023-accuse-de-reception-des-forces-de-securite.md) | Espace des forces de sécurité : signalement retrouvé par référence exacte, accusé horodaté et notifié, aucune donnée de l'enfant hors dossier transmis par passerelle, accès fermé à 30 jours | Acceptée |

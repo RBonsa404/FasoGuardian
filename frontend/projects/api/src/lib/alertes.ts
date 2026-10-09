@@ -73,6 +73,8 @@ export interface Signalement {
   /** Faux une fois le dossier effacé, au bout de 30 jours. */
   readonly dossierDisponible: boolean;
   readonly empreinteDossier: string;
+  /** Accusé de réception des forces de sécurité, s'il a été donné. */
+  readonly accuseLe: string | null;
 }
 
 /** Client des alertes et de l'autorisation de retrait (US-ENF-001, US-PAR-008, 010, 012). */

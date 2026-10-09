@@ -15,6 +15,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `notifications.spec.ts` | Écran d'installation et de notifications ; message poussé au service worker, accusé de livraison envoyé au serveur | US-ENF-001 |
 | `page-qr.spec.ts` | Page publique QR sans JavaScript : page générique, une seule requête, moins de 60 Ko | US-TRS-001, US-SYS-010 |
 | `console-kyc.spec.ts` | Enrôlement TOTP d'un agent, instruction et validation d'un dossier dans la console ; refus opposé à un opérateur support | US-ADM-001, US-PAR-001 |
+| `console-fds.spec.ts` | Signalement retrouvé par sa référence dans l'espace des forces de sécurité, accusé de réception, accusé visible par le parent | US-FDS-001 |
 
 ## Lancer les tests
 

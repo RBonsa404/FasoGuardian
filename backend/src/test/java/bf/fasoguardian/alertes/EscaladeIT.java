@@ -162,8 +162,11 @@ class EscaladeIT extends TestIntegration {
         reception.recevoir(Flux.ALERT, carte.numeroSerie(), ("{\"t\":" + (Instant.now().getEpochSecond() + 1) + ",\"seq\":1,\"ev\":\"sos\"}")
                 .getBytes(StandardCharsets.UTF_8));
         String[] alerte = new String[1];
-        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> alerte[0] = jdbc.queryForObject(
-                "SELECT id::text FROM alertes.alerte WHERE enfant_id = ?::uuid", String.class, famille.enfantId()));
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            alerte[0] = jdbc.queryForList("SELECT id::text FROM alertes.alerte WHERE enfant_id = ?::uuid", String.class, famille.enfantId())
+                    .stream().findFirst().orElse(null);
+            assertThat(alerte[0]).isNotNull();
+        });
         String base = "/api/v1/alertes/" + alerte[0];
 
         // Pas encore prise en charge : l'escalade est refusée avant même de consommer un code.

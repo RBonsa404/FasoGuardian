@@ -59,7 +59,7 @@ import { LIBELLES_ROLES } from '../commun/acces';
         </a>
       }
     </div>
-    @if (session.roles().length > 0 && !session.roles().includes('KYC') && !session.roles().includes('ADMIN') && !session.roles().includes('SAV') && !session.roles().includes('SUPPORT')) {
+    @if (session.roles().length > 0 && !session.roles().includes('KYC') && !session.roles().includes('ADMIN') && !session.roles().includes('SAV') && !session.roles().includes('SUPPORT') && !session.roles().includes('FDS')) {
       <p class="m-0 text-body text-text-2" i18n="@@tableau.vide">Les écrans de votre rôle ne sont pas encore disponibles dans cette version.</p>
     }
   `,

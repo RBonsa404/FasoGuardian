@@ -53,6 +53,9 @@ public class SignalementFds {
     @Column(name = "accuse_le")
     private Instant accuseLe;
 
+    @Column(name = "accuse_par")
+    private UUID accusePar;
+
     @Column(name = "efface_le")
     private Instant effaceLe;
 
@@ -68,6 +71,24 @@ public class SignalementFds {
         this.dossierChiffre = dossierChiffre;
         this.creeLe = maintenant;
         this.transmisLe = canal == Canal.PASSERELLE ? maintenant : null;
+    }
+
+    /**
+     * Les forces de sécurité confirment la prise en charge (US-FDS-001).
+     *
+     * @return {@code false} si la réception était déjà accusée : le premier accusé fait foi
+     */
+    public boolean accuser(UUID agentId, Instant maintenant) {
+        if (accuseLe != null) {
+            return false;
+        }
+        accuseLe = maintenant;
+        accusePar = agentId;
+        return true;
+    }
+
+    public Instant accuseLe() {
+        return accuseLe;
     }
 
     public void effacerDossier(Instant maintenant) {

@@ -61,8 +61,9 @@ public class Escalades {
     public record Apercu(Identification enfant, int positionsDuTrajet, Point dernierePosition, boolean conventionActive) {
     }
 
+    /** @param accuseLe accusé de réception des forces de sécurité, ou {@code null} */
     public record SignalementVue(String reference, Canal canal, Instant creeLe, Instant disponibleJusquAu,
-            boolean dossierDisponible, String empreinteDossier) {
+            boolean dossierDisponible, String empreinteDossier, Instant accuseLe) {
     }
 
     public record Dossier(String reference, byte[] pdf) {
@@ -194,7 +195,7 @@ public class Escalades {
 
     private static SignalementVue vue(SignalementFds s) {
         return new SignalementVue(s.reference(), s.canal(), s.creeLe(), s.disponibleJusquAu(), s.dossierDisponible(),
-                s.empreinteDossier());
+                s.empreinteDossier(), s.accuseLe());
     }
 
     private static String libelle(Alerte alerte) {

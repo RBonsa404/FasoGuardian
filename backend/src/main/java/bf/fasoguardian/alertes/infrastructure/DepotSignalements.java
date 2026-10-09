@@ -3,6 +3,7 @@ package bf.fasoguardian.alertes.infrastructure;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import bf.fasoguardian.alertes.domaine.SignalementFds;
@@ -12,6 +13,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface DepotSignalements extends JpaRepository<SignalementFds, UUID> {
 
     List<SignalementFds> findByAlerteIdIn(Collection<UUID> alerteIds);
+
+    Optional<SignalementFds> findByReference(String reference);
 
     List<SignalementFds> findByDossierChiffreIsNotNullAndCreeLeBefore(Instant limite);
 
