@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientProfil } from 'api';
+import { ClientConformite, ClientProfil } from 'api';
 import { FgBanniere, FgBouton, FgChamp, FgCode, FgFeuille, FgIcon, FgTelephone } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
@@ -24,18 +24,42 @@ type Feuille = 'mot-de-passe' | 'telephone' | 'cloture' | null;
 export class Reglages {
   private readonly client = inject(ClientProfil);
   private readonly router = inject(Router);
+  private readonly conformite = inject(ClientConformite);
 
   protected readonly feuille = signal<Feuille>(null);
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly succes = signal<string | null>(null);
   protected readonly codeEnvoye = signal(false);
+  protected readonly export = signal(false);
 
   protected readonly actuel = new FormControl('', { nonNullable: true });
   protected readonly nouveau = new FormControl('', { nonNullable: true });
   protected readonly telephone = new FormControl('', { nonNullable: true });
   protected readonly code = new FormControl('', { nonNullable: true });
   protected readonly explicationCloture = $localize`:@@cloture.explication:La clôture est définitive : votre compte sera fermé et vos données supprimées sous 30 jours. Saisissez le code reçu par SMS pour confirmer.`;
+
+  /** Droit d'accès : le fichier est produit à la demande et la demande est journalisée. */
+  protected telechargerMesDonnees(): void {
+    this.export.set(true);
+    this.erreur.set(null);
+    this.conformite.mesDonnees().subscribe({
+      next: (fichier) => {
+        this.export.set(false);
+        const adresse = URL.createObjectURL(fichier);
+        const lien = document.createElement('a');
+        lien.href = adresse;
+        lien.download = 'mes-donnees-fasoguardian.json';
+        lien.click();
+        URL.revokeObjectURL(adresse);
+        this.succes.set($localize`:@@reglages.donnees.succes:Vos données ont été téléchargées.`);
+      },
+      error: (cause: unknown) => {
+        this.export.set(false);
+        this.erreur.set(erreurLisible(cause).message);
+      },
+    });
+  }
 
   protected ouvrir(feuille: Feuille): void {
     this.erreur.set(null);

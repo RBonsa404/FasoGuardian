@@ -5,6 +5,11 @@
 @if (succes(); as message) {
   <fg-banner ton="info" icone="valider">{{ message }}</fg-banner>
 }
+@if (feuille() === null) {
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+}
 
 <div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
   <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" (click)="ouvrir('mot-de-passe')">
@@ -19,6 +24,17 @@
     <fg-icon nom="cloche" [taille]="20" />
     <span class="flex-1 text-body font-medium" i18n="@@reglages.notifications">Notifications et installation</span>
   </a>
+  <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" routerLink="/abonnement">
+    <fg-icon nom="mobile-money" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@accueil.abonnement">Mon abonnement</span>
+  </a>
+  <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [disabled]="export()" (click)="telechargerMesDonnees()">
+    <fg-icon nom="partager" [taille]="20" />
+    <span class="flex flex-1 flex-col">
+      <span class="text-body font-medium" i18n="@@reglages.donnees">Télécharger mes données</span>
+      <span class="text-caption text-text-3" i18n="@@reglages.donnees.texte">Tout ce que FasoGuardian conserve sur vous et vos enfants.</span>
+    </span>
+  </button>
 </div>
 
 <button fg-button variante="danger" type="button" class="mt-auto" (click)="ouvrir('cloture')" i18n="@@reglages.cloture">Clôturer le compte</button>

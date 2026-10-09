@@ -15,6 +15,8 @@ interface Entree {
 const ENTREES: readonly Entree[] = [
   { libelle: $localize`:@@nav.tableau:Tableau de bord`, lien: '/' },
   { libelle: $localize`:@@nav.kyc:File KYC`, lien: '/kyc', role: 'KYC' },
+  { libelle: $localize`:@@nav.audit:Journal d'audit`, lien: '/admin/audit', role: 'ADMIN' },
+  { libelle: $localize`:@@nav.conformite:Conformité CIL`, lien: '/conformite', role: 'ADMIN' },
 ];
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */

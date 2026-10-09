@@ -20,8 +20,18 @@ import { LIBELLES_ROLES } from '../commun/acces';
           <span class="text-label text-text-2" i18n="@@tableau.kyc.texte">Objectif : décision sous 48 h ouvrées.</span>
         </a>
       }
+      @if (session.roles().includes('ADMIN')) {
+        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/audit">
+          <strong class="text-body font-semibold" i18n="@@nav.audit">Journal d'audit</strong>
+          <span class="text-label text-text-2" i18n="@@tableau.audit.texte">Accès sensibles, refus et état de la chaîne d'empreintes.</span>
+        </a>
+        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/conformite">
+          <strong class="text-body font-semibold" i18n="@@nav.conformite">Conformité CIL</strong>
+          <span class="text-label text-text-2" i18n="@@tableau.conformite.texte">Durées de conservation, purges, demandes d'effacement, rapport mensuel.</span>
+        </a>
+      }
     </div>
-    @if (session.roles().length > 0 && !session.roles().includes('KYC')) {
+    @if (session.roles().length > 0 && !session.roles().includes('KYC') && !session.roles().includes('ADMIN')) {
       <p class="m-0 text-body text-text-2" i18n="@@tableau.vide">Les écrans de votre rôle ne sont pas encore disponibles dans cette version.</p>
     }
   `,

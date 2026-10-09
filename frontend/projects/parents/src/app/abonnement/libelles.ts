@@ -37,5 +37,9 @@ export function resumeOffre(offre: Offre): string {
     offre.zonesMaximum > 1
       ? $localize`:@@abonnement.offre.zones:${offre.zonesMaximum}:nombre: Safe Zones`
       : $localize`:@@abonnement.offre.zone:1 Safe Zone`;
-  return $localize`:@@abonnement.offre.resume:Position toutes les ${minutes}:minutes: min · ${zones}:zones: · historique ${offre.historiqueJours}:jours: jours`;
+  const historique =
+    offre.historiqueJours > 1
+      ? $localize`:@@abonnement.offre.historique:historique ${offre.historiqueJours}:jours: jours`
+      : $localize`:@@abonnement.offre.historique24h:historique 24 h`;
+  return $localize`:@@abonnement.offre.resume:Position toutes les ${minutes}:minutes: min · ${zones}:zones: · ${historique}:historique:`;
 }

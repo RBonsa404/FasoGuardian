@@ -17,6 +17,12 @@ export const routes: Routes = [
         canActivate: [roleRequis('KYC')],
         loadComponent: () => import('./kyc/instruction').then((m) => m.InstructionKyc),
       },
+      { path: 'admin/audit', canActivate: [roleRequis('ADMIN')], loadComponent: () => import('./admin/audit').then((m) => m.Audit) },
+      {
+        path: 'conformite',
+        canActivate: [roleRequis('ADMIN')],
+        loadComponent: () => import('./admin/conformite').then((m) => m.Conformite),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -10,7 +10,7 @@ import { jourCourt, jourLong, mois, montant, resumeOffre } from './libelles';
 import { EcranPaiement, INTERROGATION_MS } from './paiement';
 
 const OFFRES: Offre[] = [
-  { code: 'ESSENTIEL', libelle: 'Essentiel', prixFcfa: 1500, intervalleS: 900, zonesMaximum: 1, historiqueJours: 30 },
+  { code: 'ESSENTIEL', libelle: 'Essentiel', prixFcfa: 1500, intervalleS: 900, zonesMaximum: 1, historiqueJours: 1 },
   { code: 'INTERMEDIAIRE', libelle: 'Intermédiaire', prixFcfa: 2250, intervalleS: 300, zonesMaximum: 3, historiqueJours: 30 },
   { code: 'PREMIUM', libelle: 'Premium', prixFcfa: 5000, intervalleS: 300, zonesMaximum: 3, historiqueJours: 90 },
 ];
@@ -105,7 +105,7 @@ describe('mon abonnement', () => {
     expect(lire(page)).toContain('2 250 FCFA / mois');
     expect(lire(page)).toContain('Prochaine échéance 7 nov. · renouvellement auto · Orange Money');
     expect(lire(page)).toContain('Intermédiaire · actuelle');
-    expect(lire(page)).toContain('Position toutes les 15 min · 1 Safe Zone · historique 30 jours');
+    expect(lire(page)).toContain('Position toutes les 15 min · 1 Safe Zone · historique 24 h');
     expect(lire(page)).toContain('SOS, détection de retrait et page QR inclus dans toutes les offres.');
     // À jour et loin de l'échéance : aucun bouton de paiement n'insiste.
     expect([...page.querySelectorAll('button')].some((b) => lire(b).includes('Payer'))).toBe(false);

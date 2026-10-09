@@ -23,3 +23,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0013](0013-escalade-et-dossier-de-signalement.md) | Escalade sous second facteur ; sans convention, dossier PDF remis par le parent, chiffré et gardé 30 jours | Acceptée |
 | [0014](0014-notifications-push-et-repli-sms.md) | Notifications : choix du canal, Web Push chiffré, accusé et repli SMS à 60 s, adresses de livraison limitées | Acceptée |
 | [0015](0015-abonnements-et-paiements.md) | Abonnement par enfant, activation sur notification signée seulement, relances et restriction, droits exposés aux autres modules | Acceptée |
+| [0016](0016-conformite-droits-des-personnes-et-purges.md) | Garde-fou AIPD au démarrage, accès servi aussitôt, effacement exécuté sous 30 jours dans chaque module, registre des purges et rapport mensuel | Acceptée |
