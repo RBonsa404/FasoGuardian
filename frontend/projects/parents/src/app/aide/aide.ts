@@ -63,7 +63,7 @@ export const LIBELLES_CATEGORIES: Record<CategorieAide, string> = {
 
     <a class="mt-auto grid min-h-13 place-items-center rounded-md border border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide/demandes" i18n="@@aide.demandes">Mes demandes au support</a>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class Aide {
   private readonly client = inject(ClientSupport);
@@ -136,7 +136,7 @@ export class Aide {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class ArticleDAide {
   readonly slug = input.required<string>();

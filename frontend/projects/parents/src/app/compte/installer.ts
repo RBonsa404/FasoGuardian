@@ -63,7 +63,7 @@ interface InviteInstallation extends Event {
       <a class="grid min-h-12 place-items-center text-body font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n="@@installer.plusTard">Plus tard</a>
     </div>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class Installer {
   protected readonly push = inject(NotificationsPush);

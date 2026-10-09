@@ -60,7 +60,7 @@ export const STATUTS: Record<StatutDemandeSupport, { libelle: string; ton: TonBa
       <button fg-button variante="ghost" type="button" (click)="feuille.set(false)" i18n="@@commun.annuler">Annuler</button>
     </fg-sheet>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class DemandesSupport {
   private readonly client = inject(ClientSupport);
@@ -153,7 +153,7 @@ export class DemandesSupport {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class FilDemande {
   readonly tid = input.required<string>();

@@ -32,7 +32,7 @@ const RACCOURCIS: readonly { chemin: string; libelle: string; icone: NomIcone }[
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (situation(); as s) {
-      <div class="relative h-56 overflow-hidden rounded-xl border border-line">
+      <div class="relative h-56 overflow-hidden rounded-xl border border-line lg:row-span-3 lg:h-128">
         <app-carte class="absolute inset-0" [libelle]="libelleCarte()" [position]="repere()" [zones]="zones()" />
         <a class="absolute top-3 right-3 z-1000 rounded-full bg-surface px-3 py-1.5 text-caption font-semibold shadow-e1 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', enfant().id, 'carte']" i18n="@@apercu.agrandir">Agrandir</a>
       </div>
@@ -73,20 +73,21 @@ const RACCOURCIS: readonly { chemin: string; libelle: string; icone: NomIcone }[
         }
       </nav>
     } @else if (sansBracelet()) {
-      <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-5">
+      <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-5 lg:col-span-2 lg:max-w-md">
         <h2 class="m-0 text-h3 font-semibold" i18n="@@apercu.associer.titre">Associez le bracelet de {{ enfant().prenom }}</h2>
         <p class="m-0 text-body text-text-2" i18n="@@apercu.associer.texte">Le code d'appairage est sur la carte glissée dans la boîte.</p>
         <button fg-button type="button" (click)="associer()" i18n="@@apercu.associer">Associer</button>
       </section>
     } @else if (erreur(); as message) {
-      <fg-banner ton="erreur">{{ message }}</fg-banner>
+      <fg-banner class="lg:col-span-2" ton="erreur">{{ message }}</fg-banner>
       <button fg-button variante="secondary" type="button" class="self-start" (click)="rafraichir()" i18n="@@commun.reessayer">Réessayer</button>
     } @else {
       <fg-skeleton forme="carte" />
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'flex flex-col gap-3' },
+  // Grand écran : la carte à gauche, sur toute la hauteur ; position, mesures et raccourcis à droite.
+  host: { class: 'flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-4' },
 })
 export class ApercuEnfant {
   readonly enfant = input.required<FicheEnfant>();

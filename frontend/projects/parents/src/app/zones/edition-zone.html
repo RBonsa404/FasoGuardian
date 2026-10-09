@@ -1,4 +1,4 @@
-<div class="relative h-72 flex-none">
+<div class="relative h-72 flex-none lg:h-auto lg:flex-1">
   <app-carte class="absolute inset-0" i18n-libelle="@@zone.carte" libelle="Carte : touchez pour tracer la zone" [brouillon]="brouillon()" (touche)="placer($event)" />
   <a class="absolute top-6 left-4 z-1000 grid size-11 place-items-center rounded-full bg-surface shadow-e2 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'zones']" i18n-aria-label="@@etape.retour" aria-label="Retour">
     <fg-icon nom="retour" [taille]="22" />
@@ -6,7 +6,7 @@
   <span class="absolute inset-x-4 bottom-3 z-1000 rounded-full bg-surface px-3 py-1.5 text-center text-caption font-semibold shadow-e1" role="status">{{ consigne() }}</span>
 </div>
 
-<form class="flex flex-1 flex-col gap-4 px-5 pt-4 pb-7" (submit)="$event.preventDefault(); demanderConfirmation()">
+<form class="flex flex-1 flex-col gap-4 px-5 pt-4 pb-7 lg:w-104 lg:flex-none lg:overflow-auto lg:px-8 lg:pt-10" (submit)="$event.preventDefault(); demanderConfirmation()">
   <h1 class="m-0 text-h2 font-bold tracking-tight">
     @if (creation()) {
       <ng-container i18n="@@zone.titre.nouvelle">Nouvelle zone</ng-container>

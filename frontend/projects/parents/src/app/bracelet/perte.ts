@@ -104,7 +104,7 @@ const SUITES: Record<MotifDeclaration, readonly string[]> = {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class PerteBracelet {
   readonly id = input.required<string>();

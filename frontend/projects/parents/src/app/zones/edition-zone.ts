@@ -25,7 +25,8 @@ const NON_CHOISI = 'border border-line-strong text-text-2';
   imports: [ReactiveFormsModule, RouterLink, Carte, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, SecondFacteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './edition-zone.html',
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col' },
+  // Grand écran : le formulaire à gauche, la carte où tracer la zone sur tout le reste de la fenêtre.
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col lg:mx-0 lg:h-dvh lg:max-w-none lg:flex-row-reverse' },
 })
 export class EditionZone {
   readonly id = input.required<string>();

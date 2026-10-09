@@ -17,6 +17,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `console-kyc.spec.ts` | Enrôlement TOTP d'un agent, instruction et validation d'un dossier dans la console ; refus opposé à un opérateur support | US-ADM-001, US-PAR-001 |
 | `console-fds.spec.ts` | Signalement retrouvé par sa référence dans l'espace des forces de sécurité, accusé de réception, accusé visible par le parent | US-FDS-001 |
 | `console-parametres.spec.ts` | Écran de paramétrage : tarifs, passerelle LoRaWAN enregistrée, vue en ligne sur un signe de vie scellé, puis retirée | US-SYS-004 |
+| `grand-ecran.spec.ts` | Espace parent sur un poste de travail : barre latérale, cartes plein cadre (tableau de bord, position, tracé d'une zone, trajets), retour à l'affichage téléphone | US-PAR-006, 007 |
 
 ## Lancer les tests
 

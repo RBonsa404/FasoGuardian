@@ -29,7 +29,7 @@ const DELAIS_DE_RELECTURE_MS = [5_000, 15_000, 30_000];
       <fg-icon nom="retour" [taille]="22" />
     </a>
 
-    <section class="absolute inset-x-4 bottom-6 z-1000 flex flex-col gap-2 rounded-xl border border-line bg-surface p-4 shadow-e2" aria-live="polite">
+    <section class="absolute inset-x-4 bottom-6 z-1000 flex flex-col gap-2 rounded-xl border border-line bg-surface p-4 shadow-e2 lg:right-auto lg:left-6 lg:w-96" aria-live="polite">
       @if (situation(); as s) {
         @if (s.position; as p) {
           <h1 class="m-0 text-h3 font-semibold">{{ titre() }}</h1>

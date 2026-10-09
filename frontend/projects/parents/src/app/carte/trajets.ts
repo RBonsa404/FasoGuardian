@@ -42,7 +42,7 @@ interface Jour {
       </div>
     </div>
 
-    <app-carte class="mt-4 h-80 flex-none" i18n-libelle="@@trajets.carte" libelle="Carte du trajet de la journée" [trace]="trajet()?.points ?? []" />
+    <app-carte class="mt-4 h-80 flex-none lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:h-full" i18n-libelle="@@trajets.carte" libelle="Carte du trajet de la journée" [trace]="trajet()?.points ?? []" />
 
     <div class="flex flex-1 flex-col gap-4 px-5 pt-4 pb-7" aria-live="polite">
       @if (trajet(); as t) {
@@ -73,7 +73,8 @@ interface Jour {
       }
     </div>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col' },
+  // Grand écran : jours et bilan à gauche, carte du trajet sur toute la hauteur à droite.
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col lg:mx-0 lg:grid lg:h-dvh lg:max-w-none lg:grid-cols-[26rem_minmax(0,1fr)] lg:grid-rows-[auto_1fr]' },
 })
 export class Trajets {
   readonly id = input.required<string>();

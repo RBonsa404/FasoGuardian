@@ -33,3 +33,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0023](0023-accuse-de-reception-des-forces-de-securite.md) | Espace des forces de sécurité : signalement retrouvé par référence exacte, accusé horodaté et notifié, aucune donnée de l'enfant hors dossier transmis par passerelle, accès fermé à 30 jours | Acceptée |
 | [0024](0024-passerelles-lorawan-en-zone-pilote.md) | Registre des passerelles LoRaWAN et réception scellée des trames : une trame entendue vaut présence dans l'enceinte ; non validable sur le bracelet actuel, sans radio LoRa | Acceptée |
 | [0025](0025-essai-en-temperature-hors-perimetre-logiciel.md) | US-SYS-009 : la tenue au-delà de 50 °C se prouve par un essai en étuve sur prototype, pas par du code | Acceptée |
+| [0026](0026-espace-parent-sur-grand-ecran.md) | Version web de l'espace parent : même application, barre latérale et cartes plein cadre à partir de 1024 px, téléphone inchangé | Acceptée |

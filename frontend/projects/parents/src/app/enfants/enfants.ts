@@ -56,7 +56,7 @@ const LIBELLES_CHAMPS: Record<string, string> = {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class Enfants {
   private readonly client = inject(ClientFamille);
@@ -87,7 +87,7 @@ export class Enfants {
   imports: [DatePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fiche-enfant.html',
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class FicheEnfantEcran {
   readonly id = input.required<string>();

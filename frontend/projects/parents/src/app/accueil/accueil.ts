@@ -35,7 +35,7 @@ import { ApercuEnfant } from './apercu-enfant';
       }
       @if (enfants(); as liste) {
         @if (liste.length > 1) {
-          <div class="flex gap-1.5" role="group" i18n-aria-label="@@accueil.choixEnfant" aria-label="Enfant affiché">
+          <div class="flex gap-1.5 lg:max-w-md" role="group" i18n-aria-label="@@accueil.choixEnfant" aria-label="Enfant affiché">
             @for (enfant of liste; track enfant.id) {
               <button type="button" class="h-11 flex-1 truncate rounded-full px-3 text-label font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [class]="enfant.id === choisi()?.id ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong text-text-2'" [attr.aria-pressed]="enfant.id === choisi()?.id" (click)="choix.set(enfant.id)">{{ enfant.prenom }}</button>
             }
@@ -50,7 +50,7 @@ import { ApercuEnfant } from './apercu-enfant';
       <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@accueil.titre">Mon compte</h1>
     }
     @if (compte(); as c) {
-      <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+      <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 lg:max-w-md">
         <div class="flex items-center justify-between gap-3">
           <span class="text-body font-semibold tabular-nums">{{ c.telephoneMasque }}</span>
           @if (c.statut === 'ACTIF') {
@@ -77,17 +77,17 @@ import { ApercuEnfant } from './apercu-enfant';
       <fg-skeleton forme="carte" />
     }
     @if (compte()?.statut === 'ACTIF') {
-      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n="@@accueil.centre">Alertes</a>
-      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/enfants" i18n="@@accueil.enfants">Mes enfants</a>
-      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/abonnement" i18n="@@accueil.abonnement">Mon abonnement</a>
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/alertes" i18n="@@accueil.centre">Alertes</a>
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/enfants" i18n="@@accueil.enfants">Mes enfants</a>
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/abonnement" i18n="@@accueil.abonnement">Mon abonnement</a>
     }
-    <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide" i18n="@@accueil.aide">Aide et support</a>
-    <a class="mt-auto self-start py-2 text-label font-semibold text-accent" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
-    <button fg-button variante="secondary" type="button" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">
+    <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/aide" i18n="@@accueil.aide">Aide et support</a>
+    <a class="mt-auto self-start py-2 text-label font-semibold text-accent lg:hidden" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
+    <button fg-button class="lg:hidden" variante="secondary" type="button" [chargement]="sortie()" (click)="deconnecter()" i18n="@@accueil.deconnexion">
       Se déconnecter
     </button>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:mx-0 lg:max-w-6xl lg:px-10' },
 })
 export class Accueil {
   private readonly client = inject(ClientAuthentification);
