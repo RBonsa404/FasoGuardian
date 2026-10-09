@@ -28,6 +28,9 @@ public class ConfigurationBracelet {
     @Column(name = "mode_economie", nullable = false)
     private boolean modeEconomie;
 
+    @Column(name = "economie_automatique", nullable = false)
+    private boolean economieAutomatique;
+
     protected ConfigurationBracelet() {
     }
 
@@ -39,11 +42,36 @@ public class ConfigurationBracelet {
         this.modeEconomie = false;
     }
 
-    /** @return {@code true} si la valeur a changé */
+    /** Choix du parent. @return {@code true} si la valeur a changé */
     public boolean reglerModeEconomie(boolean actif) {
         boolean change = modeEconomie != actif;
         modeEconomie = actif;
+        economieAutomatique = false;
         return change;
+    }
+
+    /**
+     * Batterie sous le seuil : la plateforme active le mode économie, sauf si le parent l'a déjà choisi.
+     *
+     * @return {@code true} si le mode vient d'être activé
+     */
+    public boolean economiserDOffice() {
+        if (modeEconomie) {
+            return false;
+        }
+        modeEconomie = true;
+        economieAutomatique = true;
+        return true;
+    }
+
+    /** Batterie remontée : seul un mode économie activé d'office est levé. @return {@code true} s'il l'a été */
+    public boolean leverLEconomieDOffice() {
+        if (!economieAutomatique) {
+            return false;
+        }
+        modeEconomie = false;
+        economieAutomatique = false;
+        return true;
     }
 
     public boolean modeEconomie() {

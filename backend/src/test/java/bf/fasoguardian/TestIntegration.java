@@ -71,6 +71,8 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.chiffrement.cle-empreinte", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.jetons.secret", TestIntegration::cleAleatoire);
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
+        // La supervision des bracelets muets ne tourne que lorsqu'un essai l'appelle.
+        registre.add("fasoguardian.telemetrie.supervision", () -> "PT24H");
         registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);
         // Les essais existants supposent les droits du palier intermédiaire ; AbonnementsIT les fait varier.

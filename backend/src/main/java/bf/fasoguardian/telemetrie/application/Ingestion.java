@@ -4,11 +4,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.BraceletConnu;
 import bf.fasoguardian.dispositifs.Commandes;
+import bf.fasoguardian.dispositifs.SuiviBracelets;
 import bf.fasoguardian.telemetrie.EvenementBraceletRecu;
 import bf.fasoguardian.telemetrie.PositionRecue;
 import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
@@ -34,6 +36,9 @@ public class Ingestion implements ReceptionMessages {
 
     /** Taille maximale d'un message : le format compact tient en une centaine d'octets. */
     public static final int TAILLE_MAXIMALE = 512;
+    /** Seuils de batterie, en pour cent (US-SYS-007). */
+    static final int BATTERIE_FAIBLE = 20;
+    static final int BATTERIE_RETABLIE = 30;
 
     public enum Resultat {
         ACCEPTE,
@@ -46,16 +51,18 @@ public class Ingestion implements ReceptionMessages {
 
     private final Bracelets bracelets;
     private final Commandes commandes;
+    private final SuiviBracelets suivi;
     private final DepotTelemetrie depot;
     private final ApplicationEventPublisher evenements;
     private final JsonMapper json;
     private final MeterRegistry metriques;
     private final Clock horloge;
 
-    Ingestion(Bracelets bracelets, Commandes commandes, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
+    Ingestion(Bracelets bracelets, Commandes commandes, SuiviBracelets suivi, DepotTelemetrie depot, ApplicationEventPublisher evenements, JsonMapper json,
             MeterRegistry metriques, Clock horloge) {
         this.bracelets = bracelets;
         this.commandes = commandes;
+        this.suivi = suivi;
         this.depot = depot;
         this.evenements = evenements;
         this.json = json;
@@ -95,9 +102,11 @@ public class Ingestion implements ReceptionMessages {
                     || mesure.mesureeLe().isBefore(connu.appaireDepuis())) {
                 return Resultat.INVALIDE;
             }
+            Integer batterieAvant = depot.etat(connu.id()).map(EtatBracelet::batterie).orElse(null);
             depot.enregistrerEtat(connu.id(), new EtatBracelet(mesure.batterie(), mesure.signalDbm(),
                     mesure.reseau() == null ? null : mesure.reseau().libelle(), mesure.operateur(), mesure.enMouvement(),
                     Boolean.TRUE, null, maintenant));
+            suivreLaBatterie(connu.id(), batterieAvant, mesure.batterie());
             if (!depot.ajouterPosition(connu.id(), mesure, maintenant)) {
                 return Resultat.DOUBLON;
             }
@@ -255,5 +264,20 @@ public class Ingestion implements ReceptionMessages {
             journalTechnique.debug("Message {} écarté : {}", flux, resultat);
         }
         return resultat;
+    }
+
+    /**
+     * Seuils de batterie (US-SYS-007) : le franchissement de 20 % vers le bas avertit le parent et fait passer
+     * le bracelet en mode économie ; la remontée à 30 % lève ce mode. L'écart évite d'osciller autour du seuil.
+     */
+    private void suivreLaBatterie(UUID braceletId, Integer avant, Integer maintenant) {
+        if (maintenant == null) {
+            return;
+        }
+        if (maintenant < BATTERIE_FAIBLE && (avant == null || avant >= BATTERIE_FAIBLE)) {
+            suivi.batterieFaible(braceletId, maintenant);
+        } else if (maintenant >= BATTERIE_RETABLIE && avant != null && avant < BATTERIE_RETABLIE) {
+            suivi.batterieRetablie(braceletId);
+        }
     }
 }

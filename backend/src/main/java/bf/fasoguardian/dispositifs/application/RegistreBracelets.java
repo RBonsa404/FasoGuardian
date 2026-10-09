@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import bf.fasoguardian.abonnements.Droits;
+import bf.fasoguardian.abonnements.Droits.DroitsEnfant;
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.domaine.Appairage;
 import bf.fasoguardian.dispositifs.domaine.Bracelet;
 import bf.fasoguardian.dispositifs.domaine.StatutBracelet;
 import bf.fasoguardian.dispositifs.infrastructure.DepotAppairages;
 import bf.fasoguardian.dispositifs.infrastructure.DepotBracelets;
+import bf.fasoguardian.dispositifs.infrastructure.DepotConfigurations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +21,14 @@ class RegistreBracelets implements Bracelets {
 
     private final DepotBracelets bracelets;
     private final DepotAppairages appairages;
+    private final DepotConfigurations configurations;
+    private final Droits droits;
 
-    RegistreBracelets(DepotBracelets bracelets, DepotAppairages appairages) {
+    RegistreBracelets(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations, Droits droits) {
         this.bracelets = bracelets;
         this.appairages = appairages;
+        this.configurations = configurations;
+        this.droits = droits;
     }
 
     @Override
@@ -36,6 +43,17 @@ class RegistreBracelets implements Bracelets {
     public Optional<BraceletConnu> deLEnfant(UUID enfantId) {
         return appairages.findByEnfantIdAndFinIsNull(enfantId).flatMap(
                 appairage -> bracelets.findById(appairage.braceletId()).map(bracelet -> connu(bracelet, appairage)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EnService> enService() {
+        return bracelets.findByStatutOrderByNumeroSerie(StatutBracelet.ACTIF).stream().filter(bracelet -> !bracelet.certificatRevoque())
+                .flatMap(bracelet -> appairages.findByBraceletIdAndFinIsNull(bracelet.id()).stream().map(appairage -> {
+                    DroitsEnfant ouverts = droits.de(appairage.enfantId());
+                    return new EnService(bracelet.id(), bracelet.numeroSerie(), appairage.enfantId(), appairage.debut(),
+                            configurations.findById(bracelet.id()).orElseThrow().intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()));
+                })).toList();
     }
 
     @Override

@@ -27,6 +27,13 @@ public interface Bracelets {
     /** Bracelet actuellement appairé à l'enfant. */
     Optional<BraceletConnu> deLEnfant(UUID enfantId);
 
+    /** @param intervalleS intervalle d'émission attendu en ce moment ; 0 si l'émission périodique est suspendue */
+    record EnService(UUID braceletId, String numeroSerie, UUID enfantId, Instant appaireDepuis, int intervalleS) {
+    }
+
+    /** Bracelets actifs portés par un enfant, avec le rythme auquel ils doivent donner des nouvelles. */
+    List<EnService> enService();
+
     /** @param fin fin de l'appairage, ou {@code null} s'il est en cours */
     record Periode(UUID braceletId, String numeroSerie, Instant debut, Instant fin) {
     }
