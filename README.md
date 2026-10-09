@@ -63,7 +63,7 @@ Le fichier `proxy.dev.json` relaie `/api` vers un serveur lancé en local sur le
 Simulateur de bracelets :
 
 ```bash
-cd simulator && ../backend/mvnw -f pom.xml package && java -jar target/fasoguardian-simulateur-0.1.0-SNAPSHOT.jar --certificats=../infra/certs --bracelets=FG-DEV-0001,FG-DEV-0002 --intervalle=PT10S --duree=PT1M
+cd simulator && ../backend/mvnw -f pom.xml package && java -jar target/fasoguardian-simulateur-0.1.0-SNAPSHOT.jar --certificats=../infra/certs --bracelets=FG-DEV-0001,FG-DEV-0002 --intervalle=PT10S --duree=PT1M --cle-plateforme=<clé publique de la plateforme>
 ```
 
 ## Tests

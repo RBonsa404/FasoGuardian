@@ -88,6 +88,11 @@ export class ClientBracelet {
     return this.http.get<Situation>(`/api/v1/enfants/${enfantId}/position`);
   }
 
+  /** « Localiser maintenant » : demande une position immédiate au bracelet, au plus une fois par minute. */
+  localiser(enfantId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(enfantId)}/localisation`, {});
+  }
+
   private base(enfantId: string): string {
     return `/api/v1/enfants/${enfantId}/bracelet`;
   }

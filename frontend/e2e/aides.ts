@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { ChildProcess, execFileSync, spawn } from 'node:child_process';
 import { createHmac } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -215,9 +215,40 @@ export function braceletEmet(numeroSerie: string, flux: 'telemetry' | 'alert' | 
   const certificats = '/mosquitto/certs';
   execFileSync(
     'docker',
-    ['exec', 'fasoguardian-mosquitto-1', 'mosquitto_pub', '-h', 'localhost', '-p', '8883', '-q', '1', '-i', numeroSerie,
+    // Identifiant de session distinct de celui du bracelet simulé : le broker n'admet qu'une session par identifiant.
+    ['exec', 'fasoguardian-mosquitto-1', 'mosquitto_pub', '-h', 'localhost', '-p', '8883', '-q', '1', '-i', `${numeroSerie}-essai`,
       '--cafile', `${certificats}/ca.crt`, '--cert', `${certificats}/bracelet-${numeroSerie}.crt`, '--key', `${certificats}/bracelet-${numeroSerie}.key`,
       '-t', `fg/${numeroSerie}/${flux}`, '-m', JSON.stringify(message)],
     { stdio: 'ignore' },
   );
+}
+
+export interface BraceletSimule {
+  /** Tout ce que le simulateur a écrit depuis son démarrage. */
+  sortie(): string;
+  arreter(): void;
+}
+
+/**
+ * Lance le simulateur pour un bracelet : il se connecte au broker sous son certificat, émet une position, puis
+ * vérifie avec la clé publique de la plateforme, accuse et applique les commandes signées qu'il reçoit.
+ */
+export function simulerBracelet(numeroSerie: string): BraceletSimule {
+  const racine = join(__dirname, '..', '..');
+  const jar = join(racine, 'simulator', 'target', 'fasoguardian-simulateur-0.1.0-SNAPSHOT.jar');
+  if (!existsSync(jar)) {
+    throw new Error('Simulateur absent : cd simulator && ../backend/mvnw -f pom.xml package');
+  }
+  execFileSync('sh', [join(racine, 'infra', 'generer-certificats-dev.sh'), numeroSerie], { stdio: 'ignore' });
+  const java = process.env['JAVA_HOME'] ? join(process.env['JAVA_HOME'], 'bin', 'java') : 'java';
+  const processus: ChildProcess = spawn(java, [
+    // La sortie du simulateur est lue en UTF-8, quel que soit l'encodage par défaut du poste.
+    '-Dstdout.encoding=UTF-8', '-Dstderr.encoding=UTF-8',
+    '-jar', jar, `--certificats=${join(racine, 'infra', 'certs')}`, `--bracelets=${numeroSerie}`, '--intervalle=PT10M',
+    `--cle-plateforme=${join(__dirname, '.etat', 'commandes-publique.pem')}`,
+  ]);
+  let sortie = '';
+  processus.stdout?.on('data', (morceau: Buffer) => (sortie += morceau.toString()));
+  processus.stderr?.on('data', (morceau: Buffer) => (sortie += morceau.toString()));
+  return { sortie: () => sortie, arreter: () => void processus.kill() };
 }

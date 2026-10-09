@@ -1,10 +1,17 @@
 package bf.fasoguardian.simulateur;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import bf.fasoguardian.simulateur.VerificateurCommandes.Resultat;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -20,20 +28,39 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * Simulateur de bracelets FasoGuardian : chaque bracelet se connecte au broker en TLS mutuel avec son
- * propre certificat et publie sa télémétrie sur fg/{deviceId}/telemetry (QoS 1).
+ * propre certificat, publie sa télémétrie sur fg/{deviceId}/telemetry (QoS 1) et obéit aux commandes signées
+ * reçues sur fg/{deviceId}/cmd, qu'il accuse sur fg/{deviceId}/ack.
  *
- * <p>Version minimale du socle : télémétrie périodique et état en ligne / hors ligne (dernière volonté).
- * Les alertes, le repli SMS, les coupures et la montée à 15 000 bracelets (client asynchrone) arrivent
- * avec le module telemetrie et les tests de charge.
+ * <p>Les commandes sont vérifiées comme le fera le logiciel embarqué : sans la clé publique de la plateforme
+ * ({@code --cle-plateforme}), toutes sont refusées. Le repli SMS, les coupures et la montée à 15 000 bracelets
+ * (client asynchrone) arrivent avec les tests de charge.
  *
  * <pre>
  * java -jar fasoguardian-simulateur.jar --broker=ssl://localhost:8883 --certificats=infra/certs \
- *      --bracelets=FG-DEV-0001,FG-DEV-0002 --intervalle=PT5M [--duree=PT10M]
+ *      --bracelets=FG-DEV-0001,FG-DEV-0002 --intervalle=PT5M [--duree=PT10M] \
+ *      [--cle-plateforme=infra/certs/commandes-publique.pem]
  * </pre>
  */
 public final class Simulateur {
 
     private static final int QOS = 1;
+    /** Intervalle entre deux positions en mode alerte (FG-DOC-08 §7.3). */
+    private static final Duration INTERVALLE_ALERTE = Duration.ofSeconds(60);
+
+    /** Un bracelet connecté, son rythme d'émission et son vérificateur de commandes. */
+    private static final class Connexion {
+        final BraceletSimule bracelet;
+        final MqttClient client;
+        final VerificateurCommandes verificateur;
+        volatile boolean modeAlerte;
+        volatile Instant prochaineEmission = Instant.EPOCH;
+
+        Connexion(BraceletSimule bracelet, MqttClient client, VerificateurCommandes verificateur) {
+            this.bracelet = bracelet;
+            this.client = client;
+            this.verificateur = verificateur;
+        }
+    }
 
     private Simulateur() {
     }
@@ -46,27 +73,40 @@ public final class Simulateur {
         Duration intervalle = Duration.parse(options.getOrDefault("intervalle", "PT5M"));
         Duration duree = options.containsKey("duree") ? Duration.parse(options.get("duree")) : null;
         long graine = Long.parseLong(options.getOrDefault("graine", "20261007"));
+        PublicKey clePlateforme = options.containsKey("cle-plateforme") ? lireClePublique(Path.of(options.get("cle-plateforme"))) : null;
 
         ScheduledExecutorService planificateur = Executors.newScheduledThreadPool(2);
-        List<MqttClient> clients = new ArrayList<>();
+        List<Connexion> connexions = new ArrayList<>();
         AtomicLong publies = new AtomicLong();
 
         for (String identifiant : identifiants) {
             BraceletSimule bracelet = new BraceletSimule(identifiant.trim(), graine);
             MqttClient client = connecter(broker, certificats, bracelet);
-            clients.add(client);
-            planificateur.scheduleAtFixedRate(() -> publier(client, bracelet, publies),
-                    0, intervalle.toMillis(), TimeUnit.MILLISECONDS);
+            Connexion connexion = new Connexion(bracelet, client, new VerificateurCommandes(bracelet.identifiant(), clePlateforme));
+            client.subscribe(topic(bracelet.identifiant(), "cmd"), QOS,
+                    (sujet, message) -> recevoirCommande(connexion, new String(message.getPayload(), StandardCharsets.US_ASCII), publies));
+            connexions.add(connexion);
         }
-        System.out.printf("%d bracelet(s) connecté(s) à %s, télémétrie toutes les %s%n",
-                clients.size(), broker, intervalle);
+        // Une vérification par seconde : l'intervalle effectif suit le mode (normal ou alerte) de chaque bracelet.
+        planificateur.scheduleAtFixedRate(() -> {
+            Instant maintenant = Instant.now();
+            for (Connexion connexion : connexions) {
+                if (!maintenant.isBefore(connexion.prochaineEmission)) {
+                    Duration rythme = connexion.modeAlerte && INTERVALLE_ALERTE.compareTo(intervalle) < 0 ? INTERVALLE_ALERTE : intervalle;
+                    connexion.prochaineEmission = maintenant.plus(rythme);
+                    publier(connexion, publies);
+                }
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+        System.out.printf("%d bracelet(s) connecté(s) à %s, télémétrie toutes les %s, commandes %s%n", connexions.size(), broker,
+                intervalle, clePlateforme == null ? "refusées (pas de clé de la plateforme)" : "vérifiées");
 
         Runnable arreter = () -> {
             planificateur.shutdownNow();
-            for (MqttClient client : clients) {
+            for (Connexion connexion : connexions) {
                 try {
-                    client.disconnectForcibly(1000, 1000);
-                    client.close();
+                    connexion.client.disconnectForcibly(1000, 1000);
+                    connexion.client.close();
                 } catch (MqttException erreur) {
                     System.err.println("Fermeture : " + erreur.getMessage());
                 }
@@ -100,14 +140,48 @@ public final class Simulateur {
         return client;
     }
 
-    private static void publier(MqttClient client, BraceletSimule bracelet, AtomicLong publies) {
+    /** Vérifie la commande, l'accuse (ou signale son rejet), puis l'applique. */
+    private static void recevoirCommande(Connexion connexion, String message, AtomicLong publies) {
+        Resultat resultat = connexion.verificateur.verifier(message, Instant.now());
+        String id = connexion.bracelet.identifiant();
+        if (!resultat.acceptee()) {
+            System.out.printf("%s : commande refusée (%s)%n", id, resultat.rejet());
+        } else if ("alert".equals(resultat.commande().code())) {
+            connexion.modeAlerte = resultat.commande().parametre("on", 0) == 1;
+            connexion.prochaineEmission = Instant.now();
+            System.out.printf("%s : mode alerte %s%n", id, connexion.modeAlerte ? "activé" : "désactivé");
+        } else {
+            System.out.printf("%s : commande %s exécutée%n", id, resultat.commande().code());
+        }
+        String accuse = "{\"id\":\"" + (resultat.idLu() == null ? "inconnue" : resultat.idLu()) + "\",\"ok\":" + resultat.acceptee() + "}";
+        // L'accusé part d'un autre fil : le client synchrone ne publie pas depuis sa propre fonction de rappel.
+        new Thread(() -> {
+            try {
+                connexion.client.publish(topic(id, "ack"), accuse.getBytes(StandardCharsets.UTF_8), QOS, false);
+                if (resultat.acceptee() && "loc".equals(resultat.commande().code())) {
+                    publier(connexion, publies);
+                }
+            } catch (MqttException erreur) {
+                System.err.printf("%s : accusé impossible (%s)%n", id, erreur.getMessage());
+            }
+        }, "accuse-" + id).start();
+    }
+
+    private static void publier(Connexion connexion, AtomicLong publies) {
         try {
-            String message = bracelet.prochaineTelemetrie(Instant.now());
-            client.publish(topic(bracelet.identifiant(), "telemetry"), message.getBytes(StandardCharsets.UTF_8), QOS, false);
+            String message = connexion.bracelet.prochaineTelemetrie(Instant.now());
+            connexion.client.publish(topic(connexion.bracelet.identifiant(), "telemetry"), message.getBytes(StandardCharsets.UTF_8), QOS, false);
             publies.incrementAndGet();
         } catch (MqttException erreur) {
-            System.err.printf("%s : publication impossible (%s)%n", bracelet.identifiant(), erreur.getMessage());
+            System.err.printf("%s : publication impossible (%s)%n", connexion.bracelet.identifiant(), erreur.getMessage());
         }
+    }
+
+    /** Clé publique ECDSA de la plateforme au format PEM (« BEGIN PUBLIC KEY »). */
+    static PublicKey lireClePublique(Path chemin) throws IOException, GeneralSecurityException {
+        String pem = Files.readString(chemin, StandardCharsets.US_ASCII);
+        String base64 = pem.replaceAll("-----(BEGIN|END) PUBLIC KEY-----", "").replaceAll("\\s", "");
+        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
     }
 
     private static String topic(String identifiant, String flux) {

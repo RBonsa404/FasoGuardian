@@ -19,3 +19,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0009](0009-cycle-de-vie-du-bracelet.md) | Identifiant d'appareil, perte (suivi 72 h), vol (révocation immédiate), casse et liste de révocation | Acceptée |
 | [0010](0010-evaluation-des-safe-zones.md) | Appartenance calculée dans le domaine, sortie après présence et tolérance, positions imprécises ignorées | Acceptée |
 | [0011](0011-alertes-et-retrait.md) | Gravité et notification des alertes, résolution par le système, journal en ajout seul, fenêtre de retrait | Acceptée |
+| [0012](0012-commandes-signees.md) | Commandes vers le bracelet : signature ECDSA, destinataire, expiration, anti-rejeu, accusé et réémission | Acceptée |

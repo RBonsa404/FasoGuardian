@@ -5,6 +5,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | Fichier | Parcours | User stories |
 |---|---|---|
 | `inscription-kyc.spec.ts` | Inscription du parent, dépôt du dossier, validation par un agent KYC, compte activé | US-PAR-001 |
+| `commandes.spec.ts` | « Localiser maintenant » et mode alerte : commande signée, vérifiée, exécutée et accusée par un bracelet simulé | US-SYS-011, US-ENF-002, US-PAR-006 |
 | `compte.spec.ts` | Mot de passe oublié par code SMS, puis clôture du compte confirmée par second facteur | US-PAR-002 |
 | `famille.spec.ts` | Fiche enfant, fiche médicale avec élément critique, contact d'urgence visible sur la page QR | US-PAR-003, 004, 011 |
 | `alertes.spec.ts` | SOS publié en MQTT par un bracelet fictif, alerte prise en charge puis levée avec motif, journal, retrait autorisé, constaté, prolongé et clos | US-ENF-001, 002, US-PAR-008, 010, 012 |

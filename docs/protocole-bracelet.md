@@ -19,8 +19,8 @@ serveur (module `telemetrie`) s'y conforment.
 | `fg/<id>/telemetry` | bracelet → plateforme | position et état radio |
 | `fg/<id>/alert` | bracelet → plateforme | événement (SOS, retrait, chute…) |
 | `fg/<id>/status` | bracelet → plateforme | en ligne / hors ligne (message retenu et dernière volonté) |
-| `fg/<id>/cmd` | plateforme → bracelet | commandes signées (livrées avec le module alertes) |
-| `fg/<id>/ack` | bracelet → plateforme | accusé d'exécution d'une commande (idem) |
+| `fg/<id>/cmd` | plateforme → bracelet | commande signée |
+| `fg/<id>/ack` | bracelet → plateforme | accusé d'exécution d'une commande, ou signalement d'un refus |
 
 ## Messages
 
@@ -67,6 +67,44 @@ ils ouvrent une alerte critique. `worn` referme la fenêtre en cours. Posé sur 
 ```
 
 Publié en message retenu à la connexion ; le même message avec `"online":false` est la dernière volonté.
+
+### `cmd` — commande signée (ADR 0012)
+
+Le message est du texte : `base64url(corps) "." base64url(signature)`, sans remplissage. La signature est une
+ECDSA P-256 / SHA-256 au format brut R‖S (64 octets) calculée sur les octets du corps. Le corps décodé :
+
+```json
+{"id":"3f0c2b9e-4f55-4c0e-9d3a-0e8a1b2c3d4e","dev":"FG-2291","cmd":"alert","n":1791540000123,"exp":1791540900,"p":{"on":1}}
+```
+
+| Champ | Sens |
+|---|---|
+| `id` | identifiant de la commande, repris dans l'accusé |
+| `dev` | bracelet destinataire |
+| `cmd` | `alert`, `cfg`, `rm` ou `loc` |
+| `n` | numéro strictement croissant par bracelet |
+| `exp` | expiration, en secondes Unix (15 minutes après l'émission) |
+| `p` | paramètres de la commande |
+
+| `cmd` | Paramètres | Effet attendu |
+|---|---|---|
+| `alert` | `on` : 1 ou 0 | entre en mode alerte (une position toutes les 60 s) ou en sort |
+| `cfg` | `int`, `alr` : intervalles en secondes ; `eco` : 1 ou 0 | applique les intervalles et le mode économie |
+| `rm` | `until` : fin de la fenêtre en secondes Unix, 0 pour la refermer | autorise le retrait sans alerte jusqu'à cette heure |
+| `loc` | aucun | mesure et publie une position tout de suite |
+
+Le bracelet n'exécute une commande que si **tous** ces contrôles passent : signature de la plateforme valide,
+`dev` égal à son identifiant, `exp` non dépassé, `n` supérieur au dernier numéro accepté. Une commande déjà
+exécutée (même `id`) est accusée de nouveau sans être rejouée.
+
+### `ack`
+
+```json
+{"id":"3f0c2b9e-4f55-4c0e-9d3a-0e8a1b2c3d4e","ok":true}
+```
+
+`"ok":false` signale une commande refusée. Sans accusé au bout de 30 secondes, la plateforme republie le même
+message jusqu'à son expiration.
 
 ## Règles de réception
 

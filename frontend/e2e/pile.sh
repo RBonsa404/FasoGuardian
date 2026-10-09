@@ -68,6 +68,11 @@ case "${1:-}" in
       for cle in EMPREINTE TELEPHONE PIECE_KYC SANTE SECRET_MFA IMEI PROFIL_ENFANT; do
         echo "FG_CLE_$cle=$(openssl rand -base64 32)"
       done
+      # Clé de signature des commandes : privée pour le serveur, publique pour les bracelets simulés.
+      openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out "$ETAT/commandes-privee.pem" 2>/dev/null
+      openssl pkey -in "$ETAT/commandes-privee.pem" -pubout -out "$ETAT/commandes-publique.pem" 2>/dev/null
+      echo "FG_CLE_COMMANDES=$(openssl pkcs8 -topk8 -nocrypt -in "$ETAT/commandes-privee.pem" -outform DER | openssl base64 -A)"
+      rm -f "$ETAT/commandes-privee.pem"
     } > "$ENV"
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).
     [ -f "$RACINE/infra/certs/ca.crt" ] || sh "$RACINE/infra/generer-certificats-dev.sh"
