@@ -2,6 +2,7 @@ package bf.fasoguardian.identite;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -19,6 +20,9 @@ public interface LiensTutelle {
     List<UUID> enfantsDe(UUID tuteurId);
 
     List<UUID> tuteursActifsDe(UUID enfantId);
+
+    /** Premier prénom du tuteur, tel que vérifié par son dossier KYC ; vide s'il n'a pas de dossier approuvé. */
+    Optional<String> prenomDuTuteur(UUID tuteurId);
 
     /** Identité déclarée de l'enfant d'un dossier approuvé ; réservé à la création de sa fiche par famille. */
     EnfantVerifie enfantDuDossier(UUID dossierId);

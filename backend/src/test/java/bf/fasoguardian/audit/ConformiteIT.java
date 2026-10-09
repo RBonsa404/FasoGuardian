@@ -232,7 +232,7 @@ class ConformiteIT extends TestIntegration {
         avec(get("/api/v1/console/conformite"), admin).andExpect(status().isOk())
                 .andExpect(jsonPath("$.aipd.documentee").value(false))
                 .andExpect(jsonPath("$.conservation[0].donnee").value("Positions"))
-                .andExpect(jsonPath("$.conservation.length()").value(8))
+                .andExpect(jsonPath("$.conservation.length()").value(9))
                 .andExpect(jsonPath("$.joursDePurge").value(1))
                 .andExpect(jsonPath("$.demandesEffacement").value(org.hamcrest.Matchers.greaterThan(0)))
                 .andExpect(jsonPath("$.purges[?(@.traitement == 'CONSULTATIONS_PAGE_QR')].executions").exists())

@@ -36,6 +36,9 @@ class DonneesGeolocalisation implements DonneesPersonnelles {
                     + " WHERE f.zone_id = z.id) AS franchissements FROM geolocalisation.safe_zone z WHERE z.enfant_id = ?"
                     + " ORDER BY z.cree_le", enfant));
         }
+        export.put("partagesDePosition", jdbc.queryForList("SELECT enfant_id::text AS enfant, destinataire_lien AS contact,"
+                + " destinataire_masque AS numero, debut::text AS debut, fin::text AS fin, revoque_le::text AS \"revoqueLe\","
+                + " ouvertures FROM geolocalisation.partage_position WHERE cree_par = ? ORDER BY debut", personne.tuteurId()));
         return export;
     }
 
@@ -46,6 +49,7 @@ class DonneesGeolocalisation implements DonneesPersonnelles {
             supprimes += jdbc.update("DELETE FROM geolocalisation.franchissement WHERE zone_id IN (" + ZONES_DE_L_ENFANT + ")", enfant);
             supprimes += jdbc.update("DELETE FROM geolocalisation.suivi_zone WHERE zone_id IN (" + ZONES_DE_L_ENFANT + ")", enfant);
             supprimes += jdbc.update("DELETE FROM geolocalisation.safe_zone WHERE enfant_id = ?", enfant);
+            supprimes += jdbc.update("DELETE FROM geolocalisation.partage_position WHERE enfant_id = ?", enfant);
             zones.oublier(enfant);
         }
         return supprimes;

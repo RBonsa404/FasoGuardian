@@ -58,6 +58,7 @@ public class Conformite implements RegistrePurges, DemandesDroits {
             new Duree("Fiche santé", "Durée du compte", "Effacement à la clôture"),
             new Duree("Journal de consultation de la page QR", "12 mois, adresse IP pseudonymisée", "Purge quotidienne"),
             new Duree("Numéro des tiers (page QR)", "30 jours", "Purge quotidienne"),
+            new Duree("Partages de position", "30 jours après leur fin", "Purge quotidienne"),
             new Duree("Dossiers de signalement", "30 jours", "Purge quotidienne"),
             new Duree("Notifications", "90 jours", "Purge quotidienne"));
 

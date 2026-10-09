@@ -88,6 +88,9 @@ fasoguardian:
   qr:
     # Délai de réponse plancher de la page publique, identique pour un jeton valide ou non.
     delai-minimal: PT0.3S
+  parents:
+    # Adresse publique de l'application Parents, pour les liens envoyés par SMS.
+    url: ${FG_URL_PARENTS:http://localhost:4201}
   conformite:
     # Analyse d'impact (AIPD) : sans ces trois valeurs, le profil prod refuse de démarrer (US-ADM-003).
     aipd:

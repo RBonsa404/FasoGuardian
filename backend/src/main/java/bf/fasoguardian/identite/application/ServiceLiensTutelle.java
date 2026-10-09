@@ -1,10 +1,12 @@
 package bf.fasoguardian.identite.application;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import bf.fasoguardian.identite.LiensTutelle;
 import bf.fasoguardian.identite.application.InstructionKyc.EnfantDeclare;
+import bf.fasoguardian.identite.application.InstructionKyc.IdentiteDeclaree;
 import bf.fasoguardian.identite.domaine.DossierKyc;
 import bf.fasoguardian.identite.domaine.DossierKyc.Statut;
 import bf.fasoguardian.identite.domaine.LienTutelle;
@@ -48,6 +50,15 @@ class ServiceLiensTutelle implements LiensTutelle {
     @Transactional(readOnly = true)
     public List<UUID> tuteursActifsDe(UUID enfantId) {
         return liens.findByEnfantId(enfantId).stream().filter(LienTutelle::actif).map(LienTutelle::tuteurId).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<String> prenomDuTuteur(UUID tuteurId) {
+        return dossiers.findFirstByDemandeurIdAndStatutOrderByDecideLeDesc(tuteurId, Statut.APPROUVE)
+                .map(dossier -> json.readValue(chiffrement.dechiffrer(CategorieDonnee.PIECE_KYC, dossier.identiteChiffree()),
+                        IdentiteDeclaree.class).prenoms())
+                .map(prenoms -> prenoms.strip().split("\\s+")[0]).filter(prenom -> !prenom.isEmpty());
     }
 
     @Override
