@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Pile locale des tests de bout en bout : PostgreSQL vierge (Docker), serveur sous le profil dev avec
-# l'adaptateur SMS bac à sable, broker Mosquitto en TLS mutuel (8883), applications Parents (4201) et Console (4202).
+# l'adaptateur SMS bac à sable, broker Mosquitto en TLS mutuel (8883), applications Parents (4201) et Console (4202), site vitrine (4203).
 # Les secrets de la pile sont tirés au hasard à chaque démarrage et gardés dans e2e/.etat (ignoré par Git).
 #
 #   sh e2e/pile.sh demarrer   démarre la pile (JAVA_HOME doit pointer sur un JDK 21)
@@ -94,17 +94,19 @@ case "${1:-}" in
     # Certificats de développement du broker, du serveur et des bracelets simulés (jamais versionnés).
     [ -f "$RACINE/infra/certs/ca.crt" ] || sh "$RACINE/infra/generer-certificats-dev.sh"
     # Une pile laissée par une session précédente (poste redémarré) garderait l'ancienne base et son mot de passe.
-    for port in 8080 4201 4202; do arreter_port "$port"; done
+    for port in 8080 4201 4202 4203; do arreter_port "$port"; done
     $COMPOSE down -v
     $COMPOSE up -d --wait postgres
     $COMPOSE up -d mosquitto
     lancer_serveur
     (cd "$FRONTEND" && nohup npx ng serve parents --port 4201 --proxy-config proxy.dev.json > "$ETAT/parents.log" 2>&1 &)
     (cd "$FRONTEND" && nohup npx ng serve console --port 4202 --proxy-config proxy.dev.json > "$ETAT/console.log" 2>&1 &)
+    (cd "$FRONTEND" && nohup npx ng serve site --port 4203 > "$ETAT/site.log" 2>&1 &)
     attendre http://localhost:8080/api/v1/dev/sms
     attendre http://localhost:4201/
     attendre http://localhost:4202/
-    echo "Pile prête : serveur 8080, parents 4201, console 4202"
+    attendre http://localhost:4203/
+    echo "Pile prête : serveur 8080, parents 4201, console 4202, site 4203"
     ;;
   tester)
     set -a && . "$ENV" && set +a
@@ -112,7 +114,7 @@ case "${1:-}" in
     cd "$FRONTEND" && npx playwright test -c e2e/playwright.config.ts "$@"
     ;;
   arreter)
-    for port in 8080 4201 4202; do arreter_port "$port"; done
+    for port in 8080 4201 4202 4203; do arreter_port "$port"; done
     [ -f "$ENV" ] && $COMPOSE down -v
     rm -rf "$ETAT"
     ;;

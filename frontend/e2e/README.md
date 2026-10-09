@@ -21,6 +21,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `ecrans-parents.spec.ts` | Introduction à la première visite ; aperçu de la page QR conforme à la page publique ; état de maintenance du bracelet | US-PAR-001, US-TRS-001, US-SAV-001 |
 | `console-ota.spec.ts` | Image non signée refusée ; image signée déployée par vagues, vérifiée par le bracelet simulé qui redémarre sur la nouvelle version ; parent informé | US-PAR-013 |
 | `theme.spec.ts` | Thème clair : suivi du système, choix dans les paramètres, persistance ; captures en clair de l'espace parent et de la console | transverse |
+| `site.spec.ts` | Site vitrine : contenu rendu côté serveur, navigation, bracelet 3D chargé à la demande et vue éclatée au défilement ; repli sans animation et menu sur téléphone | écrans 1 à 8 |
 
 ## Lancer les tests
 
