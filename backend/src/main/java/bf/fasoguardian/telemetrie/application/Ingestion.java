@@ -60,7 +60,12 @@ public class Ingestion implements ReceptionMessages {
         this.horloge = horloge;
     }
 
+    /**
+     * Point d'entrée des transports. La transaction s'ouvre ici : sans elle, les événements publiés par le
+     * traitement (position reçue, événement du bracelet) ne seraient jamais remis aux autres modules.
+     */
     @Override
+    @Transactional
     public void recevoir(Flux flux, String identifiantAppareil, byte[] message) {
         switch (flux) {
             case TELEMETRY -> telemetrie(identifiantAppareil, message);

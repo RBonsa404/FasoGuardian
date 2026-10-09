@@ -23,8 +23,8 @@ import bf.fasoguardian.TestIntegration;
 import bf.fasoguardian.alertes.application.OuvertureAlertes;
 import bf.fasoguardian.alertes.application.Retraits;
 import bf.fasoguardian.notifications.infrastructure.SmsBacASable;
-import bf.fasoguardian.telemetrie.application.Ingestion;
-import bf.fasoguardian.telemetrie.application.Ingestion.Resultat;
+import bf.fasoguardian.telemetrie.application.ReceptionMessages;
+import bf.fasoguardian.telemetrie.application.ReceptionMessages.Flux;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ class AlertesIT extends TestIntegration {
     JdbcTemplate jdbc;
 
     @Autowired
-    Ingestion ingestion;
+    ReceptionMessages reception;
 
     @Autowired
     OuvertureAlertes ouverture;
@@ -298,13 +298,14 @@ class AlertesIT extends TestIntegration {
     private void evenement(Carte carte, String code, String suite) {
         String message = "{\"t\":" + (Instant.now().getEpochSecond() + 1) + ",\"seq\":" + SEQUENCE.incrementAndGet() + ",\"ev\":\"" + code
                 + "\"" + suite + "}";
-        assertThat(ingestion.alerte(carte.numeroSerie(), message.getBytes(StandardCharsets.UTF_8))).isEqualTo(Resultat.ACCEPTE);
+        // Par le port des transports, comme le fait l'abonné MQTT : c'est ce chemin qui doit porter la transaction.
+        reception.recevoir(Flux.ALERT, carte.numeroSerie(), message.getBytes(StandardCharsets.UTF_8));
     }
 
     private void position(Carte carte, long t, double latitude, double longitude) {
         String message = String.format(java.util.Locale.ROOT, "{\"t\":%d,\"seq\":%d,\"lat\":%.5f,\"lon\":%.5f,\"acc\":8,\"src\":\"gnss\"}",
                 t, SEQUENCE.incrementAndGet(), latitude, longitude);
-        assertThat(ingestion.telemetrie(carte.numeroSerie(), message.getBytes(StandardCharsets.UTF_8))).isEqualTo(Resultat.ACCEPTE);
+        reception.recevoir(Flux.TELEMETRY, carte.numeroSerie(), message.getBytes(StandardCharsets.UTF_8));
     }
 
     /** Attend que l'écouteur asynchrone ait ouvert l'alerte du type donné ; renvoie son identifiant. */

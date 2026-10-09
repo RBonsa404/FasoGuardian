@@ -18,3 +18,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0008](0008-chiffrement-dans-les-cas-d-usage.md) | Chiffrement appelé par les cas d'usage plutôt que par convertisseurs JPA | Acceptée |
 | [0009](0009-cycle-de-vie-du-bracelet.md) | Identifiant d'appareil, perte (suivi 72 h), vol (révocation immédiate), casse et liste de révocation | Acceptée |
 | [0010](0010-evaluation-des-safe-zones.md) | Appartenance calculée dans le domaine, sortie après présence et tolérance, positions imprécises ignorées | Acceptée |
+| [0011](0011-alertes-et-retrait.md) | Gravité et notification des alertes, résolution par le système, journal en ajout seul, fenêtre de retrait | Acceptée |

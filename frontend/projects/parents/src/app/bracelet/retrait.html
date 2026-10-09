@@ -1,0 +1,71 @@
+<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet']" i18n-aria-label="@@etape.retour" aria-label="Retour">
+  <fg-icon nom="retour" [taille]="22" />
+</a>
+
+@if (!charge()) {
+  <fg-skeleton forme="carte" />
+  <fg-skeleton forme="carte" />
+} @else if (autorisation(); as a) {
+  <div class="flex flex-col gap-1.5">
+    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@retrait.actif.titre">Retrait autorisé</h1>
+    <p class="m-0 text-body text-text-2" i18n="@@retrait.actif.texte">Aucune alerte de retrait ne sera émise pendant cette fenêtre. En cas d'urgence médicale, la sangle peut toujours être coupée.</p>
+  </div>
+
+  <div class="mx-auto grid size-52 place-items-center rounded-full border-4" [class]="bientotFini() ? 'border-attention' : 'border-accent'" role="timer" aria-live="off">
+    <div class="flex flex-col items-center gap-1">
+      <strong class="font-display text-data font-bold tabular-nums" [class.text-attention]="bientotFini()">{{ decompte() }}</strong>
+      <span class="text-label text-text-2" i18n="@@retrait.fin">fin à {{ heure(a.fin) }}</span>
+    </div>
+  </div>
+
+  @if (a.retire) {
+    <fg-banner ton="attention" i18n="@@retrait.retire">Le bracelet a été retiré. Remettez-le à {{ prenom() }} avant la fin : sinon une alerte sera envoyée.</fg-banner>
+  } @else {
+    <fg-banner ton="info" i18n="@@retrait.porte">Le bracelet est toujours porté. Autorisé à {{ heure(a.debut) }}.</fg-banner>
+  }
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+
+  <div class="mt-auto flex flex-col gap-2">
+    <button fg-button taille="lg" type="button" [chargement]="enCours()" (click)="terminer()" i18n="@@retrait.remis">Bracelet remis</button>
+    <button fg-button variante="secondary" type="button" [disabled]="!prolongeable()" (click)="demander('prolonger')" i18n="@@retrait.prolonger">+ {{ prolongation }} min · code SMS</button>
+  </div>
+} @else {
+  <div class="flex flex-col gap-1.5">
+    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@retrait.titre">Autoriser un retrait</h1>
+    <p class="m-0 text-body text-text-2" i18n="@@retrait.texte">Pour la toilette, la recharge ou la nuit : {{ prenom() }} peut enlever son bracelet sans déclencher d'alerte, pendant la durée choisie.</p>
+  </div>
+
+  @if (remis()) {
+    <fg-banner ton="succes" i18n="@@retrait.repris">Bracelet remis. La surveillance du retrait a repris.</fg-banner>
+  }
+
+  <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+    <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@retrait.prereglages">Durée</legend>
+    <div class="flex gap-1.5">
+      @for (p of prereglages; track p.motif) {
+        <label class="flex h-16 flex-1 cursor-pointer flex-col items-center justify-center rounded-md has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent" [class]="minutes() === p.minutes ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong text-text-2'">
+          <input class="sr-only" type="radio" name="duree" [checked]="minutes() === p.minutes" (change)="choisir(p)" />
+          <span class="text-label font-semibold">{{ p.libelle }}</span>
+          <span class="text-caption tabular-nums">{{ duree(p.minutes) }}</span>
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <label class="flex flex-col gap-1.5 text-label font-semibold" for="duree">
+    <span class="flex justify-between"><ng-container i18n="@@retrait.personnalisee">Durée personnalisée</ng-container><span class="tabular-nums text-text-2">{{ duree(minutes()) }}</span></span>
+    <input id="duree" class="accent-accent" type="range" min="15" max="720" step="15" [value]="minutes()" (input)="reglerDuree($event)" />
+    <span class="flex justify-between text-caption font-normal text-text-3"><span>15 min</span><span>12 h</span></span>
+  </label>
+
+  <p class="m-0 rounded-banner bg-surface-2 p-3.5 text-label text-text-2" i18n="@@retrait.regles">Cinq minutes avant la fin, vous recevez un rappel. À l'échéance, si le bracelet n'a pas été remis, une alerte « retrait non autorisé » est envoyée.</p>
+
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+  <button fg-button class="mt-auto" taille="lg" type="button" (click)="demander('autoriser')" i18n="@@retrait.autoriser">Autoriser {{ duree(minutes()) }} · code SMS</button>
+}
+
+<app-second-facteur action="AUTORISER_RETRAIT" [ouverte]="demande() !== null" [explication]="explication()" [erreur]="erreurCode()" (saisi)="confirmer($event)" (annule)="demande.set(null)" />

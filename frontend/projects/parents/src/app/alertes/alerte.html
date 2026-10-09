@@ -1,0 +1,91 @@
+<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n-aria-label="@@etape.retour" aria-label="Retour">
+  <fg-icon nom="retour" [taille]="22" />
+</a>
+
+@if (alerte(); as a) {
+  <header class="flex flex-col gap-2">
+    <div class="flex items-center gap-3">
+      <span class="grid size-12 flex-none place-items-center rounded-full" [class]="enCours() ? (a.gravite === 'CRITIQUE' ? 'bg-alert text-on-alert' : 'bg-alert-soft text-alert-ink') : 'bg-surface-2 text-text-2'" aria-hidden="true">
+        <fg-icon [nom]="icone()" [taille]="24" />
+      </span>
+      @if (!enCours()) {
+        <fg-badge ton="neutre">{{ statut(a.statut) }}</fg-badge>
+      } @else if (a.gravite === 'CRITIQUE') {
+        <fg-badge ton="alerte" i18n="@@alerte.critique">Alerte critique</fg-badge>
+      } @else {
+        <fg-badge ton="alerte" i18n="@@alerte.importante">Alerte</fg-badge>
+      }
+    </div>
+    <h1 class="m-0 text-h2 font-bold tracking-tight">{{ titre() }}</h1>
+    <p class="m-0 text-label text-text-2 tabular-nums">{{ heure(a.ouverteLe) }} · {{ ilYA(a.ouverteLe) }}@if (enCours()) { · {{ statut(a.statut) }} }</p>
+  </header>
+
+  @if (repere(); as position) {
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-label font-semibold" i18n="@@alerte.position">Dernière position connue au déclenchement</h2>
+      <div class="relative h-44 overflow-hidden rounded-xl border border-line">
+        <app-carte class="absolute inset-0" i18n-libelle="@@alerte.carte" libelle="Carte de la position au déclenchement de l'alerte" [position]="position" />
+      </div>
+    </section>
+  } @else if (a.type !== 'SIGNALEMENT' && a.type !== 'BATTERIE_CRITIQUE') {
+    <fg-banner ton="info" i18n="@@alerte.sansPosition">Le bracelet n'a pas joint de position à cette alerte. La carte montre sa dernière position transmise.</fg-banner>
+  }
+
+  <p class="m-0 text-body text-text-2">{{ explication() }}</p>
+
+  @if (erreur(); as message) {
+    <fg-banner ton="erreur">{{ message }}</fg-banner>
+  }
+
+  @if (enCours()) {
+    <div class="flex flex-col gap-2">
+      @if (a.statut === 'OUVERTE') {
+        <button fg-button variante="alert" taille="lg" type="button" [chargement]="enTraitement()" (click)="prendreEnCharge()" i18n="@@alerte.prendre">J'ai pris en charge</button>
+      } @else {
+        <button fg-button taille="lg" type="button" [chargement]="enTraitement()" (click)="ouvrirCloture('lever')" i18n="@@alerte.lever">Lever l'alerte</button>
+      }
+      <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'carte']" i18n="@@alerte.direct">Voir en direct</a>
+      <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'contacts']" i18n="@@alerte.contacts">Appeler un contact</a>
+      @if (a.statut !== 'ESCALADEE') {
+        <button fg-button variante="ghost" type="button" (click)="ouvrirCloture('fausse')" i18n="@@alerte.fausse">C'est une fausse alerte</button>
+      }
+    </div>
+  }
+
+  <section class="flex flex-col gap-2">
+    <h2 class="m-0 text-h3 font-semibold" i18n="@@alerte.journal">Journal de l'alerte</h2>
+    <ol class="m-0 flex list-none flex-col gap-2 p-0">
+      @for (ligne of a.actions; track $index) {
+        <li class="flex gap-3 text-label">
+          <span class="flex-none font-semibold tabular-nums text-text-2">{{ heure(ligne.effectueeLe) }}</span>
+          <span>{{ action(ligne) }}</span>
+        </li>
+      }
+    </ol>
+    <p class="m-0 text-caption text-text-3" i18n="@@alerte.scelle">Entrées scellées : aucune ne peut être modifiée ni supprimée.</p>
+  </section>
+
+  <fg-sheet [titre]="titreFeuille()" [ouverte]="cloture() !== null" (fermee)="cloture.set(null)">
+    <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+      <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@alerte.motif">Motif</legend>
+      @for (m of motifs(); track m) {
+        <label class="flex min-h-12 cursor-pointer items-center rounded-md px-3 text-body font-medium has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent" [class]="motif() === m ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong'">
+          <input class="sr-only" type="radio" name="motif" [checked]="motif() === m" (change)="motif.set(m); erreurMotif.set(null)" />
+          {{ m }}
+        </label>
+      }
+    </fieldset>
+    <fg-input i18n-libelle="@@alerte.precision" libelle="Précision (facultatif)" [longueurMax]="120" [formControl]="precision" />
+    @if (erreurMotif(); as message) {
+      <fg-banner ton="erreur">{{ message }}</fg-banner>
+    }
+    <p class="m-0 text-caption text-text-3" i18n="@@alerte.motif.aide">Le motif est inscrit au journal et ne pourra plus être modifié.</p>
+    <button fg-button type="button" (click)="confirmerCloture()" i18n="@@alerte.confirmer">Confirmer</button>
+    <button fg-button variante="secondary" type="button" (click)="cloture.set(null)" i18n="@@commun.annuler">Annuler</button>
+  </fg-sheet>
+} @else if (erreur(); as message) {
+  <fg-banner ton="erreur">{{ message }}</fg-banner>
+} @else {
+  <fg-skeleton forme="carte" />
+  <fg-skeleton forme="carte" />
+}

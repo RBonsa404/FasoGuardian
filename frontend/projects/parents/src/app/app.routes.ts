@@ -74,6 +74,22 @@ export const routes: Routes = [
     canActivate: [sessionRequise],
     loadComponent: () => import('./carte/trajets').then((m) => m.Trajets),
   },
+  { path: 'alertes', canActivate: [sessionRequise], loadComponent: () => import('./alertes/centre').then((m) => m.CentreAlertes) },
+  {
+    path: 'alertes/:aid',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./alertes/alerte').then((m) => m.EcranAlerte),
+  },
+  {
+    path: 'enfants/:id/journal',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./alertes/journal').then((m) => m.JournalAlertes),
+  },
+  {
+    path: 'enfants/:id/bracelet/retrait',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./bracelet/retrait').then((m) => m.Retrait),
+  },
   {
     path: 'enfants/:id/bracelet',
     canActivate: [sessionRequise],

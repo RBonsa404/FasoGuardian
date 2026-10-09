@@ -17,6 +17,8 @@ const RACCOURCIS: readonly { chemin: string; libelle: string; icone: NomIcone }[
   { chemin: 'zones', libelle: $localize`:@@apercu.zones:Zones`, icone: 'safe-zone' },
   { chemin: 'trajets', libelle: $localize`:@@apercu.trajets:Trajets`, icone: 'historique' },
   { chemin: 'bracelet', libelle: $localize`:@@apercu.bracelet:Bracelet`, icone: 'bracelet' },
+  { chemin: 'bracelet/retrait', libelle: $localize`:@@apercu.retrait:Retrait`, icone: 'retrait' },
+  { chemin: 'journal', libelle: $localize`:@@apercu.journal:Journal`, icone: 'audit' },
 ];
 
 /**
@@ -62,9 +64,9 @@ const RACCOURCIS: readonly { chemin: string; libelle: string; icone: NomIcone }[
         }
       </dl>
 
-      <nav class="grid grid-cols-4 gap-2" [attr.aria-label]="libelleRaccourcis()">
+      <nav class="grid grid-cols-3 gap-2" [attr.aria-label]="libelleRaccourcis()">
         @for (raccourci of raccourcis; track raccourci.chemin) {
-          <a class="flex min-h-18 flex-col items-center justify-center gap-1.5 rounded-banner border border-line bg-surface text-caption font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', enfant().id, raccourci.chemin]">
+          <a class="flex min-h-18 flex-col items-center justify-center gap-1.5 rounded-banner border border-line bg-surface text-caption font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="'/enfants/' + enfant().id + '/' + raccourci.chemin">
             <fg-icon class="text-accent" [nom]="raccourci.icone" [taille]="22" />{{ raccourci.libelle }}
           </a>
         }

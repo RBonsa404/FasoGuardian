@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientAuthentification, ClientFamille, Compte, FicheEnfant } from 'api';
-import { FgBadge, FgBanniere, FgBouton, FgSquelette } from 'ui';
+import { Alerte, ClientAlertes, ClientAuthentification, ClientFamille, Compte, FicheEnfant } from 'api';
+import { FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { ApercuEnfant } from './apercu-enfant';
@@ -13,11 +13,24 @@ import { ApercuEnfant } from './apercu-enfant';
  */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, ApercuEnfant, FgBadge, FgBanniere, FgBouton, FgSquelette],
+  imports: [RouterLink, ApercuEnfant, FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (compte()?.statut === 'ACTIF') {
       <h1 class="sr-only" i18n="@@accueil.tableau">Tableau de bord</h1>
+      @if (alertesEnCours(); as nombre) {
+        <a class="flex min-h-14 items-center gap-3 rounded-lg bg-alert px-4 font-semibold text-on-alert focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="lienAlertes()" role="alert">
+          <fg-icon nom="cloche" [taille]="22" />
+          <span class="flex-1">
+            @if (nombre > 1) {
+              <ng-container i18n="@@accueil.alertes">{{ nombre }} alertes en cours</ng-container>
+            } @else {
+              <ng-container i18n="@@accueil.alerte">1 alerte en cours</ng-container>
+            }
+          </span>
+          <span class="text-label" i18n="@@accueil.alertes.voir">Voir</span>
+        </a>
+      }
       @if (enfants(); as liste) {
         @if (liste.length > 1) {
           <div class="flex gap-1.5" role="group" i18n-aria-label="@@accueil.choixEnfant" aria-label="Enfant affiché">
@@ -61,6 +74,7 @@ import { ApercuEnfant } from './apercu-enfant';
       <fg-skeleton forme="carte" />
     }
     @if (compte()?.statut === 'ACTIF') {
+      <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n="@@accueil.centre">Alertes</a>
       <a class="flex min-h-14 items-center justify-between rounded-lg border border-line bg-surface px-4 text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/enfants" i18n="@@accueil.enfants">Mes enfants</a>
     }
     <a class="mt-auto self-start py-2 text-label font-semibold text-accent" routerLink="/reglages" i18n="@@accueil.reglages">Paramètres du compte</a>
@@ -75,6 +89,12 @@ export class Accueil {
   private readonly router = inject(Router);
 
   private readonly famille = inject(ClientFamille);
+  private readonly clientAlertes = inject(ClientAlertes);
+
+  /** Alertes en cours de tous les enfants, relues toutes les trente secondes. */
+  private readonly alertes = signal<Alerte[]>([]);
+  protected readonly alertesEnCours = computed(() => this.alertes().length);
+  protected readonly lienAlertes = computed(() => (this.alertes().length === 1 ? ['/alertes', this.alertes()[0].id] : ['/alertes']));
 
   protected readonly compte = signal<Compte | null>(null);
   protected readonly enfants = signal<FicheEnfant[] | null>(null);
@@ -89,6 +109,16 @@ export class Accueil {
 
   constructor() {
     this.charger();
+    const minuterie = setInterval(() => {
+      if (this.compte()?.statut === 'ACTIF') {
+        this.lireAlertes();
+      }
+    }, 30_000);
+    inject(DestroyRef).onDestroy(() => clearInterval(minuterie));
+  }
+
+  private lireAlertes(): void {
+    this.clientAlertes.mesAlertes(true).subscribe({ next: (alertes) => this.alertes.set(alertes), error: () => undefined });
   }
 
   protected charger(): void {
@@ -98,6 +128,7 @@ export class Accueil {
         this.compte.set(compte);
         if (compte.statut === 'ACTIF') {
           this.famille.mesEnfants().subscribe({ next: (enfants) => this.enfants.set(enfants), error: () => this.enfants.set([]) });
+          this.lireAlertes();
         }
       },
       error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),

@@ -56,6 +56,10 @@ et compté (`fasoguardian_telemetrie_messages_total{resultat="INVALIDE"}`).
 (batterie critique), `charge` (pose sur le chargeur) ou `worn` (contact peau rétabli : le bracelet est remis). La position est la dernière connue ; elle peut manquer :
 l'alerte part sans attendre un nouveau point (FG-DOC-08 §7.3).
 
+Pendant une fenêtre de retrait autorisée par le parent, `strap` et `skin` sont seulement notés ; hors fenêtre,
+ils ouvrent une alerte critique. `worn` referme la fenêtre en cours. Posé sur son chargeur, le bracelet émet
+`charge` et non `skin` (ADR 0011).
+
 ### `status`
 
 ```json

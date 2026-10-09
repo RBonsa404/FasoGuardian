@@ -40,6 +40,9 @@
     <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'trajets']">
       <fg-icon nom="historique" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.trajets">Trajets</span>
     </a>
+    <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'journal']">
+      <fg-icon nom="audit" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.journal">Journal des alertes</span>
+    </a>
     <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'bracelet']">
       <fg-icon nom="bracelet" [taille]="20" /><span class="flex-1 text-body font-medium" i18n="@@enfant.bracelet">Bracelet</span>
     </a>

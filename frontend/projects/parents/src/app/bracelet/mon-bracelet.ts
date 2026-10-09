@@ -55,6 +55,10 @@ import { VisuelBracelet } from './visuel';
       }
 
       <nav class="mt-auto flex flex-col divide-y divide-line" i18n-aria-label="@@bracelet.actions" aria-label="Actions sur le bracelet">
+        <a class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet', 'retrait']">
+          <ng-container i18n="@@bracelet.retrait">Autoriser un retrait</ng-container>
+          <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
+        </a>
         <a class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet', 'perte']">
           <ng-container i18n="@@bracelet.declarer">Déclarer perdu ou volé</ng-container>
           <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />

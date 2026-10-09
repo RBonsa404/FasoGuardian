@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { createHmac } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -202,4 +203,21 @@ export async function braceletAuParc(api: APIRequestContext): Promise<CarteActiv
   });
   expect(reponse.status()).toBe(201);
   return reponse.json();
+}
+
+/**
+ * Publie un message comme le ferait le bracelet : en MQTT, TLS mutuel, sous son propre certificat de
+ * développement (émis à la demande). Le message traverse le broker et son ACL avant d'atteindre le serveur.
+ */
+export function braceletEmet(numeroSerie: string, flux: 'telemetry' | 'alert' | 'status', message: Record<string, unknown>): void {
+  const racine = join(__dirname, '..', '..');
+  execFileSync('sh', [join(racine, 'infra', 'generer-certificats-dev.sh'), numeroSerie], { stdio: 'ignore' });
+  const certificats = '/mosquitto/certs';
+  execFileSync(
+    'docker',
+    ['exec', 'fasoguardian-mosquitto-1', 'mosquitto_pub', '-h', 'localhost', '-p', '8883', '-q', '1', '-i', numeroSerie,
+      '--cafile', `${certificats}/ca.crt`, '--cert', `${certificats}/bracelet-${numeroSerie}.crt`, '--key', `${certificats}/bracelet-${numeroSerie}.key`,
+      '-t', `fg/${numeroSerie}/${flux}`, '-m', JSON.stringify(message)],
+    { stdio: 'ignore' },
+  );
 }
