@@ -116,6 +116,13 @@ export const routes: Routes = [
     loadComponent: () => import('./bracelet/associer').then((m) => m.AssocierBracelet),
   },
   {
+    path: 'enfants/:id/partage',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./partage/partage').then((m) => m.Partage),
+  },
+  // Vue du contact secondaire : sans compte, le jeton du lien reçu par SMS tient lieu de preuve.
+  { path: 'p/:jeton', loadComponent: () => import('./partage/vue-contact').then((m) => m.VueContact) },
+  {
     path: 'abonnement',
     canActivate: [sessionRequise],
     loadComponent: () => import('./abonnement/abonnement').then((m) => m.EcranAbonnement),

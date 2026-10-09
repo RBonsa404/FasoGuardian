@@ -19,6 +19,7 @@ const RACCOURCIS: readonly { chemin: string; libelle: string; icone: NomIcone }[
   { chemin: 'bracelet', libelle: $localize`:@@apercu.bracelet:Bracelet`, icone: 'bracelet' },
   { chemin: 'bracelet/retrait', libelle: $localize`:@@apercu.retrait:Retrait`, icone: 'retrait' },
   { chemin: 'journal', libelle: $localize`:@@apercu.journal:Journal`, icone: 'audit' },
+  { chemin: 'partage', libelle: $localize`:@@apercu.partage:Partager`, icone: 'partager' },
 ];
 
 /**

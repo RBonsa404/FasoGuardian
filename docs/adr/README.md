@@ -24,3 +24,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0014](0014-notifications-push-et-repli-sms.md) | Notifications : choix du canal, Web Push chiffré, accusé et repli SMS à 60 s, adresses de livraison limitées | Acceptée |
 | [0015](0015-abonnements-et-paiements.md) | Abonnement par enfant, activation sur notification signée seulement, relances et restriction, droits exposés aux autres modules | Acceptée |
 | [0016](0016-conformite-droits-des-personnes-et-purges.md) | Garde-fou AIPD au démarrage, accès servi aussitôt, effacement exécuté sous 30 jours dans chaque module, registre des purges et rapport mensuel | Acceptée |
+| [0017](0017-partage-temporaire-de-la-position.md) | Partage de la position par lien personnel envoyé à un contact d'urgence, borné dans le temps, révocable, sans rien montrer de l'enfant | Acceptée |

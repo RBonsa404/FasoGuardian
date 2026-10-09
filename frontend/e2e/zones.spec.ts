@@ -19,7 +19,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
 
   // Tableau de bord : le bracelet est appairé mais n'a encore rien transmis
   await expect(page.getByRole('heading', { name: 'Pas encore de position' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Raccourcis pour Yacouba' }).getByRole('link')).toHaveCount(6);
+  await expect(page.getByRole('navigation', { name: 'Raccourcis pour Yacouba' }).getByRole('link')).toHaveCount(7);
   await page.waitForLoadState('networkidle');
   await page.screenshot({ path: 'e2e/.etat/ecran-16-tableau-de-bord.png', fullPage: true });
   await page.getByRole('link', { name: 'Mes enfants' }).click();
