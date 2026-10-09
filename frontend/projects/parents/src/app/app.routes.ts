@@ -127,6 +127,18 @@ export const routes: Routes = [
   },
   // Vue du contact secondaire : sans compte, le jeton du lien reçu par SMS tient lieu de preuve.
   { path: 'p/:jeton', loadComponent: () => import('./partage/vue-contact').then((m) => m.VueContact) },
+  { path: 'aide', canActivate: [sessionRequise], loadComponent: () => import('./aide/aide').then((m) => m.Aide) },
+  {
+    path: 'aide/demandes',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./aide/demandes').then((m) => m.DemandesSupport),
+  },
+  {
+    path: 'aide/demandes/:tid',
+    canActivate: [sessionRequise],
+    loadComponent: () => import('./aide/demandes').then((m) => m.FilDemande),
+  },
+  { path: 'aide/:slug', canActivate: [sessionRequise], loadComponent: () => import('./aide/aide').then((m) => m.ArticleDAide) },
   {
     path: 'abonnement',
     canActivate: [sessionRequise],

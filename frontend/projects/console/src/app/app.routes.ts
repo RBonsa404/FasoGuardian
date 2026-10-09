@@ -23,6 +23,8 @@ export const routes: Routes = [
         canActivate: [roleRequis('KYC')],
         loadComponent: () => import('./kyc/instruction').then((m) => m.InstructionKyc),
       },
+      { path: 'support/tickets', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/tickets').then((m) => m.Tickets) },
+      { path: 'support/faq', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/faq').then((m) => m.Faq) },
       { path: 'sav/parc', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/parc').then((m) => m.Parc) },
       {
         path: 'sav/parc/:numero',
