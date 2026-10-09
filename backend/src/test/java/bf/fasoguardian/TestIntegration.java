@@ -76,6 +76,7 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.sms.adaptateur", () -> "bac-a-sable");
         // La supervision des bracelets muets ne tourne que lorsqu'un essai l'appelle.
         registre.add("fasoguardian.telemetrie.supervision", () -> "PT24H");
+        registre.add("fasoguardian.supervision.sonde", () -> "PT24H");
         registre.add("fasoguardian.sms.secret-passerelle", () -> SECRET_PASSERELLE_SMS);
         registre.add("fasoguardian.paiements.adaptateur", () -> "bac-a-sable");
         registre.add("fasoguardian.paiements.secret-webhook", TestIntegration::cleAleatoire);

@@ -72,6 +72,27 @@ export interface TableauConformite {
   readonly purges: readonly PurgeExecutee[];
 }
 
+/** Indicateurs de supervision (US-ADM-004). */
+export interface TableauSupervision {
+  /** Pourcentage des minutes où le serveur a répondu, sur la période mesurée (trente jours au plus). */
+  readonly disponibilite: number;
+  readonly objectifDeDisponibilite: number;
+  readonly minutesMesurees: number;
+  readonly minutesIndisponibles: number;
+  /** Délai événement → notification au 95e centile, en secondes ; `null` sans alerte récente. */
+  readonly delaiP95S: number | null;
+  readonly seuilDeDelaiS: number;
+  readonly delaiHorsSeuil: boolean;
+  readonly derniereAlerte: string | null;
+  readonly braceletsEnService: number;
+  readonly braceletsMuets: number;
+  /** Décomptes depuis le démarrage du serveur. */
+  readonly alertesOuvertes: number;
+  readonly smsEnvoyes: number;
+  readonly notificationsPoussees: number;
+  readonly messagesRefuses: number;
+}
+
 export interface DemandeEffacement {
   readonly id: string;
   /** EFF-000012. */
@@ -100,6 +121,10 @@ export class ClientConformite {
 
   verifierLaChaine(): Observable<ChaineAudit> {
     return this.http.post<ChaineAudit>('/api/v1/console/audit/verification', null);
+  }
+
+  supervision(): Observable<TableauSupervision> {
+    return this.http.get<TableauSupervision>('/api/v1/console/supervision');
   }
 
   tableau(): Observable<TableauConformite> {

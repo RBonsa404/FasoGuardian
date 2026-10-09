@@ -2,12 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
-import { AgentInterne, ChaineAudit, ClientAgents, ClientConformite, DemandeEffacement, EntreeAudit, FiltreAudit, PageAudit, RoleInterne, Session, TableauConformite } from 'api';
+import { AgentInterne, ChaineAudit, ClientAgents, ClientConformite, DemandeEffacement, EntreeAudit, FiltreAudit, PageAudit, RoleInterne, Session, TableauConformite, TableauSupervision } from 'api';
 
 import { Agents } from './agents';
 import { Audit } from './audit';
 import { Conformite, moisPrecedent } from './conformite';
 import { Securite } from './securite';
+import { Supervision, tuiles } from './supervision';
 
 function entree(partiel: Partial<EntreeAudit> = {}): EntreeAudit {
   return {
@@ -346,5 +347,65 @@ describe('sécurité', () => {
     expect(lire(page)).toContain('KYC · 6f1c2a90');
     expect(demandes.map((d) => d.action)).toEqual(['ENUMERATION_QR', 'ACCES_REFUSE']);
     expect(Date.now() - Date.parse(demandes[0].depuis!)).toBeGreaterThan(6.9 * 86_400_000);
+  });
+});
+
+describe('supervision', () => {
+  function supervision(partiel: Partial<TableauSupervision> = {}): TableauSupervision {
+    return {
+      disponibilite: 99.93,
+      objectifDeDisponibilite: 99.5,
+      minutesMesurees: 43_200,
+      minutesIndisponibles: 30,
+      delaiP95S: 12.4,
+      seuilDeDelaiS: 45,
+      delaiHorsSeuil: false,
+      derniereAlerte: null,
+      braceletsEnService: 240,
+      braceletsMuets: 0,
+      alertesOuvertes: 18,
+      smsEnvoyes: 40,
+      notificationsPoussees: 310,
+      messagesRefuses: 2,
+      ...partiel,
+    };
+  }
+
+  async function monter(etat: TableauSupervision) {
+    TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: ClientConformite, useValue: { supervision: () => of(etat) } }] });
+    const fixture = TestBed.createComponent(Supervision);
+    await fixture.whenStable();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('montre la disponibilité face à son objectif et le délai face à son seuil', async () => {
+    const page = await monter(supervision());
+
+    expect(lire(page)).toContain('Disponibilité · 30 j');
+    expect(lire(page)).toContain('99,93 %');
+    expect(lire(page)).toContain('Objectif 99,5 %');
+    expect(lire(page)).toContain('12,4 s');
+    expect(lire(page)).toContain('Seuil 45 s');
+    expect(lire(page)).toContain('Tous donnent des nouvelles');
+    expect(lire(page)).toContain('310 push · 40 SMS');
+    expect(page.querySelector('fg-banner')).toBeNull();
+  });
+
+  it('signale l’alerte d’exploitation quand le délai dépasse le seuil', async () => {
+    const page = await monter(supervision({ delaiP95S: 61, delaiHorsSeuil: true, derniereAlerte: '2026-10-09T10:00:00Z', braceletsMuets: 7 }));
+
+    expect(lire(page)).toContain("Alerte d'exploitation");
+    expect(lire(page)).toContain('dépasse 45 s au 95e centile');
+    expect(lire(page)).toContain('7 sans nouvelles');
+  });
+
+  it('marque hors objectif une disponibilité insuffisante, et dit quand rien n’est mesurable', () => {
+    const liste = tuiles(supervision({ disponibilite: 98.5, minutesMesurees: 200, minutesIndisponibles: 3, delaiP95S: null }));
+
+    expect(liste[0].ok).toBe(false);
+    expect(liste[0].libelle).toBe('Disponibilité · 1 j');
+    expect(liste[0].note).toBe("3 min d'indisponibilité");
+    expect(liste[1].valeur).toBe('—');
+    expect(liste[1].ok).toBe(true);
   });
 });

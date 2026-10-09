@@ -3,15 +3,18 @@ package bf.fasoguardian.telemetrie.application;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import bf.fasoguardian.dispositifs.Bracelets;
 import bf.fasoguardian.dispositifs.Bracelets.EnService;
 import bf.fasoguardian.dispositifs.SuiviBracelets;
 import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
 import bf.fasoguardian.telemetrie.infrastructure.DepotTelemetrie;
+import io.micrometer.core.instrument.MeterRegistry;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,12 @@ public class Supervision {
     private final DepotTelemetrie depot;
     private final Clock horloge;
 
-    Supervision(Bracelets bracelets, SuiviBracelets suivi, DepotTelemetrie depot, Clock horloge) {
+    private final AtomicInteger enService = new AtomicInteger();
+    private final AtomicInteger silencieux = new AtomicInteger();
+
+    Supervision(Bracelets bracelets, SuiviBracelets suivi, DepotTelemetrie depot, Clock horloge, MeterRegistry metriques) {
+        metriques.gauge("fasoguardian.bracelets.en.service", enService);
+        metriques.gauge("fasoguardian.bracelets.muets", silencieux);
         this.bracelets = bracelets;
         this.suivi = suivi;
         this.depot = depot;
@@ -44,7 +52,9 @@ public class Supervision {
     public void superviser() {
         Instant maintenant = horloge.instant();
         Set<UUID> muets = suivi.muets();
-        for (EnService bracelet : bracelets.enService()) {
+        List<EnService> suivis = bracelets.enService();
+        int sansNouvelles = 0;
+        for (EnService bracelet : suivis) {
             if (bracelet.intervalleS() <= 0) {
                 continue;
             }
@@ -52,6 +62,9 @@ public class Supervision {
                     .filter(e -> !e.dernierContact().isBefore(bracelet.appaireDepuis()));
             Instant contact = etat.map(EtatBracelet::dernierContact).orElse(bracelet.appaireDepuis());
             boolean muet = Duration.between(contact, maintenant).getSeconds() > (long) INTERVALLES_TOLERES * bracelet.intervalleS();
+            if (muet) {
+                sansNouvelles++;
+            }
             if (muet && !muets.contains(bracelet.braceletId())) {
                 suivi.signalerMuet(bracelet.braceletId(), etat.map(EtatBracelet::dernierContact).orElse(null),
                         etat.map(EtatBracelet::batterie).orElse(null), etat.map(EtatBracelet::reseau).orElse(null));
@@ -59,5 +72,7 @@ public class Supervision {
                 suivi.signalerReprise(bracelet.braceletId());
             }
         }
+        enService.set(suivis.size());
+        silencieux.set(sansNouvelles);
     }
 }

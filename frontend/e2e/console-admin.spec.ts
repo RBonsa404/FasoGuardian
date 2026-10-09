@@ -67,4 +67,13 @@ test('un administrateur crée un agent, change son périmètre, le suspend et vo
   await expect(page.getByRole('table', { name: 'Accès refusés' }).getByRole('row').filter({ hasText: 'GET /api/v1/console/parc' }).first()).toBeVisible();
   await expect(page.getByText(/Tentatives d'énumération de QR/)).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/ecran-73-securite.png', fullPage: true });
+
+  // Écran 72 : disponibilité mesurée et délai de notification, face à leurs objectifs
+  await navigation.getByRole('link', { name: 'Supervision' }).click();
+  await expect(page.getByRole('heading', { name: 'Supervision', exact: true })).toBeVisible();
+  await expect(page.getByRole('status').getByText(/En direct · actualisé il y a \d+ s/)).toBeVisible();
+  await expect(page.getByText('Objectif 99,5 %')).toBeVisible();
+  await expect(page.getByText('Seuil 45 s')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bracelets en service' })).toBeVisible();
+  await page.screenshot({ path: 'e2e/.etat/ecran-72-supervision.png', fullPage: true });
 });

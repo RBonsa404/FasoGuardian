@@ -1,6 +1,7 @@
 package bf.fasoguardian.alertes.application;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
 
 import bf.fasoguardian.alertes.domaine.Alerte;
@@ -11,6 +12,8 @@ import bf.fasoguardian.alertes.infrastructure.DepotAlertes;
 import bf.fasoguardian.geolocalisation.RetourEnZone;
 import bf.fasoguardian.geolocalisation.SortieDeZone;
 import bf.fasoguardian.telemetrie.EvenementBraceletRecu;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +31,13 @@ class Declenchement {
     private final DepotAlertes alertes;
     private final DepotActions actions;
     private final Clock horloge;
+    private final Timer delaiDeNotification;
 
     Declenchement(OuvertureAlertes ouverture, Retraits retraits, DepotAlertes alertes, DepotActions actions,
-            Clock horloge) {
+            Clock horloge, MeterRegistry metriques) {
+        this.delaiDeNotification = Timer.builder("fasoguardian.alertes.delai.notification")
+                .description("Délai entre un événement du bracelet et la notification des parents")
+                .publishPercentiles(0.95).publishPercentileHistogram().register(metriques);
         this.ouverture = ouverture;
         this.retraits = retraits;
         this.alertes = alertes;
@@ -71,7 +78,10 @@ class Declenchement {
     }
 
     private void ouvrir(EvenementBraceletRecu evenement, Type type) {
-        ouverture.ouvrir(evenement.enfantId(), type, null, null, null, evenement.latitude(), evenement.longitude());
+        ouverture.ouvrir(evenement.enfantId(), type, null, null, null, evenement.latitude(), evenement.longitude())
+                // Délai entre l'événement au poignet et la notification des parents : l'indicateur suivi par
+                // la supervision (objectif : moins de 45 s au 95e centile, US-ADM-004).
+                .ifPresent(alerte -> delaiDeNotification.record(Duration.between(evenement.mesureLe(), horloge.instant())));
     }
 
     private void resoudre(List<Alerte> concernees, String motif) {

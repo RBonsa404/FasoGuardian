@@ -20,6 +20,7 @@ const ENTREES: readonly Entree[] = [
   { libelle: $localize`:@@nav.agents:Agents et rôles`, lien: '/admin/agents', role: 'ADMIN' },
   { libelle: $localize`:@@nav.audit:Journal d'audit`, lien: '/admin/audit', role: 'ADMIN' },
   { libelle: $localize`:@@nav.conformite:Conformité CIL`, lien: '/conformite', role: 'ADMIN' },
+  { libelle: $localize`:@@nav.supervision:Supervision`, lien: '/admin/supervision', role: 'ADMIN' },
   { libelle: $localize`:@@nav.securite:Sécurité`, lien: '/admin/securite', role: 'ADMIN' },
 ];
 

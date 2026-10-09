@@ -60,7 +60,8 @@ public class Conformite implements RegistrePurges, DemandesDroits {
             new Duree("Numéro des tiers (page QR)", "30 jours", "Purge quotidienne"),
             new Duree("Partages de position", "30 jours après leur fin", "Purge quotidienne"),
             new Duree("Dossiers de signalement", "30 jours", "Purge quotidienne"),
-            new Duree("Notifications", "90 jours", "Purge quotidienne"));
+            new Duree("Notifications", "90 jours", "Purge quotidienne"),
+            new Duree("Sondes de disponibilité", "90 jours, aucune donnée personnelle", "Purge quotidienne"));
 
     public record Duree(String donnee, String duree, String mecanisme) {
     }

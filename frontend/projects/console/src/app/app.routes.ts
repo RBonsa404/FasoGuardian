@@ -30,6 +30,11 @@ export const routes: Routes = [
         canActivate: [roleRequis('ADMIN')],
         loadComponent: () => import('./admin/securite').then((m) => m.Securite),
       },
+      {
+        path: 'admin/supervision',
+        canActivate: [roleRequis('ADMIN')],
+        loadComponent: () => import('./admin/supervision').then((m) => m.Supervision),
+      },
       { path: 'admin/audit', canActivate: [roleRequis('ADMIN')], loadComponent: () => import('./admin/audit').then((m) => m.Audit) },
       {
         path: 'conformite',

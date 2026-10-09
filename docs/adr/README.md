@@ -25,3 +25,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0015](0015-abonnements-et-paiements.md) | Abonnement par enfant, activation sur notification signée seulement, relances et restriction, droits exposés aux autres modules | Acceptée |
 | [0016](0016-conformite-droits-des-personnes-et-purges.md) | Garde-fou AIPD au démarrage, accès servi aussitôt, effacement exécuté sous 30 jours dans chaque module, registre des purges et rapport mensuel | Acceptée |
 | [0017](0017-partage-temporaire-de-la-position.md) | Partage de la position par lien personnel envoyé à un contact d'urgence, borné dans le temps, révocable, sans rien montrer de l'enfant | Acceptée |
+| [0018](0018-supervision-et-alertes-d-exploitation.md) | Disponibilité mesurée par minutes répondues, délai événement → notification au 95e centile, alerte d'exploitation au journal et dans Prometheus | Acceptée |

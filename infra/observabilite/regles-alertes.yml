@@ -1,6 +1,4 @@
-# Seuils d'alerte d'exploitation (FG-DOC-06, tableau 20). Les règles portant sur des métriques
-# métier (délai événement → notification, messages MQTT en erreur, bracelets muets) sont ajoutées
-# avec les modules qui publient ces métriques.
+# Seuils d'alerte d'exploitation (FG-DOC-06, tableau 20).
 groups:
   - name: plateforme
     rules:
@@ -19,3 +17,32 @@ groups:
           gravite: avertissement
         annotations:
           resume: "Latence des API au 95e centile supérieure à 800 ms sur 10 minutes (objectif : 500 ms)."
+
+  - name: service
+    rules:
+      # US-ADM-004 : délai événement du bracelet → notification des parents.
+      - alert: DelaiDeNotificationEleve
+        expr: histogram_quantile(0.95, sum by (le) (rate(fasoguardian_alertes_delai_notification_seconds_bucket{job="serveur"}[10m]))) > 45
+        for: 5m
+        labels:
+          gravite: critique
+        annotations:
+          resume: "Délai événement → notification supérieur à 45 s au 95e centile."
+
+      # US-ADM-004 : disponibilité mensuelle, objectif 99,5 %.
+      - alert: DisponibiliteSousObjectif
+        expr: avg_over_time(up{job="serveur"}[30d]) < 0.995
+        for: 30m
+        labels:
+          gravite: avertissement
+        annotations:
+          resume: "Disponibilité du serveur sur 30 jours inférieure à 99,5 %."
+
+      # US-SAV-001 : part anormale de bracelets muets, signe d'une panne de réseau ou du broker.
+      - alert: BraceletsMuetsEnNombre
+        expr: fasoguardian_bracelets_muets{job="serveur"} > 5 and fasoguardian_bracelets_muets{job="serveur"} / fasoguardian_bracelets_en_service{job="serveur"} > 0.2
+        for: 15m
+        labels:
+          gravite: avertissement
+        annotations:
+          resume: "Plus d'un bracelet en service sur cinq ne donne plus de nouvelles."

@@ -16,6 +16,7 @@ import bf.fasoguardian.audit.application.ConsultationJournal;
 import bf.fasoguardian.audit.application.ConsultationJournal.Chaine;
 import bf.fasoguardian.audit.application.ConsultationJournal.Filtre;
 import bf.fasoguardian.audit.application.ConsultationJournal.Page;
+import bf.fasoguardian.audit.application.SupervisionPlateforme;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Journal d'audit et conformité, côté administrateur (US-ADM-002, US-ADM-003) ; droit d'accès, côté parent. */
+/** Journal d'audit, conformité et supervision, côté administrateur (US-ADM-002 à 004) ; droit d'accès, côté parent. */
 @RestController
 @Tag(name = "Audit et conformité")
 @SecurityRequirement(name = "jetonAcces")
@@ -42,8 +43,10 @@ class ControleurConformite {
 
     private final Conformite conformite;
     private final ConsultationJournal consultation;
+    private final SupervisionPlateforme supervision;
 
-    ControleurConformite(Conformite conformite, ConsultationJournal consultation) {
+    ControleurConformite(Conformite conformite, ConsultationJournal consultation, SupervisionPlateforme supervision) {
+        this.supervision = supervision;
         this.conformite = conformite;
         this.consultation = consultation;
     }
@@ -65,6 +68,13 @@ class ControleurConformite {
     @PostMapping("/api/v1/console/audit/verification")
     ResponseEntity<Chaine> verifier(@AuthenticationPrincipal Jwt jeton) {
         return sansCache(consultation.verifier(id(jeton)));
+    }
+
+    @Operation(summary = "Supervision : disponibilité sur 30 jours, délai de notification, parc en service")
+    @PreAuthorize(ADMIN)
+    @GetMapping("/api/v1/console/supervision")
+    ResponseEntity<SupervisionPlateforme.Tableau> supervision() {
+        return sansCache(supervision.tableau());
     }
 
     @Operation(summary = "Tableau de bord de conformité : AIPD, durées de conservation, purges, demandes")
