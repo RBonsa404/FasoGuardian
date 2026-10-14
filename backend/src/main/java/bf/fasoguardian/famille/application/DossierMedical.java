@@ -2,7 +2,9 @@ package bf.fasoguardian.famille.application;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ import bf.fasoguardian.famille.domaine.RevisionSante;
 import bf.fasoguardian.famille.infrastructure.DepotContacts;
 import bf.fasoguardian.famille.infrastructure.DepotFichesSante;
 import bf.fasoguardian.famille.infrastructure.DepotRevisionsSante;
+import bf.fasoguardian.identite.LiensTutelle;
 import bf.fasoguardian.identite.Telephones;
 import bf.fasoguardian.plateforme.chiffrement.CategorieDonnee;
 import bf.fasoguardian.plateforme.chiffrement.ServiceChiffrement;
@@ -48,7 +51,8 @@ public class DossierMedical {
             Instant modifieLe) {
     }
 
-    public record RevisionVue(int nombreElements, int nombreCritiques, Instant modifieLe) {
+    /** Une révision : décomptes, date, prénom vérifié de son auteur (vide sans dossier approuvé), et s'il s'agit du demandeur. */
+    public record RevisionVue(int nombreElements, int nombreCritiques, Instant modifieLe, String auteur, boolean parVous) {
     }
 
     public record ContactVue(UUID id, String lien, String nom, String telephone, boolean visibleSurQr, int rang) {
@@ -62,6 +66,7 @@ public class DossierMedical {
     }
 
     private final AccesEnfant acces;
+    private final LiensTutelle liens;
     private final DepotFichesSante fiches;
     private final DepotRevisionsSante revisions;
     private final DepotContacts contacts;
@@ -70,9 +75,10 @@ public class DossierMedical {
     private final JsonMapper json;
     private final Clock horloge;
 
-    DossierMedical(AccesEnfant acces, DepotFichesSante fiches, DepotRevisionsSante revisions, DepotContacts contacts,
+    DossierMedical(AccesEnfant acces, LiensTutelle liens, DepotFichesSante fiches, DepotRevisionsSante revisions, DepotContacts contacts,
             ServiceChiffrement chiffrement, JournalAudit journal, JsonMapper json, Clock horloge) {
         this.acces = acces;
+        this.liens = liens;
         this.fiches = fiches;
         this.revisions = revisions;
         this.contacts = contacts;
@@ -122,8 +128,12 @@ public class DossierMedical {
     @Transactional(readOnly = true)
     public List<RevisionVue> revisions(UUID tuteurId, UUID enfantId) {
         acces.exigerTuteur(tuteurId, enfantId);
+        Map<UUID, String> prenoms = new HashMap<>();
         return revisions.findByEnfantIdOrderByModifieLeDesc(enfantId).stream()
-                .map(r -> new RevisionVue(r.nombreElements(), r.nombreCritiques(), r.modifieLe())).toList();
+                .map(r -> new RevisionVue(r.nombreElements(), r.nombreCritiques(), r.modifieLe(),
+                        prenoms.computeIfAbsent(r.auteurId(), auteur -> liens.prenomDuTuteur(auteur).orElse("")),
+                        r.auteurId().equals(tuteurId)))
+                .toList();
     }
 
     // ------------------------------------------------------- projection publique

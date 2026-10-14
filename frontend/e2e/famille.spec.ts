@@ -32,16 +32,27 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
 
   // Fiche médicale : un élément critique, un élément privé
   await page.getByRole('link', { name: 'Fiche médicale' }).click();
+  await expect(page.getByText("Aucune information médicale pour l'instant.")).toBeVisible();
+  await page.getByRole('button', { name: 'Modifier les informations' }).click();
   await page.locator('select#groupe').selectOption('O+');
   await page.getByRole('button', { name: 'Ajouter une information' }).click();
   await page.getByLabel('Information', { exact: true }).fill('Arachide');
   await page.getByRole('switch', { name: 'Critique · visible sur la page QR' }).click();
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await expect(page.getByText('Fiche médicale enregistrée.')).toBeVisible();
+  const arachide = page.getByRole('switch', { name: 'Arachide · critique, visible sur la page QR' });
+  await expect(arachide).toBeChecked();
+  await expect(page.getByText(/Dernière révision : .+ par \S+/)).toBeVisible();
+  // En lecture, la bascule s'enregistre aussitôt : l'information devient privée
+  await arachide.click();
+  await page.getByRole('button', { name: 'journal des révisions' }).click();
+  await expect(page.getByText('1 information(s), dont 0 critique(s)')).toBeVisible();
   await expect(page.getByText('1 information(s), dont 1 critique(s)')).toBeVisible();
+  await arachide.click();
+  await expect(page.getByText('1 information(s), dont 1 critique(s)')).toHaveCount(2);
   await page.reload();
-  await expect(page.getByLabel('Information', { exact: true })).toHaveValue('Arachide');
-  await expect(page.getByRole('switch', { name: 'Critique · visible sur la page QR' })).toBeChecked();
+  await expect(page.getByRole('switch', { name: 'Arachide · critique, visible sur la page QR' })).toBeChecked();
+  await page.screenshot({ path: 'e2e/.etat/ecran-32-fiche-medicale.png', fullPage: true });
 
   // Contacts d'urgence
   await page.getByRole('link', { name: 'Retour' }).click();

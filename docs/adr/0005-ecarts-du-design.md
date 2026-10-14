@@ -63,3 +63,9 @@ traçabilité.
   Safe Zones, trajets, journal, bracelet, fiche médicale, contacts, page QR) restent en liste au-dessus de
   « Modifier la fiche », la maquette ne disant pas d'où on les ouvre. Tant que la photo de l'enfant
   (US-PAR-004) n'existe pas, le cercle porte l'initiale.
+- **Écran 32, fiche médicale.** La lecture suit la maquette : une carte par information, sa bascule
+  « Critique / Privé » enregistrée aussitôt (une révision par bascule, comme tout enregistrement), la dernière
+  révision avec le prénom de son auteur et le journal des révisions sur demande. Deux ajouts : « Modifier les
+  informations » ouvre le formulaire d'ajout, de correction et de retrait, que la maquette ne montre pas ; le
+  groupe sanguin vient après les autres informations. La maquette range le médecin traitant parmi les
+  informations : la fiche n'a pas de type « Médecin », il se saisit sous « Autre ».

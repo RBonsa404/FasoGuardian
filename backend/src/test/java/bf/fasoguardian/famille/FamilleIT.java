@@ -126,7 +126,8 @@ class FamilleIT extends TestIntegration {
                 byte[].class, famille.enfantId()), StandardCharsets.ISO_8859_1)).doesNotContain("MARQUEUR", "O+", "Ventoline");
 
         appel(get(base + "/revisions"), jeton).andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].nombreElements").value(2)).andExpect(jsonPath("$[0].nombreCritiques").value(1));
+                .andExpect(jsonPath("$[0].nombreElements").value(2)).andExpect(jsonPath("$[0].nombreCritiques").value(1))
+                .andExpect(jsonPath("$[0].auteur").value("Mariam")).andExpect(jsonPath("$[0].parVous").value(true));
         assertThat(jdbc.queryForList("SELECT action FROM audit.entree WHERE type_cible = 'ENFANT' AND cible_id = ?",
                 String.class, famille.enfantId())).contains("CONSULTATION_FICHE_SANTE", "MODIFICATION_FICHE_SANTE");
         assertThatThrownBy(() -> jdbc.update("UPDATE famille.revision_sante SET nombre_critiques = 0"))

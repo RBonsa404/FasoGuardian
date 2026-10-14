@@ -43,6 +43,10 @@ public class RevisionSante {
         this.modifieLe = maintenant;
     }
 
+    public UUID auteurId() {
+        return auteurId;
+    }
+
     public int nombreElements() {
         return nombreElements;
     }
