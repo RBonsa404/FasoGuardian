@@ -53,8 +53,12 @@ test('un SOS du bracelet arrive au parent, qui le prend en charge puis le lève 
   await page.getByRole('button', { name: 'Toutes' }).click();
   await expect(page.getByRole('link', { name: /SOS · appui long · Yacouba/ })).toContainText('Levée');
   await page.goto(`/enfants/${enfants[0].id}/journal`);
-  await expect(page.getByRole('heading', { name: 'SOS · appui long' })).toBeVisible();
-  await expect(page.getByRole('listitem')).toHaveCount(3);
+  // Écran 20 : une ligne par alerte, sa dernière étape, et des filtres par type
+  await expect(page.getByRole('link', { name: /SOS · appui long/ })).toContainText('Levée');
+  await page.getByRole('button', { name: 'Zones' }).click();
+  await expect(page.getByText('Aucune alerte de ce type.')).toBeVisible();
+  await page.getByRole('button', { name: 'Toutes' }).click();
+  await expect(page.getByRole('link', { name: /SOS · appui long/ })).toBeVisible();
   await expect(page.getByText('Entrées scellées : aucune ne peut être modifiée ni supprimée.')).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/ecran-20-journal.png', fullPage: true });
 

@@ -1,8 +1,26 @@
-<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n-aria-label="@@etape.retour" aria-label="Retour">
-  <fg-icon nom="retour" [taille]="22" />
-</a>
+@if (!critiqueEnCours()) {
+  <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/alertes" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <fg-icon nom="retour" [taille]="22" />
+  </a>
+}
 
 @if (alerte(); as a) {
+  @if (critiqueEnCours()) {
+    <!-- Écran 25 : alerte critique en cours, en aplat ambre sur toute la largeur. -->
+    <header class="relative -mx-5 -mt-6 flex flex-col items-center gap-2 overflow-hidden bg-alert px-5 pt-4 pb-6 text-center text-on-alert lg:mx-0 lg:mt-0 lg:rounded-xl">
+      <a class="absolute top-3 left-3 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-on-alert" routerLink="/alertes" i18n-aria-label="@@etape.retour" aria-label="Retour">
+        <fg-icon nom="retour" [taille]="22" />
+      </a>
+      <span class="relative mt-8 mb-2 grid size-30 place-items-center" aria-hidden="true">
+        <span class="absolute inset-0 rounded-full border-2 border-on-alert/15"></span>
+        <span class="absolute inset-3 rounded-full border-2 border-on-alert/25 motion-safe:animate-ping motion-safe:[animation-duration:2s]"></span>
+        <span class="relative grid size-18 place-items-center rounded-full bg-on-alert text-alert"><fg-icon [nom]="icone()" [taille]="30" /></span>
+      </span>
+      <span class="text-caption font-bold tracking-[.12em] uppercase" i18n="@@alerte.critique.kicker">Alerte critique</span>
+      <h1 class="m-0 font-display text-[26px] leading-tight font-bold tracking-tight">{{ titre() }}</h1>
+      <p class="m-0 text-body font-medium tabular-nums">{{ heure(a.ouverteLe) }} · {{ ilYA(a.ouverteLe) }} · {{ statut(a.statut) }}</p>
+    </header>
+  } @else {
   <header class="flex flex-col gap-2">
     <div class="flex items-center gap-3">
       <span class="grid size-12 flex-none place-items-center rounded-full" [class]="enCours() ? (a.gravite === 'CRITIQUE' ? 'bg-alert text-on-alert' : 'bg-alert-soft text-alert-ink') : 'bg-surface-2 text-text-2'" aria-hidden="true">
@@ -19,11 +37,12 @@
     <h1 class="m-0 text-h2 font-bold tracking-tight">{{ titre() }}</h1>
     <p class="m-0 text-label text-text-2 tabular-nums">{{ heure(a.ouverteLe) }} · {{ ilYA(a.ouverteLe) }}@if (enCours()) { · {{ statut(a.statut) }} }</p>
   </header>
+  }
 
   @if (repere(); as position) {
-    <section class="flex flex-col gap-2">
-      <h2 class="m-0 text-label font-semibold" i18n="@@alerte.position">Dernière position connue au déclenchement</h2>
-      <div class="relative h-44 overflow-hidden rounded-xl border border-line">
+    <section class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-3.5">
+      <h2 class="m-0 text-caption font-medium text-text-3" i18n="@@alerte.position">Dernière position connue au déclenchement</h2>
+      <div class="relative h-44 overflow-hidden rounded-md">
         <app-carte class="absolute inset-0" i18n-libelle="@@alerte.carte" libelle="Carte de la position au déclenchement de l'alerte" [position]="position" />
       </div>
     </section>
@@ -31,7 +50,7 @@
     <fg-banner ton="info" i18n="@@alerte.sansPosition">Le bracelet n'a pas joint de position à cette alerte. La carte montre sa dernière position transmise.</fg-banner>
   }
 
-  <p class="m-0 text-body text-text-2">{{ explication() }}</p>
+  <p class="m-0 rounded-lg bg-surface-2 p-3.5 text-label text-text-2">{{ explication() }}</p>
 
   @if (erreur(); as message) {
     <fg-banner ton="erreur">{{ message }}</fg-banner>
@@ -44,8 +63,10 @@
       } @else {
         <button fg-button taille="lg" type="button" [chargement]="enTraitement()" (click)="ouvrirCloture('lever')" i18n="@@alerte.lever">Lever l'alerte</button>
       }
-      <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'carte']" i18n="@@alerte.direct">Voir en direct</a>
-      <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'contacts']" i18n="@@alerte.contacts">Appeler un contact</a>
+      <div class="grid grid-cols-2 gap-2">
+        <a class="grid min-h-13 place-items-center rounded-banner border border-line bg-surface px-2 text-center text-label font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'contacts']" i18n="@@alerte.contacts">Appeler un contact</a>
+        <a class="grid min-h-13 place-items-center rounded-banner border border-line bg-surface px-2 text-center text-label font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', a.enfantId, 'carte']" i18n="@@alerte.direct">Voir en direct</a>
+      </div>
       @if (a.statut === 'ACQUITTEE') {
         <a class="grid min-h-12 place-items-center rounded-banner border-(length:--border-width-trait) border-alert text-body font-semibold text-alert-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" [routerLink]="['/alertes', a.id, 'signalement']" i18n="@@alerte.signaler">Signaler une disparition</a>
       } @else if (a.statut === 'ESCALADEE') {

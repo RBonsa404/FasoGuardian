@@ -60,6 +60,8 @@ export class EcranAlerte {
   protected readonly erreurMotif = signal<string | null>(null);
 
   protected readonly enCours = computed(() => !!this.alerte() && enCours(this.alerte()!));
+  /** Une alerte critique en cours s'affiche en aplat ambre, comme l'écran 25. */
+  protected readonly critiqueEnCours = computed(() => this.enCours() && this.alerte()?.gravite === 'CRITIQUE');
   protected readonly icone = computed(() => (this.alerte() ? iconeAlerte(this.alerte()!) : 'info'));
   protected readonly titre = computed(() => (this.alerte() ? titreComplet(this.alerte()!, this.enfant()?.prenom ?? $localize`:@@alerte.enfant:votre enfant`) : ''));
   protected readonly explication = computed(() => (this.alerte() ? explication(this.alerte()!) : ''));
