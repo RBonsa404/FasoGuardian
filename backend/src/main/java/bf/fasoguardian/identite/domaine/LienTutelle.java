@@ -68,6 +68,10 @@ public class LienTutelle {
         return statut == Statut.ACTIF;
     }
 
+    public Instant creeLe() {
+        return creeLe;
+    }
+
     /** Le tuteur perd l'accès à l'enfant ; le lien reste au dossier, avec la décision qui l'a suspendu. */
     public void suspendre() {
         this.statut = Statut.SUSPENDU;

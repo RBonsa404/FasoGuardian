@@ -69,6 +69,10 @@ class ControleurKyc {
             @NotNull @Valid EnfantDto enfant) {
     }
 
+    record DemandeDossierInvite(@NotNull UUID invitationId, @NotNull Canal canal, @NotNull NatureLien natureLien,
+            @NotNull @Valid IdentiteDto demandeur) {
+    }
+
     record DemandeDecision(@NotNull Decision decision, @Size(max = 500) String motif) {
     }
 
@@ -87,6 +91,16 @@ class ControleurKyc {
         return kyc.ouvrir(id(jeton), demande.canal(), demande.natureLien(),
                 new IdentiteDeclaree(d.nom().trim(), d.prenoms().trim(), d.typePiece().trim(), d.numeroPiece().trim()),
                 new EnfantDeclare(e.prenom().trim(), e.nom().trim(), e.dateNaissance()));
+    }
+
+    @Operation(summary = "Ouvre le dossier d'un second tuteur invité : il vise l'enfant de l'invitation (US-PAR-003)")
+    @PreAuthorize(PARENT)
+    @PostMapping("/api/v1/kyc/dossiers/invitation")
+    @ResponseStatus(HttpStatus.CREATED)
+    DossierParent ouvrirSurInvitation(@AuthenticationPrincipal Jwt jeton, @Valid @RequestBody DemandeDossierInvite demande) {
+        IdentiteDto d = demande.demandeur();
+        return kyc.ouvrirSurInvitation(id(jeton), demande.invitationId(), demande.canal(), demande.natureLien(),
+                new IdentiteDeclaree(d.nom().trim(), d.prenoms().trim(), d.typePiece().trim(), d.numeroPiece().trim()));
     }
 
     @Operation(summary = "Dossier le plus récent du parent, ou 204 s'il n'en a pas")

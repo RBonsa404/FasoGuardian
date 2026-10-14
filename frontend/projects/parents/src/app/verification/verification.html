@@ -10,6 +10,26 @@
       [total]="total()"
       (retour)="reculer()"
     >
+      @if (invitations().length > 0) {
+        <div role="radiogroup" class="flex flex-col gap-3" i18n-aria-label="@@verification.invitation.groupe" aria-label="Enfant concerné">
+          @for (invitation of invitations(); track invitation.id) {
+            <button type="button" role="radio" [attr.aria-checked]="etat.invitation()?.id === invitation.id" [class]="classesChoix(etat.invitation()?.id === invitation.id)" (click)="choisirInvitation(invitation)">
+              <span [class]="classesPastille(etat.invitation()?.id === invitation.id)"><fg-icon nom="filiation" [taille]="20" /></span>
+              <span class="flex flex-1 flex-col gap-0.5 text-left">
+                <strong class="text-body font-semibold" i18n="@@verification.invitation.titre">{{ invitation.invitant || 'Un parent' }} vous invite comme second tuteur</strong>
+                <span class="text-label text-text-2" i18n="@@verification.invitation.texte">Vous verrez l'enfant une fois votre identité vérifiée · jusqu'au {{ jourInvitation(invitation.expireLe) }}</span>
+              </span>
+            </button>
+          }
+          <button type="button" role="radio" [attr.aria-checked]="!etat.invitation()" [class]="classesChoix(!etat.invitation())" (click)="choisirInvitation(null)">
+            <span [class]="classesPastille(!etat.invitation())"><fg-icon nom="kyc-piece" [taille]="20" /></span>
+            <span class="flex flex-1 flex-col gap-0.5 text-left">
+              <strong class="text-body font-semibold" i18n="@@verification.invitation.autre">Inscrire un autre enfant</strong>
+              <span class="text-label text-text-2" i18n="@@verification.invitation.autre.texte">Vous déclarez vous-même l'enfant</span>
+            </span>
+          </button>
+        </div>
+      }
       <div role="radiogroup" class="flex flex-col gap-3" i18n-aria-label="@@verification.mode.groupe" aria-label="Mode de vérification">
         <button type="button" role="radio" [attr.aria-checked]="enLigne()" [class]="classesChoix(enLigne())" (click)="choisirCanal('EN_LIGNE')">
           <span [class]="classesPastille(enLigne())"><fg-icon nom="kyc-piece" [taille]="20" /></span>
@@ -101,12 +121,17 @@
       [total]="total()"
       (retour)="reculer()"
     >
+      @if (etat.invitation(); as invitation) {
+        <p class="m-0 rounded-lg border border-line bg-surface p-4 text-body text-text-2" i18n="@@verification.filiation.invitation">L'enfant est celui pour lequel {{ invitation.invitant || 'un parent' }} vous invite : l'agent le retrouve à partir de l'invitation. Joignez le justificatif de votre propre lien avec lui.</p>
+      }
       @if (!etat.aCompleter()) {
+        @if (!etat.invitation()) {
         <form id="formulaire" class="contents" [formGroup]="enfant" (submit)="$event.preventDefault(); validerFiliation()">
           <fg-input i18n-libelle="@@verification.enfant.prenom" libelle="Prénom de l'enfant" [longueurMax]="80" formControlName="prenom" />
           <fg-input i18n-libelle="@@verification.enfant.nom" libelle="Nom de l'enfant" [longueurMax]="80" formControlName="nom" />
           <fg-input type="date" i18n-libelle="@@verification.enfant.naissance" libelle="Date de naissance" formControlName="dateNaissance" />
         </form>
+        }
         <fg-switch [formControl]="tuteur" i18n-libelle="@@verification.filiation.tuteur" libelle="Je suis le tuteur légal de l'enfant">
           <strong class="text-body font-semibold" i18n="@@verification.filiation.tuteur">Je suis le tuteur légal de l'enfant</strong>
           <span class="text-label text-text-2" i18n="@@verification.filiation.tuteur.texte">Le jugement de tutelle remplace l'acte de naissance.</span>
@@ -141,7 +166,15 @@
           </span>
         </div>
       }
-      @if (etat.enfant(); as e) {
+      @if (etat.invitation(); as invitation) {
+        <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
+          <span [class]="classesPastille(false)"><fg-icon nom="filiation" [taille]="20" /></span>
+          <span class="flex flex-1 flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@verification.recap.invitation">Second tuteur</strong>
+            <span class="text-label text-text-2" i18n="@@verification.recap.invitation.texte">Sur invitation de {{ invitation.invitant || 'un parent' }}</span>
+          </span>
+        </div>
+      } @else if (etat.enfant(); as e) {
         <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
           <span [class]="classesPastille(false)"><fg-icon nom="filiation" [taille]="20" /></span>
           <span class="flex flex-1 flex-col gap-0.5">

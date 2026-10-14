@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-import { CanalKyc, DossierKycParent, EnfantDeclare, IdentiteDeclaree, NatureLien, TypePieceKyc } from 'api';
+import { CanalKyc, DossierKycParent, EnfantDeclare, IdentiteDeclaree, InvitationRecue, NatureLien, TypePieceKyc } from 'api';
 
 /**
  * État du parcours de vérification, conservé en mémoire le temps de la saisie. Les photos et l'identité
@@ -15,6 +15,8 @@ export class EtatVerification {
   readonly fichiers = signal<Partial<Record<TypePieceKyc, Blob>>>({});
   /** Dossier existant à compléter (statut COMPLEMENT_DEMANDE). */
   readonly aCompleter = signal<DossierKycParent | null>(null);
+  /** Invitation de second tuteur à laquelle le dossier répond : l'enfant est alors celui de l'invitation. */
+  readonly invitation = signal<InvitationRecue | null>(null);
 
   joindre(type: TypePieceKyc, fichier: Blob): void {
     this.fichiers.update((fichiers) => ({ ...fichiers, [type]: fichier }));
@@ -27,6 +29,7 @@ export class EtatVerification {
     this.enfant.set(null);
     this.fichiers.set({});
     this.aCompleter.set(null);
+    this.invitation.set(null);
   }
 }
 

@@ -64,6 +64,10 @@ class DonneesIdentite implements DonneesPersonnelles {
                 + " (SELECT json_agg(json_build_object('de', m.auteur, 'texte', m.texte, 'le', m.cree_le) ORDER BY m.cree_le)::text"
                 + " FROM identite.message_support m WHERE m.demande_id = d.id) AS messages"
                 + " FROM identite.demande_support d WHERE d.tuteur_id = ? ORDER BY d.ouverte_le", personne.tuteurId()));
+        // Le numéro de l'invité est celui d'un tiers : l'export n'en garde que l'état de l'invitation.
+        export.put("invitationsDeTuteur", jdbc.queryForList("SELECT statut, cree_le::text AS \"creeLe\","
+                + " expire_le::text AS \"expireLe\", close_le::text AS \"closeLe\" FROM identite.invitation_tuteur"
+                + " WHERE invitant_id = ? ORDER BY cree_le", personne.tuteurId()));
         return export;
     }
 
@@ -81,6 +85,9 @@ class DonneesIdentite implements DonneesPersonnelles {
         supprimes += jdbc.update("DELETE FROM identite.consentement WHERE utilisateur_id = ?", personne.tuteurId());
         supprimes += jdbc.update("DELETE FROM identite.demande_support WHERE tuteur_id = ?", personne.tuteurId());
         supprimes += jdbc.update("DELETE FROM identite.code_usage_unique WHERE cible_hash = ?", comptes.get(0).get("telephone_hash"));
+        // Invitations envoyées, et celles adressées à ce numéro : elles n'ont plus d'objet.
+        supprimes += jdbc.update("DELETE FROM identite.invitation_tuteur WHERE invitant_id = ? OR telephone_hash = ?",
+                personne.tuteurId(), comptes.get(0).get("telephone_hash"));
         supprimes += jdbc.update("UPDATE identite.utilisateur SET efface_le = ?, telephone_chiffre = NULL, telephone_hash = NULL,"
                 + " mdp_argon2id = NULL, statut = 'CLOS', clos_le = coalesce(clos_le, ?) WHERE id = ?", maintenant, maintenant,
                 personne.tuteurId());

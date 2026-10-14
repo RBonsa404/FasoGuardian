@@ -73,13 +73,15 @@ public class InstructionKyc {
     }
 
     /** Ligne de la file d'instruction, réservée aux agents KYC (identité du parent, prénom et âge de l'enfant). */
+    /** {@code secondTuteur} : dossier d'un adulte invité par le tuteur d'un enfant déjà suivi (US-PAR-003). */
     public record DossierFile(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
             String demandeur, String enfantPrenom, int enfantAge, Instant deposeLe, boolean prisEnCharge,
-            boolean prisEnChargeParMoi) {
+            boolean prisEnChargeParMoi, boolean secondTuteur) {
     }
 
     public record DossierInstruction(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
-            IdentiteDeclaree demandeur, EnfantDeclare enfant, String motif, Instant deposeLe, List<PieceVue> pieces) {
+            IdentiteDeclaree demandeur, EnfantDeclare enfant, String motif, Instant deposeLe, List<PieceVue> pieces,
+            boolean secondTuteur) {
     }
 
     public record ContenuPiece(byte[] octets, String typeMime) {
@@ -95,6 +97,7 @@ public class InstructionKyc {
     private final DepotPiecesKyc pieces;
     private final DepotLiensTutelle liens;
     private final DepotUtilisateurs utilisateurs;
+    private final InvitationsTuteur invitations;
     private final ServiceChiffrement chiffrement;
     private final JournalAudit journal;
     private final ServiceSms sms;
@@ -103,12 +106,14 @@ public class InstructionKyc {
     private final Clock horloge;
 
     InstructionKyc(DepotDossiersKyc dossiers, DepotPiecesKyc pieces, DepotLiensTutelle liens,
-            DepotUtilisateurs utilisateurs, ServiceChiffrement chiffrement, JournalAudit journal, ServiceSms sms,
+            DepotUtilisateurs utilisateurs, InvitationsTuteur invitations, ServiceChiffrement chiffrement,
+            JournalAudit journal, ServiceSms sms,
             ApplicationEventPublisher evenements, JsonMapper json, Clock horloge) {
         this.dossiers = dossiers;
         this.pieces = pieces;
         this.liens = liens;
         this.utilisateurs = utilisateurs;
+        this.invitations = invitations;
         this.chiffrement = chiffrement;
         this.journal = journal;
         this.sms = sms;
@@ -131,6 +136,23 @@ public class InstructionKyc {
         }
         DossierKyc dossier = dossiers.save(new DossierKyc("KYC-" + dossiers.prochaineReference(), tuteurId, canal, nature,
                 chiffrerJson(demandeur), chiffrerJson(enfant), horloge.instant()));
+        return vueParent(dossier);
+    }
+
+    /**
+     * Dossier d'un second tuteur invité (US-PAR-003) : il vise l'enfant déjà suivi, dont l'identité vérifiée est
+     * reprise ; l'invité n'en voit rien avant l'approbation. Les pièces et le dépôt suivent le parcours ordinaire.
+     */
+    @Transactional
+    public DossierParent ouvrirSurInvitation(UUID tuteurId, UUID invitationId, Canal canal, NatureLien nature,
+            IdentiteDeclaree demandeur) {
+        if (dossiers.existsByDemandeurIdAndStatutIn(tuteurId, OUVERTS)) {
+            throw new ErreurMetier(CodeErreur.CONFLIT, "Un dossier de vérification est déjà en cours.");
+        }
+        var invitation = invitations.reserverPourDossier(tuteurId, invitationId);
+        DossierKyc dossier = dossiers.save(DossierKyc.surInvitation("KYC-" + dossiers.prochaineReference(), tuteurId, canal,
+                nature, chiffrerJson(demandeur), invitation.id(), invitation.enfantId(),
+                invitations.enfantDeclare(invitation.enfantId()), horloge.instant()));
         return vueParent(dossier);
     }
 
@@ -192,7 +214,7 @@ public class InstructionKyc {
                     return new DossierFile(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(),
                             demandeur.nom() + " " + demandeur.prenoms(), enfant.prenom(),
                             java.time.Period.between(enfant.dateNaissance(), LocalDate.now(horloge)).getYears(),
-                            d.deposeLe(), d.agentId() != null, agentId.equals(d.agentId()));
+                            d.deposeLe(), d.agentId() != null, agentId.equals(d.agentId()), d.invitationId() != null);
                 });
     }
 
@@ -250,6 +272,9 @@ public class InstructionKyc {
     public DossierInstruction decider(UUID agentId, UUID dossierId, Decision decision, String motif) {
         DossierKyc dossier = pourAgent(dossierId);
         Instant maintenant = horloge.instant();
+        if (decision == Decision.APPROUVER && dossier.invitationId() != null) {
+            invitations.exigerApprouvable(dossier.invitationId(), dossier.enfantId());
+        }
         try {
             switch (decision) {
                 case APPROUVER -> dossier.approuver(maintenant);
@@ -268,8 +293,14 @@ public class InstructionKyc {
             liens.save(new LienTutelle(tuteur.id(), dossier.enfantId(), dossier.natureLien(), maintenant));
             tuteur.activer();
             evenements.publishEvent(new DossierKycApprouve(dossier.id(), tuteur.id(), dossier.enfantId()));
+            if (dossier.invitationId() != null) {
+                invitations.surDecision(dossier.invitationId(), true);
+            }
             texte = "FasoGuardian : votre compte est activé. Ouvrez l'application pour associer le bracelet.";
         } else if (decision == Decision.REJETER) {
+            if (dossier.invitationId() != null) {
+                invitations.surDecision(dossier.invitationId(), false);
+            }
             texte = "FasoGuardian : votre dossier n'a pas pu être validé. Ouvrez l'application pour en connaître le motif.";
         } else {
             texte = "FasoGuardian : un complément est nécessaire pour votre dossier. Ouvrez l'application.";
@@ -308,7 +339,7 @@ public class InstructionKyc {
         return new DossierInstruction(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(),
                 dechiffrerJson(d.identiteChiffree(), IdentiteDeclaree.class),
                 dechiffrerJson(d.enfantChiffre(), EnfantDeclare.class), d.motif(), d.deposeLe(),
-                pieces.findByDossierId(d.id()).stream().map(InstructionKyc::vue).toList());
+                pieces.findByDossierId(d.id()).stream().map(InstructionKyc::vue).toList(), d.invitationId() != null);
     }
 
     private static PieceVue vue(PieceJustificative p) {

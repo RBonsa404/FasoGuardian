@@ -19,6 +19,8 @@ export interface DossierKycFile {
   readonly deposeLe: string;
   readonly prisEnCharge: boolean;
   readonly prisEnChargeParMoi: boolean;
+  /** Dossier d'un adulte invité par le tuteur d'un enfant déjà suivi (US-PAR-003). */
+  readonly secondTuteur: boolean;
 }
 
 export interface DossierKycInstruction {
@@ -32,6 +34,8 @@ export interface DossierKycInstruction {
   readonly motif: string | null;
   readonly deposeLe: string;
   readonly pieces: readonly PieceKyc[];
+  /** L'enfant est déjà suivi : son identité est celle vérifiée au premier dossier. */
+  readonly secondTuteur: boolean;
 }
 
 export interface PageResultats<T> {

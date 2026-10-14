@@ -19,6 +19,7 @@ const TRAITEMENTS: Record<string, string> = {
   NUMEROS_DES_TIERS: $localize`:@@conformite.purge.tiers:Numéros des tiers`,
   DOSSIERS_DE_SIGNALEMENT: $localize`:@@conformite.purge.dossiers:Dossiers de signalement`,
   NOTIFICATIONS: $localize`:@@conformite.purge.notifications:Notifications`,
+  INVITATIONS_TUTEUR: $localize`:@@conformite.purge.invitations:Invitations de second tuteur`,
 };
 
 /**

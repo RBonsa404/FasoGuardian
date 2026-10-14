@@ -88,6 +88,10 @@
           </dd>
           <dt class="text-text-3" i18n="@@kyc.enfant">Enfant</dt>
           <dd class="m-0 font-medium">{{ d.enfant.prenom }} {{ d.enfant.nom }}, <ng-container i18n="@@kyc.neLe">né le {{ d.enfant.dateNaissance | date: 'longDate' }}</ng-container></dd>
+          @if (d.secondTuteur) {
+            <dt class="text-text-3" i18n="@@kyc.secondTuteur">Demande</dt>
+            <dd class="m-0 font-medium" i18n="@@kyc.secondTuteur.texte">Second tuteur, invité par le tuteur de cet enfant déjà suivi : vérifiez le lien du demandeur avec cet enfant-là.</dd>
+          }
         </dl>
       </section>
 

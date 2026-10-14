@@ -96,6 +96,10 @@ public class DossierKyc {
     @Column(name = "decide_le")
     private Instant decideLe;
 
+    /** Invitation d'un tuteur de l'enfant : le dossier vise alors un enfant déjà suivi. */
+    @Column(name = "invitation_id")
+    private UUID invitationId;
+
     @Version
     private long version;
 
@@ -114,6 +118,15 @@ public class DossierKyc {
         this.enfantChiffre = enfantChiffre;
         this.statut = Statut.BROUILLON;
         this.creeLe = maintenant;
+    }
+
+    /** Dossier d'un second tuteur invité : il porte sur l'enfant déjà suivi, dont l'identité est reprise. */
+    public static DossierKyc surInvitation(String reference, UUID demandeurId, Canal canal, NatureLien natureLien,
+            byte[] identiteChiffree, UUID invitationId, UUID enfantId, byte[] enfantChiffre, Instant maintenant) {
+        DossierKyc dossier = new DossierKyc(reference, demandeurId, canal, natureLien, identiteChiffree, enfantChiffre, maintenant);
+        dossier.enfantId = enfantId;
+        dossier.invitationId = invitationId;
+        return dossier;
     }
 
     /** Les pièces ne s'ajoutent qu'avant le dépôt ou en réponse à une demande de complément. */
@@ -226,6 +239,10 @@ public class DossierKyc {
 
     public Instant decideLe() {
         return decideLe;
+    }
+
+    public UUID invitationId() {
+        return invitationId;
     }
 
     public static class TransitionIllegaleException extends IllegalStateException {

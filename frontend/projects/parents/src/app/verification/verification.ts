@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Observable, concat, defer, last, switchMap } from 'rxjs';
 
-import { ClientKyc, DossierKycParent, TypePieceKyc } from 'api';
+import { ClientKyc, DossierKycParent, InvitationRecue, TypePieceKyc } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquelette, NomIcone } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
@@ -14,6 +14,7 @@ import { EtatVerification, allegerPhoto } from './etat-verification';
 type NomEtape = 'mode' | 'identite' | 'piece' | 'filiation' | 'recap' | 'instruction';
 
 const SAISIE: readonly NomEtape[] = ['mode', 'identite', 'piece', 'filiation', 'recap'];
+const JOUR = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
 interface CarteFichier {
   readonly type: TypePieceKyc;
@@ -54,6 +55,8 @@ export class Verification {
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly dossier = signal<DossierKycParent | null | undefined>(undefined);
+  /** Invitations de second tuteur reçues sur le numéro du compte (US-PAR-003). */
+  protected readonly invitations = signal<InvitationRecue[]>([]);
 
   protected readonly enLigne = computed(() => this.etat.canal() === 'EN_LIGNE');
   protected readonly etapes = computed<readonly NomEtape[]>(() => {
@@ -83,6 +86,8 @@ export class Verification {
       const etape = this.etape();
       if (etape === 'instruction') {
         this.chargerDossier();
+      } else if (etape === 'mode') {
+        this.chargerInvitations();
       } else if (!this.etapes().includes(etape) || this.manqueUnPrealable(etape)) {
         void this.router.navigate(['/verification', this.etapes()[0]], { replaceUrl: true });
       }
@@ -96,6 +101,15 @@ export class Verification {
 
   protected choisirCanal(canal: 'EN_LIGNE' | 'POINT_INSCRIPTION'): void {
     this.etat.canal.set(canal);
+  }
+
+  /** Répondre à une invitation, ou déclarer soi-même son enfant. */
+  protected choisirInvitation(invitation: InvitationRecue | null): void {
+    this.etat.invitation.set(invitation);
+  }
+
+  protected jourInvitation(iso: string): string {
+    return JOUR.format(new Date(iso));
   }
 
   protected validerIdentite(): void {
@@ -127,16 +141,16 @@ export class Verification {
   }
 
   protected validerFiliation(): void {
-    if (!this.etat.aCompleter()) {
+    if (!this.etat.aCompleter() && !this.etat.invitation()) {
       if (this.enfant.invalid) {
         this.erreur.set($localize`:@@verification.enfant.incomplet:Renseignez le prénom, le nom et la date de naissance de l'enfant.`);
         return;
       }
       this.etat.enfant.set(this.enfant.getRawValue());
-      if (this.enLigne() && !this.etat.fichiers()[this.justificatif().type]) {
-        this.erreur.set($localize`:@@verification.filiation.manque:Ajoutez le justificatif du lien avec l'enfant.`);
-        return;
-      }
+    }
+    if (!this.etat.aCompleter() && this.enLigne() && !this.etat.fichiers()[this.justificatif().type]) {
+      this.erreur.set($localize`:@@verification.filiation.manque:Ajoutez le justificatif du lien avec l'enfant.`);
+      return;
     }
     this.avancer();
   }
@@ -147,9 +161,17 @@ export class Verification {
       return;
     }
     const aCompleter = this.etat.aCompleter();
+    const invitation = this.etat.invitation();
     const ouverture: Observable<DossierKycParent> = aCompleter
       ? defer(() => [aCompleter])
-      : this.client.ouvrir({
+      : invitation
+        ? this.client.ouvrirSurInvitation({
+            invitationId: invitation.id,
+            canal: this.etat.canal(),
+            natureLien: this.etat.natureLien(),
+            demandeur: this.etat.identite()!,
+          })
+        : this.client.ouvrir({
           canal: this.etat.canal(),
           natureLien: this.etat.natureLien(),
           demandeur: this.etat.identite()!,
@@ -213,6 +235,22 @@ export class Verification {
     });
   }
 
+  private chargerInvitations(): void {
+    this.client.invitationsRecues().subscribe({
+      next: (invitations) => {
+        this.invitations.set(invitations);
+        // Une invitation reçue est proposée d'emblée ; celle qui n'est plus valable est oubliée.
+        const choisie = this.etat.invitation();
+        if (choisie && !invitations.some((i) => i.id === choisie.id)) {
+          this.etat.invitation.set(null);
+        } else if (!choisie && invitations.length > 0) {
+          this.etat.invitation.set(invitations[0]);
+        }
+      },
+      error: () => this.invitations.set([]),
+    });
+  }
+
   protected readonly nombrePieces = computed(() => Object.keys(this.etat.fichiers()).length);
 
   protected avancerDepuisMode(): void {
@@ -255,6 +293,6 @@ export class Verification {
     if (this.etat.aCompleter() || etape === 'mode' || etape === 'identite') {
       return false;
     }
-    return !this.etat.identite() || (etape === 'recap' && !this.etat.enfant());
+    return !this.etat.identite() || (etape === 'recap' && !this.etat.enfant() && !this.etat.invitation());
   }
 }

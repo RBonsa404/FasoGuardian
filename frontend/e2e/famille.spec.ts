@@ -56,7 +56,7 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
 
   // Contacts d'urgence
   await page.getByRole('link', { name: 'Retour' }).click();
-  await page.getByRole('link', { name: "Contacts d'urgence" }).click();
+  await page.getByRole('link', { name: 'Tuteurs et contacts' }).click();
   await expect(page.getByText('Aucun contact pour l\'instant.')).toBeVisible();
   await page.getByRole('button', { name: 'Ajouter un contact' }).click();
   const contact = page.getByRole('dialog', { name: 'Ajouter un contact' });
@@ -65,6 +65,6 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
   await contact.getByLabel('Numéro mobile').fill('76112233');
   await contact.getByRole('switch', { name: 'Joignable depuis la page QR' }).click();
   await contact.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByRole('button', { name: /Fatou Zongo/ })).toContainText('Tante · +22676112233');
+  await expect(page.getByRole('button', { name: /Fatou Zongo/ })).toContainText('Tante · +226 76 11 22 33');
   await expect(page.getByRole('button', { name: /Fatou Zongo/ })).toContainText('Page QR');
 });

@@ -57,6 +57,7 @@ crée les comptes de démonstration et affiche leur récapitulatif. À relancer 
 | Numéro | État |
 |---|---|
 | `70 00 00 01` | compte actif ; enfant **Awa**, bracelet appairé avec une position à Ouagadougou |
+| `70 00 00 03` | second tuteur d'Awa : invité par `70 00 00 01`, vérifié ; il suit Awa avec son propre compte |
 | `70 00 00 02` | compte en attente ; son dossier KYC est à instruire dans la console |
 
 **Agents de la console** — mot de passe `demo-fasoguardian-2026`
@@ -122,7 +123,7 @@ Ctrl+C l'arrête. Sans lui, « Localiser maintenant » est bien envoyé mais rie
 7. **Trajets** : apparaissent après plusieurs positions (`… position` à quelques minutes d'écart, ou le
    simulateur).
 8. **Journal des alertes** (« Tout voir ») : filtres par type.
-9. **Fiche enfant**, **fiche médicale**, **contacts d'urgence**, **aperçu de la page QR** ; ouvrez ensuite la
+9. **Fiche enfant**, **fiche médicale**, **tuteurs et contacts**, **aperçu de la page QR** ; ouvrez ensuite la
    vraie page publique (lien `…/q/…` donné par `demo`) : un tiers n'y voit ni nom, ni photo, ni position.
 10. **Partager la position** temporairement avec un contact.
 11. **Mon bracelet** : mode économie, déclarer perdu puis retrouvé (code SMS), désappairer ; associer le

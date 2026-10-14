@@ -117,9 +117,10 @@ function ligne(dossier: DossierKycFile): Ligne {
     heures,
     urgent,
     lien:
-      dossier.natureLien === 'TUTEUR'
+      (dossier.natureLien === 'TUTEUR'
         ? $localize`:@@kyc.lien.tuteur:Tuteur · jugement de tutelle`
-        : $localize`:@@kyc.lien.parent:Parent · acte de naissance`,
+        : $localize`:@@kyc.lien.parent:Parent · acte de naissance`) +
+      (dossier.secondTuteur ? $localize`:@@kyc.lien.second: · second tuteur` : ''),
     canal: dossier.canal === 'EN_LIGNE' ? $localize`:@@kyc.canal.enLigne:En ligne` : $localize`:@@kyc.canal.point:Point d'inscription`,
     priorite: urgent
       ? { libelle: $localize`:@@kyc.priorite.haute:Haute`, ton: 'attention' }

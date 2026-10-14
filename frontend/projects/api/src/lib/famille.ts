@@ -54,6 +54,31 @@ export interface RevisionSante {
   readonly parVous: boolean;
 }
 
+/** Tuteur de l'enfant ; le principal est celui dont la vérification a créé la fiche. */
+export interface TuteurEnfant {
+  /** Premier prénom et nom, vérifiés par le KYC. */
+  readonly prenom: string;
+  readonly nom: string;
+  readonly telephone: string | null;
+  readonly principal: boolean;
+  readonly vous: boolean;
+  /** Lien suspendu à titre conservatoire pendant un litige. */
+  readonly suspendu: boolean;
+}
+
+export interface InvitationTuteur {
+  readonly telephone: string;
+  /** EN_VERIFICATION : l'invité a ouvert son dossier KYC. */
+  readonly statut: 'EN_ATTENTE' | 'EN_VERIFICATION';
+  readonly expireLe: string;
+}
+
+export interface TuteursEnfant {
+  readonly tuteurs: readonly TuteurEnfant[];
+  readonly invitation: InvitationTuteur | null;
+  readonly peutInviter: boolean;
+}
+
 export interface ContactUrgence {
   readonly id: string;
   readonly lien: string;
@@ -106,6 +131,19 @@ export class ClientFamille {
 
   revisionsSante(id: string): Observable<RevisionSante[]> {
     return this.http.get<RevisionSante[]>(`${BASE}/${id}/sante/revisions`);
+  }
+
+  tuteurs(id: string): Observable<TuteursEnfant> {
+    return this.http.get<TuteursEnfant>(`${BASE}/${id}/tuteurs`);
+  }
+
+  /** Invite un second tuteur ; action sensible confirmée par code SMS (AJOUTER_TUTEUR). */
+  inviterTuteur(id: string, telephone: string, codeSecondFacteur: string): Observable<InvitationTuteur> {
+    return this.http.post<InvitationTuteur>(`${BASE}/${id}/tuteurs/invitation`, { telephone, codeSecondFacteur });
+  }
+
+  annulerInvitation(id: string): Observable<void> {
+    return this.http.delete<void>(`${BASE}/${id}/tuteurs/invitation`);
   }
 
   contacts(id: string): Observable<ContactUrgence[]> {

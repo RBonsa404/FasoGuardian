@@ -49,9 +49,15 @@ describe('Verification', () => {
     serveur = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
     page = harnais.routeNativeElement!;
+    serveur.expectOne('/api/v1/moi/invitations').flush([]);
+    await harnais.fixture.whenStable();
   });
 
-  afterEach(() => serveur.verify());
+  // Chaque retour à la première étape relit les invitations reçues.
+  afterEach(() => {
+    serveur.match('/api/v1/moi/invitations').forEach((requete) => requete.flush([]));
+    serveur.verify();
+  });
 
   const stable = () => harnais.fixture.whenStable();
   const action = () => page.querySelector('[pied] button, button[fg-button]') as HTMLButtonElement;
@@ -135,6 +141,42 @@ describe('Verification', () => {
     await stable();
     expect(page.textContent).toContain('Dossier en instruction');
     expect(page.textContent).toContain('KYC-20418');
+  });
+
+  it('un adulte invité comme second tuteur dépose son dossier sans déclarer l’enfant', async () => {
+    await harnais.navigateByUrl('/verification/identite');
+    await harnais.navigateByUrl('/verification/mode');
+    serveur.expectOne('/api/v1/moi/invitations').flush([{ id: 'i-1', invitant: 'Mariam', expireLe: '2026-10-21T09:00:00Z' }]);
+    await stable();
+    const invitation = Array.from(page.querySelectorAll('[role=radio]')).find((b) => b.textContent?.includes('Mariam vous invite comme second tuteur'));
+    expect(invitation?.getAttribute('aria-checked')).toBe('true');
+    (Array.from(page.querySelectorAll('[role=radio]')).find((b) => b.textContent?.includes("En point d'inscription")) as HTMLButtonElement).click();
+    await stable();
+
+    await suivant();
+    await remplirIdentite();
+    expect(router.url).toBe('/verification/filiation');
+    expect(page.textContent).toContain("l'agent le retrouve à partir de l'invitation");
+    expect(page.querySelector('input[type=date]')).toBeNull();
+    await suivant();
+    expect(router.url).toBe('/verification/recap');
+    expect(page.textContent).toContain('Sur invitation de Mariam');
+
+    await suivant();
+    const ouverture = serveur.expectOne('/api/v1/kyc/dossiers/invitation');
+    expect(ouverture.request.body).toEqual({
+      invitationId: 'i-1',
+      canal: 'POINT_INSCRIPTION',
+      natureLien: 'PARENT',
+      demandeur: { nom: 'Ouédraogo', prenoms: 'Mariam', typePiece: 'CNIB', numeroPiece: 'B12345678' },
+    });
+    ouverture.flush({ ...DOSSIER, canal: 'POINT_INSCRIPTION' });
+    serveur.expectOne('/api/v1/kyc/dossiers/d-1/depot').flush({ ...DOSSIER, statut: 'DEPOSE' });
+    await stable();
+    expect(router.url).toBe('/verification/instruction');
+    expect(TestBed.inject(EtatVerification).invitation()).toBeNull();
+    serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'DEPOSE', deposeLe: '2026-10-07T09:52:00Z' });
+    await stable();
   });
 
   it("en point d'inscription : saute les photos et dépose le dossier sans pièce", async () => {

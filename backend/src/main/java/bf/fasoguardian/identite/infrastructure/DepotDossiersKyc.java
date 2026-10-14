@@ -21,6 +21,8 @@ public interface DepotDossiersKyc extends JpaRepository<DossierKyc, UUID> {
 
     Optional<DossierKyc> findByReference(String reference);
 
+    Optional<DossierKyc> findFirstByEnfantIdAndStatutOrderByDecideLeAsc(UUID enfantId, Statut statut);
+
     Page<DossierKyc> findByStatutInOrderByDeposeLeAsc(Collection<Statut> statuts, Pageable page);
 
     @Query(value = "SELECT nextval('identite.dossier_kyc_reference_seq')", nativeQuery = true)

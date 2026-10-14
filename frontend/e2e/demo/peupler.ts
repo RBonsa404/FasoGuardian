@@ -25,6 +25,7 @@ const AGENTS: { identifiant: string; roles: string[] }[] = [
 /** Numéros fictifs des parents de démonstration (format burkinabè, préfixe +226 ajouté par l'application). */
 const PARENT_ACTIF = '70000001';
 const PARENT_EN_ATTENTE = '70000002';
+const SECOND_TUTEUR = '70000003';
 
 async function jetonAdministrateur(api: APIRequestContext): Promise<{ jeton: string; secret: string }> {
   const identifiant = process.env['FG_ADMIN_IDENTIFIANT'] ?? '';
@@ -130,11 +131,28 @@ test('peuplement de démonstration', async ({ request }) => {
     },
   })).status()).toBe(200);
   for (const contact of [
-    { lien: 'Mère', nom: 'Mariam Ouédraogo', telephone: PARENT_ACTIF, visibleSurQr: true },
     { lien: 'Tante', nom: 'Fatimata Sawadogo', telephone: '76087721', visibleSurQr: true },
   ]) {
     expect((await request.post(`${awa}/contacts`, { headers: parent, data: contact })).status()).toBe(201);
   }
+
+  // Second tuteur d'Awa (écran 34) : invité par Mariam, code SMS à l'appui, puis vérifié par l'équipe KYC.
+  const jetonSecond = await inscrire(request, SECOND_TUTEUR);
+  expect((await request.post(`${SERVEUR}/api/v1/moi/second-facteur`, { headers: parent, data: { action: 'AJOUTER_TUTEUR' } })).status()).toBe(202);
+  const codeInvitation = await dernierCodeSms(request, PARENT_ACTIF);
+  expect((await request.post(`${awa}/tuteurs/invitation`, {
+    headers: parent, data: { telephone: SECOND_TUTEUR, codeSecondFacteur: codeInvitation },
+  })).status()).toBe(201);
+  const second = { Authorization: `Bearer ${jetonSecond}` };
+  const [invitation] = await (await request.get(`${SERVEUR}/api/v1/moi/invitations`, { headers: second })).json();
+  const dossierSecond = await (await request.post(`${SERVEUR}/api/v1/kyc/dossiers/invitation`, {
+    headers: second,
+    data: { invitationId: invitation.id, canal: 'POINT_INSCRIPTION', natureLien: 'PARENT',
+      demandeur: { nom: 'Ouédraogo', prenoms: 'Ibrahim', typePiece: 'CNIB', numeroPiece: 'B00000003' } },
+  })).json();
+  expect((await request.post(`${SERVEUR}/api/v1/kyc/dossiers/${dossierSecond.id}/depot`, { headers: second })).status()).toBe(200);
+  expect((await request.post(`${SERVEUR}/api/v1/console/kyc/dossiers/${dossierSecond.id}/prise-en-charge`, { headers: kyc })).status()).toBe(200);
+  expect((await request.post(`${SERVEUR}/api/v1/console/kyc/dossiers/${dossierSecond.id}/decision`, { headers: kyc, data: { decision: 'APPROUVER' } })).status()).toBe(200);
 
   // Unité en stock, pour essayer l'appairage ou l'échange en point relais.
   const reserve = await braceletAuParc(request);
@@ -149,7 +167,7 @@ test('peuplement de démonstration', async ({ request }) => {
     administrateur: { identifiant: process.env['FG_ADMIN_IDENTIFIANT'], motDePasse: process.env['FG_ADMIN_MOT_DE_PASSE'], secret: admin.secret },
     agents: comptes,
     motDePasseAgents: MOT_DE_PASSE_AGENT,
-    parents: { actif: PARENT_ACTIF, enAttente: PARENT_EN_ATTENTE, motDePasse: MOT_DE_PASSE_PARENT, dossierEnAttente: enAttente },
+    parents: { actif: PARENT_ACTIF, secondTuteur: SECOND_TUTEUR, enAttente: PARENT_EN_ATTENTE, motDePasse: MOT_DE_PASSE_PARENT, dossierEnAttente: enAttente },
     bracelets: { appaire: bracelet.numeroSerie, jetonQr: bracelet.jetonQr, enStock: reserve.numeroSerie, codeEnStock: reserve.codeAppairage, jetonQrEnStock: reserve.jetonQr },
   }, null, 2));
 });

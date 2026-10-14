@@ -63,6 +63,19 @@ traçabilité.
   Safe Zones, trajets, journal, bracelet, fiche médicale, contacts, page QR) restent en liste au-dessus de
   « Modifier la fiche », la maquette ne disant pas d'où on les ouvre. Tant que la photo de l'enfant
   (US-PAR-004) n'existe pas, le cercle porte l'initiale.
+- **Écran 34, tuteurs et contacts.** Voir ADR 0032. Les tuteurs sont nommés comme leur dossier KYC les a
+  vérifiés ; leurs pastilles de droits sont les mêmes (position, alertes, retrait, escalade), le tableau 17
+  de FG-DOC-06 ne distinguant pas le second tuteur. Les contacts secondaires sont groupés sous un titre
+  « Contacts d'urgence » avec leurs règles (cinq au plus, SMS en cascade, page QR) ; leurs pastilles sont
+  « SMS en cascade » et, s'il y a lieu, « Page QR », ce que la plateforme fait réellement (la maquette dit
+  « Appel en cascade », or la cascade envoie des SMS). Le bouton « Inviter un second tuteur » n'apparaît que
+  tant qu'il reste une place et qu'aucune invitation n'est en cours ; une invitation en cours a sa carte,
+  avec son échéance ou la vérification en cours, et peut être annulée.
+- **Écran 11, réponse à une invitation.** Le design ne montre pas l'arrivée d'un second tuteur invité. La
+  première étape de la vérification lui présente l'invitation reçue (« Mariam vous invite comme second
+  tuteur »), choisie d'emblée, avec la possibilité d'inscrire plutôt un autre enfant ; l'étape du lien ne lui
+  demande alors pas l'identité de l'enfant, et le récapitulatif indique « Second tuteur, sur invitation de… ».
+  Mêmes cartes de choix, mêmes composants que le reste du parcours.
 - **Écran 32, fiche médicale.** La lecture suit la maquette : une carte par information, sa bascule
   « Critique / Privé » enregistrée aussitôt (une révision par bascule, comme tout enregistrement), la dernière
   révision avec le prénom de son auteur et le journal des révisions sur demande. Deux ajouts : « Modifier les
