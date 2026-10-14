@@ -166,6 +166,18 @@ class FamilleIT extends TestIntegration {
         appel(get(base), jeton).andExpect(jsonPath("$.length()").value(4));
     }
 
+    @Test
+    void leContratOpenApiDecritLaFicheEtLaFicheMedicale() throws Exception {
+        mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}'].patch").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/historique'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante'].put").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante/revisions'].get").exists())
+                .andExpect(jsonPath("$.components.schemas.RevisionVue.properties.auteur").exists())
+                .andExpect(jsonPath("$.components.schemas.Revision.properties.parVous").exists());
+    }
+
     private ResultActions contact(String base, String jeton, String lien, String nom, String telephone, boolean visible)
             throws Exception {
         return appel(post(base).contentType(MediaType.APPLICATION_JSON).content("{\"lien\":\"" + lien + "\",\"nom\":\"" + nom
