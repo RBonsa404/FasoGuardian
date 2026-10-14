@@ -1,0 +1,131 @@
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { APIRequestContext, expect, test } from '@playwright/test';
+
+import { MOT_DE_PASSE_PARENT, PNG, SERVEUR, braceletAuParc, braceletEmet, codeTotp, dernierCodeSms } from '../aides';
+
+/**
+ * Peuple une pile locale fraîche de comptes de démonstration, pour essayer l'application à la main
+ * (docs/tester-en-local.md). Toutes les données sont fictives. Les secrets TOTP des agents sont écrits dans
+ * e2e/.etat/demo.json, ignoré par Git ; `sh e2e/pile.sh codes` en donne les codes du moment.
+ */
+
+const ETAT = join(__dirname, '..', '.etat');
+export const MOT_DE_PASSE_AGENT = 'demo-fasoguardian-2026';
+
+const AGENTS: { identifiant: string; roles: string[] }[] = [
+  { identifiant: 'demo.kyc', roles: ['KYC'] },
+  { identifiant: 'demo.support', roles: ['SUPPORT'] },
+  { identifiant: 'demo.sav', roles: ['SAV'] },
+  { identifiant: 'demo.fds', roles: ['FDS'] },
+  { identifiant: 'demo.admin', roles: ['ADMIN'] },
+];
+
+/** Numéros fictifs des parents de démonstration (format burkinabè, préfixe +226 ajouté par l'application). */
+const PARENT_ACTIF = '70000001';
+const PARENT_EN_ATTENTE = '70000002';
+
+async function jetonAdministrateur(api: APIRequestContext): Promise<{ jeton: string; secret: string }> {
+  const identifiant = process.env['FG_ADMIN_IDENTIFIANT'] ?? '';
+  const motDePasse = process.env['FG_ADMIN_MOT_DE_PASSE'] ?? '';
+  const chemin = `${SERVEUR}/api/v1/auth/agents/connexion`;
+  const premiere = await api.post(chemin, { data: { identifiant, motDePasse } });
+  expect(premiere.status(), 'pile fraîche attendue : lancez « sh e2e/pile.sh demarrer » avant « demo »').toBe(403);
+  const secret: string = (await premiere.json()).secretTotp;
+  const session = await api.post(chemin, { data: { identifiant, motDePasse, codeTotp: codeTotp(secret) } });
+  expect(session.status()).toBe(200);
+  const corps = await session.json();
+  // Les aides des tests (braceletAuParc) reprennent ce secret : le second facteur ne s'active qu'une fois.
+  writeFileSync(join(ETAT, 'admin.json'), JSON.stringify({ secret, jeton: corps.jetonAcces, expire: Date.now() + corps.expireDansSecondes * 1000 }));
+  return { jeton: corps.jetonAcces, secret };
+}
+
+/** Crée l'agent et active son second facteur ; renvoie son secret TOTP et un jeton. */
+async function agent(api: APIRequestContext, admin: string, identifiant: string, roles: string[]): Promise<{ secret: string; jeton: string }> {
+  const creation = await api.post(`${SERVEUR}/api/v1/admin/agents`, {
+    headers: { Authorization: `Bearer ${admin}` },
+    data: { identifiant, motDePasseProvisoire: MOT_DE_PASSE_AGENT, roles },
+  });
+  expect(creation.status(), `création de ${identifiant}`).toBe(201);
+  const chemin = `${SERVEUR}/api/v1/auth/agents/connexion`;
+  const premiere = await api.post(chemin, { data: { identifiant, motDePasse: MOT_DE_PASSE_AGENT } });
+  const secret: string = (await premiere.json()).secretTotp;
+  const session = await api.post(chemin, { data: { identifiant, motDePasse: MOT_DE_PASSE_AGENT, codeTotp: codeTotp(secret) } });
+  expect(session.status()).toBe(200);
+  return { secret, jeton: (await session.json()).jetonAcces };
+}
+
+async function inscrire(api: APIRequestContext, telephone: string): Promise<string> {
+  const auth = `${SERVEUR}/api/v1/auth/inscription`;
+  expect((await api.post(`${auth}/numero`, { data: { telephone } })).status()).toBe(202);
+  const code = await dernierCodeSms(api, telephone);
+  const { preuve } = await (await api.post(`${auth}/code`, { data: { telephone, code } })).json();
+  const reponse = await api.post(`${auth}/terminer`, {
+    data: { preuve, motDePasse: MOT_DE_PASSE_PARENT, consentements: ['CONDITIONS_GENERALES', 'DONNEES_ENFANT'] },
+  });
+  expect(reponse.ok(), `inscription de ${telephone}`).toBe(true);
+  return (await reponse.json()).jetonAcces;
+}
+
+async function deposerDossier(api: APIRequestContext, jeton: string, demandeur: Record<string, string>, enfant: Record<string, string>): Promise<string> {
+  const entetes = { Authorization: `Bearer ${jeton}` };
+  const kyc = `${SERVEUR}/api/v1/kyc/dossiers`;
+  const dossier = await (await api.post(kyc, { headers: entetes, data: { canal: 'EN_LIGNE', natureLien: 'PARENT', demandeur, enfant } })).json();
+  for (const [type, name, mimeType, buffer] of [
+    ['PIECE_RECTO', 'recto.png', 'image/png', PNG],
+    ['ACTE_NAISSANCE', 'acte.pdf', 'application/pdf', Buffer.from('%PDF-1.7 acte de naissance fictif')],
+  ] as [string, string, string, Buffer][]) {
+    expect((await api.post(`${kyc}/${dossier.id}/pieces`, { headers: entetes, multipart: { type, fichier: { name, mimeType, buffer } } })).status()).toBe(201);
+  }
+  expect((await api.post(`${kyc}/${dossier.id}/depot`, { headers: entetes })).status()).toBe(200);
+  return dossier.reference;
+}
+
+test('peuplement de démonstration', async ({ request }) => {
+  test.setTimeout(180_000);
+  const admin = await jetonAdministrateur(request);
+  const comptes: Record<string, { secret: string; roles: string[] }> = {};
+  const jetons: Record<string, string> = {};
+  for (const { identifiant, roles } of AGENTS) {
+    const cree = await agent(request, admin.jeton, identifiant, roles);
+    comptes[identifiant] = { secret: cree.secret, roles };
+    jetons[identifiant] = cree.jeton;
+  }
+
+  // Parent au compte actif : Awa, dont le bracelet est appairé et a transmis une position à Ouagadougou.
+  const jetonActif = await inscrire(request, PARENT_ACTIF);
+  const reference = await deposerDossier(request, jetonActif,
+    { nom: 'Ouédraogo', prenoms: 'Mariam', typePiece: 'CNIB', numeroPiece: 'B00000001' },
+    { prenom: 'Awa', nom: 'Ouédraogo', dateNaissance: '2018-03-14' });
+  const kyc = { Authorization: `Bearer ${jetons['demo.kyc']}` };
+  const file = await (await request.get(`${SERVEUR}/api/v1/console/kyc/dossiers?size=100`, { headers: kyc })).json();
+  const dossier = file.elements.find((e: { reference: string }) => e.reference === reference);
+  expect((await request.post(`${SERVEUR}/api/v1/console/kyc/dossiers/${dossier.id}/prise-en-charge`, { headers: kyc })).status()).toBe(200);
+  expect((await request.post(`${SERVEUR}/api/v1/console/kyc/dossiers/${dossier.id}/decision`, { headers: kyc, data: { decision: 'APPROUVER' } })).status()).toBe(200);
+
+  const session = await (await request.post(`${SERVEUR}/api/v1/auth/connexion`, { data: { telephone: PARENT_ACTIF, motDePasse: MOT_DE_PASSE_PARENT } })).json();
+  const parent = { Authorization: `Bearer ${session.jetonAcces}` };
+  const enfants = await (await request.get(`${SERVEUR}/api/v1/enfants`, { headers: parent })).json();
+  const bracelet = await braceletAuParc(request);
+  expect((await request.post(`${SERVEUR}/api/v1/enfants/${enfants[0].id}/bracelet/appairage`, { headers: parent, data: { code: bracelet.codeAppairage } })).status()).toBe(200);
+  // Une position antérieure à l'appairage serait écartée : elle est datée de quelques secondes plus tard.
+  braceletEmet(bracelet.numeroSerie, 'telemetry', { t: Math.floor(Date.now() / 1000) + 5, seq: 1, lat: 12.3714, lon: -1.5197, acc: 12, src: 'gnss', bat: 78, rssi: -79, net: '4g' });
+
+  // Unité en stock, pour essayer l'appairage ou l'échange en point relais.
+  const reserve = await braceletAuParc(request);
+
+  // Parent dont le dossier attend l'équipe KYC : de quoi instruire un dossier dans la console.
+  const jetonAttente = await inscrire(request, PARENT_EN_ATTENTE);
+  const enAttente = await deposerDossier(request, jetonAttente,
+    { nom: 'Sawadogo', prenoms: 'Ibrahim', typePiece: 'CNIB', numeroPiece: 'B00000002' },
+    { prenom: 'Moussa', nom: 'Sawadogo', dateNaissance: '2015-09-01' });
+
+  writeFileSync(join(ETAT, 'demo.json'), JSON.stringify({
+    administrateur: { identifiant: process.env['FG_ADMIN_IDENTIFIANT'], motDePasse: process.env['FG_ADMIN_MOT_DE_PASSE'], secret: admin.secret },
+    agents: comptes,
+    motDePasseAgents: MOT_DE_PASSE_AGENT,
+    parents: { actif: PARENT_ACTIF, enAttente: PARENT_EN_ATTENTE, motDePasse: MOT_DE_PASSE_PARENT, dossierEnAttente: enAttente },
+    bracelets: { appaire: bracelet.numeroSerie, jetonQr: bracelet.jetonQr, enStock: reserve.numeroSerie, codeEnStock: reserve.codeAppairage, jetonQrEnStock: reserve.jetonQr },
+  }, null, 2));
+});

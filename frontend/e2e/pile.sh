@@ -6,6 +6,12 @@
 #   sh e2e/pile.sh demarrer   démarre la pile (JAVA_HOME doit pointer sur un JDK 21)
 #   sh e2e/pile.sh tester     joue les tests Playwright contre la pile
 #   sh e2e/pile.sh serveur    reconstruit et relance le seul serveur (base conservée)
+#   sh e2e/pile.sh demo       crée les comptes de démonstration (pile fraîche ; docs/tester-en-local.md)
+#   sh e2e/pile.sh codes      affiche les codes à six chiffres du moment des agents de démonstration
+#   sh e2e/pile.sh bracelet FG-XXXX position|sos|retrait|remis|chute|batterie
+#                             fait émettre au bracelet un message, comme le bracelet réel (MQTT, TLS mutuel)
+#   sh e2e/pile.sh simulateur FG-XXXX
+#                             lance un bracelet simulé qui émet sa position et répond aux commandes signées
 #   sh e2e/pile.sh arreter    arrête la pile et supprime la base
 set -eu
 
@@ -113,13 +119,48 @@ case "${1:-}" in
     shift
     cd "$FRONTEND" && npx playwright test -c e2e/playwright.config.ts "$@"
     ;;
+  demo)
+    set -a && . "$ENV" && set +a
+    cd "$FRONTEND" && npx playwright test -c e2e/demo/demo.config.ts
+    node "$FRONTEND/e2e/demo/resume.mjs"
+    ;;
+  codes)
+    node "$FRONTEND/e2e/demo/codes.mjs"
+    ;;
+  bracelet)
+    numero="${2:?numéro du bracelet, par exemple FG-1234}"
+    sh "$RACINE/infra/generer-certificats-dev.sh" "$numero" >/dev/null
+    t=$(date +%s)
+    # Position autour du centre de Ouagadougou ; la séquence croît avec l'heure pour ne jamais être rejouée.
+    point="\"lat\":12.3714,\"lon\":-1.5197,\"acc\":12"
+    case "${3:-position}" in
+      position) flux=telemetry; message="{\"t\":$t,\"seq\":$t,$point,\"src\":\"gnss\",\"bat\":78,\"rssi\":-79,\"net\":\"4g\",\"op\":\"Orange BF\"}" ;;
+      sos) flux=alert; message="{\"t\":$t,\"seq\":$t,\"ev\":\"sos\",$point}" ;;
+      retrait) flux=alert; message="{\"t\":$t,\"seq\":$t,\"ev\":\"strap\",$point}" ;;
+      remis) flux=alert; message="{\"t\":$t,\"seq\":$t,\"ev\":\"worn\",$point}" ;;
+      chute) flux=alert; message="{\"t\":$t,\"seq\":$t,\"ev\":\"fall\",$point}" ;;
+      batterie) flux=alert; message="{\"t\":$t,\"seq\":$t,\"ev\":\"batcrit\",$point,\"bat\":8}" ;;
+      *) echo "Événement inconnu : position, sos, retrait, remis, chute ou batterie"; exit 1 ;;
+    esac
+    c=/mosquitto/certs
+    MSYS_NO_PATHCONV=1 docker exec fasoguardian-mosquitto-1 mosquitto_pub -h localhost -p 8883 -q 1 -i "$numero-manuel"       --cafile "$c/ca.crt" --cert "$c/bracelet-$numero.crt" --key "$c/bracelet-$numero.key" -t "fg/$numero/$flux" -m "$message"
+    echo "$numero : $flux envoyé"
+    ;;
+  simulateur)
+    numero="${2:?numéro du bracelet, par exemple FG-1234}"
+    jar="$RACINE/simulator/target/fasoguardian-simulateur-0.1.0-SNAPSHOT.jar"
+    [ -f "$jar" ] || (cd "$RACINE/simulator" && ../backend/mvnw -B -q -f pom.xml package -DskipTests)
+    sh "$RACINE/infra/generer-certificats-dev.sh" "$numero" >/dev/null
+    echo "Bracelet simulé $numero : une position par minute, commandes vérifiées et accusées (Ctrl+C pour l'arrêter)"
+    "${JAVA_HOME:?JAVA_HOME doit pointer sur un JDK 21}/bin/java" -jar "$jar" --certificats="$RACINE/infra/certs" --bracelets="$numero"       --intervalle=PT1M --cle-plateforme="$ETAT/commandes-publique.pem" --cle-ota="$ETAT/ota-publique.pem"
+    ;;
   arreter)
     for port in 8080 4201 4202 4203; do arreter_port "$port"; done
     [ -f "$ENV" ] && $COMPOSE down -v
     rm -rf "$ETAT"
     ;;
   *)
-    echo "Usage : sh e2e/pile.sh demarrer | serveur | tester [arguments Playwright] | arreter"
+    echo "Usage : sh e2e/pile.sh demarrer | demo | codes | bracelet FG-XXXX évènement | simulateur FG-XXXX | serveur | tester [arguments Playwright] | arreter"
     exit 1
     ;;
 esac

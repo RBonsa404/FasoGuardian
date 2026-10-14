@@ -27,6 +27,8 @@ voir [docs/tracabilite.md](docs/tracabilite.md) pour le statut de chacune des 43
 
 ## Démarrage
 
+**Pour essayer l'application à la main, avec des comptes de démonstration : [docs/tester-en-local.md](docs/tester-en-local.md).**
+
 Préparation, une seule fois : créer le fichier `.env` à partir de `.env.example`, y renseigner les mots de
 passe, puis générer les certificats de développement.
 
