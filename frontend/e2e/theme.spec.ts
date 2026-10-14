@@ -74,6 +74,8 @@ test('la console se lit en clair', async ({ page, request }) => {
   await expect(page.getByRole('heading', { name: 'Supervision' })).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/clair-72-supervision.png' });
 
-  await page.getByRole('group', { name: 'Apparence' }).getByRole('button', { name: 'Sombre' }).click();
+  // Le bouton de la barre du haut passe du réglage du système au thème sombre.
+  await page.getByRole('button', { name: /^Apparence : Système/ }).click();
   expect(await fond(page)).toBe(FOND_SOMBRE);
+  await expect(page.getByRole('button', { name: /^Apparence : Sombre/ })).toBeVisible();
 });
