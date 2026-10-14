@@ -56,3 +56,10 @@ traçabilité.
   ne cherche pas une personne par son nom : ce serait un accès transversal aux données personnelles que
   FG-DOC-06 (tableau 17) ne donne à aucun rôle. L'invite ne cite que ce qui fonctionne pour l'agent. La cloche
   de notifications de la barre du haut n'est pas reprise : la console n'envoie pas de notifications aux agents.
+- **Écran 31, fiche enfant.** L'en-tête, les lignes et l'historique suivent la maquette ; l'historique nomme
+  l'auteur par son prénom vérifié par le KYC (« (tuteur) » pour un autre tuteur) et le champ modifié, jamais
+  la valeur. Trois écarts : « Né(e) » faute de sexe déclaré dans le dossier ; la ligne « Bracelet » donne le
+  numéro sans la couleur de la sangle, que la plateforme ne connaît pas ; les rubriques de l'enfant (carte,
+  Safe Zones, trajets, journal, bracelet, fiche médicale, contacts, page QR) restent en liste au-dessus de
+  « Modifier la fiche », la maquette ne disant pas d'où on les ouvre. Tant que la photo de l'enfant
+  (US-PAR-004) n'existe pas, le cercle porte l'initiale.

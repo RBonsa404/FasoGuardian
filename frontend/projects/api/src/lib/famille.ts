@@ -22,6 +22,10 @@ export interface FicheEnfant {
 export interface RevisionEnfant {
   readonly champ: string;
   readonly modifieLe: string;
+  /** Prénom vérifié de l'auteur ; vide s'il n'a pas de dossier approuvé. */
+  readonly auteur: string;
+  /** Vrai si l'auteur est le parent connecté. */
+  readonly parVous: boolean;
 }
 
 export type TypeElementMedical = 'ALLERGIE' | 'PATHOLOGIE' | 'TRAITEMENT' | 'AUTRE';

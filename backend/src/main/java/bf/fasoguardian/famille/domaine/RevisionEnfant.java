@@ -39,6 +39,10 @@ public class RevisionEnfant {
         this.modifieLe = maintenant;
     }
 
+    public UUID auteurId() {
+        return auteurId;
+    }
+
     public String champ() {
         return champ;
     }

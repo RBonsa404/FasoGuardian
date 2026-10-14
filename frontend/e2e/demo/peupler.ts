@@ -112,6 +112,30 @@ test('peuplement de démonstration', async ({ request }) => {
   // Une position antérieure à l'appairage serait écartée : elle est datée de quelques secondes plus tard.
   braceletEmet(bracelet.numeroSerie, 'telemetry', { t: Math.floor(Date.now() / 1000) + 5, seq: 1, lat: 12.3714, lon: -1.5197, acc: 12, src: 'gnss', bat: 78, rssi: -79, net: '4g' });
 
+  // Fiche d'Awa remplie (profil, santé, contacts), pour voir les écrans 31, 32, 34 et la page QR dans leur état ordinaire.
+  const awa = `${SERVEUR}/api/v1/enfants/${enfants[0].id}`;
+  expect((await request.patch(awa, {
+    headers: parent,
+    data: { profil: { ecole: 'Les Manguiers · CE2', quartier: 'Ouaga 2000', tailleCm: 128, signesDistinctifs: 'Petite cicatrice au menton' } },
+  })).status()).toBe(200);
+  expect((await request.put(`${awa}/sante`, {
+    headers: parent,
+    data: {
+      groupeSanguin: 'O+', groupeSanguinSurQr: true,
+      elements: [
+        { type: 'ALLERGIE', libelle: 'Arachides (sévère)', critique: true },
+        { type: 'PATHOLOGIE', libelle: 'Asthme · inhalateur dans le sac', critique: true },
+        { type: 'TRAITEMENT', libelle: 'Ventoline si crise', critique: false },
+      ],
+    },
+  })).status()).toBe(200);
+  for (const contact of [
+    { lien: 'Mère', nom: 'Mariam Ouédraogo', telephone: PARENT_ACTIF, visibleSurQr: true },
+    { lien: 'Tante', nom: 'Fatimata Sawadogo', telephone: '76087721', visibleSurQr: true },
+  ]) {
+    expect((await request.post(`${awa}/contacts`, { headers: parent, data: contact })).status()).toBe(201);
+  }
+
   // Unité en stock, pour essayer l'appairage ou l'échange en point relais.
   const reserve = await braceletAuParc(request);
 

@@ -3,7 +3,10 @@ package bf.fasoguardian.famille.application;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import bf.fasoguardian.audit.JournalAudit;
@@ -44,7 +47,8 @@ public class Familles implements AccesEnfant {
             Instant modifieLe) {
     }
 
-    public record Revision(String champ, Instant modifieLe) {
+    /** Une modification : champ, date, prénom vérifié de son auteur (vide sans dossier approuvé), et s'il s'agit du demandeur. */
+    public record Revision(String champ, Instant modifieLe, String auteur, boolean parVous) {
     }
 
     private final DepotEnfants enfants;
@@ -111,9 +115,22 @@ public class Familles implements AccesEnfant {
             if (propre.tailleCm() != null && (propre.tailleCm() < 30 || propre.tailleCm() > 220)) {
                 throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE, "La taille est comprise entre 30 et 220 cm.");
             }
-            if (!propre.equals(lireProfil(enfant))) {
+            ProfilEnfant ancien = lireProfil(enfant);
+            if (!propre.equals(ancien)) {
                 enfant.definirProfil(chiffrement.chiffrer(CategorieDonnee.PROFIL_ENFANT, json.writeValueAsBytes(propre)), maintenant);
-                revisions.save(new RevisionEnfant(enfantId, tuteurId, "profil", maintenant));
+                // Un champ par trace, pour que l'historique dise ce qui a changé sans en recopier la valeur.
+                if (!Objects.equals(propre.ecole(), ancien.ecole())) {
+                    revisions.save(new RevisionEnfant(enfantId, tuteurId, "ecole", maintenant));
+                }
+                if (!Objects.equals(propre.quartier(), ancien.quartier())) {
+                    revisions.save(new RevisionEnfant(enfantId, tuteurId, "quartier", maintenant));
+                }
+                if (!Objects.equals(propre.tailleCm(), ancien.tailleCm())) {
+                    revisions.save(new RevisionEnfant(enfantId, tuteurId, "tailleCm", maintenant));
+                }
+                if (!Objects.equals(propre.signesDistinctifs(), ancien.signesDistinctifs())) {
+                    revisions.save(new RevisionEnfant(enfantId, tuteurId, "signesDistinctifs", maintenant));
+                }
             }
         }
         return vue(enfant);
@@ -138,8 +155,12 @@ public class Familles implements AccesEnfant {
     @Transactional(readOnly = true)
     public List<Revision> historique(UUID tuteurId, UUID enfantId) {
         exigerTuteur(tuteurId, enfantId);
+        Map<UUID, String> prenoms = new HashMap<>();
         return revisions.findByEnfantIdOrderByModifieLeDesc(enfantId).stream()
-                .map(revision -> new Revision(revision.champ(), revision.modifieLe())).toList();
+                .map(revision -> new Revision(revision.champ(), revision.modifieLe(),
+                        prenoms.computeIfAbsent(revision.auteurId(), auteur -> liens.prenomDuTuteur(auteur).orElse("")),
+                        revision.auteurId().equals(tuteurId)))
+                .toList();
     }
 
     private void refuser(UUID tuteurId, UUID enfantId) {

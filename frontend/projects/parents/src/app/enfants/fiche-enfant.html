@@ -2,33 +2,41 @@
   <fg-icon nom="retour" [taille]="22" />
 </a>
 @if (enfant(); as e) {
-  <div class="flex items-center gap-4">
-    <span class="grid size-16 flex-none place-items-center rounded-full bg-surface-2 font-display text-h2 font-bold" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
-    <div class="flex min-w-0 flex-col gap-0.5">
-      <h1 class="m-0 truncate text-titre-ecran font-bold tracking-tight">{{ e.prenom }} {{ e.nom }}</h1>
-      <span class="text-label text-text-2" i18n="@@enfant.naissance">Né(e) le {{ e.dateNaissance | date: 'dd/MM/yyyy' }} · {{ age() }} ans</span>
-    </div>
+  <div class="flex flex-col items-center gap-1 text-center">
+    <span class="mb-3 grid size-24 place-items-center rounded-full border-[3px] border-accent bg-surface-2 font-display text-h1 font-bold text-accent" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
+    <h1 class="m-0 text-titre-ecran font-bold tracking-tight">{{ e.prenom }} {{ e.nom }}</h1>
+    <span class="text-body text-text-2" i18n="@@enfant.naissance">Né(e) le {{ e.dateNaissance | date: 'dd/MM/yyyy' }} · {{ age() }} ans</span>
   </div>
 
-  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
-    <div class="flex justify-between gap-4 py-3">
-      <dt class="text-label text-text-2" i18n="@@enfant.ecole">École</dt>
-      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.ecole || '—' }}</dd>
-    </div>
-    <div class="flex justify-between gap-4 py-3">
-      <dt class="text-label text-text-2" i18n="@@enfant.quartier">Quartier</dt>
-      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.quartier || '—' }}</dd>
-    </div>
-    <div class="flex justify-between gap-4 py-3">
-      <dt class="text-label text-text-2" i18n="@@enfant.taille">Taille</dt>
-      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.tailleCm ? e.profil.tailleCm + ' cm' : '—' }}</dd>
-    </div>
-    <div class="flex justify-between gap-4 py-3">
-      <dt class="text-label text-text-2" i18n="@@enfant.signes">Signes distinctifs</dt>
-      <dd class="m-0 text-right text-label font-semibold">{{ e.profil.signesDistinctifs || '—' }}</dd>
+  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
+    @for (ligne of lignes(); track ligne.cle) {
+      <div class="flex justify-between gap-4 px-4 py-3">
+        <dt class="text-body text-text-2">{{ ligne.cle }}</dt>
+        <dd class="m-0 text-right text-body font-medium">{{ ligne.valeur || '—' }}</dd>
+      </div>
+    }
+    <div class="flex justify-between gap-4 px-4 py-3">
+      <dt class="text-body text-text-2" i18n="@@enfant.bracelet">Bracelet</dt>
+      <dd class="m-0 text-right text-body font-medium">
+        @if (numeroBracelet(); as numero) {
+          {{ numero }}
+        } @else {
+          <span i18n="@@enfant.bracelet.aucun">aucun bracelet associé</span>
+        }
+      </dd>
     </div>
   </dl>
-  <button fg-button variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
+
+  @if (historique().length > 0) {
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-label font-semibold" i18n="@@enfant.historique">Historique des modifications</h2>
+      <ul class="m-0 flex list-none flex-col gap-1.5 rounded-lg bg-surface-2 p-3">
+        @for (revision of historique(); track $index) {
+          <li class="text-label text-text-2">{{ dateRevision(revision.modifieLe) }} · {{ auteur(revision) }} · {{ libelleChamp(revision.champ) }}</li>
+        }
+      </ul>
+    </section>
+  }
 
   <nav class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" i18n-aria-label="@@enfant.rubriques" aria-label="Rubriques de la fiche">
     <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="['/enfants', e.id, 'carte']">
@@ -57,16 +65,7 @@
     </a>
   </nav>
 
-  @if (historique().length > 0) {
-    <section class="flex flex-col gap-2">
-      <h2 class="m-0 text-h3 font-semibold" i18n="@@enfant.historique">Historique des modifications</h2>
-      <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
-        @for (revision of historique(); track $index) {
-          <li class="text-label text-text-2" i18n="@@enfant.revision">{{ revision.modifieLe | date: 'd MMM y à HH:mm' }} · {{ libelleChamp(revision.champ) }}</li>
-        }
-      </ul>
-    </section>
-  }
+  <button fg-button class="mt-auto" variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
 
   <fg-sheet i18n-titre="@@enfant.modifier" titre="Modifier la fiche" [ouverte]="edition()" (fermee)="edition.set(false)">
     <form class="contents" [formGroup]="formulaire" (submit)="$event.preventDefault(); enregistrer()">

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-import { ClientFamille, FicheEnfant, RevisionEnfant } from 'api';
+import { ClientBracelet, ClientFamille, FicheEnfant, RevisionEnfant } from 'api';
 import { FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
@@ -19,10 +19,18 @@ export function age(dateNaissance: string, aujourdhui = new Date()): number {
 }
 
 const LIBELLES_CHAMPS: Record<string, string> = {
-  prenom: $localize`:@@enfant.champ.prenom:prénom`,
-  nom: $localize`:@@enfant.champ.nom:nom`,
-  profil: $localize`:@@enfant.champ.profil:école, quartier ou signes distinctifs`,
+  prenom: $localize`:@@enfant.champ.prenom:prénom modifié`,
+  nom: $localize`:@@enfant.champ.nom:nom modifié`,
+  ecole: $localize`:@@enfant.champ.ecole:école modifiée`,
+  quartier: $localize`:@@enfant.champ.quartier:quartier modifié`,
+  tailleCm: $localize`:@@enfant.champ.taille:taille modifiée`,
+  signesDistinctifs: $localize`:@@enfant.champ.signes:signes distinctifs modifiés`,
+  // Traces antérieures au détail par champ.
+  profil: $localize`:@@enfant.champ.profil:école, quartier ou signes distinctifs modifiés`,
 };
+
+const JOUR_MOIS = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
+const JOUR_MOIS_ANNEE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
 
 /** Tous mes enfants (écran 17, US-PAR-003) : un enfant par lien de tutelle actif. */
 @Component({
@@ -93,9 +101,11 @@ export class FicheEnfantEcran {
   readonly id = input.required<string>();
 
   private readonly client = inject(ClientFamille);
+  private readonly bracelets = inject(ClientBracelet);
 
   protected readonly enfant = signal<FicheEnfant | null>(null);
   protected readonly historique = signal<RevisionEnfant[]>([]);
+  protected readonly numeroBracelet = signal<string | null>(null);
   protected readonly erreur = signal<string | null>(null);
   protected readonly edition = signal(false);
   protected readonly enCours = signal(false);
@@ -125,6 +135,19 @@ export class FicheEnfantEcran {
 
   protected libelleChamp(champ: string): string {
     return LIBELLES_CHAMPS[champ] ?? champ;
+  }
+
+  protected dateRevision(iso: string): string {
+    const date = new Date(iso);
+    return (date.getFullYear() === new Date().getFullYear() ? JOUR_MOIS : JOUR_MOIS_ANNEE).format(date);
+  }
+
+  /** Prénom vérifié de l'auteur ; un autre tuteur est nommé comme tel. */
+  protected auteur(revision: RevisionEnfant): string {
+    if (revision.parVous) {
+      return revision.auteur || $localize`:@@enfant.auteur.vous:vous`;
+    }
+    return revision.auteur ? $localize`:@@enfant.auteur.tuteur:${revision.auteur}:prenom: (tuteur)` : $localize`:@@enfant.auteur.autre:un autre tuteur`;
   }
 
   protected modifier(): void {
@@ -183,5 +206,7 @@ export class FicheEnfantEcran {
       error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),
     });
     this.client.historique(id).subscribe({ next: (h) => this.historique.set(h), error: () => undefined });
+    this.numeroBracelet.set(null);
+    this.bracelets.bracelet(id).subscribe({ next: (b) => this.numeroBracelet.set(b.numeroSerie), error: () => undefined });
   }
 }

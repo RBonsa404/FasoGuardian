@@ -2,6 +2,7 @@ package bf.fasoguardian.famille;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -57,7 +58,8 @@ class FamilleIT extends TestIntegration {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.prenom").value("Hawa"))
                 .andExpect(jsonPath("$.nom").value("Ouédraogo"));
         appel(get(base + "/historique"), jeton).andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].champ").value("prenom")).andExpect(jsonPath("$[0].modifieLe").isNotEmpty());
+                .andExpect(jsonPath("$[0].champ").value("prenom")).andExpect(jsonPath("$[0].modifieLe").isNotEmpty())
+                .andExpect(jsonPath("$[0].auteur").value("Mariam")).andExpect(jsonPath("$[0].parVous").value(true));
 
         // Profil descriptif : chiffré en base, historisé sans valeur, jamais projeté sur la page publique.
         appel(patch(base).contentType(MediaType.APPLICATION_JSON).content("""
@@ -68,7 +70,15 @@ class FamilleIT extends TestIntegration {
                 .andExpect(jsonPath("$.profil.tailleCm").value(128));
         assertThat(new String(jdbc.queryForObject("SELECT profil_chiffre FROM famille.enfant WHERE id = ?::uuid",
                 byte[].class, famille.enfantId()), StandardCharsets.ISO_8859_1)).doesNotContain("MARQUEUR", "cicatrice");
-        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$[0].champ").value("profil"));
+        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[*].champ", containsInAnyOrder("ecole", "quartier", "tailleCm", "signesDistinctifs", "prenom")));
+        // Seul le champ changé est tracé.
+        appel(patch(base).contentType(MediaType.APPLICATION_JSON).content("""
+                {"profil":{"ecole":"Les Manguiers MARQUEUR-PROFIL","quartier":"Ouaga 2000","tailleCm":130,
+                           "signesDistinctifs":"Petite cicatrice au menton"}}
+                """), jeton).andExpect(status().isOk());
+        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$.length()").value(6))
+                .andExpect(jsonPath("$[0].champ").value("tailleCm"));
         appel(patch(base).contentType(MediaType.APPLICATION_JSON).content("{\"profil\":{\"tailleCm\":400}}"), jeton)
                 .andExpect(status().isBadRequest());
     }

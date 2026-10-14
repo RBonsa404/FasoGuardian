@@ -25,8 +25,10 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
   await feuille.getByLabel('Taille (cm)').fill('128');
   await feuille.getByRole('button', { name: 'Enregistrer' }).click();
   await expect(page.getByText('Les Manguiers · CE2')).toBeVisible();
-  await expect(page.getByText('128 cm')).toBeVisible();
-  await expect(page.getByText(/école, quartier ou signes distinctifs/)).toBeVisible();
+  await expect(page.getByText('1,28 m')).toBeVisible();
+  await expect(page.getByText(/· école modifiée/)).toBeVisible();
+  await expect(page.getByText(/· taille modifiée/)).toBeVisible();
+  await page.screenshot({ path: 'e2e/.etat/ecran-31-fiche-enfant.png', fullPage: true });
 
   // Fiche médicale : un élément critique, un élément privé
   await page.getByRole('link', { name: 'Fiche médicale' }).click();
