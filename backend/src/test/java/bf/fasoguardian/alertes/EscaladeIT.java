@@ -72,6 +72,11 @@ class EscaladeIT extends TestIntegration {
                 + "{\"type\":\"ALLERGIE\",\"libelle\":\"Arachide\",\"critique\":true},"
                 + "{\"type\":\"TRAITEMENT\",\"libelle\":\"Suivi orthophonique\",\"critique\":false}]}", parent.jeton())
                 .andExpect(status().isOk());
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .multipart(org.springframework.http.HttpMethod.PUT, enfant + "/photo")
+                .file(new org.springframework.mock.web.MockMultipartFile("fichier", "photo.png", "image/png",
+                        Acteurs.PNG))
+                .header("Authorization", "Bearer " + parent.jeton())).andExpect(status().isOk());
         jdbc.update("UPDATE dispositifs.appairage SET debut = now() - INTERVAL '1 day' WHERE enfant_id = ?::uuid", famille.enfantId());
         long t = Instant.now().getEpochSecond();
         position(carte, t - 9000, 1, 12.36000, -1.53000);
@@ -115,7 +120,8 @@ class EscaladeIT extends TestIntegration {
                 "Les Manguiers", "Tampouy", "Bracelet porté : " + carte.numeroSerie(), "Allergie : Arachide", "Signalement par un tuteur", "12.37140, -1.51970",
                 "Trajet des deux dernières heures (2 positions)", "12.36500, -1.52500");
         assertThat(texte).as("ni information médicale non critique, ni position hors des deux heures")
-                .doesNotContain("orthophonique", "12.36000");
+                .doesNotContain("orthophonique", "12.36000", "Aucune photo");
+        assertThat(new String(pdf, StandardCharsets.ISO_8859_1)).as("la photo de l'enfant est jointe").contains("/Image");
 
         // Le dossier est chiffré en base ; l'escalade, la génération et le téléchargement sont journalisés.
         byte[] stocke = jdbc.queryForObject("SELECT dossier_chiffre FROM alertes.signalement_fds WHERE alerte_id = ?::uuid", byte[].class, alerte);

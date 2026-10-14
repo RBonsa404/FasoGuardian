@@ -1,6 +1,7 @@
 package bf.fasoguardian.alertes.infrastructure;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -14,6 +15,7 @@ import bf.fasoguardian.telemetrie.TrajetsRecents.Point;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -24,7 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Dossier de signalement en PDF, une à deux pages A4 lisibles sans FasoGuardian : identité de l'enfant,
+ * Dossier de signalement en PDF, une à deux pages A4 lisibles sans FasoGuardian : photo et identité de l'enfant,
  * signes distinctifs, informations médicales critiques, dernière position et trajet des deux dernières heures.
  */
 @Component
@@ -64,6 +66,7 @@ class RedacteurDossierPdf implements RedacteurDossier {
 
         Identification enfant = contenu.enfant();
         rubrique(document, "Enfant");
+        ajouterPhoto(document, enfant.photo());
         ligne(document, "Nom et prénom", enfant.nom().toUpperCase(Locale.FRENCH) + " " + enfant.prenom());
         ligne(document, "Né(e) le", enfant.dateNaissance().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " ("
                 + Period.between(enfant.dateNaissance(), LocalDate.ofInstant(contenu.etabliLe(), fuseau)).getYears() + " ans)");
@@ -122,6 +125,25 @@ class RedacteurDossierPdf implements RedacteurDossier {
         document.add(note);
         document.close();
         return sortie.toByteArray();
+    }
+
+    /** Une photo illisible n'empêche pas le dossier : elle est signalée absente, le reste suffit à l'identifier. */
+    private static void ajouterPhoto(Document document, byte[] contenu) {
+        Image photo = null;
+        if (contenu != null) {
+            try {
+                photo = Image.getInstance(contenu);
+            } catch (IOException | RuntimeException erreur) {
+                photo = null;
+            }
+        }
+        if (photo == null) {
+            document.add(new Paragraph("Aucune photo de l'enfant n'est jointe à ce dossier.", NOTE));
+            return;
+        }
+        photo.scaleToFit(130, 160);
+        photo.setSpacingAfter(4);
+        document.add(photo);
     }
 
     private static void rubrique(Document document, String titre) {

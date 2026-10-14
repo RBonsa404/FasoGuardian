@@ -3,7 +3,11 @@
 </a>
 @if (enfant(); as e) {
   <div class="flex flex-col items-center gap-1 text-center">
-    <span class="mb-3 grid size-24 place-items-center rounded-full border-[3px] border-accent bg-surface-2 font-display text-h1 font-bold text-accent" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
+    @if (photo(); as url) {
+      <img class="mb-3 size-24 rounded-full border-[3px] border-accent object-cover" [src]="url" i18n-alt="@@enfant.photo.alt" alt="Photo de {{ e.prenom }}" />
+    } @else {
+      <span class="mb-3 grid size-24 place-items-center rounded-full border-[3px] border-accent bg-surface-2 font-display text-h1 font-bold text-accent" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
+    }
     <h1 class="m-0 text-titre-ecran font-bold tracking-tight">{{ e.prenom }} {{ e.nom }}</h1>
     <span class="text-body text-text-2" i18n="@@enfant.naissance">Né(e) le {{ e.dateNaissance | date: 'dd/MM/yyyy' }} · {{ age() }} ans</span>
   </div>
@@ -68,6 +72,29 @@
   <button fg-button class="mt-auto" variante="secondary" type="button" (click)="modifier()" i18n="@@enfant.modifier">Modifier la fiche</button>
 
   <fg-sheet i18n-titre="@@enfant.modifier" titre="Modifier la fiche" [ouverte]="edition()" (fermee)="edition.set(false)">
+    <section class="flex items-center gap-4 rounded-lg border border-line bg-surface p-4" i18n-aria-label="@@enfant.photo" aria-label="Photo">
+      @if (photo(); as url) {
+        <img class="size-16 flex-none rounded-full object-cover" [src]="url" alt="" />
+      } @else {
+        <span class="grid size-16 flex-none place-items-center rounded-full bg-surface-2 font-display text-h2 font-bold text-text-2" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
+      }
+      <div class="flex min-w-0 flex-1 flex-col gap-2">
+        <span class="text-label text-text-2" i18n="@@enfant.photo.aide">Visible de ses seuls tuteurs, et jointe au dossier de signalement en cas de disparition. Jamais sur la page QR.</span>
+        <input #fichierPhoto class="sr-only" type="file" accept="image/jpeg,image/png" tabindex="-1" aria-hidden="true" (change)="choisirPhoto($event)" />
+        <div class="flex flex-wrap gap-2">
+          <button fg-button variante="secondary" taille="sm" type="button" [chargement]="envoiPhoto()" (click)="fichierPhoto.click()">
+            @if (e.photoModifieeLe) {
+              <ng-container i18n="@@enfant.photo.changer">Changer la photo</ng-container>
+            } @else {
+              <ng-container i18n="@@enfant.photo.ajouter">Ajouter une photo</ng-container>
+            }
+          </button>
+          @if (e.photoModifieeLe) {
+            <button fg-button variante="ghost" taille="sm" type="button" [disabled]="envoiPhoto()" (click)="retirerPhoto()" i18n="@@enfant.photo.retirer">Retirer</button>
+          }
+        </div>
+      </div>
+    </section>
     <form class="contents" [formGroup]="formulaire" (submit)="$event.preventDefault(); enregistrer()">
       <fg-input i18n-libelle="@@enfant.prenomLibelle" libelle="Prénom" [longueurMax]="80" formControlName="prenom" />
       <fg-input i18n-libelle="@@enfant.nomLibelle" libelle="Nom" [longueurMax]="80" formControlName="nom" />

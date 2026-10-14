@@ -45,7 +45,7 @@ test('un parent voit ce que montre la page QR de son enfant, et l’état de mai
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
-  await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
+  await page.getByRole('link', { name: /Yacouba · \d+ ans/ }).click();
   await page.getByRole('link', { name: 'Aperçu de la page QR' }).click();
 
   // Écran 33 : ni nom ni numéro ; seulement ce que la famille a marqué

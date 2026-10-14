@@ -1,5 +1,6 @@
 package bf.fasoguardian.famille.web;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -92,6 +95,28 @@ class ControleurFamille {
         ProfilDto p = demande.profil();
         return sansCache(familles.modifier(id(jeton), enfantId, demande.prenom(), demande.nom(),
                 p == null ? null : new Familles.ProfilEnfant(p.ecole(), p.quartier(), p.tailleCm(), p.signesDistinctifs())));
+    }
+
+    @Operation(summary = "Ajoute ou remplace la photo de l'enfant (JPEG ou PNG, 2 Mo au plus)")
+    @PutMapping(path = "/{enfantId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<FicheEnfant> definirPhoto(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId,
+            @RequestParam MultipartFile fichier) throws IOException {
+        return sansCache(familles.definirPhoto(id(jeton), enfantId, fichier.getBytes(), fichier.getContentType()));
+    }
+
+    @Operation(summary = "Photo de l'enfant, réservée à ses tuteurs ; 404 s'il n'en a pas")
+    @GetMapping("/{enfantId}/photo")
+    ResponseEntity<byte[]> photo(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return familles.photo(id(jeton), enfantId)
+                .map(photo -> ResponseEntity.ok().header(HttpHeaders.CACHE_CONTROL, "no-store")
+                        .contentType(MediaType.parseMediaType(photo.typeMime())).body(photo.contenu()))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Retire la photo de l'enfant")
+    @DeleteMapping("/{enfantId}/photo")
+    ResponseEntity<FicheEnfant> retirerPhoto(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return sansCache(familles.retirerPhoto(id(jeton), enfantId));
     }
 
     @Operation(summary = "Historique des modifications de la fiche enfant")

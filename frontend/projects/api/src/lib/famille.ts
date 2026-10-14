@@ -17,6 +17,8 @@ export interface FicheEnfant {
   readonly dateNaissance: string;
   readonly profil: ProfilEnfant;
   readonly modifieLe: string;
+  /** Date de la photo, ou `null` si l'enfant n'en a pas. */
+  readonly photoModifieeLe: string | null;
 }
 
 export interface RevisionEnfant {
@@ -131,6 +133,21 @@ export class ClientFamille {
 
   revisionsSante(id: string): Observable<RevisionSante[]> {
     return this.http.get<RevisionSante[]>(`${BASE}/${id}/sante/revisions`);
+  }
+
+  /** Photo de l'enfant, réservée à ses tuteurs. */
+  photo(id: string): Observable<Blob> {
+    return this.http.get(`${BASE}/${id}/photo`, { responseType: 'blob' });
+  }
+
+  definirPhoto(id: string, photo: Blob): Observable<FicheEnfant> {
+    const corps = new FormData();
+    corps.append('fichier', photo, 'photo');
+    return this.http.put<FicheEnfant>(`${BASE}/${id}/photo`, corps);
+  }
+
+  retirerPhoto(id: string): Observable<FicheEnfant> {
+    return this.http.delete<FicheEnfant>(`${BASE}/${id}/photo`);
   }
 
   tuteurs(id: string): Observable<TuteursEnfant> {

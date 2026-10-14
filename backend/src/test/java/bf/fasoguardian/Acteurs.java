@@ -22,6 +22,9 @@ import org.springframework.test.web.servlet.ResultActions;
 public final class Acteurs {
 
     public static final String MOT_DE_PASSE_PARENT = "soleil-de-ouaga-2026";
+    /** Image PNG valide d'un pixel. */
+    public static final byte[] PNG = java.util.Base64.getDecoder().decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==");
     public static final String MOT_DE_PASSE_AGENT = "phrase-de-passe-agent-2026";
     private static final AtomicInteger SUITE = new AtomicInteger(500_000);
     private static final java.security.SecureRandom ALEA = new java.security.SecureRandom();

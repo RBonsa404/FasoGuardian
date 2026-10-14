@@ -3,18 +3,22 @@ package bf.fasoguardian.famille.application;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
 import bf.fasoguardian.famille.AccesEnfant;
 import bf.fasoguardian.famille.domaine.Enfant;
+import bf.fasoguardian.famille.domaine.PhotoEnfant;
 import bf.fasoguardian.famille.domaine.RevisionEnfant;
 import bf.fasoguardian.famille.infrastructure.DepotEnfants;
+import bf.fasoguardian.famille.infrastructure.DepotPhotos;
 import bf.fasoguardian.famille.infrastructure.DepotRevisionsEnfant;
 import bf.fasoguardian.identite.DossierKycApprouve;
 import bf.fasoguardian.identite.LiensTutelle;
@@ -43,9 +47,16 @@ public class Familles implements AccesEnfant {
         static final ProfilEnfant VIDE = new ProfilEnfant(null, null, null, null);
     }
 
+    /** {@code photoModifieeLe} : date de la photo, ou {@code null} s'il n'y en a pas. */
     public record FicheEnfant(UUID id, String prenom, String nom, LocalDate dateNaissance, ProfilEnfant profil,
-            Instant modifieLe) {
+            Instant modifieLe, Instant photoModifieeLe) {
     }
+
+    public record Photo(byte[] contenu, String typeMime) {
+    }
+
+    /** Une photo de 2 Mo suffit à reconnaître l'enfant ; l'application l'allège avant l'envoi. */
+    public static final int TAILLE_MAX_PHOTO = 2 * 1024 * 1024;
 
     /** Une modification : champ, date, prénom vérifié de son auteur (vide sans dossier approuvé), et s'il s'agit du demandeur. */
     public record Revision(String champ, Instant modifieLe, String auteur, boolean parVous) {
@@ -53,16 +64,18 @@ public class Familles implements AccesEnfant {
 
     private final DepotEnfants enfants;
     private final DepotRevisionsEnfant revisions;
+    private final DepotPhotos photos;
     private final LiensTutelle liens;
     private final JournalAudit journal;
     private final ServiceChiffrement chiffrement;
     private final JsonMapper json;
     private final Clock horloge;
 
-    Familles(DepotEnfants enfants, DepotRevisionsEnfant revisions, LiensTutelle liens, JournalAudit journal,
-            ServiceChiffrement chiffrement, JsonMapper json, Clock horloge) {
+    Familles(DepotEnfants enfants, DepotRevisionsEnfant revisions, DepotPhotos photos, LiensTutelle liens,
+            JournalAudit journal, ServiceChiffrement chiffrement, JsonMapper json, Clock horloge) {
         this.enfants = enfants;
         this.revisions = revisions;
+        this.photos = photos;
         this.liens = liens;
         this.journal = journal;
         this.chiffrement = chiffrement;
@@ -152,6 +165,53 @@ public class Familles implements AccesEnfant {
         return propre;
     }
 
+    /** Ajoute ou remplace la photo : JPEG ou PNG vérifié par sa signature, chiffré, tracé dans l'historique. */
+    @Transactional
+    public FicheEnfant definirPhoto(UUID tuteurId, UUID enfantId, byte[] contenu, String typeMime) {
+        exigerTuteur(tuteurId, enfantId);
+        Enfant enfant = enfants.findById(enfantId).orElseThrow(Familles::introuvable);
+        if (contenu == null || contenu.length == 0 || contenu.length > TAILLE_MAX_PHOTO || !imageConforme(contenu, typeMime)) {
+            throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE, "Envoyez une photo JPEG ou PNG de 2 Mo au plus.");
+        }
+        Instant maintenant = horloge.instant();
+        byte[] chiffre = chiffrement.chiffrer(CategorieDonnee.PROFIL_ENFANT, contenu);
+        photos.findById(enfantId).ifPresentOrElse(
+                photo -> photo.remplacer(chiffre, typeMime, contenu.length, maintenant),
+                () -> photos.save(new PhotoEnfant(enfantId, chiffre, typeMime, contenu.length, maintenant)));
+        revisions.save(new RevisionEnfant(enfantId, tuteurId, "photo", maintenant));
+        return vue(enfant);
+    }
+
+    @Transactional
+    public FicheEnfant retirerPhoto(UUID tuteurId, UUID enfantId) {
+        exigerTuteur(tuteurId, enfantId);
+        Enfant enfant = enfants.findById(enfantId).orElseThrow(Familles::introuvable);
+        photos.findById(enfantId).ifPresent(photo -> {
+            photos.delete(photo);
+            photos.flush();
+            revisions.save(new RevisionEnfant(enfantId, tuteurId, "photo", horloge.instant()));
+        });
+        return vue(enfant);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Photo> photo(UUID tuteurId, UUID enfantId) {
+        exigerTuteur(tuteurId, enfantId);
+        return photos.findById(enfantId)
+                .map(photo -> new Photo(chiffrement.dechiffrer(CategorieDonnee.PROFIL_ENFANT, photo.contenuChiffre()), photo.typeMime()));
+    }
+
+    /** Le contenu doit commencer par la signature du format annoncé : un autre fichier renommé est refusé. */
+    private static boolean imageConforme(byte[] contenu, String typeMime) {
+        byte[] attendu = switch (typeMime == null ? "" : typeMime) {
+            case "image/jpeg" -> new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+            case "image/png" -> new byte[] {(byte) 0x89, 'P', 'N', 'G'};
+            default -> null;
+        };
+        return attendu != null && contenu.length > attendu.length
+                && Arrays.equals(Arrays.copyOf(contenu, attendu.length), attendu);
+    }
+
     @Transactional(readOnly = true)
     public List<Revision> historique(UUID tuteurId, UUID enfantId) {
         exigerTuteur(tuteurId, enfantId);
@@ -170,7 +230,7 @@ public class Familles implements AccesEnfant {
 
     private FicheEnfant vue(Enfant enfant) {
         return new FicheEnfant(enfant.id(), enfant.prenom(), enfant.nom(), enfant.dateNaissance(), lireProfil(enfant),
-                enfant.modifieLe());
+                enfant.modifieLe(), photos.findById(enfant.id()).map(PhotoEnfant::modifieeLe).orElse(null));
     }
 
     private static ErreurMetier introuvable() {

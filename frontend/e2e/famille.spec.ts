@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, parentAvecEnfant, onglets, ongletReglages } from './aides';
+import { MOT_DE_PASSE_PARENT, PNG, parentAvecEnfant, onglets, ongletReglages } from './aides';
 
 /** Module famille (US-PAR-003, 004, 011) : fiche enfant, fiche médicale et contacts d'urgence, côté parent. */
 test('un parent complète la fiche de son enfant, sa fiche médicale et ses contacts', async ({ page, request }) => {
@@ -16,7 +16,7 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
   // Fiche enfant : créée par l'approbation du KYC, puis complétée
   await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
-  await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
+  await page.getByRole('link', { name: /Yacouba · \d+ ans/ }).click();
   await expect(page.getByRole('heading', { name: 'Yacouba Zongo' })).toBeVisible();
   await expect(page.getByText('02/05/2017')).toBeVisible();
   await page.getByRole('button', { name: 'Modifier la fiche' }).click();
@@ -28,6 +28,12 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
   await expect(page.getByText('1,28 m')).toBeVisible();
   await expect(page.getByText(/· école modifiée/)).toBeVisible();
   await expect(page.getByText(/· taille modifiée/)).toBeVisible();
+  // Photo : choisie dans la feuille de modification, affichée sur la fiche, retirable
+  await page.getByRole('button', { name: 'Modifier la fiche' }).click();
+  await feuille.locator('input[type=file]').setInputFiles({ name: 'photo.png', mimeType: 'image/png', buffer: PNG });
+  await expect(page.getByRole('img', { name: 'Photo de Yacouba' })).toBeVisible();
+  await expect(page.getByText(/· photo modifiée/)).toBeVisible();
+  await page.keyboard.press('Escape');
   await page.screenshot({ path: 'e2e/.etat/ecran-31-fiche-enfant.png', fullPage: true });
 
   // Fiche médicale : un élément critique, un élément privé

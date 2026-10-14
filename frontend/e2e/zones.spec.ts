@@ -26,7 +26,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   await page.screenshot({ path: 'e2e/.etat/ecran-16-tableau-de-bord.png', fullPage: true });
   await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
-  await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
+  await page.getByRole('link', { name: /Yacouba · \d+ ans/ }).click();
 
   // Carte : le bracelet vient d'être appairé et n'a encore rien transmis
   await page.getByRole('link', { name: 'Carte', exact: true }).click();

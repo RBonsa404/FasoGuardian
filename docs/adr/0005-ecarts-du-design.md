@@ -61,8 +61,14 @@ traçabilité.
   la valeur. Trois écarts : « Né(e) » faute de sexe déclaré dans le dossier ; la ligne « Bracelet » donne le
   numéro sans la couleur de la sangle, que la plateforme ne connaît pas ; les rubriques de l'enfant (carte,
   Safe Zones, trajets, journal, bracelet, fiche médicale, contacts, page QR) restent en liste au-dessus de
-  « Modifier la fiche », la maquette ne disant pas d'où on les ouvre. Tant que la photo de l'enfant
-  (US-PAR-004) n'existe pas, le cercle porte l'initiale.
+  « Modifier la fiche », la maquette ne disant pas d'où on les ouvre. Le cercle montre la photo de l'enfant
+  (ADR 0033), sinon son initiale ; la photo se choisit dans la feuille « Modifier la fiche ».
+- **Écran 17, mes enfants.** Chaque carte reprend la maquette (photo dans un anneau à la couleur de l'état,
+  « Prénom · âge », état, heure, fraîcheur, réseau, batterie). L'état dit ce que la plateforme sait : dans
+  quelle Safe Zone est l'enfant, s'il en est sorti, s'il se déplace, sinon « Hors des Safe Zones » ; la
+  maquette nomme un quartier (« Gounghin ») que la plateforme ne déduit pas d'une position, faute de
+  géocodage inverse, et un retrait de bracelet que la liste ne relit pas. « + Ajouter un enfant » ouvre une
+  nouvelle vérification de lien, propre à cet enfant.
 - **Écran 34, tuteurs et contacts.** Voir ADR 0032. Les tuteurs sont nommés comme leur dossier KYC les a
   vérifiés ; leurs pastilles de droits sont les mêmes (position, alertes, retrait, escalade), le tableau 17
   de FG-DOC-06 ne distinguant pas le second tuteur. Les contacts secondaires sont groupés sous un titre

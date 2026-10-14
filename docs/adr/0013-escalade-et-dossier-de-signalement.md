@@ -25,8 +25,8 @@ activation en production. Aucune convention n'existe aujourd'hui. Le design (éc
    journal de l'alerte, dernière position et positions des deux dernières heures (quarante au plus dans le
    tableau). Les « informations médicales pertinentes » sont entendues comme celles que le parent a déjà
    choisi d'exposer à un tiers en cas d'urgence ; le reste de la fiche médicale n'y figure pas.
-4. **Pas de photo.** La photo de l'enfant n'existe pas encore dans la plateforme (US-PAR-004, à faire) : le
-   dossier ne la contient pas. Ce manque est un écart assumé à US-PAR-010, à combler avec la photo.
+4. **Photo.** Depuis l'ADR 0033, la photo confiée par la famille ouvre la rubrique « Enfant » ; sans photo,
+   le dossier le dit. (Écart initial « pas de photo », levé le 14 octobre 2026.)
 5. **Conservation.** Le dossier est chiffré (catégorie `SIGNALEMENT`, clé `FG_CLE_SIGNALEMENT`),
    téléchargeable par les tuteurs pendant 30 jours, puis effacé chaque nuit. Sa référence (`FG-SIG-000412`) et
    son empreinte SHA-256 restent : elles prouvent ce qui a été remis sans conserver les données.

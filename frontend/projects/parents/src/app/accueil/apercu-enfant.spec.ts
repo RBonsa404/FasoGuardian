@@ -24,6 +24,7 @@ const AWA: FicheEnfant = {
   dateNaissance: '2018-03-14',
   profil: { ecole: null, quartier: null, tailleCm: null, signesDistinctifs: null },
   modifieLe: '2026-10-01T08:00:00Z',
+  photoModifieeLe: null,
 };
 
 const ECOLE: SafeZone = {

@@ -6,6 +6,7 @@ import bf.fasoguardian.famille.DossiersEnfants;
 import bf.fasoguardian.famille.application.Familles.ProfilEnfant;
 import bf.fasoguardian.famille.domaine.Enfant;
 import bf.fasoguardian.famille.infrastructure.DepotEnfants;
+import bf.fasoguardian.famille.infrastructure.DepotPhotos;
 import bf.fasoguardian.plateforme.chiffrement.CategorieDonnee;
 import bf.fasoguardian.plateforme.chiffrement.ServiceChiffrement;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,15 @@ class IdentificationEnfants implements DossiersEnfants {
 
     private final DepotEnfants enfants;
     private final DossierMedical medical;
+    private final DepotPhotos photos;
     private final ServiceChiffrement chiffrement;
     private final JsonMapper json;
 
-    IdentificationEnfants(DepotEnfants enfants, DossierMedical medical, ServiceChiffrement chiffrement, JsonMapper json) {
+    IdentificationEnfants(DepotEnfants enfants, DossierMedical medical, DepotPhotos photos, ServiceChiffrement chiffrement,
+            JsonMapper json) {
         this.enfants = enfants;
         this.medical = medical;
+        this.photos = photos;
         this.chiffrement = chiffrement;
         this.json = json;
     }
@@ -36,6 +40,8 @@ class IdentificationEnfants implements DossiersEnfants {
                 : json.readValue(chiffrement.dechiffrer(CategorieDonnee.PROFIL_ENFANT, enfant.profilChiffre()), ProfilEnfant.class);
         return new Identification(enfant.prenom(), enfant.nom(), enfant.dateNaissance(), profil.tailleCm(),
                 profil.signesDistinctifs(), profil.ecole(), profil.quartier(),
-                medical.informationsCritiques(enfantId).stream().map(i -> i.type() + " : " + i.libelle()).toList());
+                medical.informationsCritiques(enfantId).stream().map(i -> i.type() + " : " + i.libelle()).toList(),
+                photos.findById(enfantId).map(photo -> chiffrement.dechiffrer(CategorieDonnee.PROFIL_ENFANT, photo.contenuChiffre()))
+                        .orElse(null));
     }
 }

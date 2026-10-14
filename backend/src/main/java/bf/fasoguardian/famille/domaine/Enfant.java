@@ -32,9 +32,6 @@ public class Enfant {
     @Column(name = "date_naissance", nullable = false)
     private LocalDate dateNaissance;
 
-    @Column(name = "photo_ref")
-    private String photoRef;
-
     @Column(name = "profil_chiffre")
     private byte[] profilChiffre;
 

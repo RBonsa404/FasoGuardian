@@ -1,5 +1,6 @@
 package bf.fasoguardian.famille.application;
 
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,10 @@ class DonneesFamille implements DonneesPersonnelles {
             enfant.put("fiche", fiche);
             enfant.put("sante", dossiers.fiche(personne.tuteurId(), fiche.id()));
             enfant.put("contactsDUrgence", dossiers.contacts(personne.tuteurId(), fiche.id()));
+            // La photo est rendue telle qu'elle a été confiée, encodée en base 64.
+            enfant.put("photo", familles.photo(personne.tuteurId(), fiche.id())
+                    .map(photo -> Map.of("typeMime", photo.typeMime(), "base64", Base64.getEncoder().encodeToString(photo.contenu())))
+                    .orElse(null));
             enfant.put("consultationsDeLaPageQr", jdbc.queryForObject(
                     "SELECT count(*) FROM famille.consultation_qr WHERE enfant_id = ?", Long.class, fiche.id()));
             return enfant;
@@ -48,8 +53,8 @@ class DonneesFamille implements DonneesPersonnelles {
         long supprimes = 0;
         for (UUID enfant : personne.enfants()) {
             // Le journal des révisions de santé, en ajout seul, reste : il ne porte que des décomptes.
-            for (String table : List.of("contact_urgence", "fiche_sante", "enfant_revision", "profil_qr", "consultation_qr",
-                    "signalement_tiers")) {
+            for (String table : List.of("contact_urgence", "fiche_sante", "enfant_revision", "photo_enfant", "profil_qr",
+                    "consultation_qr", "signalement_tiers")) {
                 supprimes += jdbc.update("DELETE FROM famille." + table + " WHERE enfant_id = ?", enfant);
             }
             supprimes += jdbc.update("DELETE FROM famille.enfant WHERE id = ?", enfant);

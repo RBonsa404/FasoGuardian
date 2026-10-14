@@ -15,7 +15,7 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
   await expect(page.getByRole('heading', { name: 'Associez le bracelet de Yacouba' })).toBeVisible();
   await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
-  await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
+  await page.getByRole('link', { name: /Yacouba · \d+ ans/ }).click();
 
   // Aucun bracelet : l'écran propose l'appairage
   await page.getByRole('link', { name: 'Bracelet' }).click();

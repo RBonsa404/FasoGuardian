@@ -14,6 +14,7 @@ const AWA: FicheEnfant = {
   dateNaissance: '2018-03-14',
   profil: { ecole: 'Les Manguiers · CE2', quartier: 'Ouaga 2000', tailleCm: 128, signesDistinctifs: 'Petite cicatrice au menton' },
   modifieLe: '2026-10-02T10:00:00Z',
+  photoModifieeLe: null,
 };
 
 const ANNEE = new Date().getFullYear();
@@ -35,12 +36,12 @@ function lignes(page: HTMLElement): string[] {
   return [...page.querySelectorAll('dl > div')].map((ligne) => `${lire(ligne.querySelector('dt')!)} ${lire(ligne.querySelector('dd')!)}`);
 }
 
-async function ouvrir(bracelet: Partial<ClientBracelet>) {
+async function ouvrir(bracelet: Partial<ClientBracelet>, famille: Partial<ClientFamille> = {}) {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
       { provide: ClientBracelet, useValue: bracelet },
-      { provide: ClientFamille, useValue: { enfant: () => of(AWA), historique: () => of(HISTORIQUE) } },
+      { provide: ClientFamille, useValue: { enfant: () => of(AWA), historique: () => of(HISTORIQUE), ...famille } },
     ],
   });
   const fixture = TestBed.createComponent(FicheEnfantEcran);
@@ -72,6 +73,23 @@ describe('fiche enfant', () => {
       '15 sept. · Ibrahim (tuteur) · école modifiée',
       '1 sept. 2024 · un autre tuteur · école, quartier ou signes distinctifs modifiés',
     ]);
+  });
+
+  it('montre la photo chargée par l’API authentifiée, sinon l’initiale', async () => {
+    const photo = vi.fn().mockReturnValue(of(new Blob(['png'], { type: 'image/png' })));
+    const avec = await ouvrir(
+      { bracelet: () => of({ numeroSerie: 'FG-2291' } as Bracelet) },
+      { enfant: () => of({ ...AWA, photoModifieeLe: '2026-10-02T10:00:00Z' }), photo } as Partial<ClientFamille>,
+    );
+    expect(photo).toHaveBeenCalledWith('e-1');
+    const image = avec.querySelector('img') as HTMLImageElement;
+    expect(image.getAttribute('src')).toMatch(/^blob:/);
+    expect(image.alt).toBe('Photo de Awa');
+
+    TestBed.resetTestingModule();
+    const sans = await ouvrir({ bracelet: () => of({ numeroSerie: 'FG-2291' } as Bracelet) }, { photo } as Partial<ClientFamille>);
+    expect(sans.querySelector('img')).toBeNull();
+    expect(photo).toHaveBeenCalledTimes(1);
   });
 
   it('signale l’absence de bracelet', async () => {

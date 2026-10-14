@@ -10,9 +10,12 @@ import java.util.UUID;
  */
 public interface DossiersEnfants {
 
-    /** @param informationsMedicales seulement celles que le parent a marquées critiques */
+    /**
+     * @param informationsMedicales seulement celles que le parent a marquées critiques
+     * @param photo                 photo de l'enfant, JPEG ou PNG, ou {@code null} s'il n'en a pas
+     */
     record Identification(String prenom, String nom, LocalDate dateNaissance, Integer tailleCm, String signesDistinctifs,
-            String ecole, String quartier, List<String> informationsMedicales) {
+            String ecole, String quartier, List<String> informationsMedicales, byte[] photo) {
     }
 
     Identification pourSignalement(UUID enfantId);

@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -167,10 +170,50 @@ class FamilleIT extends TestIntegration {
     }
 
     @Test
+    void laPhotoEstChiffreeReserveeAuxTuteursEtHistorisee() throws Exception {
+        Acteurs acteurs = new Acteurs(mvc, sms);
+        ParentAvecEnfant famille = acteurs.parentAvecEnfant();
+        String jeton = famille.parent().jeton();
+        String base = "/api/v1/enfants/" + famille.enfantId();
+
+        appel(get(base), jeton).andExpect(jsonPath("$.photoModifieeLe").isEmpty());
+        appel(get(base + "/photo"), jeton).andExpect(status().isNotFound());
+        // Un fichier qui n'est pas une image, ou qui ment sur son format, est refusé
+        envoyerPhoto(base, jeton, "%PDF-1.7 faux".getBytes(StandardCharsets.US_ASCII), "image/png").andExpect(status().isBadRequest());
+        envoyerPhoto(base, jeton, Acteurs.PNG, "image/gif").andExpect(status().isBadRequest());
+
+        envoyerPhoto(base, jeton, Acteurs.PNG, "image/png").andExpect(status().isOk())
+                .andExpect(jsonPath("$.photoModifieeLe").isNotEmpty());
+        appel(get(base + "/photo"), jeton).andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", "image/png")).andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(content().bytes(Acteurs.PNG));
+        assertThat(new String(jdbc.queryForObject("SELECT contenu_chiffre FROM famille.photo_enfant WHERE enfant_id = ?::uuid",
+                byte[].class, famille.enfantId()), StandardCharsets.ISO_8859_1)).doesNotContain("PNG", "IHDR");
+        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$[0].champ").value("photo"));
+
+        // Un autre parent n'y a pas accès, et la page publique n'en dit rien
+        Parent etranger = acteurs.parent();
+        appel(get(base + "/photo"), etranger.jeton()).andExpect(status().isNotFound());
+        envoyerPhoto(base, etranger.jeton(), Acteurs.PNG, "image/png").andExpect(status().isNotFound());
+
+        appel(delete(base + "/photo"), jeton).andExpect(status().isOk()).andExpect(jsonPath("$.photoModifieeLe").isEmpty());
+        appel(get(base + "/photo"), jeton).andExpect(status().isNotFound());
+        appel(get(base + "/historique"), jeton).andExpect(jsonPath("$.length()").value(2));
+    }
+
+    private ResultActions envoyerPhoto(String base, String jeton, byte[] contenu, String typeMime) throws Exception {
+        return mvc.perform(multipart(org.springframework.http.HttpMethod.PUT, base + "/photo")
+                .file(new MockMultipartFile("fichier", "photo", typeMime, contenu)).header("Authorization", "Bearer " + jeton));
+    }
+
+    @Test
     void leContratOpenApiDecritLaFicheEtLaFicheMedicale() throws Exception {
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}'].patch").exists())
                 .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/historique'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/photo'].put").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/photo'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/photo'].delete").exists())
                 .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante'].get").exists())
                 .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante'].put").exists())
                 .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/sante/revisions'].get").exists())
