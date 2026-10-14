@@ -16,7 +16,7 @@ voir [docs/tracabilite.md](docs/tracabilite.md) pour le statut de chacune des 43
 | `backend/` | Serveur Spring Boot 4 en monolithe modulaire : neuf modules métier et un socle technique |
 | `frontend/` | Espace de travail Angular 22 : `site`, `parents`, `public-qr`, `console`, bibliothèques `ui` et `api` |
 | `simulator/` | Simulateur de bracelets (MQTT en TLS mutuel) |
-| `firmware/` | Logiciel embarqué du bracelet (à venir) |
+| `firmware/` | Logiciel embarqué du bracelet : noyau portable et ses essais (port matériel avec le prototype, ADR 0030) |
 | `infra/` | Docker Compose, Mosquitto, Nginx, Prometheus, Grafana, Loki |
 | `docs/` | ADR, protocoles d'essai, matrice de traçabilité |
 
