@@ -5,35 +5,13 @@ import { ClientAuthentification, Compte, RoleInterne, Session } from 'api';
 import { FgBouton, FgChoixTheme } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
-
-interface Entree {
-  readonly libelle: string;
-  readonly lien: string;
-  readonly role?: RoleInterne;
-}
-
-const ENTREES: readonly Entree[] = [
-  { libelle: $localize`:@@nav.tableau:Tableau de bord`, lien: '/' },
-  { libelle: $localize`:@@nav.kyc:File KYC`, lien: '/kyc', role: 'KYC' },
-  { libelle: $localize`:@@nav.litiges:Litiges de filiation`, lien: '/kyc/litiges', role: 'KYC' },
-  { libelle: $localize`:@@nav.tickets:Tickets support`, lien: '/support/tickets', role: 'SUPPORT' },
-  { libelle: $localize`:@@nav.faq:Base de connaissances`, lien: '/support/faq', role: 'SUPPORT' },
-  { libelle: $localize`:@@nav.fds:Signalements`, lien: '/fds', role: 'FDS' },
-  { libelle: $localize`:@@nav.parc:Parc de bracelets`, lien: '/sav/parc', role: 'SAV' },
-  { libelle: $localize`:@@nav.muets:Bracelets muets`, lien: '/sav/muets', role: 'SAV' },
-  { libelle: $localize`:@@nav.ota:Campagnes OTA`, lien: '/sav/ota', role: 'SAV' },
-  { libelle: $localize`:@@nav.agents:Agents et rôles`, lien: '/admin/agents', role: 'ADMIN' },
-  { libelle: $localize`:@@nav.audit:Journal d'audit`, lien: '/admin/audit', role: 'ADMIN' },
-  { libelle: $localize`:@@nav.conformite:Conformité CIL`, lien: '/conformite', role: 'ADMIN' },
-  { libelle: $localize`:@@nav.supervision:Supervision`, lien: '/admin/supervision', role: 'ADMIN' },
-  { libelle: $localize`:@@nav.securite:Sécurité`, lien: '/admin/securite', role: 'ADMIN' },
-  { libelle: $localize`:@@nav.parametres:Paramétrage`, lien: '/admin/parametres', role: 'ADMIN' },
-];
+import { ENTREES } from './entrees';
+import { Recherche } from './recherche';
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */
 @Component({
   selector: 'app-structure',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgChoixTheme],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgChoixTheme, Recherche],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside class="flex w-62 flex-none flex-col gap-1 border-r border-line bg-surface px-3.5 py-5">
@@ -68,7 +46,12 @@ const ENTREES: readonly Entree[] = [
         </button>
       </div>
     </aside>
-    <main id="contenu" class="flex min-w-0 flex-1 flex-col gap-5 overflow-auto px-7 py-6"><router-outlet /></main>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="flex h-16 flex-none items-center gap-3.5 border-b border-line px-7">
+        <app-recherche />
+      </header>
+      <main id="contenu" class="flex min-w-0 flex-1 flex-col gap-5 overflow-auto px-7 py-6"><router-outlet /></main>
+    </div>
   `,
   host: { class: 'flex h-dvh' },
 })

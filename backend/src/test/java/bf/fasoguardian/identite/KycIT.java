@@ -157,6 +157,31 @@ class KycIT extends TestIntegration {
     }
 
     @Test
+    void laRechercheDeLaConsoleRetrouveUnDossierDeposeParSaReferencePourLaSeuleEquipeKyc() throws Exception {
+        Acteurs acteurs = new Acteurs(mvc, sms);
+        Parent parent = acteurs.parent();
+        String dossier = deposerDossierComplet(parent);
+        String reference = jdbc.queryForObject("SELECT reference FROM identite.dossier_kyc WHERE id = ?::uuid", String.class, dossier);
+        String kyc = acteurs.agent("[\"KYC\"]").jeton();
+
+        mvc.perform(get("/api/v1/console/kyc/references/" + reference.toLowerCase()).header("Authorization", "Bearer " + kyc))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(dossier))
+                .andExpect(header().string("Cache-Control", "no-store"));
+        mvc.perform(get("/api/v1/console/kyc/references/KYC-1").header("Authorization", "Bearer " + kyc))
+                .andExpect(status().isNotFound());
+        // Un brouillon n'existe pas pour l'équipe d'instruction.
+        String brouillon = ouvrirDossier(acteurs.parent(), "EN_LIGNE", "PARENT");
+        String refBrouillon = jdbc.queryForObject("SELECT reference FROM identite.dossier_kyc WHERE id = ?::uuid", String.class, brouillon);
+        mvc.perform(get("/api/v1/console/kyc/references/" + refBrouillon).header("Authorization", "Bearer " + kyc))
+                .andExpect(status().isNotFound());
+
+        mvc.perform(get("/api/v1/console/kyc/references/" + reference).header("Authorization", "Bearer " + acteurs.agent("[\"SUPPORT\"]").jeton()))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/v1/console/kyc/references/" + reference).header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void unParentNeVoitNiNeModifieLeDossierDUnAutre() throws Exception {
         Acteurs acteurs = new Acteurs(mvc, sms);
         Parent titulaire = acteurs.parent();

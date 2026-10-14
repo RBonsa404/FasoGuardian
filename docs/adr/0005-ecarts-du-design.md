@@ -43,3 +43,9 @@ traçabilité.
   tableau 18) : l'écran montre le début de ce pseudonyme et la date du blocage. Le seuil est celui de
   US-SYS-010 (plus de 20 jetons invalides en une minute), non les « 10 min » de la maquette.
 - **Écrans 64 et 66, identité de l'enfant.** Voir ADR 0009 : le rôle SAV ne voit que l'état des bracelets.
+- **Écran 56, recherche Ctrl K.** La maquette invite à « rechercher un dossier, un parent, un FG-XXXX ». La
+  recherche trouve les écrans de l'agent et reconnaît les références de ses seuls rôles (FG-…, SAV-…, KYC-…,
+  SUP-…, FG-SIG-…), puis ouvre l'écran qui les cherche avec ses propres contrôles et sa journalisation. Elle
+  ne cherche pas une personne par son nom : ce serait un accès transversal aux données personnelles que
+  FG-DOC-06 (tableau 17) ne donne à aucun rôle. L'invite ne cite que ce qui fonctionne pour l'agent. La cloche
+  de notifications de la barre du haut n'est pas reprise : la console n'envoie pas de notifications aux agents.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -89,7 +89,7 @@ export function attente(iso: string, maintenant = Date.now()): string {
   `,
   host: { class: 'contents' },
 })
-export class Tickets {
+export class Tickets implements OnInit {
   private readonly client = inject(ClientSupport);
   private readonly router = inject(Router);
 
@@ -99,6 +99,10 @@ export class Tickets {
   protected readonly parent = $localize`:@@tickets.leParent:Parent`;
   protected readonly parentInconnu = $localize`:@@tickets.parentInconnu:Parent sans dossier approuvé`;
 
+  /** Référence d'une demande venue de la recherche de la console (Ctrl K) : cherchée dans chaque file. */
+  readonly reference = input<string>();
+  private filesParcourues = 0;
+
   protected readonly statut = signal<StatutDemandeSupport>('OUVERTE');
   protected readonly demandes = signal<readonly DemandeSupport[] | null>(null);
   protected readonly choisie = signal<DemandeSupport | null>(null);
@@ -106,7 +110,8 @@ export class Tickets {
   protected readonly erreur = signal<string | null>(null);
   protected readonly reponse = new FormControl('', { nonNullable: true });
 
-  constructor() {
+  // Au premier chargement, la référence éventuelle de la recherche (paramètre d'adresse) est déjà liée.
+  ngOnInit(): void {
     this.charger();
   }
 
@@ -158,7 +163,22 @@ export class Tickets {
 
   private charger(): void {
     this.client.demandes(this.statut()).subscribe({
-      next: (demandes) => this.demandes.set(demandes),
+      next: (demandes) => {
+        this.demandes.set(demandes);
+        const reference = this.reference()?.toUpperCase();
+        if (!reference || this.choisie()) {
+          return;
+        }
+        const trouvee = demandes.find((d) => d.reference === reference);
+        if (trouvee) {
+          this.ouvrir(trouvee);
+        } else if (++this.filesParcourues < FILES.length) {
+          this.statut.set(FILES[this.filesParcourues].statut);
+          this.charger();
+        } else {
+          this.erreur.set($localize`:@@tickets.introuvable:Aucune demande ne porte la référence ${reference}:reference:.`);
+        }
+      },
       error: (cause: unknown) => this.signaler(cause),
     });
   }

@@ -66,4 +66,15 @@ test('un agent SAV suit un bracelet du parc, enregistre son retour puis le remet
   await page.getByRole('button', { name: 'Résolus' }).click();
   await expect(page.getByRole('button', { name: 'Résolus' })).toHaveAttribute('aria-pressed', 'true');
   await page.screenshot({ path: 'e2e/.etat/ecran-66-muets.png', fullPage: true });
+
+  // Écran 56 : Ctrl K, le numéro gravé, Entrée : la fiche du bracelet
+  await page.keyboard.press('Control+K');
+  const recherche = page.getByRole('combobox', { name: 'Rechercher' });
+  await expect(recherche).toBeFocused();
+  await recherche.fill(carte.numeroSerie.toLowerCase());
+  await expect(page.getByRole('option').first()).toContainText(`Bracelet ${carte.numeroSerie}`);
+  await page.screenshot({ path: 'e2e/.etat/ecran-56-recherche.png' });
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(new RegExp(`/sav/parc/${carte.numeroSerie}$`));
+  await expect(page.getByRole('heading', { name: carte.numeroSerie })).toBeVisible();
 });

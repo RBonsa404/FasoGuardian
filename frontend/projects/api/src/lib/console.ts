@@ -65,6 +65,11 @@ export class ClientConsole {
     return this.http.get<PageResultats<DossierKycFile>>(KYC, { params: { page, size: taille } });
   }
 
+  /** Identifiant du dossier qui porte cette référence (recherche de la console). */
+  dossierKycParReference(reference: string): Observable<{ readonly id: string }> {
+    return this.http.get<{ readonly id: string }>(`/api/v1/console/kyc/references/${encodeURIComponent(reference)}`);
+  }
+
   dossierKyc(id: string): Observable<DossierKycInstruction> {
     return this.http.get<DossierKycInstruction>(`${KYC}/${id}`);
   }

@@ -196,6 +196,17 @@ public class InstructionKyc {
                 });
     }
 
+    /**
+     * Retrouve un dossier par la référence que le parent communique (recherche de la console). Seul
+     * l'identifiant est rendu : la consultation du dossier, journalisée, se fait ensuite.
+     */
+    @Transactional(readOnly = true)
+    public UUID parReference(String reference) {
+        return dossiers.findByReference(reference == null ? "" : reference.strip().toUpperCase(java.util.Locale.ROOT))
+                .filter(d -> d.statut() != Statut.BROUILLON).map(DossierKyc::id)
+                .orElseThrow(() -> new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Aucun dossier ne porte cette référence."));
+    }
+
     @Transactional
     public DossierInstruction consulter(UUID agentId, UUID dossierId) {
         DossierKyc dossier = pourAgent(dossierId);

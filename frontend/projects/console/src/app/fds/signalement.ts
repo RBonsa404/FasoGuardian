@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -77,7 +77,17 @@ export class SignalementFds {
   protected readonly transmis = $localize`:@@fds.dossier.transmis:Transmis par la passerelle`;
   protected readonly remis = $localize`:@@fds.dossier.remis:Remis en main propre par le parent`;
 
+  /** Référence venue de la recherche de la console (Ctrl K) : elle est cherchée aussitôt. */
+  readonly ref = input<string>();
+
   constructor() {
+    effect(() => {
+      const ref = this.ref();
+      if (ref) {
+        this.reference.setValue(ref);
+        untracked(() => this.chercher());
+      }
+    });
     inject(ClientAuthentification)
       .moi()
       .subscribe({ next: (compte) => this.agent.set(compte.identifiant ?? null), error: () => undefined });

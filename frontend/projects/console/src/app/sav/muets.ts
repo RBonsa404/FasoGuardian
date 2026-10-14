@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -186,7 +186,7 @@ const DATE_LONGUE = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'nu
   `,
   host: { class: 'contents' },
 })
-export class Muets {
+export class Muets implements OnInit {
   private readonly client = inject(ClientSav);
   private readonly router = inject(Router);
 
@@ -202,9 +202,13 @@ export class Muets {
     { libelle: $localize`:@@muets.etape.cloture:Clôture`, titre: $localize`:@@muets.titre.cloture:Ticket clos` },
   ];
 
+  /** Référence d'un ticket venue de la recherche de la console (Ctrl K). */
+  readonly ticket = input<string>();
+
   protected readonly tickets = signal<readonly TicketMaintenance[] | null>(null);
   protected readonly resolus = signal(false);
   private readonly choisiId = signal<string | null>(null);
+  private chercheDansResolus = false;
   protected readonly sansRendezVous = signal(false);
   protected readonly cloture = signal<TicketMaintenance | null>(null);
   protected readonly enCours = signal(false);
@@ -231,7 +235,8 @@ export class Muets {
   protected readonly rendezVous = new FormControl('', { nonNullable: true });
   protected readonly remplacement = new FormControl('', { nonNullable: true });
 
-  constructor() {
+  // Au premier chargement, la référence éventuelle de la recherche (paramètre d'adresse) est déjà liée.
+  ngOnInit(): void {
     this.charger();
   }
 
@@ -390,8 +395,17 @@ export class Muets {
     this.client.tickets(this.resolus()).subscribe({
       next: (tickets) => {
         this.tickets.set(tickets);
-        // Sur grand écran, le premier ticket est ouvert d'emblée, comme sur l'écran 66.
-        if (!this.choisi() && tickets.length > 0) {
+        const demande = this.ticket()?.toUpperCase();
+        const trouve = demande ? tickets.find((t) => t.reference === demande) : undefined;
+        if (trouve) {
+          this.choisiId.set(trouve.id);
+        } else if (demande && !this.resolus() && !this.chercheDansResolus) {
+          // Le ticket demandé n'est plus à traiter : il est peut-être déjà résolu.
+          this.chercheDansResolus = true;
+          this.montrer(true);
+          return;
+        } else if (!this.choisi() && tickets.length > 0) {
+          // Sur grand écran, le premier ticket est ouvert d'emblée, comme sur l'écran 66.
           this.choisiId.set(tickets[0].id);
         }
       },

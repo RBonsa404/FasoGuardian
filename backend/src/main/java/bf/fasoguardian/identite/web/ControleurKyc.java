@@ -126,6 +126,16 @@ class ControleurKyc {
                 resultat.getTotalElements()));
     }
 
+    record IdentifiantDossier(UUID id) {
+    }
+
+    @Operation(summary = "Identifiant du dossier qui porte cette référence (recherche de la console)")
+    @PreAuthorize(AGENT_KYC)
+    @GetMapping("/api/v1/console/kyc/references/{reference}")
+    ResponseEntity<IdentifiantDossier> parReference(@PathVariable String reference) {
+        return sansCache().body(new IdentifiantDossier(kyc.parReference(reference)));
+    }
+
     @Operation(summary = "Dossier complet pour instruction (consultation journalisée)")
     @PreAuthorize(AGENT_KYC)
     @GetMapping("/api/v1/console/kyc/dossiers/{dossierId}")
