@@ -37,7 +37,7 @@ describe('session expirée', () => {
     const page = await monter([AWA]);
 
     expect(lire(page)).toContain('Votre session a expiré');
-    expect(lire(page)).toContain('La fiche de Awa reste consultable.');
+    expect(lire(page)).toContain("La fiche d'Awa reste consultable.");
     expect(lire(page)).toContain('Awa Ouédraogo');
     expect(lire(page)).toContain('École Les Manguiers, Ouaga 2000');
     expect(lire(page)).toContain('Groupe sanguinO+');

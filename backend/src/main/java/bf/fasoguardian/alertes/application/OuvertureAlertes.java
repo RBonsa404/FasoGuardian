@@ -13,6 +13,7 @@ import bf.fasoguardian.alertes.domaine.Alerte.Statut;
 import bf.fasoguardian.alertes.domaine.Alerte.Type;
 import bf.fasoguardian.alertes.infrastructure.DepotActions;
 import bf.fasoguardian.alertes.infrastructure.DepotAlertes;
+import bf.fasoguardian.alertes.infrastructure.DepotSuivis;
 import bf.fasoguardian.dispositifs.Commandes;
 import bf.fasoguardian.identite.LiensTutelle;
 import bf.fasoguardian.notifications.Notifications;
@@ -38,10 +39,12 @@ public class OuvertureAlertes {
     private final LiensTutelle liens;
     private final Notifications notifications;
     private final MeterRegistry metriques;
+    private final DepotSuivis suivis;
     private final Clock horloge;
 
     OuvertureAlertes(DepotAlertes alertes, DepotActions actions, Commandes commandes, LiensTutelle liens, Notifications notifications,
-            MeterRegistry metriques, Clock horloge) {
+            MeterRegistry metriques, DepotSuivis suivis, Clock horloge) {
+        this.suivis = suivis;
         this.alertes = alertes;
         this.actions = actions;
         this.commandes = commandes;
@@ -79,15 +82,21 @@ public class OuvertureAlertes {
         return Optional.of(alerte);
     }
 
-    /** Une alerte vient d'être close : le bracelet quitte le mode alerte s'il ne reste aucune alerte critique. */
+    /**
+     * Une alerte vient d'être close, ou un suivi rapproché s'achève : le bracelet quitte le mode alerte s'il ne
+     * reste ni alerte critique ni suivi rapproché en cours.
+     */
     @Transactional
     public void relacherModeAlerte(UUID enfantId) {
-        boolean critiqueEnCours = NON_CLOSES.stream()
-                .flatMap(statut -> alertes.findByEnfantIdAndStatut(enfantId, statut).stream())
-                .anyMatch(alerte -> alerte.gravite() == Gravite.CRITIQUE);
-        if (!critiqueEnCours) {
+        if (!critiqueEnCours(enfantId) && suivis.jusquAu(enfantId, horloge.instant()).isEmpty()) {
             commandes.modeAlerte(enfantId, false);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public boolean critiqueEnCours(UUID enfantId) {
+        return NON_CLOSES.stream().flatMap(statut -> alertes.findByEnfantIdAndStatut(enfantId, statut).stream())
+                .anyMatch(alerte -> alerte.gravite() == Gravite.CRITIQUE);
     }
 
     /** L'alerte est prise en charge ou close : ses notifications n'appellent plus de repli SMS. */

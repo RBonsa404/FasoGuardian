@@ -1,5 +1,6 @@
 import { ActionAlerte, Alerte, StatutAlerte, TypeAlerte } from 'api';
 import { NomIcone } from 'ui';
+import { de } from '../commun/francais';
 
 const ICONES: Record<TypeAlerte, NomIcone> = {
   SOS: 'sos',
@@ -52,15 +53,15 @@ export function titreComplet(alerte: Alerte, prenom: string): string {
     case 'SOS':
       return $localize`:@@alerte.titre.sos:${prenom}:prenom: a déclenché le SOS`;
     case 'RETRAIT':
-      return $localize`:@@alerte.titre.retrait:Le bracelet de ${prenom}:prenom: a été retiré`;
+      return $localize`:@@alerte.titre.retrait:Le bracelet ${de(prenom)}:dePrenom: a été retiré`;
     case 'SIGNALEMENT':
       return $localize`:@@alerte.titre.signalement:Signalement ouvert pour ${prenom}:prenom:`;
     case 'SORTIE_ZONE':
       return $localize`:@@alerte.titre.zone:${prenom}:prenom: a quitté « ${alerte.libelle ?? ''}:zone: »`;
     case 'BATTERIE_CRITIQUE':
-      return $localize`:@@alerte.titre.batterie:La batterie du bracelet de ${prenom}:prenom: est critique`;
+      return $localize`:@@alerte.titre.batterie:La batterie du bracelet ${de(prenom)}:dePrenom: est critique`;
     case 'CHUTE':
-      return $localize`:@@alerte.titre.chute:Le bracelet de ${prenom}:prenom: a détecté une chute`;
+      return $localize`:@@alerte.titre.chute:Le bracelet ${de(prenom)}:dePrenom: a détecté une chute`;
   }
 }
 

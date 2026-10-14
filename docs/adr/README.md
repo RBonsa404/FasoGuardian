@@ -41,3 +41,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0031](0031-remise-en-point-relais.md) | Bracelet muet : diagnostic par localisation signée, rendez-vous transmis au parent par la plateforme, unité réservée que le parent associe lui-même ; le SAV ne connaît pas la famille | Acceptée |
 | [0032](0032-second-tuteur.md) | Second tuteur : invitation confirmée par SMS, dossier KYC propre à l'invité sur l'enfant déjà suivi, deux tuteurs au plus, mêmes droits ; la différenciation est celle du contact secondaire | Acceptée |
 | [0033](0033-photo-de-l-enfant.md) | Photo de l'enfant chiffrée en base, servie aux seuls tuteurs, jointe au dossier de signalement, jamais sur la page QR | Acceptée |
+| [0034](0034-suivi-rapproche-depuis-la-carte.md) | Bascule « Mode alerte » de la carte : suivi rapproché de 30 minutes, journalisé, qui ne coupe jamais le mode d'une alerte critique | Acceptée |

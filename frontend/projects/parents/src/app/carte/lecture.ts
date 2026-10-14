@@ -2,6 +2,7 @@ import { SafeZone, Situation } from 'api';
 
 import { minutesDepuis } from '../commun/temps';
 import { PositionSurCarte } from './fond';
+import { de } from '../commun/francais';
 
 /** Au-delà, la position n'est plus présentée comme actuelle (trois intervalles normaux de 5 minutes). */
 export const MINUTES_AVANT_ATTENUATION = 15;
@@ -16,7 +17,7 @@ export function titrePosition(zones: readonly SafeZone[], prenom: string | undef
   if (dedans) {
     return $localize`:@@carte.titre.dedans:Dans « ${dedans.nom}:zone: »`;
   }
-  return prenom ? $localize`:@@carte.titre.position:Position de ${prenom}:prenom:` : $localize`:@@carte.titre.defaut:Dernière position`;
+  return prenom ? $localize`:@@carte.titre.position:Position ${de(prenom)}:dePrenom:` : $localize`:@@carte.titre.defaut:Dernière position`;
 }
 
 export function positionAncienne(situation: Situation | null, maintenant: Date): boolean {

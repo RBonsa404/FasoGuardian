@@ -125,7 +125,7 @@ describe('suivi de maintenance', () => {
     const page = await ouvrir(MaintenanceBracelet, { maintenance: () => of(SUIVI) });
 
     expect(lire(page)).toContain('Ticket SAV-007731 · ouvert automatiquement');
-    expect(lire(page)).toContain('Le bracelet de Awa ne répond plus');
+    expect(lire(page)).toContain("Le bracelet d'Awa ne répond plus");
     expect(lire(page)).toMatch(/Dernier contact \d{2}:\d{2} · batterie 46 % · 2G\./);
     const etapes = [...page.querySelectorAll('ol li')].map(lire);
     expect(etapes).toHaveLength(4);
@@ -199,5 +199,16 @@ describe('introduction', () => {
 
     expect(navigation).toHaveBeenCalledWith('/connexion');
     expect(introductionVue()).toBe(true);
+  });
+});
+
+describe('élision devant un prénom', () => {
+  it('écrit « d’ » devant une voyelle, accentuée ou non, et « de » ailleurs', async () => {
+    const { de } = await import('../commun/francais');
+    expect(de('Awa')).toBe("d'Awa");
+    expect(de('Éloïse')).toBe("d'Éloïse");
+    expect(de('Yacouba')).toBe('de Yacouba');
+    expect(de('Ibrahim')).toBe("d'Ibrahim");
+    expect(de('Moussa')).toBe('de Moussa');
   });
 });

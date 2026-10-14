@@ -77,6 +77,15 @@ export interface Signalement {
   readonly accuseLe: string | null;
 }
 
+/** Mode alerte du bracelet : une position toutes les 60 secondes. */
+export interface EtatModeAlerte {
+  readonly actif: boolean;
+  /** Fin du suivi rapproché demandé par un tuteur (30 minutes au plus), ou null. */
+  readonly jusquAu: string | null;
+  /** Une alerte critique en cours tient le bracelet en mode alerte : le tuteur ne peut pas l'arrêter. */
+  readonly alerteCritique: boolean;
+}
+
 /** Client des alertes et de l'autorisation de retrait (US-ENF-001, US-PAR-008, 010, 012). */
 @Injectable({ providedIn: 'root' })
 export class ClientAlertes {
@@ -135,6 +144,19 @@ export class ClientAlertes {
   /** Journal des alertes de l'enfant ; consultation journalisée. */
   journal(enfantId: string): Observable<Alerte[]> {
     return this.http.get<Alerte[]>(`/api/v1/enfants/${enfantId}/journal`);
+  }
+
+  modeAlerte(enfantId: string): Observable<EtatModeAlerte> {
+    return this.http.get<EtatModeAlerte>(`/api/v1/enfants/${enfantId}/bracelet/mode-alerte`);
+  }
+
+  /** Suivi rapproché de 30 minutes ; échoue en RESSOURCE_INTROUVABLE sans bracelet. */
+  activerModeAlerte(enfantId: string): Observable<EtatModeAlerte> {
+    return this.http.post<EtatModeAlerte>(`/api/v1/enfants/${enfantId}/bracelet/mode-alerte`, {});
+  }
+
+  arreterModeAlerte(enfantId: string): Observable<EtatModeAlerte> {
+    return this.http.delete<EtatModeAlerte>(`/api/v1/enfants/${enfantId}/bracelet/mode-alerte`);
   }
 
   /** Échoue en RESSOURCE_INTROUVABLE si aucun retrait n'est autorisé. */

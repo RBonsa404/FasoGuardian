@@ -10,6 +10,8 @@ import bf.fasoguardian.alertes.application.Escalades.Apercu;
 import bf.fasoguardian.alertes.application.Escalades.Dossier;
 import bf.fasoguardian.alertes.application.Escalades.SignalementVue;
 import bf.fasoguardian.alertes.application.Retraits;
+import bf.fasoguardian.alertes.application.SuiviRapproche;
+import bf.fasoguardian.alertes.application.SuiviRapproche.EtatModeAlerte;
 import bf.fasoguardian.alertes.application.Retraits.AutorisationVue;
 import bf.fasoguardian.alertes.domaine.AutorisationRetrait.Motif;
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
@@ -46,8 +48,10 @@ class ControleurAlertes {
     private final Alertes alertes;
     private final Retraits retraits;
     private final Escalades escalades;
+    private final SuiviRapproche suivi;
 
-    ControleurAlertes(Alertes alertes, Retraits retraits, Escalades escalades) {
+    ControleurAlertes(Alertes alertes, Retraits retraits, Escalades escalades, SuiviRapproche suivi) {
+        this.suivi = suivi;
         this.escalades = escalades;
         this.alertes = alertes;
         this.retraits = retraits;
@@ -145,6 +149,24 @@ class ControleurAlertes {
     @GetMapping("/api/v1/enfants/{enfantId}/journal")
     ResponseEntity<List<AlerteVue>> journal(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
         return sansCache(alertes.journal(id(jeton), enfantId));
+    }
+
+    @Operation(summary = "Mode alerte du bracelet : par une alerte critique en cours, ou par un suivi rapproché demandé")
+    @GetMapping("/api/v1/enfants/{enfantId}/bracelet/mode-alerte")
+    ResponseEntity<EtatModeAlerte> modeAlerte(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return sansCache(suivi.etat(id(jeton), enfantId));
+    }
+
+    @Operation(summary = "Suivi rapproché : une position toutes les 60 secondes pendant 30 minutes")
+    @PostMapping("/api/v1/enfants/{enfantId}/bracelet/mode-alerte")
+    ResponseEntity<EtatModeAlerte> activerModeAlerte(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return sansCache(suivi.activer(id(jeton), enfantId));
+    }
+
+    @Operation(summary = "Arrête le suivi rapproché ; le mode alerte d'une alerte critique en cours est maintenu")
+    @DeleteMapping("/api/v1/enfants/{enfantId}/bracelet/mode-alerte")
+    ResponseEntity<EtatModeAlerte> arreterModeAlerte(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID enfantId) {
+        return sansCache(suivi.desactiver(id(jeton), enfantId));
     }
 
     @Operation(summary = "Autorisation de retrait en cours")

@@ -7,6 +7,7 @@ import { FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { heure } from '../commun/temps';
+import { DePipe } from '../commun/francais';
 
 /** Durées proposées, en minutes. */
 export const DUREES: readonly { minutes: number; libelle: string }[] = [
@@ -28,7 +29,7 @@ export function decompte(secondes: number): string {
  */
 @Component({
   selector: 'app-partage',
-  imports: [RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette],
+  imports: [DePipe, RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id()]" i18n-aria-label="@@etape.retour" aria-label="Retour">
@@ -41,7 +42,7 @@ export function decompte(secondes: number): string {
       @if (partage(); as p) {
         <div class="flex flex-col gap-1.5">
           <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@partage.enCours">Partage en cours</h1>
-          <p class="m-0 text-body text-text-2" i18n="@@partage.enCours.texte">{{ p.lien }} voit la position de {{ prenom() }} jusqu'à {{ heure(p.fin) }}.</p>
+          <p class="m-0 text-body text-text-2" i18n="@@partage.enCours.texte">{{ p.lien }} voit la position {{ prenom() | de }} jusqu'à {{ heure(p.fin) }}.</p>
         </div>
         <div class="flex flex-col items-center gap-1 rounded-lg bg-accent-soft p-5" role="timer">
           <strong class="font-display text-display font-bold tabular-nums text-accent">{{ restant() }}</strong>

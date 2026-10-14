@@ -7,6 +7,7 @@ import { FgBanniere, FgBouton, FgCodeAppairage, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { VisuelBracelet } from './visuel';
+import { DePipe } from '../commun/francais';
 
 /**
  * Appairage (écran 36, US-PAR-014) : le parent saisit le code de la carte d'activation, distinct du QR
@@ -14,7 +15,7 @@ import { VisuelBracelet } from './visuel';
  */
 @Component({
   selector: 'app-associer-bracelet',
-  imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgCodeAppairage, FgIcon, FgSquelette, VisuelBracelet],
+  imports: [DePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgCodeAppairage, FgIcon, FgSquelette, VisuelBracelet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="retour()" i18n-aria-label="@@etape.retour" aria-label="Retour">
@@ -36,7 +37,7 @@ import { VisuelBracelet } from './visuel';
         @if (enCours()) {
           <span class="text-center text-body font-semibold text-accent" role="status" i18n="@@appairage.connexion">Connexion au bracelet…</span>
         } @else {
-          <span class="text-center text-body font-semibold" i18n="@@appairage.pour">Bracelet de {{ e.prenom }}</span>
+          <span class="text-center text-body font-semibold" i18n="@@appairage.pour">Bracelet {{ e.prenom | de }}</span>
         }
         <span class="-mt-3 text-center text-label text-text-3" i18n="@@appairage.conseil">Gardez le bracelet allumé, LED bleue clignotante.</span>
       }

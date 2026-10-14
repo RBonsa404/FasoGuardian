@@ -84,7 +84,7 @@ describe('fiche enfant', () => {
     expect(photo).toHaveBeenCalledWith('e-1');
     const image = avec.querySelector('img') as HTMLImageElement;
     expect(image.getAttribute('src')).toMatch(/^blob:/);
-    expect(image.alt).toBe('Photo de Awa');
+    expect(image.alt).toBe("Photo d'Awa");
 
     TestBed.resetTestingModule();
     const sans = await ouvrir({ bracelet: () => of({ numeroSerie: 'FG-2291' } as Bracelet) }, { photo } as Partial<ClientFamille>);

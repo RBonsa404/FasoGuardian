@@ -10,6 +10,7 @@ import { FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette } from 'u
 import { erreurLisible } from '../commun/erreurs';
 import { heure, ilYA } from '../commun/temps';
 import { EtatVerification, allegerPhoto } from '../verification/etat-verification';
+import { DePipe } from '../commun/francais';
 
 /** Âge en années révolues à partir d'une date ISO. */
 export function age(dateNaissance: string, aujourdhui = new Date()): number {
@@ -217,7 +218,7 @@ export class Enfants {
 /** Fiche enfant (écran 31, US-PAR-004) : identité, éléments de reconnaissance, historique des modifications. */
 @Component({
   selector: 'app-fiche-enfant',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
+  imports: [DePipe, DatePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fiche-enfant.html',
   host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },

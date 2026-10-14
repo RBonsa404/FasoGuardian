@@ -64,7 +64,12 @@ const OUAGADOUGOU: [number, number] = [12.3714, -1.5197];
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   styleUrl: './fond.css',
-  template: `<div #hote class="fg-carte size-full" role="application" [attr.aria-label]="libelle()"></div>`,
+  template: `<div
+    #hote
+    class="fg-carte size-full"
+    role="application"
+    [attr.aria-label]="libelle()"
+  ></div>`,
   host: { class: 'block' },
 })
 export class Carte {
@@ -78,7 +83,11 @@ export class Carte {
 
   private readonly hote = viewChild.required<ElementRef<HTMLElement>>('hote');
   private readonly fond = inject(FOND_DE_CARTE);
-  private readonly pret = signal<{ L: typeof import('leaflet'); carte: CarteLeaflet; calque: LayerGroup } | null>(null);
+  private readonly pret = signal<{
+    L: typeof import('leaflet');
+    carte: CarteLeaflet;
+    calque: LayerGroup;
+  } | null>(null);
   private cadre = '';
 
   constructor() {
@@ -94,14 +103,28 @@ export class Carte {
       if (detruit) {
         return;
       }
-      const carte = L.map(this.hote().nativeElement, { zoomControl: false, attributionControl: true }).setView(OUAGADOUGOU, 13);
+      const carte = L.map(this.hote().nativeElement, {
+        zoomControl: false,
+        attributionControl: true,
+      }).setView(OUAGADOUGOU, 13);
       carte.attributionControl.setPrefix(false);
-      L.tileLayer(this.fond.url, { attribution: this.fond.attribution, maxZoom: this.fond.zoomMaximal }).addTo(carte);
-      carte.on('click', (evenement) => this.touche.emit({ latitude: evenement.latlng.lat, longitude: evenement.latlng.lng }));
+      L.tileLayer(this.fond.url, {
+        attribution: this.fond.attribution,
+        maxZoom: this.fond.zoomMaximal,
+      }).addTo(carte);
+      carte.on('click', (evenement) =>
+        this.touche.emit({ latitude: evenement.latlng.lat, longitude: evenement.latlng.lng }),
+      );
       monte = carte;
       this.pret.set({ L, carte, calque: L.layerGroup().addTo(carte) });
     });
     effect(() => this.dessiner());
+  }
+
+  /** Recadre la vue sur l'enfant et ses zones, après que la personne a déplacé la carte. */
+  recentrer(): void {
+    this.cadre = '';
+    this.dessiner();
   }
 
   private dessiner(): void {
@@ -114,9 +137,17 @@ export class Carte {
     const etendue: [number, number][] = [];
 
     for (const zone of this.zones()) {
-      const classe = zone.statut === 'SUSPENDUE' || !zone.dansLaPlage ? 'fg-zone fg-zone-inactive' : zone.sortieEnCours ? 'fg-zone fg-zone-sortie' : 'fg-zone';
+      const classe =
+        zone.statut === 'SUSPENDUE' || !zone.dansLaPlage
+          ? 'fg-zone fg-zone-inactive'
+          : zone.sortieEnCours
+            ? 'fg-zone fg-zone-sortie'
+            : 'fg-zone';
       if (zone.centre && zone.rayonM) {
-        L.circle([zone.centre.latitude, zone.centre.longitude], { radius: zone.rayonM, className: classe }).addTo(calque);
+        L.circle([zone.centre.latitude, zone.centre.longitude], {
+          radius: zone.rayonM,
+          className: classe,
+        }).addTo(calque);
         etendue.push(...autour(zone.centre, zone.rayonM));
       } else if (zone.sommets) {
         const sommets = zone.sommets.map((s): [number, number] => [s.latitude, s.longitude]);
@@ -129,26 +160,43 @@ export class Carte {
     if (trace.length > 0) {
       L.polyline(trace, { className: 'fg-trace' }).addTo(calque);
       L.circleMarker(trace[0], { radius: 5, className: 'fg-trace-borne' }).addTo(calque);
-      L.circleMarker(trace[trace.length - 1], { radius: 7, className: 'fg-trace-borne fg-trace-fin' }).addTo(calque);
+      L.circleMarker(trace[trace.length - 1], {
+        radius: 7,
+        className: 'fg-trace-borne fg-trace-fin',
+      }).addTo(calque);
       etendue.push(...trace);
     }
 
     const brouillon = this.brouillon();
     if (brouillon?.centre) {
-      L.circle([brouillon.centre.latitude, brouillon.centre.longitude], { radius: brouillon.rayonM, className: 'fg-zone fg-zone-brouillon' }).addTo(calque);
-      L.circleMarker([brouillon.centre.latitude, brouillon.centre.longitude], { radius: 6, className: 'fg-sommet' }).addTo(calque);
+      L.circle([brouillon.centre.latitude, brouillon.centre.longitude], {
+        radius: brouillon.rayonM,
+        className: 'fg-zone fg-zone-brouillon',
+      }).addTo(calque);
+      L.circleMarker([brouillon.centre.latitude, brouillon.centre.longitude], {
+        radius: 6,
+        className: 'fg-sommet',
+      }).addTo(calque);
       etendue.push(...autour(brouillon.centre, brouillon.rayonM));
     }
     if (brouillon && brouillon.sommets.length > 0) {
       const sommets = brouillon.sommets.map((s): [number, number] => [s.latitude, s.longitude]);
-      (sommets.length > 2 ? L.polygon(sommets, { className: 'fg-zone fg-zone-brouillon' }) : L.polyline(sommets, { className: 'fg-zone fg-zone-brouillon' })).addTo(calque);
-      sommets.forEach((sommet) => L.circleMarker(sommet, { radius: 6, className: 'fg-sommet' }).addTo(calque));
+      (sommets.length > 2
+        ? L.polygon(sommets, { className: 'fg-zone fg-zone-brouillon' })
+        : L.polyline(sommets, { className: 'fg-zone fg-zone-brouillon' })
+      ).addTo(calque);
+      sommets.forEach((sommet) =>
+        L.circleMarker(sommet, { radius: 6, className: 'fg-sommet' }).addTo(calque),
+      );
     }
 
     const position = this.position();
     if (position) {
       const point: [number, number] = [position.latitude, position.longitude];
-      L.circle(point, { radius: position.precisionM, className: 'fg-incertitude' }).addTo(calque);
+      L.circle(point, {
+        radius: position.precisionM,
+        className: position.attenuee ? 'fg-incertitude fg-incertitude-approx' : 'fg-incertitude',
+      }).addTo(calque);
       const repere = L.divIcon({
         className: '',
         iconSize: [44, 44],
@@ -161,7 +209,9 @@ export class Carte {
 
     // La vue n'est recadrée que lorsque ce qui est montré change (nature des éléments, cercle en cours de tracé),
     // pas à chaque rafraîchissement de la position.
-    const cercle = brouillon?.centre ? `${brouillon.centre.latitude.toFixed(5)},${brouillon.centre.longitude.toFixed(5)},${brouillon.rayonM}` : '';
+    const cercle = brouillon?.centre
+      ? `${brouillon.centre.latitude.toFixed(5)},${brouillon.centre.longitude.toFixed(5)},${brouillon.rayonM}`
+      : '';
     const cadre = `${this.zones().length}|${trace.length}|${position ? 'p' : ''}|${cercle}`;
     if (etendue.length > 0 && cadre !== this.cadre && !brouillon?.sommets.length) {
       this.cadre = cadre;

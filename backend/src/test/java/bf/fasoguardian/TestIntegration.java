@@ -85,6 +85,7 @@ public abstract class TestIntegration {
         registre.add("fasoguardian.supervision.sonde", () -> "PT24H");
         // La cascade ne tourne que lorsqu'un essai l'appelle ; un point de contact institutionnel fictif est convenu.
         registre.add("fasoguardian.alertes.cascade.cadence", () -> "PT24H");
+        registre.add("fasoguardian.alertes.suivi-rapproche.cadence", () -> "PT24H");
         registre.add("fasoguardian.alertes.cascade.contact-institutionnel", () -> "70 99 00 17");
         registre.add("fasoguardian.sms.secret-passerelle", () -> SECRET_PASSERELLE_SMS);
         registre.add("fasoguardian.lorawan.secret-serveur-reseau", () -> SECRET_SERVEUR_LORAWAN);

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FgIcon } from 'ui';
 
 import { CopieLocale, FicheLocale } from '../commun/copie-locale';
+import { de } from '../commun/francais';
 
 const JOUR = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
 const HEURE = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' });
@@ -77,7 +78,7 @@ export class SessionExpiree {
       return $localize`:@@session.texte.sansCopie:Reconnectez-vous pour voir la position en direct.`;
     }
     return fiches.length === 1
-      ? $localize`:@@session.texte.une:Reconnectez-vous pour voir la position en direct. La fiche de ${fiches[0].prenom}:prenom: reste consultable.`
+      ? $localize`:@@session.texte.une:Reconnectez-vous pour voir la position en direct. La fiche ${de(fiches[0].prenom)}:dePrenom: reste consultable.`
       : $localize`:@@session.texte.plusieurs:Reconnectez-vous pour voir la position en direct. Les fiches de vos enfants restent consultables.`;
   });
 

@@ -67,6 +67,12 @@
   fill-opacity: 0.1;
 }
 
+/* Position approximative ou ancienne : filet pointillé (HANDOFF §7), on ne laisse pas croire à un point sûr. */
+.fg-incertitude-approx {
+  stroke-dasharray: 4 4;
+  stroke-opacity: 0.6;
+}
+
 .fg-trace {
   stroke: var(--color-accent);
   stroke-width: 4;

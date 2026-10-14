@@ -88,7 +88,7 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     const { texte } = await monter(of(situation('CELLULE', 850, 9)), []);
 
     expect(texte).toContain('Approx. ± 850 m');
-    expect(texte).toContain('Position de Awa');
+    expect(texte).toContain("Position d'Awa");
     expect(texte).not.toContain('Précise');
   });
 
@@ -148,7 +148,7 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     const introuvable = new HttpErrorResponse({ status: 404, error: { status: 404, code: 'RESSOURCE_INTROUVABLE', detail: "Aucun bracelet n'est associé à cet enfant." } });
     const { texte } = await monter(throwError(() => introuvable));
 
-    expect(texte).toContain('Associez le bracelet de Awa');
+    expect(texte).toContain("Associez le bracelet d'Awa");
     expect(texte).toContain("Le code d'appairage est sur la carte glissée dans la boîte.");
   });
 });

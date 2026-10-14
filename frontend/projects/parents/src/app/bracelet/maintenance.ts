@@ -6,6 +6,7 @@ import { FgBadge, FgBanniere, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible, estIntrouvable } from '../commun/erreurs';
 import { heure } from '../commun/temps';
+import { DePipe } from '../commun/francais';
 
 const RENDEZ_VOUS = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
@@ -23,7 +24,7 @@ interface Etape {
  */
 @Component({
   selector: 'app-maintenance',
-  imports: [RouterLink, FgBadge, FgBanniere, FgIcon, FgSquelette],
+  imports: [DePipe, RouterLink, FgBadge, FgBanniere, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet']" i18n-aria-label="@@etape.retour" aria-label="Retour">
@@ -32,7 +33,7 @@ interface Etape {
     @if (suivi(); as s) {
       <div class="flex flex-col gap-2">
         <fg-badge class="self-start" ton="attention"><ng-container i18n="@@maintenance.ticket">Ticket</ng-container> {{ s.reference }} · <ng-container i18n="@@maintenance.automatique">ouvert automatiquement</ng-container></fg-badge>
-        <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@maintenance.titre">Le bracelet de {{ prenom() }} ne répond plus</h1>
+        <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@maintenance.titre">Le bracelet {{ prenom() | de }} ne répond plus</h1>
         <p class="m-0 text-label text-text-2">{{ dernierContact() }}</p>
       </div>
 

@@ -4,7 +4,7 @@
 @if (enfant(); as e) {
   <div class="flex flex-col items-center gap-1 text-center">
     @if (photo(); as url) {
-      <img class="mb-3 size-24 rounded-full border-[3px] border-accent object-cover" [src]="url" i18n-alt="@@enfant.photo.alt" alt="Photo de {{ e.prenom }}" />
+      <img class="mb-3 size-24 rounded-full border-[3px] border-accent object-cover" [src]="url" i18n-alt="@@enfant.photo.alt" alt="Photo {{ e.prenom | de }}" />
     } @else {
       <span class="mb-3 grid size-24 place-items-center rounded-full border-[3px] border-accent bg-surface-2 font-display text-h1 font-bold text-accent" aria-hidden="true">{{ e.prenom.charAt(0) }}</span>
     }

@@ -96,7 +96,7 @@ describe('partage temporaire de la position', () => {
     client.courant = partage();
     const { fixture, page } = await monter(client);
 
-    expect(lire(page)).toContain('Oncle voit la position de Awa jusqu');
+    expect(lire(page)).toContain("Oncle voit la position d'Awa jusqu");
     expect(page.querySelector('[role="timer"]')?.textContent).toMatch(/1:2[34]:\d\d/);
     expect(lire(page)).toContain('+226 76 •• •• 08');
     expect(lire(page)).toContain('SMS · lien unique');

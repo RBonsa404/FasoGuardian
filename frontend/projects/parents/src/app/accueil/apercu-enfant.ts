@@ -10,6 +10,7 @@ import { Carte } from '../carte/fond';
 import { forceDuSignal, positionAncienne, repereDe } from '../carte/lecture';
 import { erreurLisible } from '../commun/erreurs';
 import { heure, ilYA } from '../commun/temps';
+import { DePipe, de } from '../commun/francais';
 
 const RAFRAICHISSEMENT_MS = 60_000;
 /** Relectures après « Localiser maintenant », le temps que le bracelet réponde. */
@@ -34,7 +35,7 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
  */
 @Component({
   selector: 'app-apercu-enfant',
-  imports: [RouterLink, Carte, FgBanniere, FgBouton, FgIcon, FgSquelette],
+  imports: [DePipe, RouterLink, Carte, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="relative -mx-5 -mt-10 h-[330px] overflow-hidden lg:row-span-8 lg:mx-0 lg:mt-0 lg:h-128 lg:rounded-xl lg:border lg:border-line">
@@ -98,7 +99,7 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
       </section>
     } @else if (sansBracelet()) {
       <section class="relative z-1000 mx-[-8px] -mt-7 flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-5 shadow-e2 lg:mx-0 lg:mt-0">
-        <h2 class="m-0 text-h3 font-semibold" i18n="@@apercu.associer.titre">Associez le bracelet de {{ enfant().prenom }}</h2>
+        <h2 class="m-0 text-h3 font-semibold" i18n="@@apercu.associer.titre">Associez le bracelet {{ enfant().prenom | de }}</h2>
         <p class="m-0 text-body text-text-2" i18n="@@apercu.associer.texte">Le code d'appairage est sur la carte glissée dans la boîte.</p>
         <button fg-button type="button" (click)="associer()" i18n="@@apercu.associer">Associer</button>
       </section>
@@ -197,7 +198,7 @@ export class ApercuEnfant {
       ? $localize`:@@apercu.cloche.alertes:Voir les alertes : ${this.alertesEnCours()}:nombre: en cours`
       : $localize`:@@apercu.cloche:Voir les alertes`,
   );
-  protected readonly libelleCarte = computed(() => $localize`:@@apercu.carte.libelle:Carte de la position de ${this.enfant().prenom}:prenom:`);
+  protected readonly libelleCarte = computed(() => $localize`:@@apercu.carte.libelle:Carte de la position ${de(this.enfant().prenom)}:dePrenom:`);
   protected readonly libelleActions = computed(() => $localize`:@@apercu.actions:Actions pour ${this.enfant().prenom}:prenom:`);
   protected readonly libelleAutres = computed(() => $localize`:@@apercu.raccourcis:Raccourcis pour ${this.enfant().prenom}:prenom:`);
   protected readonly ancienne = computed(() => positionAncienne(this.situation(), this.maintenant()));
@@ -213,7 +214,7 @@ export class ApercuEnfant {
     if (sortie) {
       return $localize`:@@carte.titre.sortie:Hors de « ${sortie}:zone: »`;
     }
-    return this.zoneDedans() ?? $localize`:@@carte.titre.position:Position de ${this.enfant().prenom}:prenom:`;
+    return this.zoneDedans() ?? $localize`:@@carte.titre.position:Position ${de(this.enfant().prenom)}:dePrenom:`;
   });
   protected readonly derniereAlerte = computed(() => this.alertes()[0] ?? null);
   protected readonly mesures = computed(() => {
