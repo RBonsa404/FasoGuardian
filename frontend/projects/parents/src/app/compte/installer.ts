@@ -24,7 +24,8 @@ interface InviteInstallation extends Event {
     <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
       <fg-icon nom="retour" [taille]="22" />
     </a>
-    <div class="flex flex-col gap-1.5">
+    <div class="flex flex-col items-center gap-2 text-center">
+      <img src="icone-192.png" alt="" class="mb-3 size-22 rounded-[22px] shadow-e2" />
       <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@installer.titre">Gardez FasoGuardian à portée de main</h1>
       <p class="m-0 text-body text-text-2" i18n="@@installer.texte">Ajoutez l'application à votre écran d'accueil. Elle pèse moins de 1 Mo et fonctionne même avec peu de réseau.</p>
     </div>

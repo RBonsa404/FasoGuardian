@@ -43,12 +43,15 @@
 
   <fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
     <legend class="mb-1.5 p-0 text-label font-semibold" i18n="@@retrait.prereglages">Durée</legend>
-    <div class="flex gap-1.5">
+    <div class="flex flex-col gap-2.5">
       @for (p of prereglages; track p.motif) {
-        <label class="flex h-16 flex-1 cursor-pointer flex-col items-center justify-center rounded-md has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent" [class]="minutes() === p.minutes ? 'border-2 border-accent bg-accent-soft' : 'border border-line-strong text-text-2'">
+        <label class="flex min-h-16 cursor-pointer items-center gap-3.5 rounded-lg bg-surface px-4 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent" [class]="minutes() === p.minutes ? 'border-2 border-accent' : 'border border-line'">
           <input class="sr-only" type="radio" name="duree" [checked]="minutes() === p.minutes" (change)="choisir(p)" />
-          <span class="text-label font-semibold">{{ p.libelle }}</span>
-          <span class="text-caption tabular-nums">{{ duree(p.minutes) }}</span>
+          <span class="grid size-10 flex-none place-items-center rounded-md bg-surface-2" aria-hidden="true"><fg-icon [nom]="p.icone" [taille]="20" /></span>
+          <span class="flex flex-col">
+            <span class="text-body font-semibold">{{ p.libelle }}</span>
+            <span class="text-label text-text-2 tabular-nums">{{ duree(p.minutes) }}</span>
+          </span>
         </label>
       }
     </div>

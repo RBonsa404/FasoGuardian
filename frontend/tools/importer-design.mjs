@@ -53,6 +53,11 @@ icones.info = '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16v.5"
 // Tracés des maquettes absents de handoff/assets : action « Signaler » et sélecteur d'enfant de l'écran 16.
 icones.drapeau = '<path d="M5 21V4h11l-1.5 4L16 12H5"></path>';
 icones['chevron-bas'] = '<path d="M6 9l6 6 6-6"></path>';
+// Envoi d'un message au support (écran 47).
+icones.envoyer = '<path d="M5 12h14M13 6l6 6-6 6"></path>';
+// Préréglages de l'autorisation de retrait (écran 38).
+icones.toilette = '<path d="M7 4h10l-1 7H8zM6 11h12l-1 9H7z"></path>';
+icones.nuit = '<path d="M20 14A8 8 0 1 1 10 4a7 7 0 0 0 10 10z"></path>';
 
 const lignes = Object.entries(icones)
   .sort(([a], [b]) => a.localeCompare(b))

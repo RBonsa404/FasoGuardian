@@ -3,16 +3,16 @@ import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { AutorisationRetrait, ClientAlertes, ClientFamille, MotifRetrait } from 'api';
-import { FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
+import { FgBanniere, FgBouton, FgIcon, FgSquelette, NomIcone } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { SecondFacteur } from '../commun/second-facteur';
 import { heure } from '../commun/temps';
 
-const PREREGLAGES: readonly { motif: MotifRetrait; libelle: string; minutes: number }[] = [
-  { motif: 'TOILETTE', libelle: $localize`:@@retrait.toilette:Toilette`, minutes: 30 },
-  { motif: 'RECHARGE', libelle: $localize`:@@retrait.recharge:Recharge`, minutes: 120 },
-  { motif: 'NUIT', libelle: $localize`:@@retrait.nuit:Nuit`, minutes: 600 },
+const PREREGLAGES: readonly { motif: MotifRetrait; libelle: string; minutes: number; icone: NomIcone }[] = [
+  { motif: 'TOILETTE', libelle: $localize`:@@retrait.toilette:Toilette`, minutes: 30, icone: 'toilette' },
+  { motif: 'RECHARGE', libelle: $localize`:@@retrait.recharge:Recharge`, minutes: 120, icone: 'charge' },
+  { motif: 'NUIT', libelle: $localize`:@@retrait.nuit:Nuit`, minutes: 600, icone: 'nuit' },
 ];
 const PROLONGATION_MIN = 30;
 const DUREE_MAXIMALE_MIN = 720;

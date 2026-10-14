@@ -41,6 +41,20 @@ import { jourCourt, mois, montant, nomMoyen } from './libelles';
             </li>
           }
         </ul>
+        <!-- Aperçu du dernier reçu, tel que le PDF le présente (écran 43). -->
+        @let dernier = liste[0];
+        <section class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4 shadow-e2" i18n-aria-label="@@recus.apercu" aria-label="Aperçu du dernier reçu">
+          <div class="flex items-center justify-between border-b border-line pb-2">
+            <strong class="font-display text-label font-bold">FasoGuardian</strong>
+            <span class="text-caption font-semibold text-text-2" i18n="@@recus.apercu.type">REÇU · PDF</span>
+          </div>
+          <dl class="m-0 flex flex-col gap-1.5 text-caption">
+            <div class="flex justify-between gap-3"><dt class="text-text-2">N°</dt><dd class="m-0 tabular-nums">{{ dernier.numero }}</dd></div>
+            <div class="flex justify-between gap-3"><dt class="text-text-2" i18n="@@recus.apercu.offre">Offre</dt><dd class="m-0">{{ dernier.offre }} · {{ mois(dernier.periodeDebut) }}</dd></div>
+            <div class="flex justify-between gap-3"><dt class="text-text-2" i18n="@@recus.apercu.via">Payé via</dt><dd class="m-0 tabular-nums">{{ nomMoyen(dernier.moyen) }} · {{ dernier.numeroMasque }}</dd></div>
+            <div class="flex justify-between gap-3 pt-1 text-label font-bold"><dt i18n="@@recus.apercu.total">Total</dt><dd class="m-0 tabular-nums">{{ montant(dernier.montantFcfa) }} FCFA</dd></div>
+          </dl>
+        </section>
       } @else {
         <p class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2" i18n="@@recus.vide">Aucun reçu pour l'instant. Chaque paiement confirmé par l'opérateur en produit un.</p>
       }

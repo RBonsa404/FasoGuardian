@@ -12,6 +12,7 @@ export const ICONES = {
   'cloche': "<path d=\"M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0\"></path>",
   'drapeau': "<path d=\"M5 21V4h11l-1.5 4L16 12H5\"></path>",
   'ecole': "<path d=\"M3 9l9-5 9 5-9 5zM7 11.5V16c0 1.5 2.2 3 5 3s5-1.5 5-3v-4.5M21 9v6\"></path>",
+  'envoyer': "<path d=\"M5 12h14M13 6l6 6-6 6\"></path>",
   'fermer': "<path d=\"M6 6l12 12M18 6 6 18\"></path>",
   'filiation': "<path d=\"M8 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6M4 14a4 4 0 0 1 8 0M17 13a2 2 0 1 1 0-4 2 2 0 0 1 0 4M14 19a3 3 0 0 1 6 0M8 14v6\"></path>",
   'historique': "<path d=\"M3 12a9 9 0 1 0 3-6.7M3 4v4h4M12 7v5l3 2\"></path>",
@@ -23,6 +24,7 @@ export const ICONES = {
   'maison': "<path d=\"M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-5h4v5\"></path>",
   'medical': "<path d=\"M9 3h6v6h6v6h-6v6H9v-6H3V9h6z\"></path>",
   'mobile-money': "<path d=\"M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2M10 9h4M10 12h4\"></path>",
+  'nuit': "<path d=\"M20 14A8 8 0 1 1 10 4a7 7 0 0 0 10 10z\"></path>",
   'partager': "<path d=\"M6 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6M18 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6M18 15a3 3 0 1 1 0 6 3 3 0 0 1 0-6M8.6 10.5l6.8-4M8.6 13.5l6.8 4\"></path>",
   'position': "<path d=\"M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10zM12 9a2 2 0 1 1 0 4 2 2 0 0 1 0-4\"></path>",
   'qr': "<path d=\"M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2M18 14h2v2M14 18h2v2M18 20h2\"></path>",
@@ -38,6 +40,7 @@ export const ICONES = {
   'sos': "<path d=\"M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18M12 7v6M12 16.5v.5\"></path>",
   'support': "<path d=\"M4 12a8 8 0 1 1 16 0v5a2 2 0 0 1-2 2h-2v-6h4M4 13h4v6H6a2 2 0 0 1-2-2z\"></path>",
   'telephone': "<path d=\"M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2\"></path>",
+  'toilette': "<path d=\"M7 4h10l-1 7H8zM6 11h12l-1 9H7z\"></path>",
   'valider': "<path d=\"M5 12l4.5 4.5L19 7\"></path>",
 } as const;
 

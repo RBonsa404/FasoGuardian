@@ -120,7 +120,7 @@ export class DemandesSupport {
 /** Fil d'une demande (écran 47, US-PAR-017) : statut, messages du parent et réponses du support. */
 @Component({
   selector: 'app-fil-demande',
-  imports: [ReactiveFormsModule, RouterLink, FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette],
+  imports: [ReactiveFormsModule, RouterLink, FgBadge, FgBanniere, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide/demandes" i18n-aria-label="@@etape.retour" aria-label="Retour">
@@ -129,7 +129,7 @@ export class DemandesSupport {
     @if (demande(); as d) {
       <div class="flex flex-col gap-1.5">
         <fg-badge class="self-start" [ton]="statuts[d.statut].ton">{{ statuts[d.statut].libelle }} · {{ d.reference }}</fg-badge>
-        <h1 class="m-0 text-h3 font-bold tracking-tight">{{ d.objet }}</h1>
+        <h1 class="m-0 font-display text-[22px] leading-tight font-bold tracking-tight">{{ d.objet }}</h1>
       </div>
       <ol class="m-0 flex flex-1 list-none flex-col gap-2.5 p-0" aria-live="polite">
         @for (m of d.messages; track m.creeLe) {
@@ -144,8 +144,10 @@ export class DemandesSupport {
       }
       <form class="flex items-end gap-2" (submit)="$event.preventDefault(); repondre()">
         <label class="sr-only" for="reponse" i18n="@@fil.reponse">Votre réponse</label>
-        <textarea id="reponse" class="min-h-12 flex-1 rounded-md border border-line-strong bg-surface p-3 text-saisie outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent" rows="1" maxlength="2000" [formControl]="reponse" i18n-placeholder="@@fil.reponse.exemple" placeholder="Votre réponse…"></textarea>
-        <button fg-button type="submit" [chargement]="enCours()" i18n="@@demandes.envoyer">Envoyer</button>
+        <textarea id="reponse" class="min-h-12 flex-1 rounded-lg border-(length:--border-width-trait) border-line-strong bg-surface px-3.5 py-3 text-saisie outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent" rows="1" maxlength="2000" [formControl]="reponse" i18n-placeholder="@@fil.reponse.exemple" placeholder="Votre réponse…"></textarea>
+        <button type="submit" class="grid size-12 flex-none place-items-center rounded-lg bg-primary text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60" [disabled]="enCours()" [attr.aria-busy]="enCours()">
+          <fg-icon nom="envoyer" [taille]="20" /><span class="sr-only" i18n="@@demandes.envoyer">Envoyer</span>
+        </button>
       </form>
     } @else if (erreur(); as message) {
       <fg-banner ton="erreur">{{ message }}</fg-banner>
