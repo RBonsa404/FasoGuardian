@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, codeTotp, creerAgent, parentInscrit } from './aides';
+import { MOT_DE_PASSE_PARENT, codeTotp, creerAgent, parentInscrit, ongletReglages } from './aides';
 
 const CONSOLE = process.env['FG_E2E_CONSOLE'] ?? 'http://localhost:4202';
 
@@ -44,6 +44,7 @@ test('un opérateur publie un article et répond à la demande d’un parent, qu
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Aide et support' }).click();
   await expect(page.getByRole('heading', { name: 'Aide', exact: true })).toBeVisible();
   await page.getByRole('searchbox', { name: "Rechercher dans l'aide" }).fill(marque);

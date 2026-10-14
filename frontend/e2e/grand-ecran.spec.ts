@@ -38,16 +38,18 @@ test('sur grand écran, le parent navigue par la barre latérale ; sur télépho
   await expect(page.getByRole('heading', { name: 'Alertes', exact: true })).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/grand-ecran-alertes.png' });
 
-  // Téléphone : la barre disparaît, les liens du tableau de bord reviennent.
+  // Téléphone : la barre latérale disparaît, la barre d'onglets de l'écran 16 prend le relais.
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto('/');
-  await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toBeHidden();
+  await expect(page.getByRole('navigation', { name: 'Onglets' })).toBeVisible();
+  await page.getByRole('navigation', { name: 'Onglets' }).getByRole('link', { name: 'Réglages' }).click();
   await expect(page.getByRole('link', { name: 'Mes enfants' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Se déconnecter' })).toHaveCount(1);
 
   // La déconnexion depuis la barre latérale ramène à la connexion.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole('button', { name: 'Se déconnecter' }).click();
+  await page.getByRole('complementary').getByRole('button', { name: 'Se déconnecter' }).click();
   await expect(page.getByRole('button', { name: 'Se connecter' })).toBeVisible();
 });
 

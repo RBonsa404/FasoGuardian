@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, codeTotp, creerAgent, dernierCodeSms, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, codeTotp, creerAgent, dernierCodeSms, parentAvecEnfant, ongletReglages } from './aides';
 
 const CONSOLE = process.env['FG_E2E_CONSOLE'] ?? 'http://localhost:4202';
 
@@ -16,7 +16,7 @@ test('un parent exporte ses données et clôt son compte, un administrateur exé
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await page.getByRole('link', { name: 'Paramètres du compte' }).click();
+  await ongletReglages(page);
 
   // Droit d'accès : un fichier lisible, servi aussitôt
   const telechargement = page.waitForEvent('download');

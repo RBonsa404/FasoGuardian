@@ -50,6 +50,9 @@ for (const fichier of readdirSync(dossierIcones).sort()) {
 
 icones.retour = '<path d="M15 6l-6 6 6 6"></path>';
 icones.info = '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16v.5"></path>';
+// Tracés des maquettes absents de handoff/assets : action « Signaler » et sélecteur d'enfant de l'écran 16.
+icones.drapeau = '<path d="M5 21V4h11l-1.5 4L16 12H5"></path>';
+icones['chevron-bas'] = '<path d="M6 9l6 6 6-6"></path>';
 
 const lignes = Object.entries(icones)
   .sort(([a], [b]) => a.localeCompare(b))

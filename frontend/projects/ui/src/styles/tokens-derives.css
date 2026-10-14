@@ -14,6 +14,8 @@
   --color-alert-pressed: #f28500;
   --color-on-success: #0a0e1a;
   --color-on-danger: #0a0e1a;
+  /* Pastilles posées sur la carte (sélecteur d'enfant, cloche) : fond translucide flouté. */
+  --color-glass: rgba(18, 24, 41, 0.78);
 
   --radius-banner: 14px;
   --text-titre-ecran: 26px;
@@ -36,4 +38,5 @@
   --color-alert-ink: #833f09;
   --color-on-success: #ffffff;
   --color-on-danger: #ffffff;
+  --color-glass: rgba(255, 255, 255, 0.9);
 }

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, parentAvecEnfant, onglets, ongletReglages } from './aides';
 
 /** Module famille (US-PAR-003, 004, 011) : fiche enfant, fiche médicale et contacts d'urgence, côté parent. */
 test('un parent complète la fiche de son enfant, sa fiche médicale et ses contacts', async ({ page, request }) => {
@@ -10,9 +10,11 @@ test('un parent complète la fiche de son enfant, sa fiche médicale et ses cont
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await expect(page.getByText('Actif', { exact: true })).toBeVisible();
+  // Compte actif : la barre d'onglets propose la carte et les alertes.
+  await expect(onglets(page).getByRole('link', { name: 'Carte' })).toBeVisible();
 
   // Fiche enfant : créée par l'approbation du KYC, puis complétée
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
   await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
   await expect(page.getByRole('heading', { name: 'Yacouba Zongo' })).toBeVisible();

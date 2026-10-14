@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, dernierCodeSms, parentInscrit } from './aides';
+import { MOT_DE_PASSE_PARENT, dernierCodeSms, parentInscrit, ongletReglages } from './aides';
 
 const NOUVEAU = 'harmattan-de-janvier-2027';
 
@@ -29,7 +29,7 @@ test('un parent retrouve son accès par code SMS puis clôt son compte après co
   await expect(page.getByRole('heading', { name: 'Mon compte' })).toBeVisible();
 
   // Clôture : action sensible, confirmée par un code SMS propre à cette action
-  await page.getByRole('link', { name: 'Paramètres du compte' }).click();
+  await ongletReglages(page);
   await page.getByRole('button', { name: 'Clôturer le compte' }).click();
   const feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
   await expect(feuille).toBeVisible();

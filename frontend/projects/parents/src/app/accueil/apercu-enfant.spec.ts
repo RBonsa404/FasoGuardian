@@ -79,7 +79,8 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     expect(texte).toContain('4G');
     expect(texte).toContain('Orange BF · fort');
     expect(texte).not.toContain("n'a pas transmis de position plus récente");
-    expect(element.querySelector('h2')?.textContent).toBe('Dans « École Les Manguiers »');
+    // Le lieu fait le titre ; la ligne dessous dit qu'il s'agit de la Safe Zone.
+    expect(element.querySelector('h2')?.textContent).toBe('École Les Manguiers');
   });
 
   it('une position par antenne relais est dite approximative, avec son rayon d’incertitude', async () => {
@@ -102,6 +103,44 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     const { texte } = await monter(of(situation('GNSS', 10, 1)), [{ ...ECOLE, sortieEnCours: true, enfantDedans: false }]);
 
     expect(texte).toContain('Hors de « École Les Manguiers »');
+  });
+
+  it('reprend l’écran 16 : choix de l’enfant, cloche, actions rapides et dernière alerte', async () => {
+    const localisations: string[] = [];
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: ClientBracelet, useValue: { situation: () => of(situation('GNSS', 12, 2)), localiser: (id: string) => (localisations.push(id), of(undefined)) } },
+        { provide: ClientZones, useValue: { zones: () => of({ zones: [ECOLE], maximum: 3 }) } },
+      ],
+    });
+    TestBed.overrideComponent(ApercuEnfant, { remove: { imports: [Carte] }, add: { imports: [CarteFactice] } });
+    const fixture = TestBed.createComponent(ApercuEnfant);
+    fixture.componentRef.setInput('enfant', AWA);
+    fixture.componentRef.setInput('alertesEnCours', 1);
+    fixture.componentRef.setInput('alertes', [
+      { id: 'a1', enfantId: 'e1', type: 'BATTERIE_CRITIQUE', gravite: 'IMPORTANTE', statut: 'LEVEE', ouverteLe: '2026-10-13T19:40:00Z', closeLe: '2026-10-13T21:10:00Z', libelle: null, latitude: null, longitude: null, actions: [] },
+    ]);
+    let choix = 0;
+    fixture.componentInstance.changerEnfant.subscribe(() => choix++);
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+
+    (page.querySelector('button[aria-label^="Enfant affiché"]') as HTMLButtonElement).click();
+    expect(choix).toBe(1);
+    expect(page.querySelector('a[aria-label="Voir les alertes : 1 en cours"]')).not.toBeNull();
+
+    const actions = [...page.querySelectorAll('nav[aria-label="Actions pour Awa"] > *')].map((a) => (a.textContent ?? '').trim());
+    expect(actions).toEqual(['Localiser maintenant', 'Autoriser un retrait', 'Partager la position', 'Signaler']);
+    expect(page.querySelector('a[href="/alertes?signaler=e1"]')).not.toBeNull();
+    (page.querySelector('nav[aria-label="Actions pour Awa"] button') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(localisations).toEqual(['e1']);
+    expect(page.textContent).toContain('Demande envoyée au bracelet.');
+
+    expect(page.textContent).toContain('Dernières alertes');
+    expect(page.querySelector('a[href="/alertes/a1"]')).not.toBeNull();
+    expect(page.querySelector('a[href="/enfants/e1/journal"]')?.textContent).toContain('Tout voir');
   });
 
   it('sans bracelet, l’aperçu invite à l’appairage', async () => {

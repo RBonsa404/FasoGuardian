@@ -3,7 +3,7 @@ import { createHmac } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { APIRequestContext, expect } from '@playwright/test';
+import { APIRequestContext, Page, expect } from '@playwright/test';
 
 export const SERVEUR = process.env['FG_E2E_SERVEUR'] ?? 'http://localhost:8080';
 
@@ -255,4 +255,14 @@ export function simulerBracelet(numeroSerie: string): BraceletSimule {
   processus.stdout?.on('data', (morceau: Buffer) => (sortie += morceau.toString()));
   processus.stderr?.on('data', (morceau: Buffer) => (sortie += morceau.toString()));
   return { sortie: () => sortie, arreter: () => void processus.kill() };
+}
+
+/** Barre d'onglets de l'application sur téléphone (écran 16). */
+export function onglets(page: Page) {
+  return page.getByRole('navigation', { name: 'Onglets' });
+}
+
+/** Ouvre l'onglet Réglages, d'où partent le compte, les enfants, l'abonnement et l'aide. */
+export async function ongletReglages(page: Page): Promise<void> {
+  await onglets(page).getByRole('link', { name: 'Réglages' }).click();
 }

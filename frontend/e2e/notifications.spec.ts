@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, parentInscrit } from './aides';
+import { MOT_DE_PASSE_PARENT, parentInscrit, ongletReglages } from './aides';
 
 /**
  * Notifications push côté navigateur (écran 15, US-ENF-001). Le message est remis au service worker par le
@@ -15,7 +15,7 @@ test('le service worker reçoit une notification poussée et en accuse réceptio
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await page.getByRole('link', { name: 'Paramètres du compte' }).click();
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Notifications et installation' }).click();
 
   await expect(page.getByRole('heading', { name: 'Gardez FasoGuardian à portée de main' })).toBeVisible();

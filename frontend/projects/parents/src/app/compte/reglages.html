@@ -1,7 +1,13 @@
-<a class="-ml-2.5 grid size-11 place-items-center rounded-md text-text focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
-  <fg-icon nom="retour" [taille]="22" />
-</a>
-<h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@reglages.titre">Paramètres</h1>
+<h1 class="sr-only" i18n="@@reglages.titre">Paramètres</h1>
+<div class="flex items-center gap-3 pb-1">
+  <span class="grid size-13 flex-none place-items-center rounded-full bg-surface-2 text-text-2" aria-hidden="true"><fg-icon nom="agent" [taille]="24" /></span>
+  <div class="flex min-w-0 flex-col gap-0.5">
+    <strong class="font-display text-[17px] font-semibold" i18n="@@reglages.monCompte">Mon compte</strong>
+    @if (compte(); as c) {
+      <span class="text-label text-text-2 tabular-nums">{{ c.telephoneMasque }}@if (c.statut === 'ACTIF') {<ng-container i18n="@@reglages.verifie"> · vérifié</ng-container>}</span>
+    }
+  </div>
+</div>
 @if (succes(); as message) {
   <fg-banner ton="info" icone="valider">{{ message }}</fg-banner>
 }
@@ -29,16 +35,34 @@
     <fg-icon nom="cloche" [taille]="20" />
     <span class="flex-1 text-body font-medium" i18n="@@reglages.notifications">Notifications et installation</span>
   </a>
+</div>
+
+<div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
+  <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" routerLink="/enfants">
+    <fg-icon nom="filiation" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@accueil.enfants">Mes enfants</span>
+  </a>
   <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" routerLink="/abonnement">
     <fg-icon nom="mobile-money" [taille]="20" />
     <span class="flex-1 text-body font-medium" i18n="@@accueil.abonnement">Mon abonnement</span>
   </a>
+  <a class="flex min-h-14 items-center gap-3 px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" routerLink="/aide">
+    <fg-icon nom="support" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@accueil.aide">Aide et support</span>
+  </a>
+</div>
+
+<div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
   <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [disabled]="export()" (click)="telechargerMesDonnees()">
     <fg-icon nom="partager" [taille]="20" />
     <span class="flex flex-1 flex-col">
       <span class="text-body font-medium" i18n="@@reglages.donnees">Télécharger mes données</span>
       <span class="text-caption text-text-3" i18n="@@reglages.donnees.texte">Tout ce que FasoGuardian conserve sur vous et vos enfants.</span>
     </span>
+  </button>
+  <button type="button" class="flex min-h-14 items-center gap-3 px-4 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [disabled]="sortie()" (click)="deconnecter()">
+    <fg-icon nom="retour" [taille]="20" />
+    <span class="flex-1 text-body font-medium" i18n="@@accueil.deconnexion">Se déconnecter</span>
   </button>
 </div>
 

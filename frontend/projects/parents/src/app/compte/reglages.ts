@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientConformite, ClientProfil } from 'api';
+import { ClientAuthentification, ClientConformite, ClientProfil, Compte } from 'api';
 import { FgBanniere, FgBouton, FgChamp, FgChoixTheme, FgCode, FgFeuille, FgIcon, FgTelephone } from 'ui';
 
 import { CopieLocale } from '../commun/copie-locale';
@@ -20,13 +20,17 @@ type Feuille = 'mot-de-passe' | 'telephone' | 'cloture' | null;
   imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgChoixTheme, FgCode, FgFeuille, FgIcon, FgTelephone, SecondFacteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reglages.html',
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
 })
 export class Reglages {
   private readonly client = inject(ClientProfil);
   private readonly router = inject(Router);
   private readonly conformite = inject(ClientConformite);
   private readonly copie = inject(CopieLocale);
+
+  private readonly authentification = inject(ClientAuthentification);
+  protected readonly compte = signal<Compte | null>(null);
+  protected readonly sortie = signal(false);
 
   protected readonly feuille = signal<Feuille>(null);
   protected readonly enCours = signal(false);
@@ -40,6 +44,18 @@ export class Reglages {
   protected readonly telephone = new FormControl('', { nonNullable: true });
   protected readonly code = new FormControl('', { nonNullable: true });
   protected readonly explicationCloture = $localize`:@@cloture.explication:La clôture est définitive : votre compte sera fermé et vos données supprimées sous 30 jours. Saisissez le code reçu par SMS pour confirmer.`;
+
+  constructor() {
+    this.authentification.moi().subscribe({ next: (compte) => this.compte.set(compte), error: () => undefined });
+  }
+
+  protected deconnecter(): void {
+    this.sortie.set(true);
+    // Un appareil dont le parent se déconnecte ne garde aucune fiche ; la session locale est fermée même hors ligne.
+    void this.copie.vider();
+    const sortir = () => void this.router.navigate(['/connexion']);
+    this.authentification.deconnecter().subscribe({ next: sortir, error: sortir });
+  }
 
   /** Droit d'accès : le fichier est produit à la demande et la demande est journalisée. */
   protected telechargerMesDonnees(): void {

@@ -35,7 +35,11 @@ async function ouvrir(statut: Compte['statut']) {
 }
 
 function liens(page: HTMLElement): string[] {
-  return [...page.querySelectorAll('nav a')].map((a) => (a.textContent ?? '').trim());
+  return [...page.querySelectorAll('aside nav a')].map((a) => (a.textContent ?? '').trim());
+}
+
+function onglets(page: HTMLElement): string[] {
+  return [...page.querySelectorAll('nav[aria-label="Onglets"] a')].map((a) => (a.textContent ?? '').trim());
 }
 
 describe('coque de l’espace parent', () => {
@@ -49,12 +53,16 @@ describe('coque de l’espace parent', () => {
     expect(page.querySelector('aside')?.classList.contains('hidden')).toBe(true);
     expect(page.querySelector('aside')?.classList.contains('lg:flex')).toBe(true);
     expect(page.querySelector('router-outlet')).not.toBeNull();
+    // Sur téléphone, l'accueil porte la barre d'onglets de l'écran 16 ; elle disparaît sur grand écran.
+    expect(onglets(page)).toEqual(['Accueil', 'Carte', 'Alertes', 'Réglages']);
+    expect(page.querySelector('nav[aria-label="Onglets"]')?.classList.contains('lg:hidden')).toBe(true);
   });
 
   it('ne propose pas les rubriques de suivi tant que le compte est en instruction', async () => {
     const { fixture } = await ouvrir('EN_INSTRUCTION');
 
     expect(liens(fixture.nativeElement as HTMLElement)).toEqual(['Tableau de bord', 'Aide et support', 'Paramètres du compte']);
+    expect(onglets(fixture.nativeElement as HTMLElement)).toEqual(['Accueil', 'Réglages']);
   });
 
   it('efface la copie locale et ferme la session à la déconnexion', async () => {

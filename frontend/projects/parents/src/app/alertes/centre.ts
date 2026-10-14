@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
@@ -126,7 +126,7 @@ interface Groupe {
 
     <fg-sheet i18n-titre="@@alertes.signaler.titre" titre="Signaler une disparition" [ouverte]="signalement()" (fermee)="signalement.set(false)">
       <p class="m-0 text-body text-text-2" i18n="@@alertes.signaler.texte">Le signalement est horodaté et les autres tuteurs sont prévenus. Vous restez seul à décider de la transmission aux forces de sécurité.</p>
-      @for (enfant of enfants(); track enfant.id) {
+      @for (enfant of aSignaler(); track enfant.id) {
         <button fg-button variante="alert" type="button" [chargement]="enTraitement() === enfant.id" (click)="signaler(enfant)" i18n="@@alertes.signaler.pour">Signaler pour {{ enfant.prenom }}</button>
       }
       <button fg-button variante="secondary" type="button" (click)="signalement.set(false)" i18n="@@commun.annuler">Annuler</button>
@@ -140,6 +140,13 @@ export class CentreAlertes {
   private readonly notifications = inject(ClientNotifications);
   private readonly router = inject(Router);
   protected readonly signalement = signal(false);
+  /** Enfant pour lequel le tableau de bord a demandé un signalement (action « Signaler » de l'écran 16). */
+  readonly demandeSignalement = input<string | undefined>(undefined, { alias: 'signaler' });
+  protected readonly aSignaler = computed(() => {
+    const id = this.demandeSignalement();
+    const pour = id ? this.enfants().filter((enfant) => enfant.id === id) : [];
+    return pour.length > 0 ? pour : this.enfants();
+  });
 
   protected readonly heure = heure;
   protected readonly ilYA = ilYA;
@@ -170,6 +177,11 @@ export class CentreAlertes {
   });
 
   constructor() {
+    effect(() => {
+      if (this.demandeSignalement()) {
+        this.signalement.set(true);
+      }
+    });
     this.charger();
     const minuterie = setInterval(() => this.charger(), RAFRAICHISSEMENT_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(minuterie));

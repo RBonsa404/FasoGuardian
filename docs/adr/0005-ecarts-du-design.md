@@ -43,6 +43,13 @@ traçabilité.
   tableau 18) : l'écran montre le début de ce pseudonyme et la date du blocage. Le seuil est celui de
   US-SYS-010 (plus de 20 jetons invalides en une minute), non les « 10 min » de la maquette.
 - **Écrans 64 et 66, identité de l'enfant.** Voir ADR 0009 : le rôle SAV ne voit que l'état des bracelets.
+- **Écran 16, tableau de bord.** La mise en page de la maquette est reprise (carte en tête, choix de l'enfant
+  et cloche posés dessus, carte d'état, quatre actions rapides, dernière alerte, barre d'onglets Accueil, Carte,
+  Alertes, Réglages). Trois écarts : l'autonomie restante (« ≈ 41 h ») n'est pas affichée, la plateforme ne
+  l'estime pas ; le bandeau orange d'une alerte en cours est conservé sous la carte d'état, une alerte ne
+  devant jamais tenir dans le seul point de la cloche ; les accès à la carte, aux Safe Zones, aux trajets et
+  au bracelet restent en liste sous la dernière alerte, la maquette ne disant pas d'où on les ouvre. Mes
+  enfants, l'abonnement, l'aide et la déconnexion passent dans l'onglet Réglages (écran 48).
 - **Écran 56, recherche Ctrl K.** La maquette invite à « rechercher un dossier, un parent, un FG-XXXX ». La
   recherche trouve les écrans de l'agent et reconnaît les références de ses seuls rôles (FG-…, SAV-…, KYC-…,
   SUP-…, FG-SIG-…), puis ouvre l'écran qui les cherche avec ses propres contrôles et sa journalisation. Elle

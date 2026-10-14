@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, braceletEmet, codeTotp, creerAgent, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, braceletEmet, codeTotp, creerAgent, parentAvecEnfant, ongletReglages } from './aides';
 
 const CONSOLE = process.env['FG_E2E_CONSOLE'] ?? 'http://localhost:4202';
 const FOND_CLAIR = 'rgb(245, 247, 251)';
@@ -31,6 +31,7 @@ test('l’espace parent suit l’apparence du système, puis le choix de la pers
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await expect(page.getByText('Précise ± 8 m')).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/clair-16-tableau-de-bord.png', fullPage: true });
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Mon abonnement' }).click();
   await expect(page.getByRole('heading', { name: 'Mon abonnement' })).toBeVisible();
   await expect(page.getByText(/FCFA/).first()).toBeVisible();

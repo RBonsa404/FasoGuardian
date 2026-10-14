@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, parentAvecEnfant, ongletReglages } from './aides';
 
 /**
  * Module abonnements (US-PAR-015) : choix d'une offre, paiement mobile money, reçu. L'opérateur est celui du
@@ -15,6 +15,7 @@ test('un parent souscrit une offre, voit un paiement refusé, réessaie, puis t�
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Mon abonnement' }).click();
 
   // Écran 41, sans abonnement : les trois offres, l'offre École n'est pas souscriptible par une famille

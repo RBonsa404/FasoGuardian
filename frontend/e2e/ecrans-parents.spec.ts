@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, parentAvecEnfant, ongletReglages } from './aides';
 
 /** Écran 9 : à la première ouverture sur un appareil, l'introduction passe avant la connexion. */
 test('la première visite montre l’introduction, les suivantes mènent droit à la connexion', async ({ page }) => {
@@ -43,6 +43,7 @@ test('un parent voit ce que montre la page QR de son enfant, et l’état de mai
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
   await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
   await page.getByRole('link', { name: 'Aperçu de la page QR' }).click();

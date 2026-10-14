@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, dernierCodeSms, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, dernierCodeSms, parentAvecEnfant, ongletReglages } from './aides';
 
 /** Module dispositifs (US-PAR-013, US-PAR-014) : appairage, mode économie, perte et désappairage, côté parent. */
 test('un parent associe un bracelet, le déclare perdu, le retrouve puis le désappaire', async ({ page, request }) => {
@@ -13,6 +13,7 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
   await page.getByRole('button', { name: 'Se connecter' }).click();
   // Tableau de bord sans bracelet : invitation à l'appairage
   await expect(page.getByRole('heading', { name: 'Associez le bracelet de Yacouba' })).toBeVisible();
+  await ongletReglages(page);
   await page.getByRole('link', { name: 'Mes enfants' }).click();
   await page.getByRole('link', { name: /Yacouba Zongo/ }).click();
 

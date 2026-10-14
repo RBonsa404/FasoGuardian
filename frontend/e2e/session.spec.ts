@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, parentAvecEnfant } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, parentAvecEnfant, onglets, ongletReglages } from './aides';
 
 /**
  * Récupération de session (US-PAR-019) : quand le jeton de rafraîchissement n'est plus valable, une
@@ -21,7 +21,7 @@ test('session expirée : la fiche de l’enfant reste consultable, puis le paren
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await expect(page.getByRole('link', { name: 'Mes enfants' })).toBeVisible();
+  await expect(onglets(page).getByRole('link', { name: 'Carte' })).toBeVisible();
 
   // Le tableau de bord copie la fiche sur l'appareil
   await expect.poll(() => page.evaluate(() => new Promise<number>((resoudre) => {
@@ -62,9 +62,10 @@ test('session expirée : la fiche de l’enfant reste consultable, puis le paren
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await expect(page.getByRole('link', { name: 'Mes enfants' })).toBeVisible();
+  await expect(onglets(page).getByRole('link', { name: 'Carte' })).toBeVisible();
 
   // La déconnexion efface la copie : sans session, il n'y a plus de fiche à montrer
+  await ongletReglages(page);
   await page.getByRole('button', { name: /Se déconnecter/ }).click();
   await expect(page).toHaveURL(/\/connexion/);
   await page.goto('/');

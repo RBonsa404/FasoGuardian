@@ -1,10 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 import { ClientAuthentification, Compte } from 'api';
-import { FgBouton } from 'ui';
+import { FgBouton, FgIcon, NomIcone } from 'ui';
 
 import { CopieLocale } from '../commun/copie-locale';
+import { EnfantCourant } from '../commun/enfant-courant';
+
+interface Onglet {
+  readonly libelle: string;
+  readonly icone: NomIcone;
+  readonly lien: string;
+  readonly compteActif?: boolean;
+}
+
+/** Écrans de premier niveau sur téléphone : la barre d'onglets n'apparaît que sur eux (écran 16). */
+const PREMIER_NIVEAU = ['/', '/alertes', '/reglages'];
 
 interface Entree {
   readonly libelle: string;
@@ -33,7 +46,7 @@ const ENTREES: readonly Entree[] = [
  */
 @Component({
   selector: 'app-coque',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside
@@ -75,7 +88,20 @@ const ENTREES: readonly Entree[] = [
         </button>
       </div>
     </aside>
-    <div class="min-w-0 flex-1"><router-outlet /></div>
+    <div [class]="ongletsVisibles() ? 'min-w-0 flex-1 max-lg:pb-18' : 'min-w-0 flex-1'"><router-outlet /></div>
+    @if (ongletsVisibles()) {
+      <nav class="fixed inset-x-0 bottom-0 z-1100 grid h-18 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden" [style.grid-template-columns]="'repeat(' + onglets().length + ', minmax(0, 1fr))'" i18n-aria-label="@@coque.onglets" aria-label="Onglets">
+        @for (onglet of onglets(); track onglet.libelle) {
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium text-text-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+            routerLinkActive="text-accent"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [routerLink]="onglet.lien"
+            ><fg-icon [nom]="onglet.icone" [taille]="22" />{{ onglet.libelle }}</a
+          >
+        }
+      </nav>
+    }
   `,
   host: { class: 'block lg:flex' },
 })
@@ -84,7 +110,28 @@ export class Coque {
   private readonly router = inject(Router);
   private readonly copie = inject(CopieLocale);
 
+  private readonly courant = inject(EnfantCourant);
+  private readonly adresse = toSignal(
+    this.router.events.pipe(
+      filter((evenement) => evenement instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
   protected readonly compte = signal<Compte | null>(null);
+  /** Accueil, Carte de l'enfant affiché, Alertes, Réglages ; sans compte actif, l'accueil et les réglages. */
+  protected readonly onglets = computed<Onglet[]>(() => {
+    const enfant = this.courant.id();
+    const tous: Onglet[] = [
+      { libelle: $localize`:@@coque.onglet.accueil:Accueil`, icone: 'maison', lien: '/' },
+      { libelle: $localize`:@@coque.onglet.carte:Carte`, icone: 'position', lien: enfant ? `/enfants/${enfant}/carte` : '/enfants', compteActif: true },
+      { libelle: $localize`:@@coque.onglet.alertes:Alertes`, icone: 'cloche', lien: '/alertes', compteActif: true },
+      { libelle: $localize`:@@coque.onglet.reglages:Réglages`, icone: 'reglages', lien: '/reglages' },
+    ];
+    return tous.filter((onglet) => !onglet.compteActif || this.compte()?.statut === 'ACTIF');
+  });
+  protected readonly ongletsVisibles = computed(() => PREMIER_NIVEAU.includes(this.adresse().split(/[?#]/)[0]));
   protected readonly sortie = signal(false);
   protected readonly entrees = computed(() =>
     ENTREES.filter((entree) => !entree.compteActif || this.compte()?.statut === 'ACTIF'),

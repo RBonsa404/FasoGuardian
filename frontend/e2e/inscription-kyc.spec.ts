@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { SERVEUR, agentKyc, dernierCodeSms } from './aides';
+import { SERVEUR, agentKyc, dernierCodeSms, onglets } from './aides';
 
 const JPEG = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.from('photo de test')]);
 const PDF = Buffer.from('%PDF-1.7 acte de naissance de test');
@@ -66,5 +66,6 @@ test("un parent s'inscrit, dépose son dossier, et son compte est activé après
   await page.goto('/verification/instruction');
   await expect(page.getByRole('heading', { name: 'Votre compte est activé' })).toBeVisible();
   await page.getByRole('button', { name: 'Continuer' }).click();
-  await expect(page.getByText('Actif', { exact: true })).toBeVisible();
+  // Compte actif : la barre d'onglets propose la carte et les alertes.
+  await expect(onglets(page).getByRole('link', { name: 'Carte' })).toBeVisible();
 });
