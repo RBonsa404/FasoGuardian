@@ -78,6 +78,8 @@ export class Carte {
   readonly zones = input<readonly SafeZone[]>([]);
   readonly trace = input<readonly PointGeo[]>([]);
   readonly brouillon = input<Brouillon | null>(null);
+  /** Hauteur, en pixels, masquée en bas de la carte par un contrôle posé dessus : le cadrage la laisse libre. */
+  readonly margeBas = input(0);
   /** Point touché sur la carte (éditeur de zone). */
   readonly touche = output<PointGeo>();
 
@@ -215,7 +217,11 @@ export class Carte {
     const cadre = `${this.zones().length}|${trace.length}|${position ? 'p' : ''}|${cercle}`;
     if (etendue.length > 0 && cadre !== this.cadre && !brouillon?.sommets.length) {
       this.cadre = cadre;
-      carte.fitBounds(L.latLngBounds(etendue), { padding: [32, 32], maxZoom: 17 });
+      carte.fitBounds(L.latLngBounds(etendue), {
+        paddingTopLeft: [32, 32],
+        paddingBottomRight: [32, 32 + this.margeBas()],
+        maxZoom: 17,
+      });
     }
   }
 }

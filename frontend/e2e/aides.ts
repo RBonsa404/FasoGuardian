@@ -209,6 +209,40 @@ export async function braceletAuParc(api: APIRequestContext): Promise<CarteActiv
 }
 
 /**
+ * Exécute une requête SQL dans la base de la pile de test. Réservé à ce qu'aucune interface ne permet, comme
+ * faire remonter un appairage dans le passé pour rejouer une journée de trajet.
+ */
+export function sqlPile(requete: string): void {
+  execFileSync('docker', ['exec', 'fasoguardian-postgres-1', 'psql', '-q', '-v', 'ON_ERROR_STOP=1', '-U', process.env['FG_DB_USER'] ?? 'fasoguardian',
+    '-d', process.env['FG_DB_NAME'] ?? 'fasoguardian', '-c', requete], { stdio: 'ignore' });
+}
+
+/**
+ * Journée de trajet, terminée il y a quelques minutes : départ de la maison, arrêt de huit minutes en route,
+ * entrée à l'école et séjour. L'appairage du bracelet est d'abord daté de la veille, pour que ces positions
+ * passées soient celles de l'enfant.
+ */
+export function journeeDeTrajet(numeroSerie: string, depart: { latitude: number; longitude: number }, ecole: { latitude: number; longitude: number }): void {
+  sqlPile(`UPDATE dispositifs.appairage SET debut = now() - INTERVAL '1 day' WHERE fin IS NULL AND bracelet_id = `
+    + `(SELECT id FROM dispositifs.bracelet WHERE numero_serie = '${numeroSerie.replace(/'/g, '')}')`);
+  const maintenant = Math.floor(Date.now() / 1000);
+  // Les heures restent dans la journée en cours, même tôt le matin.
+  const minuit = Math.floor(new Date(new Date().setHours(0, 0, 0, 0)).getTime() / 1000);
+  const debut = Math.max(minuit + 60, maintenant - 75 * 60);
+  const pas = Math.max(1, Math.floor((maintenant - 120 - debut) / 70));
+  const milieu = { latitude: (depart.latitude + ecole.latitude) / 2, longitude: (depart.longitude + ecole.longitude) / 2 };
+  const points: [number, { latitude: number; longitude: number }][] = [
+    [0, depart], [6, { latitude: depart.latitude + 0.006, longitude: depart.longitude + 0.002 }],
+    [13, milieu], [17, { latitude: milieu.latitude + 0.0001, longitude: milieu.longitude }], [21, { latitude: milieu.latitude, longitude: milieu.longitude + 0.0001 }],
+    [29, { latitude: ecole.latitude - 0.004, longitude: ecole.longitude }], [35, ecole],
+    [50, { latitude: ecole.latitude + 0.0002, longitude: ecole.longitude }], [70, { latitude: ecole.latitude, longitude: ecole.longitude + 0.0002 }],
+  ];
+  points.forEach(([minute, point], rang) => {
+    braceletEmet(numeroSerie, 'telemetry', { t: debut + minute * pas, seq: 100 + rang, lat: point.latitude, lon: point.longitude, acc: 9, src: 'gnss', bat: 70, net: '4g' });
+  });
+}
+
+/**
  * Publie un message comme le ferait le bracelet : en MQTT, TLS mutuel, sous son propre certificat de
  * développement (émis à la demande). Le message traverse le broker et son ACL avant d'atteindre le serveur.
  */

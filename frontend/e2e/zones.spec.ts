@@ -112,6 +112,6 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   // Trajets : aucune position ce jour-là, durée de conservation rappelée
   await page.getByRole('link', { name: 'Trajets' }).click();
   await expect(page.getByText('Aucune position enregistrée ce jour-là.')).toBeVisible();
-  await expect(page.getByText('Les trajets sont conservés 30 jours, puis effacés.')).toBeVisible();
+  await expect(page.getByText('Offre Intermédiaire : 30 jours conservés, puis effacés.')).toBeVisible();
   await expect(page.getByRole('group', { name: 'Jour affiché' }).getByRole('button')).toHaveCount(7);
 });

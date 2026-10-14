@@ -23,6 +23,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `theme.spec.ts` | Thème clair : suivi du système, choix dans les paramètres, persistance ; captures en clair de l'espace parent et de la console | transverse |
 | `site.spec.ts` | Site vitrine : contenu rendu côté serveur, navigation, bracelet 3D chargé à la demande et vue éclatée au défilement ; repli sans animation et menu sur téléphone | écrans 1 à 8 |
 | `carte.spec.ts` | Carte plein écran : position approximative, bascule du mode alerte (suivi rapproché de 30 min) et son arrêt, recentrage | US-PAR-006, US-PAR-009 |
+| `trajets.spec.ts` | Historique des trajets : frise des lieux (départ, arrêt, entrée dans une zone), mention de l'offre, relecture du trajet | US-PAR-008 |
 
 ## Lancer les tests
 

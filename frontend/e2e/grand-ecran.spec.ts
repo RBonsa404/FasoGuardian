@@ -97,8 +97,8 @@ test('sur grand écran, la carte occupe la fenêtre : tableau de bord, position,
 
   // Trajets : les jours et le bilan à gauche, la carte du trajet à droite
   await page.goto(`/enfants/${enfants[0].id}/trajets`);
-  await expect(page.getByRole('heading', { name: 'Trajets' })).toBeVisible();
-  await expect(page.getByText('1 position(s) enregistrée(s) ce jour-là.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Trajets de Yacouba' })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Lieux de la journée' }).getByText('Départ')).toBeVisible();
   const trajet = await page.getByRole('application').boundingBox();
   expect(trajet!.width).toBeGreaterThan(700);
   expect(trajet!.height).toBeGreaterThan(800);

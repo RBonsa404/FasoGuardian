@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { APIRequestContext, expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, PNG, SERVEUR, braceletAuParc, braceletEmet, codeTotp, dernierCodeSms } from '../aides';
+import { MOT_DE_PASSE_PARENT, PNG, SERVEUR, braceletAuParc, braceletEmet, codeTotp, dernierCodeSms, journeeDeTrajet } from '../aides';
 
 /**
  * Peuple une pile locale fraîche de comptes de démonstration, pour essayer l'application à la main
@@ -152,6 +152,9 @@ test('peuplement de démonstration', async ({ request }) => {
     const codeZone = await dernierCodeSms(request, PARENT_ACTIF);
     expect((await request.post(`${awa}/zones`, { headers: parent, data: { ...zone, codeSecondFacteur: codeZone } })).status()).toBe(201);
   }
+
+  // Journée d'Awa (écran 19) : départ de la maison, arrêt en route, arrivée à l'école.
+  journeeDeTrajet(bracelet.numeroSerie, { latitude: 12.3292, longitude: -1.5110 }, { latitude: 12.3714, longitude: -1.5197 });
 
   // Second tuteur d'Awa (écran 34) : invité par Mariam, code SMS à l'appui, puis vérifié par l'équipe KYC.
   const jetonSecond = await inscrire(request, SECOND_TUTEUR);
