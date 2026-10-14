@@ -73,6 +73,7 @@ public class Appairages {
     private final Notifications notifications;
     private final ServiceChiffrement chiffrement;
     private final CommandesBracelet commandes;
+    private final Maintenance maintenance;
     private final Droits droits;
     private final JournalAudit journal;
     private final Clock horloge;
@@ -84,9 +85,10 @@ public class Appairages {
 
     Appairages(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
             AccesEnfant acces, ProfilsQr profilsQr, SecondFacteur secondFacteur, LiensTutelle liens,
-            Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, Droits droits,
+            Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, Maintenance maintenance, Droits droits,
             JournalAudit journal, Clock horloge) {
         this.commandes = commandes;
+        this.maintenance = maintenance;
         this.droits = droits;
         this.bracelets = bracelets;
         this.appairages = appairages;
@@ -130,7 +132,7 @@ public class Appairages {
                     "Ce code n'est pas reconnu. Vérifiez la carte d'activation.");
         }
         Instant maintenant = horloge.instant();
-        appairages.findByEnfantIdAndFinIsNull(enfantId).ifPresent(ancien -> remplacer(ancien, maintenant));
+        appairages.findByEnfantIdAndFinIsNull(enfantId).ifPresent(ancien -> remplacer(tuteurId, ancien, bracelet, maintenant));
         bracelet.activer(maintenant);
         Appairage appairage = appairages.save(new Appairage(bracelet.id(), enfantId, maintenant));
         profilsQr.associer(enfantId, bracelet.jetonQrSha256(), bracelet.numeroSerie());
@@ -290,14 +292,22 @@ public class Appairages {
 
     // -------------------------------------------------------------------- aides
 
-    /** L'enfant a déjà un appairage actif : seul un bracelet déclaré perdu peut être remplacé sans autre démarche. */
-    private void remplacer(Appairage ancien, Instant maintenant) {
+    /**
+     * L'enfant a déjà un appairage actif. Seuls sont remplacés sans autre démarche un bracelet déclaré perdu et
+     * un bracelet muet dont le service après-vente a réservé l'unité de remplacement (échange en point relais) :
+     * l'ancienne unité lui revient.
+     */
+    private void remplacer(UUID tuteurId, Appairage ancien, Bracelet nouveau, Instant maintenant) {
         Bracelet precedent = bracelets.findById(ancien.braceletId()).orElseThrow();
-        if (precedent.statut() != StatutBracelet.PERDU) {
+        if (precedent.statut() == StatutBracelet.PERDU) {
+            precedent.cloreSuivi(maintenant);
+        } else if (maintenance.echanger(precedent.id(), nouveau.id(), maintenant)) {
+            precedent.retournerAuSav(maintenant);
+            journal.consigner(tuteurId, ROLE, "BRACELET_ECHANGE", "BRACELET", precedent.id().toString(), Resultat.SUCCES);
+        } else {
             throw new ErreurMetier(CodeErreur.ENFANT_DEJA_EQUIPE,
                     "Cet enfant porte déjà un bracelet. Désappairez-le ou déclarez-le avant d'en associer un autre.");
         }
-        precedent.cloreSuivi(maintenant);
         ancien.clore(MotifFin.REMPLACEMENT, maintenant);
         // L'unicité de l'appairage actif est contrôlée en base : la clôture doit y précéder le nouvel appairage.
         appairages.flush();

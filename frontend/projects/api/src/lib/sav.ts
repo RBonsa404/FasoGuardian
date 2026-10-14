@@ -57,6 +57,15 @@ export interface TicketMaintenance {
   readonly resolution: ResolutionTicket | null;
   readonly note: string | null;
   readonly resoluLe: string | null;
+  /** Sondage du bracelet par une localisation signée. */
+  readonly diagnosticLe: string | null;
+  readonly diagnostic: 'EMISE' | 'ACCUSEE' | 'REFUSEE' | 'EXPIREE' | null;
+  readonly pointRelais: string | null;
+  readonly rendezVousLe: string | null;
+  /** Unité réservée pour l'échange ; son appairage par le parent clôt le ticket. */
+  readonly remplacement: string | null;
+  /** Autres bracelets muets en ce moment. */
+  readonly autresMuets: number;
 }
 
 const PARC = '/api/v1/console/parc';
@@ -94,6 +103,19 @@ export class ClientSav {
 
   prendreEnCharge(ticketId: string): Observable<TicketMaintenance> {
     return this.http.post<TicketMaintenance>(`${TICKETS}/${ticketId}/prise-en-charge`, null);
+  }
+
+  diagnostiquer(ticketId: string): Observable<TicketMaintenance> {
+    return this.http.post<TicketMaintenance>(`${TICKETS}/${ticketId}/diagnostic`, null);
+  }
+
+  /** Le rendez-vous est transmis au parent par la plateforme : le service après-vente ne le connaît pas. */
+  fixerRendezVous(ticketId: string, pointRelais: string, le: string): Observable<TicketMaintenance> {
+    return this.http.post<TicketMaintenance>(`${TICKETS}/${ticketId}/rendez-vous`, { pointRelais, le });
+  }
+
+  reserverRemplacement(ticketId: string, numeroSerie: string): Observable<TicketMaintenance> {
+    return this.http.post<TicketMaintenance>(`${TICKETS}/${ticketId}/remplacement`, { numeroSerie });
   }
 
   resoudre(ticketId: string, resolution: ResolutionTicket, note: string): Observable<TicketMaintenance> {

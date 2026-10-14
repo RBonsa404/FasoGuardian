@@ -65,6 +65,9 @@ export interface SuiviMaintenance {
   readonly reseau: string | null;
   /** Moment où le service après-vente s'en est saisi. */
   readonly prisEnChargeLe: string | null;
+  /** Rendez-vous proposé par le service après-vente. */
+  readonly pointRelais: string | null;
+  readonly rendezVousLe: string | null;
 }
 
 /** Client du bracelet d'un enfant : appairage, configuration, perte, vol, désappairage (US-PAR-013, 014). */

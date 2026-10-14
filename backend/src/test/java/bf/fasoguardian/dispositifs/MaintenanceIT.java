@@ -140,6 +140,80 @@ class MaintenanceIT extends TestIntegration {
     }
 
     @Test
+    void lAgentSavMeneLeTicketJusquALEchangeEnPointRelaisSansConnaitreLaFamille() throws Exception {
+        ParentAvecEnfant famille = acteurs.parentAvecEnfant();
+        Carte carte = equiper(famille, "2 hours");
+        supervision.superviser();
+        String ticket = TICKETS + "/" + ticketOuvert(carte);
+        String suivi = "/api/v1/enfants/" + famille.enfantId() + "/bracelet/maintenance";
+        String sav = acteurs.jetonSav();
+
+        // Rien ne se fait sur un ticket que personne n'a pris en charge.
+        avec(post(ticket + "/diagnostic"), sav).andExpect(status().isConflict());
+        avec(post(ticket + "/prise-en-charge"), sav).andExpect(status().isOk());
+
+        // Diagnostic : une localisation signée part vers le bracelet ; tant qu'il ne l'accuse pas, elle reste émise.
+        String diagnostic = avec(post(ticket + "/diagnostic"), sav).andExpect(status().isOk())
+                .andExpect(jsonPath("$.diagnosticLe").isNotEmpty()).andExpect(jsonPath("$.diagnostic").value("EMISE"))
+                .andExpect(jsonPath("$.autresMuets").value(0)).andReturn().getResponse().getContentAsString();
+        assertThat(diagnostic).doesNotContain(famille.enfantId()).doesNotContain(famille.parent().telephone());
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM dispositifs.commande c JOIN dispositifs.bracelet b ON b.id = c.bracelet_id"
+                + " WHERE b.numero_serie = ? AND c.type = 'LOCALISER'", Long.class, carte.numeroSerie())).isEqualTo(1);
+
+        // Rendez-vous : à venir et sous trente jours ; la plateforme le transmet au parent, que l'agent ne connaît pas.
+        json(post(ticket + "/rendez-vous"), "{\"pointRelais\":\"Dassasgho\",\"le\":\"2020-01-01T10:00:00Z\"}", sav)
+                .andExpect(status().isBadRequest());
+        json(post(ticket + "/rendez-vous"), "{\"pointRelais\":\"Dassasgho\",\"le\":\"" + Instant.now().plus(Duration.ofDays(40)) + "\"}", sav)
+                .andExpect(status().isBadRequest());
+        json(post(ticket + "/rendez-vous"), "{\"pointRelais\":\"Dassasgho\",\"le\":\"" + Instant.now().plus(Duration.ofDays(2)) + "\"}", sav)
+                .andExpect(status().isOk()).andExpect(jsonPath("$.pointRelais").value("Dassasgho"));
+        acteurs.attendreSms(famille.parent().telephone(), "au point relais « Dassasgho »", carte.numeroSerie(), "saisirez le code");
+        avec(get(suivi), famille.parent().jeton()).andExpect(jsonPath("$.pointRelais").value("Dassasgho"))
+                .andExpect(jsonPath("$.rendezVousLe").isNotEmpty());
+
+        // Sans réservation, une autre unité ne remplace pas le bracelet de l'enfant.
+        Carte autre = acteurs.braceletAuParc();
+        json(post("/api/v1/enfants/" + famille.enfantId() + "/bracelet/appairage"), "{\"code\":\"" + autre.code() + "\"}",
+                famille.parent().jeton()).andExpect(status().is4xxClientError());
+
+        // Remplacement : une unité en stock, réservée pour un seul ticket.
+        json(post(ticket + "/remplacement"), "{\"numeroSerie\":\"" + carte.numeroSerie() + "\"}", sav).andExpect(status().isConflict());
+        json(post(ticket + "/remplacement"), "{\"numeroSerie\":\"FG-INCONNU\"}", sav).andExpect(status().isNotFound());
+        Carte neuve = acteurs.braceletAuParc();
+        json(post(ticket + "/remplacement"), "{\"numeroSerie\":\"" + neuve.numeroSerie().toLowerCase() + "\"}", sav)
+                .andExpect(status().isOk()).andExpect(jsonPath("$.remplacement").value(neuve.numeroSerie()));
+        ParentAvecEnfant voisins = acteurs.parentAvecEnfant();
+        Carte autreMuet = equiper(voisins, "2 hours");
+        supervision.superviser();
+        String autreTicket = TICKETS + "/" + ticketOuvert(autreMuet);
+        avec(post(autreTicket + "/prise-en-charge"), sav).andExpect(status().isOk()).andExpect(jsonPath("$.autresMuets").value(1));
+        json(post(autreTicket + "/remplacement"), "{\"numeroSerie\":\"" + neuve.numeroSerie() + "\"}", sav).andExpect(status().isConflict());
+
+        // Au point relais, le parent associe l'unité remise avec son code : échange, ticket clos, ancienne unité au SAV.
+        json(post("/api/v1/enfants/" + famille.enfantId() + "/bracelet/appairage"), "{\"code\":\"" + neuve.code() + "\"}",
+                famille.parent().jeton()).andExpect(status().isOk()).andExpect(jsonPath("$.numeroSerie").value(neuve.numeroSerie()));
+        assertThat(ticketsDe(carte)).containsExactly("RESOLU");
+        assertThat(jdbc.queryForObject("SELECT resolution FROM dispositifs.ticket_maintenance t JOIN dispositifs.bracelet b"
+                + " ON b.id = t.bracelet_id WHERE b.numero_serie = ?", String.class, carte.numeroSerie())).isEqualTo("ECHANGE");
+        assertThat(jdbc.queryForObject("SELECT statut FROM dispositifs.bracelet WHERE numero_serie = ?", String.class, carte.numeroSerie()))
+                .isEqualTo("EN_SAV");
+        avec(get(suivi), famille.parent().jeton()).andExpect(status().isNotFound());
+        avec(post(ticket + "/diagnostic"), sav).andExpect(status().isConflict());
+        assertThat(jdbc.queryForList("SELECT action FROM audit.entree WHERE action IN ('TICKET_DIAGNOSTIC', 'TICKET_RENDEZ_VOUS',"
+                + " 'TICKET_REMPLACEMENT_RESERVE', 'BRACELET_ECHANGE') AND cible_id IN (?, (SELECT reference FROM"
+                + " dispositifs.ticket_maintenance t JOIN dispositifs.bracelet b ON b.id = t.bracelet_id WHERE b.numero_serie = ?))"
+                + " ORDER BY id", String.class, braceletId(carte), carte.numeroSerie()))
+                .containsExactly("TICKET_DIAGNOSTIC", "TICKET_RENDEZ_VOUS", "TICKET_REMPLACEMENT_RESERVE", "BRACELET_ECHANGE");
+
+        // Ces actions sont réservées au service après-vente.
+        avec(post(autreTicket + "/diagnostic"), voisins.parent().jeton()).andExpect(status().isForbidden());
+        json(post(autreTicket + "/remplacement"), "{\"numeroSerie\":\"FG-1\"}", acteurs.agent("[\"SUPPORT\"]").jeton())
+                .andExpect(status().isForbidden());
+        json(post(autreTicket + "/rendez-vous"), "{\"pointRelais\":\"Pissy\",\"le\":\"" + Instant.now().plus(Duration.ofDays(1)) + "\"}",
+                acteurs.agent("[\"KYC\"]").jeton()).andExpect(status().isForbidden());
+    }
+
+    @Test
     void sousVingtPourCentLeBraceletPasseEnModeEconomieEtLeParentEstAverti() throws Exception {
         ParentAvecEnfant famille = acteurs.parentAvecEnfant();
         Carte carte = equiper(famille, "3 hours");
@@ -196,6 +270,11 @@ class MaintenanceIT extends TestIntegration {
         // Le dernier contact est celui de la réception ; l'essai le ramène à l'heure de la mesure.
         jdbc.update("UPDATE telemetrie.etat_bracelet SET dernier_contact = now() - make_interval(secs => ?) WHERE bracelet_id = ?::uuid",
                 ilYA, braceletId(carte));
+    }
+
+    private String ticketOuvert(Carte carte) {
+        return jdbc.queryForObject("SELECT t.id::text FROM dispositifs.ticket_maintenance t JOIN dispositifs.bracelet b"
+                + " ON b.id = t.bracelet_id WHERE b.numero_serie = ? AND t.statut = 'OUVERT'", String.class, carte.numeroSerie());
     }
 
     private String braceletId(Carte carte) {

@@ -99,6 +99,23 @@ public class CommandesBracelet implements Commandes {
     }
 
     /**
+     * Sondage par le service après-vente d'un bracelet muet : une localisation immédiate, dont l'accusé dit si
+     * le bracelet reçoit encore ses commandes.
+     *
+     * @return identifiant de la commande, ou vide si le bracelet n'est plus en service
+     */
+    @Transactional
+    public Optional<UUID> sonder(Bracelet bracelet, UUID agentId) {
+        return enService(bracelet) ? Optional.of(emettre(bracelet, Type.LOCALISER, Map.of(), agentId, "SAV")) : Optional.empty();
+    }
+
+    /** État de la commande, pour suivre un sondage. */
+    @Transactional(readOnly = true)
+    public Optional<Statut> statut(UUID commandeId) {
+        return commandes.findById(commandeId).map(Commande::statut);
+    }
+
+    /**
      * Envoie au bracelet sa configuration courante (intervalles, mode économie). L'intervalle tient compte de
      * l'abonnement de l'enfant ; 0 suspend l'émission périodique (US-SYS-008).
      */
@@ -181,6 +198,10 @@ public class CommandesBracelet implements Commandes {
     // -------------------------------------------------------------------- aides
 
     private void emettre(Bracelet bracelet, Type type, Map<String, Object> parametres, UUID acteurId) {
+        emettre(bracelet, type, parametres, acteurId, acteurId == null ? "SYSTEME" : "PARENT");
+    }
+
+    private UUID emettre(Bracelet bracelet, Type type, Map<String, Object> parametres, UUID acteurId, String role) {
         Instant maintenant = horloge.instant();
         UUID id = UUID.randomUUID();
         // Numéro strictement croissant par bracelet ; l'horloge en donne un qui survit à une restauration de la base.
@@ -196,10 +217,11 @@ public class CommandesBracelet implements Commandes {
         byte[] contenu = json.writeValueAsString(corps).getBytes(StandardCharsets.UTF_8);
         String message = BASE64.encodeToString(contenu) + "." + BASE64.encodeToString(signataire.signer(contenu));
         commandes.save(new Commande(id, bracelet.id(), type, sequence, message, maintenant));
-        journal.consigner(acteurId, acteurId == null ? "SYSTEME" : "PARENT", "COMMANDE_" + type.name(), "BRACELET",
+        journal.consigner(acteurId, role, "COMMANDE_" + type.name(), "BRACELET",
                 bracelet.id().toString(), Resultat.SUCCES);
         metriques.counter("fasoguardian.commandes", "issue", "EMISE").increment();
         evenements.publishEvent(new CommandeAEnvoyer(bracelet.numeroSerie(), message));
+        return id;
     }
 
     private Optional<Bracelet> braceletDe(UUID enfantId) {

@@ -79,6 +79,23 @@ public class TicketMaintenance {
     @Column(name = "resolu_le")
     private Instant resoluLe;
 
+    /** Sondage du bracelet par une commande de localisation signée (écran 67, étape 2). */
+    @Column(name = "diagnostic_le")
+    private Instant diagnosticLe;
+
+    @Column(name = "commande_diagnostic_id")
+    private UUID commandeDiagnosticId;
+
+    @Column(name = "point_relais")
+    private String pointRelais;
+
+    @Column(name = "rendez_vous_le")
+    private Instant rendezVousLe;
+
+    /** Unité de remplacement réservée : son appairage à l'enfant vaut échange et clôt le ticket. */
+    @Column(name = "remplacement_id")
+    private UUID remplacementId;
+
     @Version
     private long version;
 
@@ -106,6 +123,35 @@ public class TicketMaintenance {
         statut = Statut.EN_COURS;
         agentId = agent;
         prisEnChargeLe = maintenant;
+        return true;
+    }
+
+    /** @return {@code false} si le ticket n'est pas pris en charge */
+    public boolean diagnostiquer(UUID commande, Instant maintenant) {
+        if (statut != Statut.EN_COURS) {
+            return false;
+        }
+        commandeDiagnosticId = commande;
+        diagnosticLe = maintenant;
+        return true;
+    }
+
+    /** @return {@code false} si le ticket n'est pas pris en charge */
+    public boolean fixerRendezVous(String point, Instant quand) {
+        if (statut != Statut.EN_COURS) {
+            return false;
+        }
+        pointRelais = point.strip();
+        rendezVousLe = quand;
+        return true;
+    }
+
+    /** @return {@code false} si le ticket n'est pas pris en charge */
+    public boolean reserverRemplacement(UUID bracelet) {
+        if (statut != Statut.EN_COURS) {
+            return false;
+        }
+        remplacementId = bracelet;
         return true;
     }
 
@@ -181,5 +227,25 @@ public class TicketMaintenance {
 
     public Instant resoluLe() {
         return resoluLe;
+    }
+
+    public Instant diagnosticLe() {
+        return diagnosticLe;
+    }
+
+    public UUID commandeDiagnosticId() {
+        return commandeDiagnosticId;
+    }
+
+    public String pointRelais() {
+        return pointRelais;
+    }
+
+    public Instant rendezVousLe() {
+        return rendezVousLe;
+    }
+
+    public UUID remplacementId() {
+        return remplacementId;
     }
 }

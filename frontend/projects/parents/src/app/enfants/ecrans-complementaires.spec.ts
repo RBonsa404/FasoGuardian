@@ -46,6 +46,8 @@ const SUIVI: SuiviMaintenance = {
   batterie: 46,
   reseau: '2G',
   prisEnChargeLe: null,
+  pointRelais: null,
+  rendezVousLe: null,
 };
 
 const INTROUVABLE = new HttpErrorResponse({ status: 404, error: { status: 404, code: 'RESSOURCE_INTROUVABLE', detail: 'Absent.' } });
@@ -139,6 +141,18 @@ describe('suivi de maintenance', () => {
     const page = await ouvrir(MaintenanceBracelet, { maintenance: () => of({ ...SUIVI, statut: 'EN_COURS', prisEnChargeLe: '2026-10-09T11:20:00Z' } as SuiviMaintenance) });
 
     expect(lire(page.querySelectorAll('ol li')[2])).toContain('Pris en charge par un agent');
+  });
+
+  it('montre le rendez-vous en point relais et mène à l’association du bracelet de remplacement', async () => {
+    const page = await ouvrir(MaintenanceBracelet, {
+      maintenance: () => of({ ...SUIVI, statut: 'EN_COURS', pointRelais: 'Dassasgho', rendezVousLe: '2026-10-17T10:00:00Z' } as SuiviMaintenance),
+    });
+
+    expect(lire(page.querySelectorAll('ol li')[3])).toContain('Rendez-vous en point relais');
+    expect(lire(page.querySelectorAll('ol li')[3])).toContain('Dassasgho');
+    expect(lire(page)).toContain('Apportez le bracelet au rendez-vous');
+    const associer = [...page.querySelectorAll('a')].find((a) => lire(a).includes('Associer le bracelet de remplacement')) as HTMLAnchorElement;
+    expect(associer.getAttribute('href')).toContain('/bracelet/associer?enfant=');
   });
 
   it('rassure quand aucun ticket n’est ouvert', async () => {

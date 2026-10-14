@@ -17,6 +17,10 @@ public interface DepotTickets extends JpaRepository<TicketMaintenance, UUID> {
 
     List<TicketMaintenance> findByMotifAndStatutIn(Motif motif, Collection<Statut> statuts);
 
+    long countByMotifAndStatutIn(Motif motif, Collection<Statut> statuts);
+
+    Optional<TicketMaintenance> findByRemplacementIdAndStatutIn(UUID remplacementId, Collection<Statut> statuts);
+
     List<TicketMaintenance> findByStatutInOrderByOuvertLe(Collection<Statut> statuts);
 
     List<TicketMaintenance> findTop100ByStatutOrderByResoluLeDesc(Statut statut);

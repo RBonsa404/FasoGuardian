@@ -7,6 +7,8 @@ import { FgBadge, FgBanniere, FgIcon, FgSquelette } from 'ui';
 import { erreurLisible, estIntrouvable } from '../commun/erreurs';
 import { heure } from '../commun/temps';
 
+const RENDEZ_VOUS = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+
 interface Etape {
   readonly titre: string;
   readonly detail: string;
@@ -54,11 +56,17 @@ interface Etape {
         }
       </ol>
 
+      @if (s.pointRelais) {
+        <p class="m-0 rounded-banner bg-accent-soft p-3.5 text-label font-medium" i18n="@@maintenance.rendezVous.aide">Apportez le bracelet au rendez-vous. S'il est échangé, associez le nouveau en saisissant le code de sa carte d'activation : l'ancien sera alors détaché du compte.</p>
+      }
       <p class="m-0 rounded-banner bg-surface-2 p-3.5 text-label font-medium text-text-2" i18n="@@maintenance.verifier">À vérifier : le bracelet est-il chargé ? {{ prenom() }} est-il dans un bâtiment sans réseau ?</p>
 
       <div class="mt-auto flex flex-col gap-2">
         @if (contact(); as c) {
           <a class="grid min-h-13 place-items-center rounded-md bg-primary px-4 text-center text-body font-semibold text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-accent" [href]="'tel:' + c.telephone"><ng-container i18n="@@maintenance.appeler">Appeler</ng-container> {{ c.nom }} ({{ c.lien }})</a>
+        }
+        @if (s.pointRelais) {
+          <a class="grid min-h-12 place-items-center rounded-md border-(length:--border-width-trait) border-line-strong px-4 text-center text-label font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/bracelet/associer" [queryParams]="{ enfant: id() }" i18n="@@maintenance.associer">Associer le bracelet de remplacement</a>
         }
         <a class="grid min-h-12 place-items-center rounded-md border-(length:--border-width-trait) border-line-strong px-4 text-center text-label font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet']" i18n="@@maintenance.bracelet">Voir le bracelet</a>
       </div>
@@ -120,7 +128,14 @@ export class MaintenanceBracelet {
         heure: heure(pris ?? s.ouvertLe),
         etat: 'faite',
       },
-      { titre: $localize`:@@maintenance.etape.diagnostic:Diagnostic à distance`, detail: $localize`:@@maintenance.etape.diagnostic.detail:En attente de reconnexion`, heure: '—', etat: 'attente' },
+      s.pointRelais && s.rendezVousLe
+        ? {
+            titre: $localize`:@@maintenance.etape.rendezVous:Rendez-vous en point relais`,
+            detail: `${s.pointRelais} · ${RENDEZ_VOUS.format(new Date(s.rendezVousLe))}`,
+            heure: '—',
+            etat: 'attente',
+          }
+        : { titre: $localize`:@@maintenance.etape.diagnostic:Diagnostic à distance`, detail: $localize`:@@maintenance.etape.diagnostic.detail:En attente de reconnexion`, heure: '—', etat: 'attente' },
     ];
   });
 

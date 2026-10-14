@@ -6,7 +6,7 @@ import { BraceletParc, CarteActivationParc, ClientSav, FicheBraceletParc, Resolu
 
 import { FicheBracelet } from './fiche-bracelet';
 import { depuis } from './libelles';
-import { Muets } from './muets';
+import { Muets, etapeDe } from './muets';
 import { Parc } from './parc';
 
 function bracelet(partiel: Partial<BraceletParc> = {}): BraceletParc {
@@ -39,6 +39,12 @@ function ticket(partiel: Partial<TicketMaintenance> = {}): TicketMaintenance {
     resolution: null,
     note: null,
     resoluLe: null,
+    diagnosticLe: null,
+    diagnostic: null,
+    pointRelais: null,
+    rendezVousLe: null,
+    remplacement: null,
+    autresMuets: 2,
     ...partiel,
   };
 }
@@ -90,6 +96,24 @@ class ClientFactice {
     return of(this.liste[0]);
   }
 
+  diagnostiquer(id: string) {
+    this.mouvements.push(`diagnostic ${id}`);
+    this.liste = [{ ...this.liste[0], diagnosticLe: '2026-10-07T11:40:00Z', diagnostic: 'EXPIREE' }];
+    return of(this.liste[0]);
+  }
+
+  fixerRendezVous(id: string, pointRelais: string, le: string) {
+    this.mouvements.push(`rendez-vous ${id} ${pointRelais} ${le.slice(0, 10)}`);
+    this.liste = [{ ...this.liste[0], pointRelais, rendezVousLe: le }];
+    return of(this.liste[0]);
+  }
+
+  reserverRemplacement(id: string, numero: string) {
+    this.mouvements.push(`remplacement ${id} ${numero}`);
+    this.liste = [{ ...this.liste[0], remplacement: numero.toUpperCase() }];
+    return of(this.liste[0]);
+  }
+
   resoudre(id: string, resolution: ResolutionTicket, note: string) {
     this.resolutions.push({ id, resolution, note });
     this.liste = [];
@@ -103,6 +127,12 @@ function lire(element: Element): string {
 
 function bouton(page: HTMLElement, nom: string): HTMLButtonElement {
   return [...page.querySelectorAll('button')].find((b) => lire(b).includes(nom)) as HTMLButtonElement;
+}
+
+function saisir(page: HTMLElement, libelle: string, valeur: string) {
+  const champ = [...page.querySelectorAll('fg-input')].find((c) => lire(c).includes(libelle))!.querySelector('input') as HTMLInputElement;
+  champ.value = valeur;
+  champ.dispatchEvent(new Event('input'));
 }
 
 function preparer(client: ClientFactice) {
@@ -186,7 +216,7 @@ describe('bracelets muets', () => {
     expect(client.mouvements).toEqual(['prise t-1']);
     expect(lire(page)).toContain('À vous');
 
-    bouton(page, 'Résoudre').click();
+    bouton(page, 'Clore autrement').click();
     await fixture.whenStable();
     const echange = [...page.querySelectorAll('label')].find((libelle) => lire(libelle).includes('Échange en point relais'))!;
     (echange.querySelector('input') as HTMLInputElement).click();
@@ -198,6 +228,47 @@ describe('bracelets muets', () => {
 
     expect(client.resolutions).toEqual([{ id: 't-1', resolution: 'ECHANGE', note: 'Module remplacé' }]);
     expect(lire(page)).toContain('Tous les bracelets en service donnent des nouvelles.');
+  });
+
+  it('mène le ticket du diagnostic à la remise en point relais, sans rien montrer de la famille', async () => {
+    const client = new ClientFactice();
+    client.liste = [ticket({ statut: 'EN_COURS', prisEnCharge: true, prisEnChargeParMoi: true })];
+    const { fixture, page } = await monter(client);
+
+    expect(lire(page)).toContain('Diagnostic à distance');
+    expect(lire(page)).toContain('Autres bracelets muets');
+    bouton(page, 'Lancer le diagnostic').click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Rendez-vous en point relais');
+    expect(lire(page)).toContain('Sans réponse');
+    expect(lire(page)).not.toContain('Appeler le parent');
+
+    // Rendez-vous incomplet : rien n'est envoyé.
+    bouton(page, 'Proposer le rendez-vous').click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Indiquez le point relais');
+    saisir(page, 'Point relais', 'Dassasgho');
+    saisir(page, 'Rendez-vous', '2026-10-17T10:00');
+    bouton(page, 'Proposer le rendez-vous').click();
+    await fixture.whenStable();
+    expect(client.mouvements).toEqual(['diagnostic t-1', 'rendez-vous t-1 Dassasgho 2026-10-17']);
+    expect(lire(page)).toContain('Remise en point relais');
+
+    saisir(page, 'Unité remise', 'fg-5120');
+    bouton(page, 'Réserver l’unité'.replace('’', "'")).click();
+    await fixture.whenStable();
+    expect(client.mouvements.at(-1)).toBe('remplacement t-1 fg-5120');
+    expect(lire(page)).toContain('FG-5120');
+    expect(lire(page)).toContain('Le parent l’associe lui-même'.replace('’', "'"));
+  });
+
+  it('situe le ticket dans son parcours', () => {
+    expect(etapeDe(ticket())).toBe(0);
+    expect(etapeDe(ticket({ statut: 'EN_COURS' }))).toBe(1);
+    expect(etapeDe(ticket({ statut: 'EN_COURS', diagnosticLe: 'x' }))).toBe(2);
+    expect(etapeDe(ticket({ statut: 'EN_COURS', diagnosticLe: 'x' }), true)).toBe(3);
+    expect(etapeDe(ticket({ statut: 'EN_COURS', diagnosticLe: 'x', rendezVousLe: 'y' }))).toBe(3);
+    expect(etapeDe(ticket({ statut: 'RESOLU' }))).toBe(4);
   });
 
   it('écrit les durées en minutes puis en heures', () => {
