@@ -9,7 +9,7 @@ export const routes: Routes = [
     canActivate: [sessionRequise],
     loadComponent: () => import('./structure/structure').then((m) => m.Structure),
     children: [
-      { path: '', pathMatch: 'full', loadComponent: () => import('./pages/pages').then((m) => m.Tableau) },
+      { path: '', pathMatch: 'full', loadComponent: () => import('./pages/tableau').then((m) => m.Tableau) },
       { path: 'refuse', loadComponent: () => import('./pages/pages').then((m) => m.Refuse) },
       { path: 'kyc/litiges', canActivate: [roleRequis('KYC')], loadComponent: () => import('./kyc/litiges').then((m) => m.Litiges) },
       {

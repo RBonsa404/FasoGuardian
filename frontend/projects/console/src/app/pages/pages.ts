@@ -6,69 +6,6 @@ import { FgIcon } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
 
-/** Tableau de bord (écran 57) : point d'entrée vers les files de travail du rôle de l'agent. */
-@Component({
-  selector: 'app-tableau',
-  imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@tableau.titre">Tableau de bord</h1>
-    <div class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3">
-      @if (session.roles().includes('KYC')) {
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/kyc">
-          <strong class="text-body font-semibold" i18n="@@tableau.kyc">Dossiers KYC</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.kyc.texte">Objectif : décision sous 48 h ouvrées.</span>
-        </a>
-      }
-      @if (session.roles().includes('SUPPORT')) {
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/support/tickets">
-          <strong class="text-body font-semibold" i18n="@@nav.tickets">Tickets support</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.tickets.texte">Demandes des parents, à lire et auxquelles répondre.</span>
-        </a>
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/support/faq">
-          <strong class="text-body font-semibold" i18n="@@nav.faq">Base de connaissances</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.faq.texte">Réponses aux questions fréquentes, publiées pour les parents.</span>
-        </a>
-      }
-      @if (session.roles().includes('SAV')) {
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/sav/muets">
-          <strong class="text-body font-semibold" i18n="@@nav.muets">Bracelets muets</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.muets.texte">Tickets ouverts par la supervision, à prendre en charge.</span>
-        </a>
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/sav/parc">
-          <strong class="text-body font-semibold" i18n="@@nav.parc">Parc de bracelets</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.parc.texte">Cycle de vie de chaque unité, retours et remises en stock.</span>
-        </a>
-      }
-      @if (session.roles().includes('ADMIN')) {
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/agents">
-          <strong class="text-body font-semibold" i18n="@@nav.agents">Agents et rôles</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.agents.texte">Périmètre de chaque agent, création et suspension.</span>
-        </a>
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/securite">
-          <strong class="text-body font-semibold" i18n="@@nav.securite">Sécurité</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.securite.texte">Sources bloquées pour énumération de QR, accès refusés.</span>
-        </a>
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/admin/audit">
-          <strong class="text-body font-semibold" i18n="@@nav.audit">Journal d'audit</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.audit.texte">Accès sensibles, refus et état de la chaîne d'empreintes.</span>
-        </a>
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 hover:border-line-strong focus-visible:outline-2 focus-visible:outline-accent" routerLink="/conformite">
-          <strong class="text-body font-semibold" i18n="@@nav.conformite">Conformité CIL</strong>
-          <span class="text-label text-text-2" i18n="@@tableau.conformite.texte">Durées de conservation, purges, demandes d'effacement, rapport mensuel.</span>
-        </a>
-      }
-    </div>
-    @if (session.roles().length > 0 && !session.roles().includes('KYC') && !session.roles().includes('ADMIN') && !session.roles().includes('SAV') && !session.roles().includes('SUPPORT') && !session.roles().includes('FDS')) {
-      <p class="m-0 text-body text-text-2" i18n="@@tableau.vide">Les écrans de votre rôle ne sont pas encore disponibles dans cette version.</p>
-    }
-  `,
-  host: { class: 'contents' },
-})
-export class Tableau {
-  protected readonly session = inject(Session);
-}
-
 /** Accès refusé (écran 58) : l'agent sait pourquoi, et que la tentative est tracée. */
 @Component({
   selector: 'app-refuse',

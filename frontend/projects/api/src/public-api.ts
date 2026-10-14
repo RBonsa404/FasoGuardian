@@ -23,3 +23,4 @@ export * from './lib/support';
 export * from './lib/fds';
 export * from './lib/passerelles';
 export * from './lib/ota';
+export * from './lib/tableau';
