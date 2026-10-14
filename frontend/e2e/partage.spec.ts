@@ -23,7 +23,7 @@ test('un parent partage la position avec un contact, qui la voit par son lien ju
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await page.getByRole('navigation', { name: 'Raccourcis pour Yacouba' }).getByRole('link', { name: 'Partager' }).click();
+  await page.getByRole('navigation', { name: 'Actions pour Yacouba' }).getByRole('link', { name: 'Partager la position' }).click();
 
   // Écran 35 : choix du contact et de la durée
   await expect(page.getByRole('heading', { name: 'Partager la position' })).toBeVisible();
