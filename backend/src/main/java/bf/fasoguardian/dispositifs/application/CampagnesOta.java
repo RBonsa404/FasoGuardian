@@ -193,9 +193,13 @@ public class CampagnesOta implements VersionsLogicielles {
     @Override
     @Transactional
     public void versionConstatee(UUID braceletId, String version) {
-        bracelets.findById(braceletId).filter(bracelet -> bracelet.constaterVersion(version)).ifPresent(bracelet -> journal
-                .consigner(null, "SYSTEME", "LOGICIEL_EMBARQUE_CONSTATE", "BRACELET", braceletId.toString(), Resultat.SUCCES));
+        boolean changee = bracelets.findById(braceletId).filter(bracelet -> bracelet.constaterVersion(version)).isPresent();
+        // La campagne est verrouillée avant le journal d'audit, dans le même ordre que le lancement d'une vague :
+        // l'ordre inverse laissait un constat et un lancement simultanés s'attendre l'un l'autre.
         depot.noterInstallation(braceletId, version, horloge.instant()).forEach(this::clorSiTerminee);
+        if (changee) {
+            journal.consigner(null, "SYSTEME", "LOGICIEL_EMBARQUE_CONSTATE", "BRACELET", braceletId.toString(), Resultat.SUCCES);
+        }
     }
 
     @Scheduled(fixedDelayString = "${fasoguardian.ota.relance:PT10M}")

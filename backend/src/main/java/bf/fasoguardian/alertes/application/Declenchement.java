@@ -81,7 +81,10 @@ class Declenchement {
         ouverture.ouvrir(evenement.enfantId(), type, null, null, null, evenement.latitude(), evenement.longitude())
                 // Délai entre l'événement au poignet et la notification des parents : l'indicateur suivi par
                 // la supervision (objectif : moins de 45 s au 95e centile, US-ADM-004).
-                .ifPresent(alerte -> delaiDeNotification.record(Duration.between(evenement.mesureLe(), horloge.instant())));
+                // Une horloge de bracelet en avance donnerait un délai négatif, que la mesure refuse : il compte pour zéro.
+                .ifPresent(alerte -> delaiDeNotification.record(
+                        Duration.between(evenement.mesureLe(), horloge.instant()).isNegative() ? Duration.ZERO
+                                : Duration.between(evenement.mesureLe(), horloge.instant())));
     }
 
     private void resoudre(List<Alerte> concernees, String motif) {
