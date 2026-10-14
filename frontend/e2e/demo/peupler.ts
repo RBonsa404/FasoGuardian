@@ -136,6 +136,23 @@ test('peuplement de démonstration', async ({ request }) => {
     expect((await request.post(`${awa}/contacts`, { headers: parent, data: contact })).status()).toBe(201);
   }
 
+  // Safe Zones d'Awa (écrans 21 à 23) : l'école, où se trouve sa position, la maison et chez sa grand-mère.
+  const zones: Record<string, unknown>[] = [
+    { forme: 'CERCLE', nom: 'École Les Manguiers', categorie: 'ECOLE', centre: { latitude: 12.3714, longitude: -1.5197 }, rayonM: 220,
+      sommets: null, jours: [1, 2, 3, 4, 5], debut: '07:00', fin: '17:30', toleranceS: 300 },
+    { forme: 'POLYGONE', nom: 'Maison', categorie: 'MAISON', centre: null, rayonM: null,
+      sommets: [{ latitude: 12.3305, longitude: -1.5125 }, { latitude: 12.3305, longitude: -1.5095 }, { latitude: 12.3280, longitude: -1.5095 },
+        { latitude: 12.3280, longitude: -1.5125 }],
+      jours: [1, 2, 3, 4, 5, 6, 7], debut: '00:00', fin: '00:00', toleranceS: 300 },
+    { forme: 'CERCLE', nom: 'Chez grand-mère', categorie: 'FAMILLE', centre: { latitude: 12.3790, longitude: -1.4790 }, rayonM: 150,
+      sommets: null, jours: [6, 7], debut: '09:00', fin: '19:00', toleranceS: 600 },
+  ];
+  for (const zone of zones) {
+    expect((await request.post(`${SERVEUR}/api/v1/moi/second-facteur`, { headers: parent, data: { action: 'MODIFIER_SAFE_ZONE' } })).status()).toBe(202);
+    const codeZone = await dernierCodeSms(request, PARENT_ACTIF);
+    expect((await request.post(`${awa}/zones`, { headers: parent, data: { ...zone, codeSecondFacteur: codeZone } })).status()).toBe(201);
+  }
+
   // Second tuteur d'Awa (écran 34) : invité par Mariam, code SMS à l'appui, puis vérifié par l'équipe KYC.
   const jetonSecond = await inscrire(request, SECOND_TUTEUR);
   expect((await request.post(`${SERVEUR}/api/v1/moi/second-facteur`, { headers: parent, data: { action: 'AJOUTER_TUTEUR' } })).status()).toBe(202);

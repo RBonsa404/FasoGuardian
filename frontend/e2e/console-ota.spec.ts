@@ -90,7 +90,7 @@ test('une image signée est déployée par vagues jusqu’au bracelet, qui la v�
     await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
     await page.getByRole('button', { name: 'Se connecter' }).click();
     await page.getByRole('link', { name: 'Alertes', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Informations' })).toBeVisible();
+    await expect(page.getByText('Mise à jour du bracelet').first()).toBeVisible();
     await expect(page.getByText(`Une mise à jour (${version}) va être installée sur le bracelet ${carte.numeroSerie}`)).toBeVisible();
     await page.goto(`/enfants/${enfants[0].id}/bracelet`);
     await expect(page.getByText(version, { exact: true })).toBeVisible();

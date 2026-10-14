@@ -186,6 +186,38 @@ class NotificationsIT extends TestIntegration {
     }
 
     @Test
+    void uneNotificationSeMarqueLueParSonDestinataireSeulement() throws Exception {
+        ParentAvecEnfant famille = acteurs.parentAvecEnfant();
+        Parent parent = famille.parent();
+        Parent etranger = acteurs.parent();
+        acteurs.equiper(famille);
+        String[] id = new String[1];
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            String corps = mvc.perform(get("/api/v1/notifications").header("Authorization", "Bearer " + parent.jeton()))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$[0].lue").value(false))
+                    .andReturn().getResponse().getContentAsString();
+            id[0] = Acteurs.extraire(corps, "\"id\":\"([0-9a-f-]{36})\"");
+        });
+
+        mvc.perform(post("/api/v1/notifications/" + id[0] + "/lecture").header("Authorization", "Bearer " + etranger.jeton()))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/notifications").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(jsonPath("$[0].lue").value(false));
+        mvc.perform(post("/api/v1/notifications/" + id[0] + "/lecture").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/notifications").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(jsonPath("$[0].lue").value(true));
+
+        jdbc.update("UPDATE notifications.notification SET lue_le = NULL WHERE destinataire_id = ?::uuid",
+                Acteurs.extraire(new String(Base64.getUrlDecoder().decode(parent.jeton().split("\\.")[1])), "\"sub\":\"([0-9a-f-]{36})\""));
+        mvc.perform(post("/api/v1/notifications/lecture").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/notifications").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(jsonPath("$[*].lue", org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(true))));
+        mvc.perform(post("/api/v1/notifications/lecture")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void uneAlerteCritiquePartParPushEtParSmsEtUneInformationParPushSeulement() throws Exception {
         ParentAvecEnfant famille = acteurs.parentAvecEnfant();
         Parent parent = famille.parent();

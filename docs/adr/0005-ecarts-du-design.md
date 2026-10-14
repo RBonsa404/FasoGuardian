@@ -82,6 +82,18 @@ traçabilité.
   tuteur »), choisie d'emblée, avec la possibilité d'inscrire plutôt un autre enfant ; l'étape du lien ne lui
   demande alors pas l'identité de l'enfant, et le récapitulatif indique « Second tuteur, sur invitation de… ».
   Mêmes cartes de choix, mêmes composants que le reste du parcours.
+- **Écrans 21 et 22, Safe Zones.** Liste et édition reprennent la maquette (pastilles carrées, état
+  « Active » ou « Hors plage horaire », forme et horaires). Le quartier de la zone (« Ouaga 2000 ») n'est pas
+  affiché : la plateforme ne déduit pas de nom de quartier d'une position (pas de géocodage inverse).
+  L'édition propose cinq types de lieu et le nom libre, que la maquette réduit à quatre étiquettes.
+- **Écrans 24 et 27, centre des alertes.** Un seul écran tient les deux maquettes : en tête, un bloc ambre
+  par enfant dont des alertes attendent une prise en charge (« 2 alertes · Awa », classées par gravité,
+  numérotées, « Tout prendre en charge ») ; dessous, le fil par jour (« Aujourd'hui », « Hier ») où alertes
+  et informations se lisent ensemble. Le point bleu marque une information non lue ou une alerte qui attend
+  quelqu'un ; « Tout marquer lu » ne vaut que pour les informations, une alerte se prend en charge. La lecture
+  est tenue par le serveur (V31), pour être la même sur tous les appareils du parent. Le bouton « Signaler
+  une disparition » reste en bas de l'écran : la maquette ne dit pas d'où l'ouvrir hors du tableau de bord.
+  « Voir en direct » de la maquette 27 est rendu par l'écran de l'alerte, qui montre la carte.
 - **Écran 32, fiche médicale.** La lecture suit la maquette : une carte par information, sa bascule
   « Critique / Privé » enregistrée aussitôt (une révision par bascule, comme tout enregistrement), la dernière
   révision avec le prénom de son auteur et le journal des révisions sur demande. Deux ajouts : « Modifier les

@@ -33,7 +33,7 @@ type Action = 'suspendre' | 'supprimer';
     @if (donnees(); as d) {
       @for (zone of d.zones; track zone.id) {
         <button type="button" class="flex items-center gap-3 rounded-lg border border-line bg-surface p-4 text-left focus-visible:outline-2 focus-visible:outline-accent" (click)="ouvrir(zone)">
-          <span class="grid size-11 flex-none place-items-center rounded-full" [class]="pastille(zone)" aria-hidden="true"><fg-icon [nom]="icone(zone)" [taille]="20" /></span>
+          <span class="grid size-11 flex-none place-items-center rounded-md" [class]="pastille(zone)" aria-hidden="true"><fg-icon [nom]="icone(zone)" [taille]="20" /></span>
           <span class="flex min-w-0 flex-1 flex-col gap-0.5">
             <strong class="truncate text-body font-semibold">{{ zone.nom }}</strong>
             <span class="text-label text-text-2">{{ resume(zone) }}</span>

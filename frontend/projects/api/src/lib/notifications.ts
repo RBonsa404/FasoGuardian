@@ -17,6 +17,8 @@ export interface NotificationRecue {
   /** Écran de l'application que la notification ouvre. */
   readonly lien: string | null;
   readonly creeeLe: string;
+  /** Lue dans l'application. */
+  readonly lue: boolean;
 }
 
 /** Client des notifications push : clé du serveur d'application, abonnement et désabonnement du navigateur. */
@@ -30,6 +32,14 @@ export class ClientNotifications {
   }
 
   /** Trente dernières notifications, hors alertes. */
+  marquerLue(id: string): Observable<void> {
+    return this.http.post<void>(`/api/v1/notifications/${id}/lecture`, null);
+  }
+
+  toutMarquerLu(): Observable<void> {
+    return this.http.post<void>('/api/v1/notifications/lecture', null);
+  }
+
   recues(): Observable<NotificationRecue[]> {
     return this.http.get<NotificationRecue[]>('/api/v1/notifications');
   }

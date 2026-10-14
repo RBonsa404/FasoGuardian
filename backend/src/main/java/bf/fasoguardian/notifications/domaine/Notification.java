@@ -60,6 +60,9 @@ public class Notification {
     @Column(name = "sms_envoye_le")
     private Instant smsEnvoyeLe;
 
+    @Column(name = "lue_le")
+    private Instant lueLe;
+
     protected Notification() {
     }
 
@@ -78,6 +81,18 @@ public class Notification {
 
     public void noterPoussee(Instant maintenant) {
         pousseeLe = maintenant;
+    }
+
+    /** Lue dans l'application : vaut aussi accusé, le parent ayant vu le message. */
+    public void lire(Instant maintenant) {
+        if (lueLe == null) {
+            lueLe = maintenant;
+        }
+        accuser(maintenant);
+    }
+
+    public boolean lue() {
+        return lueLe != null;
     }
 
     public void accuser(Instant maintenant) {

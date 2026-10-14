@@ -51,7 +51,7 @@ test('un SOS du bracelet arrive au parent, qui le prend en charge puis le lève 
   await page.getByRole('link', { name: 'Retour' }).click();
   await expect(page.getByText('Aucune alerte en cours.')).toBeVisible();
   await page.getByRole('button', { name: 'Toutes' }).click();
-  await expect(page.getByRole('link', { name: /SOS · appui long · Yacouba/ })).toContainText('Levée');
+  await expect(page.getByRole('link', { name: /SOS · appui long.*Yacouba a déclenché le SOS/ })).toContainText('levée');
   await page.goto(`/enfants/${enfants[0].id}/journal`);
   // Écran 20 : une ligne par alerte, sa dernière étape, et des filtres par type
   await expect(page.getByRole('link', { name: /SOS · appui long/ })).toContainText('Levée');

@@ -282,6 +282,16 @@ class AlertesIT extends TestIntegration {
 
     // -------------------------------------------------------------------- aides
 
+    @Test
+    void leContratOpenApiDecritLeCentreDesAlertes() throws Exception {
+        mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/v1/alertes'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/enfants/{enfantId}/alertes/prise-en-charge'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/alertes/{alerteId}/acquittement'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/notifications/lecture'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/notifications/{notificationId}/lecture'].post").exists());
+    }
+
     private void evenement(Carte carte, String code, String suite) {
         String message = "{\"t\":" + (Instant.now().getEpochSecond() + 1) + ",\"seq\":" + SEQUENCE.incrementAndGet() + ",\"ev\":\"" + code
                 + "\"" + suite + "}";

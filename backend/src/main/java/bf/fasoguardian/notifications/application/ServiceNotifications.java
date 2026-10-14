@@ -74,7 +74,7 @@ public class ServiceNotifications implements Notifications {
     }
 
     /** Ce que le destinataire relit d'une notification dans l'application. */
-    public record Recue(UUID id, String modele, String titre, String texte, String lien, Instant creeeLe) {
+    public record Recue(UUID id, String modele, String titre, String texte, String lien, Instant creeeLe, boolean lue) {
     }
 
     /**
@@ -84,7 +84,20 @@ public class ServiceNotifications implements Notifications {
     @Transactional(readOnly = true)
     public List<Recue> recues(UUID destinataireId) {
         return notifications.findTop30ByDestinataireIdAndModeleNotLikeOrderByCreeeLeDesc(destinataireId, "ALERTE%").stream()
-                .map(n -> new Recue(n.id(), n.modele(), n.titre(), n.texte(), n.lien(), n.creeeLe())).toList();
+                .map(n -> new Recue(n.id(), n.modele(), n.titre(), n.texte(), n.lien(), n.creeeLe(), n.lue())).toList();
+    }
+
+    /** Marque lue une notification du destinataire ; celle d'un autre est ignorée sans le dire. */
+    @Transactional
+    public void marquerLue(UUID destinataireId, UUID notificationId) {
+        notifications.findById(notificationId).filter(n -> n.destinataireId().equals(destinataireId))
+                .ifPresent(n -> n.lire(horloge.instant()));
+    }
+
+    @Transactional
+    public void marquerToutesLues(UUID destinataireId) {
+        Instant maintenant = horloge.instant();
+        notifications.findByDestinataireIdAndLueLeIsNull(destinataireId).forEach(n -> n.lire(maintenant));
     }
 
     @Override

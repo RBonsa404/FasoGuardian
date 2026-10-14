@@ -55,6 +55,24 @@ class ControleurNotifications {
                 .body(notifications.recues(UUID.fromString(jeton.getSubject())));
     }
 
+    @Operation(summary = "Marque lue une de mes notifications")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/api/v1/notifications/{notificationId}/lecture")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void lire(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID notificationId) {
+        notifications.marquerLue(UUID.fromString(jeton.getSubject()), notificationId);
+    }
+
+    @Operation(summary = "Marque lues toutes mes notifications")
+    @SecurityRequirement(name = "jetonAcces")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/api/v1/notifications/lecture")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void toutLire(@AuthenticationPrincipal Jwt jeton) {
+        notifications.marquerToutesLues(UUID.fromString(jeton.getSubject()));
+    }
+
     @Operation(summary = "Clé publique du serveur d'application, à passer à PushManager.subscribe")
     @SecurityRequirement(name = "jetonAcces")
     @PreAuthorize("isAuthenticated()")

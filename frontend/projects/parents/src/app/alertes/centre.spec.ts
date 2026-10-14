@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { Alerte, ClientAlertes, ClientFamille, ClientNotifications, FicheEnfant, NotificationRecue } from 'api';
 
-import { CentreAlertes } from './centre';
+import { CentreAlertes, libelleJour } from './centre';
 
 function alerte(partiel: Partial<Alerte>): Alerte {
   return {
@@ -35,6 +35,7 @@ const INFORMATIONS: NotificationRecue[] = [
     texte: 'une mise à jour (2.4.2) va être installée sur le bracelet FG-2291. Il reste utilisable ; gardez-le chargé.',
     lien: '/enfants/e-1/bracelet',
     creeeLe: new Date(Date.now() - 120_000).toISOString(),
+    lue: false,
   },
 ];
 
@@ -58,20 +59,22 @@ function lire(element: Element): string {
   return (element.textContent ?? '').replace(/\s+/g, ' ');
 }
 
-describe('alertes simultanées (US-PAR-018)', () => {
-  async function monter(client: AlertesFactices) {
+describe('centre des alertes (écrans 24 et 27)', () => {
+  async function monter(client: AlertesFactices, notifications: Partial<ClientNotifications> = {}) {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
         { provide: ClientAlertes, useValue: client },
         { provide: ClientFamille, useValue: { mesEnfants: () => of([AWA, YACOUBA]) } },
-        { provide: ClientNotifications, useValue: { recues: () => of(INFORMATIONS) } },
+        { provide: ClientNotifications, useValue: { recues: () => of(INFORMATIONS), ...notifications } },
       ],
     });
     const fixture = TestBed.createComponent(CentreAlertes);
     await fixture.whenStable();
     return { fixture, page: fixture.nativeElement as HTMLElement };
   }
+
+  const urgences = (page: HTMLElement) => [...page.querySelectorAll('section.border-alert')];
 
   it('regroupe un SOS et une sortie de zone du même enfant en une seule alerte, le SOS en tête', async () => {
     const client = new AlertesFactices();
@@ -83,9 +86,10 @@ describe('alertes simultanées (US-PAR-018)', () => {
 
     const { page } = await monter(client);
 
-    const groupes = page.querySelectorAll('section:not([aria-labelledby])');
+    const groupes = urgences(page);
     expect(groupes).toHaveLength(1);
-    expect(lire(groupes[0].querySelector('h2')!)).toContain('2 alertes · Awa');
+    expect(lire(groupes[0])).toContain('2 alertes · Awa');
+    expect(lire(groupes[0].querySelector('h2')!)).toContain('Awa a déclenché le SOS');
     expect(lire(groupes[0])).toContain('Regroupées par ordre de gravité');
     const lignes = [...groupes[0].querySelectorAll('ol li')].map((ligne) => lire(ligne));
     expect(lignes).toHaveLength(2);
@@ -94,11 +98,11 @@ describe('alertes simultanées (US-PAR-018)', () => {
     expect(lire(groupes[0])).toContain('Une seule prise en charge suffit.');
   });
 
-  it('une seule prise en charge vaut pour tout le groupe', async () => {
+  it('une seule prise en charge vaut pour tout le groupe, et les alertes restent dans le fil', async () => {
     const client = new AlertesFactices();
     client.liste = [alerte({ id: 'a-1', type: 'SORTIE_ZONE', gravite: 'IMPORTANTE', libelle: 'Maison' }), alerte({ id: 'a-2' })];
     const { fixture, page } = await monter(client);
-    const boutons = [...page.querySelectorAll('section button')];
+    const boutons = urgences(page).flatMap((groupe) => [...groupe.querySelectorAll('button')]);
     expect(boutons).toHaveLength(1);
     expect(lire(boutons[0])).toContain('Tout prendre en charge');
 
@@ -106,9 +110,10 @@ describe('alertes simultanées (US-PAR-018)', () => {
     await fixture.whenStable();
 
     expect(client.prises).toEqual(['e-1']);
-    expect(page.querySelectorAll('section button')).toHaveLength(0);
+    expect(urgences(page)).toHaveLength(0);
     // Les deux alertes restent visibles et distinctes : chacune garde sa trace.
-    expect(page.querySelectorAll('section ol li')).toHaveLength(2);
+    const fil = [...page.querySelectorAll('section[aria-label="Aujourd\'hui"] a')].map(lire);
+    expect(fil.filter((ligne) => ligne.includes('prise en charge'))).toHaveLength(2);
   });
 
   it('ne mêle pas les alertes de deux enfants', async () => {
@@ -117,19 +122,35 @@ describe('alertes simultanées (US-PAR-018)', () => {
 
     const { page } = await monter(client);
 
-    const titres = [...page.querySelectorAll('section:not([aria-labelledby]) h2')].map((titre) => lire(titre).trim());
-    expect(titres).toEqual(['Awa', 'Yacouba']);
+    expect(urgences(page).map((groupe) => lire(groupe.querySelector('span')!).trim())).toEqual(['Alerte · Awa', 'Alerte · Yacouba']);
     expect(lire(page)).not.toContain('Regroupées par ordre de gravité');
   });
 
-  it('garde lisibles les notifications reçues hors alertes, même sans push', async () => {
-    const { page } = await monter(new AlertesFactices());
+  it('garde lisibles les notifications non lues, même sans push, et les marque lues', async () => {
+    const toutMarquerLu = vi.fn().mockReturnValue(of(undefined));
+    const { fixture, page } = await monter(new AlertesFactices(), { toutMarquerLu } as Partial<ClientNotifications>);
 
     expect(lire(page)).toContain('Aucune alerte en cours.');
-    const information = page.querySelector('section[aria-labelledby="titre-informations"] a') as HTMLAnchorElement;
+    const information = page.querySelector('section[aria-label="Aujourd\'hui"] a') as HTMLAnchorElement;
     expect(lire(information)).toContain('Mise à jour du bracelet');
     expect(lire(information)).toContain('Une mise à jour (2.4.2) va être installée sur le bracelet FG-2291.');
-    expect(lire(information)).toContain('il y a 2 min');
+    expect(lire(information)).toContain('non lue');
     expect(information.getAttribute('href')).toBe('/enfants/e-1/bracelet');
+
+    ([...page.querySelectorAll('button')].find((b) => lire(b).includes('Tout marquer lu')) as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(toutMarquerLu).toHaveBeenCalled();
+    // Lue, l'information quitte « En cours » et reste dans « Toutes ».
+    expect(page.querySelector('section[aria-label="Aujourd\'hui"]')).toBeNull();
+    ([...page.querySelectorAll('button')].find((b) => lire(b).trim() === 'Toutes') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Mise à jour du bracelet');
+  });
+
+  it('nomme les jours du fil', () => {
+    const maintenant = new Date(2026, 9, 14, 17, 0);
+    expect(libelleJour(new Date(2026, 9, 14, 8, 0).toISOString(), maintenant)).toBe("Aujourd'hui");
+    expect(libelleJour(new Date(2026, 9, 13, 23, 0).toISOString(), maintenant)).toBe('Hier');
+    expect(libelleJour(new Date(2026, 9, 10, 9, 0).toISOString(), maintenant)).toBe('samedi 10 octobre');
   });
 });
