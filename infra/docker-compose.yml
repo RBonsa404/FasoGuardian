@@ -144,6 +144,7 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./observabilite/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observabilite/grafana/tableaux:/var/lib/grafana/tableaux:ro
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

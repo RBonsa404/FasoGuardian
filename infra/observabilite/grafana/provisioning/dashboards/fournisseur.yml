@@ -1,0 +1,12 @@
+# Tableaux de bord versionnés, chargés au démarrage de Grafana ; une modification faite dans l'interface n'est
+# pas gardée : on modifie le fichier JSON.
+apiVersion: 1
+
+providers:
+  - name: fasoguardian
+    folder: FasoGuardian
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/tableaux
