@@ -60,3 +60,51 @@ jobs:
       - name: Essais du noyau (alertes du compilateur bloquantes, comportement indéfini piégé)
         working-directory: firmware
         run: make essais
+
+  e2e:
+    name: Parcours de bout en bout (Playwright, pile complète)
+    runs-on: ubuntu-latest
+    needs: [serveur, clients]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Dépendances et navigateur
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Simulateur de bracelets (utilisé par les parcours de commandes et d'OTA)
+        working-directory: simulator
+        run: ../backend/mvnw -B -q -f pom.xml package -DskipTests
+      - name: Pile locale (PostgreSQL, Mosquitto en TLS mutuel, serveur, applications)
+        working-directory: frontend
+        # Secrets, clés et certificats sont tirés au hasard pour cette seule exécution (e2e/.etat, jamais versionné).
+        run: sh e2e/pile.sh demarrer
+      - name: Parcours
+        working-directory: frontend
+        run: sh e2e/pile.sh tester
+      - name: Rapport et journaux en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-rapport
+          retention-days: 7
+          path: |
+            frontend/e2e/rapport-e2e/
+            frontend/e2e/test-results/
+            frontend/test-results/
+            frontend/e2e/.etat/*.log
+      - name: Arrêt de la pile
+        if: always()
+        working-directory: frontend
+        run: sh e2e/pile.sh arreter

@@ -7,9 +7,11 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   timeout: 90_000,
-  retries: 0,
+  // En intégration continue, un second essai distingue une lenteur passagère du runner d'une vraie régression ;
+  // l'essai qui n'a réussi qu'au second passage reste signalé « flaky » dans le rapport.
+  retries: process.env['CI'] ? 1 : 0,
   workers: 1,
-  reporter: [['list']],
+  reporter: process.env['CI'] ? [['list'], ['github'], ['html', { outputFolder: 'rapport-e2e', open: 'never' }]] : [['list']],
   use: {
     baseURL: process.env['FG_E2E_PARENTS'] ?? 'http://localhost:4201',
     viewport: { width: 360, height: 800 },
