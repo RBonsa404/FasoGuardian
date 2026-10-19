@@ -16,7 +16,9 @@ test('un agent KYC active son second facteur, instruit un dossier et le valide',
   await page.getByLabel('Identifiant').fill(agent.identifiant);
   await page.getByLabel('Mot de passe').fill(agent.motDePasse);
   await page.getByRole('button', { name: 'Continuer' }).click();
-  await expect(page.getByRole('heading', { name: 'Premier enrôlement' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Premier enrôlement' })).toBeVisible();
+  await expect(page.getByRole('img', { name: "QR code d'enrôlement" })).toBeVisible();
+  await page.screenshot({ path: 'e2e/.etat/ecran-55-enrolement.png' });
   const secret = (await page.locator('[data-secret]').textContent())!.trim();
   await page.getByLabel('Code à 6 chiffres').fill(codeTotp(secret));
   await page.getByRole('button', { name: 'Se connecter' }).click();

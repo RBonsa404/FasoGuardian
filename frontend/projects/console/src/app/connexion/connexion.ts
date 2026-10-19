@@ -7,13 +7,14 @@ import { ClientConsole } from 'api';
 import { FgBanniere, FgBouton, FgChamp, FgCode } from 'ui';
 
 import { erreurLisible } from '../commun/acces';
+import { QrEnrolement } from './qr-enrolement';
 
 type Etat = 'identifiants' | 'code' | 'enrolement';
 
 /** Connexion d'un agent (écran 55, US-ADM-001) : identifiant, mot de passe, puis code TOTP obligatoire. */
 @Component({
   selector: 'app-connexion',
-  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgChamp, FgCode],
+  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgChamp, FgCode, QrEnrolement],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form class="flex w-full max-w-sm flex-col gap-4 rounded-lg border border-line bg-surface p-7 shadow-e2" (submit)="$event.preventDefault(); valider()">
@@ -28,16 +29,23 @@ type Etat = 'identifiants' | 'code' | 'enrolement';
           <fg-input type="password" i18n-libelle="@@connexion.motDePasse" libelle="Mot de passe" autocomplete="current-password" [longueurMax]="128" [formControl]="motDePasse" />
         }
         @case ('enrolement') {
-          <h1 class="m-0 text-h2 font-semibold" i18n="@@enrolement.titre">Premier enrôlement</h1>
-          <p class="m-0 text-label text-text-2" i18n="@@enrolement.texte">
-            Ajoutez ce compte dans votre application d'authentification (TOTP), puis saisissez le code affiché.
-          </p>
-          <div class="flex flex-col gap-1 rounded-md bg-surface-2 p-3">
-            <span class="text-caption font-medium text-text-3" i18n="@@enrolement.secret">Clé à saisir dans l'application</span>
-            <code class="font-mono text-label font-semibold tracking-wider break-all select-all" data-secret>{{ secret() }}</code>
-          </div>
-          <a class="text-label font-semibold text-accent" [href]="uri()" i18n="@@enrolement.ouvrir">Ouvrir dans mon application d'authentification</a>
+          <h1 class="m-0 text-h2 font-semibold" i18n="@@code.titre">Code d'authentification</h1>
+          <p class="m-0 text-label text-text-2" i18n="@@code.texte">Ouvrez votre application TOTP et saisissez le code à 6 chiffres.</p>
           <fg-otp i18n-libelle="@@code.libelle" libelle="Code à 6 chiffres" [formControl]="code" />
+          <section class="flex flex-col gap-3 rounded-md bg-surface-2 p-3.5" i18n-aria-label="@@enrolement.titre" aria-label="Premier enrôlement">
+            <strong class="text-label font-semibold" i18n="@@enrolement.titre">Premier enrôlement</strong>
+            <div class="flex items-center gap-3.5">
+              @if (uri()) {
+                <app-qr-enrolement class="size-24 flex-none" [uri]="uri()" i18n-libelle="@@enrolement.qr" libelle="QR code d'enrôlement" />
+              }
+              <span class="text-caption text-text-2" i18n="@@enrolement.texte">Scannez ce code avec votre application d'authentification, puis saisissez le code qu'elle affiche.</span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-caption font-medium text-text-3" i18n="@@enrolement.secret">Ou saisissez cette clé dans l'application</span>
+              <code class="font-mono text-label font-semibold tracking-wider break-all select-all" data-secret>{{ secret() }}</code>
+            </div>
+            <a class="text-label font-semibold text-accent" [href]="uri()" i18n="@@enrolement.ouvrir">Ouvrir dans mon application d'authentification</a>
+          </section>
         }
         @case ('code') {
           <h1 class="m-0 text-h2 font-semibold" i18n="@@code.titre">Code d'authentification</h1>
