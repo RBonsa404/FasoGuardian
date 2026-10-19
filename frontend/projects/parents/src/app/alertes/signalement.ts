@@ -2,14 +2,37 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { Alerte, ApercuSignalement, ClientAlertes, ClientFamille, Signalement } from 'api';
-import { FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
+import { ActionAlerte, Alerte, ApercuSignalement, ClientAlertes, ClientFamille, Signalement } from 'api';
+import { FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { DePipe } from '../commun/francais';
 import { SecondFacteur } from '../commun/second-facteur';
 import { heure, ilYA } from '../commun/temps';
 import { age } from '../enfants/enfants';
+import { actionLisible } from './libelles';
+
+interface EtapeSuivi {
+  readonly titre: string;
+  readonly detail: string | null;
+  readonly le: string;
+  /** Accusé de réception des forces de sécurité : dernière étape, en vert. */
+  readonly accuse: boolean;
+}
+
+/** Titre d'une étape du journal, sur la frise du suivi (écran 29b). */
+function etapeDe(action: ActionAlerte): EtapeSuivi {
+  const qui = action.auteur === 'VOUS' ? $localize`:@@suivi.qui.vous:Par vous` : action.auteur === 'AUTRE_TUTEUR' ? $localize`:@@suivi.qui.autre:Par un autre tuteur` : null;
+  const titres: Partial<Record<ActionAlerte['type'], [string, string | null]>> = {
+    OUVERTURE: [$localize`:@@suivi.ouverture:Alerte déclenchée`, null],
+    ACQUITTEMENT: [$localize`:@@suivi.acquittement:Alerte prise en charge`, qui],
+    CONTACT_SOLLICITE: [$localize`:@@suivi.contact:Contacts d'urgence sollicités`, action.motif],
+    INSTITUTION_SOLLICITEE: [$localize`:@@suivi.institution:Point de contact institutionnel sollicité`, action.motif],
+    ESCALADE: [$localize`:@@suivi.escalade:Signalement confirmé`, $localize`:@@suivi.escalade.detail:Confirmé par code SMS`],
+  };
+  const [titre, detail] = titres[action.type] ?? [actionLisible(action), null];
+  return { titre, detail, le: action.effectueeLe, accuse: false };
+}
 
 /**
  * Signalement d'une disparition (écran 29, US-PAR-010). Le parent voit ce que le dossier contiendra, confirme
@@ -18,7 +41,7 @@ import { age } from '../enfants/enfants';
  */
 @Component({
   selector: 'app-signalement',
-  imports: [DatePipe, DePipe, RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette, SecondFacteur],
+  imports: [DatePipe, DePipe, RouterLink, FgBadge, FgBanniere, FgBouton, FgIcon, FgSquelette, SecondFacteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './signalement.html',
   host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
@@ -34,6 +57,14 @@ export class EcranSignalement {
   protected readonly alerte = signal<Alerte | null>(null);
   /** Photo de l'enfant jointe au dossier (ADR 0033), chargée par l'API authentifiée. */
   protected readonly photo = signal<string | null>(null);
+  /** Étapes de l'alerte, du déclenchement à l'accusé de réception des forces de sécurité. */
+  protected readonly etapesSuivi = computed<EtapeSuivi[]>(() => {
+    const etapes = [...(this.alerte()?.actions ?? [])].sort((a, b) => a.effectueeLe.localeCompare(b.effectueeLe)).map(etapeDe);
+    const accuse = this.signalement()?.accuseLe;
+    return accuse
+      ? [...etapes, { titre: $localize`:@@suivi.accuse:Accusé de réception des forces de sécurité`, detail: null, le: accuse, accuse: true }]
+      : etapes;
+  });
   private readonly famille = inject(ClientFamille);
   protected readonly apercu = signal<ApercuSignalement | null>(null);
   protected readonly signalement = signal<Signalement | null>(null);
@@ -74,6 +105,8 @@ export class EcranSignalement {
         this.enCours.set(false);
         this.confirmation.set(false);
         this.signalement.set(signalement);
+        // Le journal gagne l'étape du signalement : la frise du suivi la montre aussitôt.
+        this.client.alerte(this.aid()).subscribe({ next: (alerte) => this.alerte.set(alerte), error: () => undefined });
       },
       error: (cause: unknown) => {
         this.enCours.set(false);

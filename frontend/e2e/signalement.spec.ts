@@ -36,6 +36,10 @@ test('un parent signale une disparition, confirme par code SMS et télécharge l
   // Dossier prêt : référence, durée de disponibilité, téléchargement du PDF
   await expect(page.getByRole('heading', { name: /Dossier FG-SIG-\d{6}/ })).toBeVisible();
   await expect(page.getByText('Remettez ce dossier au commissariat')).toBeVisible();
+  // Écran 29b : la frise du suivi reprend le journal de l'alerte.
+  const suivi = page.getByRole('region', { name: "Suivi de l'alerte" });
+  await expect(suivi.getByRole('listitem')).toHaveText([/Alerte déclenchée/, /Alerte prise en chargePar vous/, /Signalement confirméConfirmé par code SMS/]);
+  await page.screenshot({ path: 'e2e/.etat/ecran-29b-suivi.png' });
   const attente = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Télécharger le PDF' }).click();
   const telechargement = await attente;

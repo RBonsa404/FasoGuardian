@@ -64,5 +64,6 @@ test('un agent des forces de sécurité accuse réception d’un signalement, et
   await expect(page.getByRole('link', { name: 'Alertes', exact: true })).toBeVisible();
   await page.goto(`/alertes/${alerte.id}/signalement`);
   await expect(page.getByRole('heading', { name: `Dossier ${reference}` })).toBeVisible();
-  await expect(page.getByText('Les forces de sécurité ont accusé réception le')).toBeVisible();
+  await expect(page.getByText('Accusé de réception reçu')).toBeVisible();
+  await expect(page.getByRole('region', { name: "Suivi de l'alerte" }).getByRole('listitem').last()).toContainText('Accusé de réception des forces de sécurité');
 });

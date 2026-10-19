@@ -6,8 +6,15 @@
 </div>
 
 @if (signalement(); as s) {
-  <div class="flex flex-col gap-1.5">
-    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.pret.titre">Dossier {{ s.reference }}</h1>
+  <div class="flex flex-col gap-2">
+    @if (s.accuseLe) {
+      <fg-badge class="self-start" ton="succes" icone="valider" i18n="@@signalement.badge.accuse">Accusé de réception reçu</fg-badge>
+    } @else if (s.canal === 'REMISE_PAR_LE_PARENT') {
+      <fg-badge class="self-start" ton="accent" i18n="@@signalement.badge.remise">Dossier prêt</fg-badge>
+    } @else {
+      <fg-badge class="self-start" ton="accent" i18n="@@signalement.badge.transmis">Dossier transmis</fg-badge>
+    }
+    <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@signalement.pret.titre">Dossier {{ s.reference }}</h1>
     @if (s.canal === 'REMISE_PAR_LE_PARENT') {
       <p class="m-0 text-body text-text-2" i18n="@@signalement.pret.remise">Remettez ce dossier au commissariat ou à la brigade de gendarmerie la plus proche. Il réunit ce qu'il faut pour reconnaître votre enfant et retracer son trajet récent.</p>
     } @else {
@@ -26,9 +33,30 @@
     </div>
   </dl>
 
-  @if (s.accuseLe) {
-    <fg-banner ton="succes"><ng-container i18n="@@signalement.accuse">Les forces de sécurité ont accusé réception le</ng-container> {{ s.accuseLe | date: "d MMM y 'à' HH:mm" }}.</fg-banner>
-  }
+  <!-- Écran 29b : le suivi de l'alerte, étape par étape, tel que le journal l'a consigné. -->
+  <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4" i18n-aria-label="@@signalement.suivi" aria-label="Suivi de l'alerte">
+    <h2 class="m-0 text-caption font-semibold tracking-wider text-text-3 uppercase" i18n="@@signalement.suivi">Suivi de l'alerte</h2>
+    <ol class="relative m-0 flex list-none flex-col gap-4 p-0">
+      <span class="absolute top-3 bottom-3 left-[11px] w-0.5 bg-line" aria-hidden="true"></span>
+      @for (etape of etapesSuivi(); track $index; let rang = $index) {
+        <li class="relative flex items-start gap-3">
+          <span
+            class="grid size-6 flex-none place-items-center rounded-full text-caption font-bold"
+            [class]="etape.accuse ? 'bg-success text-on-success' : 'bg-accent text-bg'"
+            aria-hidden="true"
+            >{{ rang + 1 }}</span
+          >
+          <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <strong class="text-body font-semibold">{{ etape.titre }}</strong>
+            @if (etape.detail) {
+              <span class="text-label text-text-2">{{ etape.detail }}</span>
+            }
+          </span>
+          <time class="flex-none text-label font-semibold tabular-nums text-text-2" [attr.datetime]="etape.le">{{ heure(etape.le) }}</time>
+        </li>
+      }
+    </ol>
+  </section>
   @if (erreur(); as message) {
     <fg-banner ton="erreur">{{ message }}</fg-banner>
   }
