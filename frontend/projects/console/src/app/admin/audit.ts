@@ -6,6 +6,7 @@ import { ChaineAudit, ClientConformite, EntreeAudit, FiltreAudit } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
+import { libelleAction } from './actions-audit';
 
 const TAILLE = 50;
 const HORODATAGE = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -88,7 +89,10 @@ const HEURE = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit
             <div class="grid min-h-11 grid-cols-[150px_150px_1.4fr_1.2fr_90px_110px] items-center border-t border-line px-4 text-label" role="row">
               <span class="tabular-nums text-text-2" role="cell">{{ horodatage(entree.horodatage) }}</span>
               <span class="truncate" role="cell" [attr.title]="entree.acteurId">{{ acteur(entree) }}</span>
-              <span class="truncate font-mono text-caption" role="cell">{{ entree.action }}</span>
+              <span class="flex min-w-0 flex-col" role="cell">
+                <span class="truncate font-medium">{{ libelleAction(entree.action) }}</span>
+                <span class="truncate font-mono text-[11px] text-text-3">{{ entree.action }}</span>
+              </span>
               <span class="truncate text-text-2" role="cell" [attr.title]="entree.cibleId">{{ cible(entree) }}</span>
               <span role="cell" [class]="entree.resultat === 'REFUS' ? 'font-semibold text-danger' : 'text-text-2'">{{ entree.resultat === 'REFUS' ? libelleRefus : libelleSucces }}</span>
               <span class="font-mono text-caption text-text-3" role="cell">{{ entree.empreinte }}</span>
@@ -111,6 +115,7 @@ const HEURE = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit
   host: { class: 'contents' },
 })
 export class Audit {
+  protected readonly libelleAction = libelleAction;
   private readonly client = inject(ClientConformite);
   private readonly router = inject(Router);
 
