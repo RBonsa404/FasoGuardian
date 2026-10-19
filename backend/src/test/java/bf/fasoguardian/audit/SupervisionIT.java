@@ -108,6 +108,44 @@ class SupervisionIT extends TestIntegration {
     }
 
     @Test
+    void lesIndicateursSontRelevesChaqueHeurePourLHistoriqueDeLEcran() throws Exception {
+        jdbc.update("DELETE FROM audit.releve_supervision");
+        // L'heure précédente : deux bracelets muets, 40 messages dont 2 écartés, 1 200 requêtes, un délai de 8,5 s.
+        for (Object[] releve : new Object[][] { { "BRACELETS_MUETS", 2 }, { "MESSAGES_BRACELETS", 40 }, { "MESSAGES_EN_ERREUR", 2 },
+                { "REQUETES", 1200 }, { "DELAI_P95_S", 8.5 } }) {
+            jdbc.update("INSERT INTO audit.releve_supervision (heure, indicateur, valeur)"
+                    + " VALUES (date_trunc('hour', now()) - INTERVAL '1 hour', ?, ?)", releve[0], releve[1]);
+        }
+        // Hier entier mesuré, sauf une minute sur dix : 90 %.
+        jdbc.update("INSERT INTO audit.sonde_disponibilite (minute) SELECT date_trunc('day', now()) - INTERVAL '1 day'"
+                + " + make_interval(mins => n) FROM generate_series(0, 1439) AS n WHERE n % 10 <> 9");
+        // Un message d'un appareil inconnu, cette heure-ci.
+        assertThat(ingestion.telemetrie("FG-0000001", "{}".getBytes(StandardCharsets.UTF_8))).isEqualTo(Resultat.APPAREIL_REFUSE);
+
+        supervision.sonder();
+        supervision.sonder();
+
+        assertThat(jdbc.queryForObject("SELECT valeur FROM audit.releve_supervision WHERE heure = date_trunc('hour', now())"
+                + " AND indicateur = 'MESSAGES_EN_ERREUR'", Double.class)).as("décompte de l'heure, versé une fois").isGreaterThanOrEqualTo(1);
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM audit.releve_supervision WHERE heure = date_trunc('hour', now())"
+                + " AND indicateur = 'BASE_OCTETS'", Integer.class)).isEqualTo(1);
+        mvc.perform(get(SUPERVISION).header("Authorization", "Bearer " + acteurs.jetonAdmin())).andExpect(status().isOk())
+                .andExpect(jsonPath("$.historiques.DELAI_P95_S.length()").value(24))
+                .andExpect(jsonPath("$.historiques.DELAI_P95_S[22]").value(8.5))
+                .andExpect(jsonPath("$.historiques.ERREURS_BRACELETS_PCT[22]").value(5.0))
+                .andExpect(jsonPath("$.historiques.BRACELETS_MUETS[22]").value(2.0))
+                .andExpect(jsonPath("$.braceletsMuetsIlYAUneHeure").value(2))
+                .andExpect(jsonPath("$.requetesParMinute").value(20.0))
+                .andExpect(jsonPath("$.erreursBraceletsPct").value(org.hamcrest.Matchers.greaterThan(0.0)))
+                .andExpect(jsonPath("$.latenceP95Ms").isNumber())
+                .andExpect(jsonPath("$.objectifDeLatenceMs").value(500)).andExpect(jsonPath("$.objectifDeDelaiS").value(60))
+                .andExpect(jsonPath("$.tailleBaseOctets").value(org.hamcrest.Matchers.greaterThan(0)))
+                .andExpect(jsonPath("$.disponibiliteParJour.length()").value(30))
+                .andExpect(jsonPath("$.disponibiliteParJour[28]").value(90.0))
+                .andExpect(jsonPath("$.disponibiliteParJour[27]").value(org.hamcrest.Matchers.nullValue()));
+    }
+
+    @Test
     void seulUnAdministrateurVoitLaSupervision() throws Exception {
         mvc.perform(get(SUPERVISION)).andExpect(status().isUnauthorized());
         mvc.perform(get(SUPERVISION).header("Authorization", "Bearer " + acteurs.jetonSav())).andExpect(status().isForbidden());

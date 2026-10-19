@@ -60,6 +60,10 @@ springdoc:
 # Une clé = 32 octets en base64 (openssl rand -base64 32). Pour une rotation, ajouter la version 2 et
 # conserver la version 1 tant que des données chiffrées avec elle subsistent.
 fasoguardian:
+  supervision:
+    # Capacité du volume qui porte la base (ex. 50GB), pour que l'écran 72 rapporte son occupation à l'objectif
+    # de 70 % de FG-DOC-06 ; sans elle, l'écran montre la seule taille de la base.
+    capacite-base: ${FG_CAPACITE_BASE:}
   push:
     # Clés du serveur d'application (VAPID). Sans elles, les notifications passent par SMS seulement.
     cle-publique: ${FG_PUSH_CLE_PUBLIQUE:}

@@ -73,7 +73,10 @@ test('un administrateur crée un agent, change son périmètre, le suspend et vo
   await expect(page.getByRole('heading', { name: 'Supervision', exact: true })).toBeVisible();
   await expect(page.getByRole('status').getByText(/En direct · actualisé il y a \d+ s/)).toBeVisible();
   await expect(page.getByText('Objectif 99,5 %')).toBeVisible();
-  await expect(page.getByText('Seuil 45 s')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Bracelets en service' })).toBeVisible();
+  await expect(page.getByText('Objectif < 60 s')).toBeVisible();
+  await expect(page.getByText('Objectif < 500 ms')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bracelets muets' })).toBeVisible();
+  // L'évolution : trente jours de disponibilité, vingt-quatre heures pour les autres indicateurs.
+  await expect(page.getByRole('img', { name: 'Disponibilité des 30 derniers jours, une barre par jour' }).locator('span')).toHaveCount(30);
   await page.screenshot({ path: 'e2e/.etat/ecran-72-supervision.png', fullPage: true });
 });

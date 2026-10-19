@@ -11,7 +11,7 @@ groups:
           resume: "Le serveur d'application ne répond plus à la collecte des métriques."
 
       - alert: LatenceApiElevee
-        expr: histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{job="serveur"}[10m]))) > 0.8
+        expr: histogram_quantile(0.95, sum by (le) (rate(fasoguardian_api_duree_seconds_bucket{job="serveur"}[10m]))) > 0.8
         for: 10m
         labels:
           gravite: avertissement
@@ -37,6 +37,15 @@ groups:
           gravite: avertissement
         annotations:
           resume: "Disponibilité du serveur sur 30 jours inférieure à 99,5 %."
+
+      # Messages des bracelets écartés (appareil inconnu ou message invalide) : objectif 0,5 %, alerte au-delà de 2 %.
+      - alert: MessagesDesBraceletsEnErreur
+        expr: sum(rate(fasoguardian_telemetrie_messages_total{job="serveur",flux!="lorawan",resultat=~"APPAREIL_REFUSE|INVALIDE"}[15m])) / sum(rate(fasoguardian_telemetrie_messages_total{job="serveur",flux!="lorawan"}[15m])) > 0.02
+        for: 15m
+        labels:
+          gravite: avertissement
+        annotations:
+          resume: "Plus de 2 % des messages des bracelets écartés sur 15 minutes (objectif : 0,5 %)."
 
       # US-SAV-001 : part anormale de bracelets muets, signe d'une panne de réseau ou du broker.
       - alert: BraceletsMuetsEnNombre

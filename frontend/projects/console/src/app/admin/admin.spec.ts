@@ -351,6 +351,7 @@ describe('sécurité', () => {
 });
 
 describe('supervision', () => {
+  const vide = Array.from({ length: 24 }, () => null);
   function supervision(partiel: Partial<TableauSupervision> = {}): TableauSupervision {
     return {
       disponibilite: 99.93,
@@ -362,11 +363,24 @@ describe('supervision', () => {
       delaiHorsSeuil: false,
       derniereAlerte: null,
       braceletsEnService: 240,
-      braceletsMuets: 0,
+      braceletsMuets: 4,
       alertesOuvertes: 18,
       smsEnvoyes: 40,
       notificationsPoussees: 310,
       messagesRefuses: 2,
+      objectifDeDelaiS: 60,
+      objectifDeLatenceMs: 500,
+      objectifDErreursPct: 0.5,
+      objectifDeDisquePct: 70,
+      latenceP95Ms: 310,
+      requetesParMinute: 1284,
+      erreursBraceletsPct: 0.4,
+      messagesBracelets24h: 52_000,
+      braceletsMuetsIlYAUneHeure: 3,
+      tailleBaseOctets: 31 * 1024 ** 3,
+      capaciteBaseOctets: 50 * 1024 ** 3,
+      disponibiliteParJour: [...Array.from({ length: 28 }, () => 100), 99.1, 99.98],
+      historiques: { DELAI_P95_S: [...vide.slice(1), 12.4], LATENCE_P95_MS: vide, ERREURS_BRACELETS_PCT: vide, BRACELETS_MUETS: vide, BASE_OCTETS: vide },
       ...partiel,
     };
   }
@@ -378,34 +392,58 @@ describe('supervision', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('montre la disponibilité face à son objectif et le délai face à son seuil', async () => {
+  it('montre les six indicateurs de FG-DOC-06 face à leur objectif, avec leur évolution', async () => {
     const page = await monter(supervision());
 
-    expect(lire(page)).toContain('Disponibilité · 30 j');
+    expect(lire(page)).toContain('Disponibilité API · 30 j');
     expect(lire(page)).toContain('99,93 %');
     expect(lire(page)).toContain('Objectif 99,5 %');
     expect(lire(page)).toContain('12,4 s');
-    expect(lire(page)).toContain('Seuil 45 s');
-    expect(lire(page)).toContain('Tous donnent des nouvelles');
-    expect(lire(page)).toContain('310 push · 40 SMS');
+    expect(lire(page)).toContain('Objectif < 60 s');
+    expect(lire(page)).toContain('310 ms');
+    expect(lire(page)).toContain('1 284 req/min');
+    expect(lire(page)).toContain('0,4 %');
+    expect(lire(page)).toContain('+1 depuis 1 h');
+    expect(lire(page)).toContain('62 %');
+    expect(lire(page)).toContain('31 Go sur 50 Go');
+    expect(page.querySelectorAll('section')).toHaveLength(6);
+    // Trente barres de disponibilité, dont le jour à 99,1 % hors objectif.
+    const jours = page.querySelectorAll('section')[0].querySelectorAll('[role="img"] > span');
+    expect(jours).toHaveLength(30);
+    expect(jours[28].className).toContain('bg-attention');
     expect(page.querySelector('fg-banner')).toBeNull();
   });
 
   it('signale l’alerte d’exploitation quand le délai dépasse le seuil', async () => {
-    const page = await monter(supervision({ delaiP95S: 61, delaiHorsSeuil: true, derniereAlerte: '2026-10-09T10:00:00Z', braceletsMuets: 7 }));
+    const page = await monter(supervision({ delaiP95S: 61, delaiHorsSeuil: true, derniereAlerte: '2026-10-09T10:00:00Z', braceletsMuets: 30 }));
 
     expect(lire(page)).toContain("Alerte d'exploitation");
     expect(lire(page)).toContain('dépasse 45 s au 95e centile');
-    expect(lire(page)).toContain('7 sans nouvelles');
+    expect(lire(page)).toContain('12,5 % des 240 bracelets en service');
   });
 
-  it('marque hors objectif une disponibilité insuffisante, et dit quand rien n’est mesurable', () => {
-    const liste = tuiles(supervision({ disponibilite: 98.5, minutesMesurees: 200, minutesIndisponibles: 3, delaiP95S: null }));
+  it('n’alerte sur les bracelets muets qu’en cas de hausse de plus de 10 % du parc en une heure', () => {
+    expect(tuiles(supervision({ braceletsMuets: 30, braceletsMuetsIlYAUneHeure: 28 }))[4].ok).toBe(true);
+    const hausse = tuiles(supervision({ braceletsMuets: 30, braceletsMuetsIlYAUneHeure: 2, historiques: { ...supervision().historiques, BRACELETS_MUETS: [...vide.slice(2), 2, 30] } }))[4];
+    expect(hausse.ok).toBe(false);
+    expect(hausse.mention).toBe('+28 depuis 1 h');
+    expect(hausse.barres.map((b) => b.horsObjectif).filter(Boolean)).toHaveLength(1);
+  });
+
+  it('marque hors objectif ce qui l’est, et dit quand rien n’est mesurable', () => {
+    const liste = tuiles(
+      supervision({ disponibilite: 98.5, minutesMesurees: 200, minutesIndisponibles: 3, delaiP95S: null, latenceP95Ms: 640, capaciteBaseOctets: null, braceletsMuetsIlYAUneHeure: null }),
+    );
 
     expect(liste[0].ok).toBe(false);
-    expect(liste[0].libelle).toBe('Disponibilité · 1 j');
+    expect(liste[0].libelle).toBe('Disponibilité API · 1 j');
     expect(liste[0].note).toBe("3 min d'indisponibilité");
     expect(liste[1].valeur).toBe('—');
     expect(liste[1].ok).toBe(true);
+    expect(liste[2].ok).toBe(false);
+    expect(liste[4].mention).toBe('');
+    // Sans capacité déclarée, la taille seule, sans pourcentage inventé.
+    expect(liste[5].valeur).toBe('31 Go');
+    expect(liste[5].mention).toBe('');
   });
 });

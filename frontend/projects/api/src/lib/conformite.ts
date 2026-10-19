@@ -91,7 +91,28 @@ export interface TableauSupervision {
   readonly smsEnvoyes: number;
   readonly notificationsPoussees: number;
   readonly messagesRefuses: number;
+  /** Objectifs de FG-DOC-06, tableau 20. */
+  readonly objectifDeDelaiS: number;
+  readonly objectifDeLatenceMs: number;
+  readonly objectifDErreursPct: number;
+  readonly objectifDeDisquePct: number;
+  /** Temps de réponse de l'API au 95e centile, en millisecondes ; `null` sans requête récente. */
+  readonly latenceP95Ms: number | null;
+  readonly requetesParMinute: number | null;
+  /** Part des messages des bracelets écartés sur 24 heures ; `null` sans message. */
+  readonly erreursBraceletsPct: number | null;
+  readonly messagesBracelets24h: number;
+  readonly braceletsMuetsIlYAUneHeure: number | null;
+  readonly tailleBaseOctets: number;
+  /** Capacité du volume de la base déclarée par l'exploitation, ou `null`. */
+  readonly capaciteBaseOctets: number | null;
+  /** Trente jours, le plus ancien d'abord ; `null` pour un jour sans mesure. */
+  readonly disponibiliteParJour: readonly (number | null)[];
+  /** Vingt-quatre heures, la plus ancienne d'abord, par indicateur ; `null` pour une heure sans relevé. */
+  readonly historiques: Readonly<Record<IndicateurReleve, readonly (number | null)[]>>;
 }
+
+export type IndicateurReleve = 'DELAI_P95_S' | 'LATENCE_P95_MS' | 'ERREURS_BRACELETS_PCT' | 'BRACELETS_MUETS' | 'BASE_OCTETS';
 
 export interface DemandeEffacement {
   readonly id: string;
