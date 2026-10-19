@@ -42,7 +42,7 @@
           <span [class]="classesPastille(!enLigne())"><fg-icon nom="agent" [taille]="20" /></span>
           <span class="flex flex-1 flex-col gap-0.5 text-left">
             <strong class="text-body font-semibold" i18n="@@verification.mode.point">En point d'inscription</strong>
-            <span class="text-label text-text-2" i18n="@@verification.mode.point.texte">Un agent vous accompagne · Dassasgho, Pissy, Gounghin</span>
+            <span class="text-label text-text-2" i18n="@@verification.mode.point.texte">Un agent vous accompagne · {{ quartiersInscription }}</span>
           </span>
         </button>
       </div>
@@ -241,19 +241,41 @@
                 <p class="m-0 text-label text-text-2">{{ d.motif }}</p>
                 <button fg-button type="button" (click)="recommencer()" i18n="@@kyc.rejete.action">Déposer un nouveau dossier</button>
               }
+              @case ('DEPOSE') {
+                @if (d.canal === 'POINT_INSCRIPTION') {
+                  <fg-badge class="self-start" ton="accent" i18n="@@kyc.statut.point">À finaliser en point d'inscription</fg-badge>
+                  <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.point.titre">Présentez-vous avec vos originaux</h2>
+                  <p class="m-0 text-label text-text-2">
+                    @if (d.natureLien === 'TUTEUR') {
+                      <ng-container i18n="@@kyc.point.texte.tuteur">Donnez la référence {{ d.reference }} et montrez votre pièce d'identité et le jugement de tutelle : un agent finalise la vérification avec vous.</ng-container>
+                    } @else {
+                      <ng-container i18n="@@kyc.point.texte">Donnez la référence {{ d.reference }} et montrez votre pièce d'identité et l'acte de naissance de l'enfant : un agent finalise la vérification avec vous.</ng-container>
+                    }
+                  </p>
+                } @else {
+                  <ng-container *ngTemplateOutlet="enInstruction; context: { $implicit: d }" />
+                }
+              }
               @default {
-                <fg-badge class="self-start" ton="accent" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
-                <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.instruction.titre">Dossier en instruction</h2>
-                <p class="m-0 text-label text-text-2">
-                  @if (d.deposeLe) {
-                    <ng-container i18n="@@kyc.instruction.texteDepot">Dossier {{ d.reference }} déposé le {{ d.deposeLe | date: 'd MMMM' }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
-                  } @else {
-                    <ng-container i18n="@@kyc.instruction.texte">Dossier {{ d.reference }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
-                  }
-                </p>
+                <ng-container *ngTemplateOutlet="enInstruction; context: { $implicit: d }" />
               }
             }
           </section>
+          @if (d.statut === 'DEPOSE' && d.canal === 'POINT_INSCRIPTION') {
+            <!-- Écran 11d : pas de réservation de créneau (ADR 0035), la liste des points qui font l'inscription. -->
+            <section class="flex flex-col gap-2.5" i18n-aria-label="@@kyc.point.liste" aria-label="Points d'inscription">
+              <h2 class="m-0 text-label font-semibold" i18n="@@kyc.point.liste">Points d'inscription</h2>
+              <ul class="m-0 flex list-none flex-col gap-2.5 p-0">
+                @for (point of pointsInscription; track point.nom) {
+                  <li class="flex flex-col gap-0.5 rounded-lg border border-line bg-surface p-4">
+                    <strong class="text-body font-semibold">{{ point.nom }}</strong>
+                    <span class="text-label text-text-2">{{ point.repere }} · {{ point.ville }}</span>
+                  </li>
+                }
+              </ul>
+              <p class="m-0 text-label text-text-3" i18n="@@kyc.point.reseau">Le réseau est en cours d'ouverture : les adresses et les horaires seront publiés à l'ouverture de chaque point.</p>
+            </section>
+          }
           @if (d.statut !== 'COMPLEMENT_DEMANDE' && d.statut !== 'REJETE') {
             <button fg-button class="mt-auto" taille="lg" type="button" (click)="accueil()" i18n="@@kyc.instruction.action">Découvrir l'application</button>
           }
@@ -268,6 +290,18 @@
     }
   }
 }
+
+<ng-template #enInstruction let-d>
+  <fg-badge class="self-start" ton="accent" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
+  <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.instruction.titre">Dossier en instruction</h2>
+  <p class="m-0 text-label text-text-2">
+    @if (d.deposeLe) {
+      <ng-container i18n="@@kyc.instruction.texteDepot">Dossier {{ d.reference }} déposé le {{ d.deposeLe | date: 'd MMMM' }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
+    } @else {
+      <ng-container i18n="@@kyc.instruction.texte">Dossier {{ d.reference }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
+    }
+  </p>
+</ng-template>
 
 <ng-template #banniere>
   @if (erreur(); as message) {

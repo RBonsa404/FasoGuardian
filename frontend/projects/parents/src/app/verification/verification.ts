@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable, concat, defer, last, switchMap } from 'rxjs';
 
 import { ClientKyc, DossierKycParent, InvitationRecue, TypePieceKyc } from 'api';
-import { FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquelette, NomIcone } from 'ui';
+import { FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquelette, NomIcone, POINTS_INSCRIPTION } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { Etape } from '../gabarit/etape';
@@ -55,6 +55,12 @@ export class Verification {
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly dossier = signal<DossierKycParent | null | undefined>(undefined);
+  /** Points où un agent finalise un dossier déposé en point d'inscription (écran 11d, ADR 0035). */
+  protected readonly pointsInscription = POINTS_INSCRIPTION;
+  /** « Dassasgho, Tampouy, Bobo-Dioulasso » : le quartier quand la ville a plusieurs points, sinon la ville. */
+  protected readonly quartiersInscription = POINTS_INSCRIPTION.map((point) =>
+    POINTS_INSCRIPTION.filter((autre) => autre.ville === point.ville).length > 1 ? point.nom.split(' · ').pop() : point.ville,
+  ).join(', ');
   /** Invitations de second tuteur reçues sur le numéro du compte (US-PAR-003). */
   protected readonly invitations = signal<InvitationRecue[]>([]);
 

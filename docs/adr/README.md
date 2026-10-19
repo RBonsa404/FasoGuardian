@@ -42,3 +42,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0032](0032-second-tuteur.md) | Second tuteur : invitation confirmée par SMS, dossier KYC propre à l'invité sur l'enfant déjà suivi, deux tuteurs au plus, mêmes droits ; la différenciation est celle du contact secondaire | Acceptée |
 | [0033](0033-photo-de-l-enfant.md) | Photo de l'enfant chiffrée en base, servie aux seuls tuteurs, jointe au dossier de signalement, jamais sur la page QR | Acceptée |
 | [0034](0034-suivi-rapproche-depuis-la-carte.md) | Bascule « Mode alerte » de la carte : suivi rapproché de 30 minutes, journalisé, qui ne coupe jamais le mode d'une alerte critique | Acceptée |
+| [0035](0035-rendez-vous-en-point-d-inscription.md) | Point d'inscription : où se présenter avec la référence et les originaux, sans réservation de créneau ; liste des points partagée avec le site | Acceptée |

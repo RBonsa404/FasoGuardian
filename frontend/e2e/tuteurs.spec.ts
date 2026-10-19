@@ -57,8 +57,10 @@ test('un tuteur invite un second tuteur, qui accède à l’enfant après sa pro
   await invitePage.getByRole('button', { name: 'Continuer' }).click();
   await expect(invitePage.getByText(/Sur invitation de/)).toBeVisible();
   await invitePage.getByRole('button', { name: 'Envoyer mon dossier' }).click();
-  await expect(invitePage.getByRole('heading', { name: 'Dossier en instruction' })).toBeVisible();
-  const reference = (await invitePage.getByText(/Dossier KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
+  // Dossier déposé en point d'inscription : la référence à donner et les points où se présenter (écran 11d).
+  await expect(invitePage.getByRole('heading', { name: 'Présentez-vous avec vos originaux' })).toBeVisible();
+  await expect(invitePage.getByRole('listitem').filter({ hasText: 'Point FasoGuardian · Dassasgho' })).toBeVisible();
+  const reference = (await invitePage.getByText(/Donnez la référence KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
 
   // Avant l'approbation, l'invité n'accède pas à l'enfant ; le tuteur voit la vérification en cours
   const jetonInvite = (await (await request.post(`${SERVEUR}/api/v1/auth/connexion`, { data: { telephone: invite.telephone, motDePasse: MOT_DE_PASSE_PARENT } })).json()).jetonAcces;

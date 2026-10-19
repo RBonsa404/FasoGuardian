@@ -227,6 +227,23 @@ describe('Verification', () => {
     serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'DEPOSE' });
   });
 
+  it('dossier déposé en point d’inscription (écran 11d) : la référence, les originaux et les points où se présenter', async () => {
+    expect(page.textContent).toContain('Un agent vous accompagne · Dassasgho, Tampouy, Bobo-Dioulasso');
+    await harnais.navigateByUrl('/verification/instruction');
+    serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'DEPOSE', canal: 'POINT_INSCRIPTION' });
+    await stable();
+
+    expect(page.textContent).toContain('Présentez-vous avec vos originaux');
+    expect(page.textContent).toContain("Donnez la référence KYC-20418 et montrez votre pièce d'identité et l'acte de naissance de l'enfant");
+    const points = Array.from(page.querySelectorAll('li'), (li) => li.textContent?.replace(/\s+/g, ' ').trim());
+    expect(points).toEqual([
+      'Point FasoGuardian · DassasghoPrès du marché · Ouagadougou',
+      'Point FasoGuardian · TampouyRond-point de Tampouy · Ouagadougou',
+      'Point FasoGuardian · CentrePrès de la gare · Bobo-Dioulasso',
+    ]);
+    expect(page.textContent).not.toContain('Un agent vérifie vos documents');
+  });
+
   it('compte activé (écran 11i) : salue le parent par son prénom et propose d’associer le bracelet', async () => {
     await harnais.navigateByUrl('/verification/instruction');
     serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'APPROUVE' });

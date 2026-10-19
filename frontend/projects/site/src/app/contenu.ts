@@ -114,18 +114,7 @@ export const CONSERVATION = [
   { donnee: 'Dossier de signalement', duree: '30 jours' },
 ] as const;
 
-/**
- * Points d'inscription et relais. Liste indicative tant que le réseau du pilote n'est pas ouvert : les lieux
- * sont des quartiers réels, les enseignes sont fictives.
- */
-export const POINTS_RELAIS = [
-  { ville: 'Ouagadougou', nom: 'Point FasoGuardian · Dassasgho', services: 'Inscription · service après-vente', repere: 'Près du marché' },
-  { ville: 'Ouagadougou', nom: 'Pharmacie relais · Pissy', services: 'Remise de bracelets', repere: 'Avenue principale' },
-  { ville: 'Ouagadougou', nom: 'Boutique relais · Gounghin', services: 'Échange de sangles', repere: 'Face au marché' },
-  { ville: 'Ouagadougou', nom: 'Point FasoGuardian · Tampouy', services: 'Inscription accompagnée', repere: 'Rond-point de Tampouy' },
-  { ville: 'Ouagadougou', nom: 'Point relais · Ouaga 2000', services: 'Remise · service après-vente', repere: 'Zone commerciale' },
-  { ville: 'Bobo-Dioulasso', nom: 'Point FasoGuardian · Centre', services: 'Inscription · service après-vente', repere: 'Près de la gare' },
-] as const;
+export { POINTS_RELAIS } from 'ui';
 
 export const QUESTIONS = [
   { question: 'Le bracelet a-t-il un écran ou une caméra ?', reponse: "Non. Il n'a ni écran, ni caméra, ni micro. Juste un bouton SOS, une LED et un vibreur." },
