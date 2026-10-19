@@ -26,9 +26,10 @@
         <button fg-button taille="lg" type="submit" form="formulaire" [chargement]="enCours()" i18n="@@inscription.numero.action">
           Recevoir le code
         </button>
-        <a class="py-2 text-center text-label font-medium text-text-3" routerLink="/connexion" i18n="@@inscription.numero.pied">
-          Déjà un compte ? Se connecter
-        </a>
+        <p class="m-0 py-2 text-center text-label font-medium text-text-2">
+          <ng-container i18n="@@inscription.numero.deja">Déjà un compte ?</ng-container>&ngsp;
+          <a class="font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/connexion" i18n="@@inscription.numero.connecter">Se connecter</a>
+        </p>
       </ng-container>
     </app-etape>
   }

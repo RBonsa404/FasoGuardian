@@ -197,7 +197,8 @@ export async function braceletAuParc(api: APIRequestContext): Promise<CarteActiv
   const reponse = await api.post(`${SERVEUR}/api/v1/console/parc`, {
     headers: { Authorization: `Bearer ${jeton}` },
     data: {
-      numeroSerie: `FG-${1000 + Math.floor(Math.random() * 9000)}`,
+      // Six chiffres : une base de test longuement réutilisée finirait par tirer deux fois le même numéro à quatre chiffres.
+      numeroSerie: `FG-${100000 + Math.floor(Math.random() * 900000)}`,
       imei: imeiFictif(),
       revisionMaterielle: 'V1',
       versionLogiciel: '2.4.1',

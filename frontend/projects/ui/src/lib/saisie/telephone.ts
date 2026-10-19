@@ -17,7 +17,7 @@ let suite = 0;
   template: `
     <label class="text-label font-semibold" [class.text-text-3]="desactive()" [attr.for]="id">{{ libelle() }}</label>
     <div [class]="cadre()">
-      <span class="text-text-2" aria-hidden="true">+226</span>
+      <span class="border-r border-line pr-2.5 text-text-2" aria-hidden="true">+226</span>
       <input
         class="min-w-0 flex-1 bg-transparent tabular-nums outline-none placeholder:text-text-3 disabled:text-text-3"
         type="tel"

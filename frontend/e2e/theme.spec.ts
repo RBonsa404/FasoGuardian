@@ -23,8 +23,11 @@ test('l’espace parent suit l’apparence du système, puis le choix de la pers
   // Système en clair : la connexion s'affiche en clair, avec le logo fait pour un fond clair
   await page.goto('/connexion');
   expect(await fond(page)).toBe(FOND_CLAIR);
+  // L'introduction porte le logo complet : celui fait pour un fond clair.
+  await page.goto('/bienvenue');
   await expect(page.locator('img[src="logo-clair.svg"]')).toBeVisible();
   await expect(page.locator('img[src="logo-sombre.svg"]')).toBeHidden();
+  await page.goto('/connexion');
   await page.screenshot({ path: 'e2e/.etat/clair-12-connexion.png' });
   await page.getByLabel('Numéro mobile').fill(telephone);
   await page.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);

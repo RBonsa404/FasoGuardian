@@ -14,10 +14,8 @@ import { erreurLisible } from '../commun/erreurs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col gap-2 px-5 pt-10">
-      <img src="logo-sombre.svg" alt="FasoGuardian" class="mb-6 h-8 w-auto self-start clair:hidden" />
-      <img src="logo-clair.svg" alt="FasoGuardian" class="mb-6 hidden h-8 w-auto self-start clair:block" />
-      <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@connexion.titre">Connexion</h1>
-      <p class="m-0 text-body text-text-2" i18n="@@connexion.texte">Retrouvez la position et les alertes de votre enfant.</p>
+      <img src="favicon.svg" alt="FasoGuardian" class="mb-4 size-11 self-start" />
+      <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@connexion.titre">Bon retour</h1>
     </div>
     <form id="connexion" class="flex flex-1 flex-col gap-3 p-5" (submit)="$event.preventDefault(); connecter()">
       @if (session.reauthentificationRequise()) {
@@ -32,6 +30,7 @@ import { erreurLisible } from '../commun/erreurs';
         libelle="Mot de passe"
         [formControl]="motDePasse"
       />
+      <a class="self-end py-1 text-label font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/mot-de-passe-oublie" i18n="@@connexion.oublie">Mot de passe oublié ?</a>
       @if (erreur(); as message) {
         <fg-banner ton="erreur">{{ message }}</fg-banner>
       }
@@ -40,10 +39,10 @@ import { erreurLisible } from '../commun/erreurs';
       <button fg-button taille="lg" type="submit" form="connexion" [chargement]="enCours()" i18n="@@connexion.action">
         Se connecter
       </button>
-      <a class="py-2 text-center text-label font-semibold text-accent" routerLink="/mot-de-passe-oublie" i18n="@@connexion.oublie">Mot de passe oublié ?</a>
-      <a class="py-2 text-center text-label font-medium text-text-3" [routerLink]="['/inscription', 'numero']" i18n="@@connexion.pied">
-        Pas encore de compte ? S'inscrire
-      </a>
+      <p class="m-0 py-2 text-center text-label font-medium text-text-2">
+        <ng-container i18n="@@connexion.nouveau">Nouveau ?</ng-container>&ngsp;
+        <a class="font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/inscription', 'numero']" i18n="@@connexion.creer">Créer un compte</a>
+      </p>
     </div>
   `,
   host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col' },
