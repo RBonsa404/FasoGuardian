@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, ElementRef, effect, input, output, viewChild } from '@angular/core';
 
+import { FgIcon } from '../icone/icone';
+import { NomIcone } from '../icone/icones';
+
 /**
  * Feuille de bas d'écran (fg-sheet). S'appuie sur l'élément natif <dialog> : focus piégé, Échap pour
  * fermer, arrière-plan inerte. Sur grand écran, elle se centre.
  */
 @Component({
   selector: 'fg-sheet',
+  imports: [FgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <dialog
@@ -15,7 +19,12 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, input, output, 
       (close)="fermee.emit()"
       (click)="surClic($event)"
     >
+      <!-- Poignée des feuilles de bas d'écran : simple repère visuel, la feuille se ferme par Échap ou l'arrière-plan. -->
+      <span class="mx-auto -mt-2 mb-3 block h-1 w-10 rounded-full bg-line-strong sm:hidden" aria-hidden="true"></span>
       <div class="flex flex-col gap-4">
+        @if (icone(); as nom) {
+          <span class="grid size-12 place-items-center rounded-md bg-accent-soft text-accent" aria-hidden="true"><fg-icon [nom]="nom" [taille]="22" /></span>
+        }
         <h2 class="m-0 text-h3 font-semibold">{{ titre() }}</h2>
         <ng-content />
       </div>
@@ -25,6 +34,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, input, output, 
 export class FgFeuille {
   readonly titre = input.required<string>();
   readonly ouverte = input(false);
+  /** Pastille d'icône au-dessus du titre, pour les feuilles de confirmation. */
+  readonly icone = input<NomIcone>();
   /** Émis à la fermeture, qu'elle vienne d'Échap, d'un clic sur l'arrière-plan ou du parent. */
   readonly fermee = output<void>();
 

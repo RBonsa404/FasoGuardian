@@ -69,7 +69,7 @@ test('un SOS du bracelet arrive au parent, qui le prend en charge puis le lève 
   await page.getByText('Recharge', { exact: true }).click();
   await page.screenshot({ path: 'e2e/.etat/ecran-38-retrait.png', fullPage: true });
   await page.getByRole('button', { name: 'Autoriser 2 h · code SMS' }).click();
-  let code = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  let code = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(code.getByText('Renvoyer le code dans')).toBeVisible();
   await code.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
   await expect(page.getByRole('heading', { name: 'Retrait autorisé' })).toBeVisible();
@@ -86,7 +86,7 @@ test('un SOS du bracelet arrive au parent, qui le prend en charge puis le lève 
 
   // Prolongation sous code, puis remise du bracelet
   await page.getByRole('button', { name: '+ 30 min · code SMS' }).click();
-  code = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  code = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(code.getByText('Renvoyer le code dans')).toBeVisible();
   await code.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
   await expect(page.getByRole('timer')).toContainText(/2:2\d:\d\d/);

@@ -28,7 +28,7 @@ test('un parent signale une disparition, confirme par code SMS et télécharge l
   await expect(page.getByText('Un faux signalement est puni par la loi.')).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/ecran-29-signalement.png', fullPage: true });
   await page.getByRole('button', { name: 'Confirmer par code SMS' }).click();
-  const code = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  const code = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(code.getByText('Renvoyer le code dans')).toBeVisible();
   await code.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
 

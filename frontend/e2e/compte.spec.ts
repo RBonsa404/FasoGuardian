@@ -31,7 +31,7 @@ test('un parent retrouve son accès par code SMS puis clôt son compte après co
   // Clôture : action sensible, confirmée par un code SMS propre à cette action
   await ongletReglages(page);
   await page.getByRole('button', { name: 'Clôturer le compte' }).click();
-  const feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  const feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille).toBeVisible();
   await expect(feuille.getByText('supprimées sous 30 jours')).toBeVisible();
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();

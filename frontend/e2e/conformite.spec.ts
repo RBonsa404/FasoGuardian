@@ -31,7 +31,7 @@ test('un parent exporte ses données et clôt son compte, un administrateur exé
 
   // Clôture : elle vaut demande d'effacement
   await page.getByRole('button', { name: 'Clôturer le compte' }).click();
-  const feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  const feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
   await expect(page).toHaveURL(/connexion/);

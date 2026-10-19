@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { ActionSensible, ClientProfil } from 'api';
+import { ActionSensible, ClientAuthentification, ClientProfil } from 'api';
 import { FgBouton, FgCode, FgFeuille } from 'ui';
 
 import { erreurLisible } from './erreurs';
@@ -17,17 +17,26 @@ const DELAI_RENVOI_S = 60;
   imports: [ReactiveFormsModule, FgFeuille, FgCode, FgBouton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <fg-sheet i18n-titre="@@secondFacteur.titre" titre="Confirmez par code SMS" [ouverte]="ouverte()" (fermee)="annule.emit()">
-      <p class="m-0 text-label text-text-2">{{ explication() }}</p>
+    <fg-sheet i18n-titre="@@secondFacteur.titre" titre="Confirmez avec le code SMS" icone="cadenas" [ouverte]="ouverte()" (fermee)="annule.emit()">
+      <p class="m-0 text-label text-text-2">
+        {{ explication() }}
+        @if (telephone(); as numero) {
+          <ng-container i18n="@@secondFacteur.envoye">Code envoyé au {{ numero }}.</ng-container>
+        }
+      </p>
       <fg-otp i18n-libelle="@@secondFacteur.code" libelle="Code à 6 chiffres" [erreur]="erreur() ?? erreurEnvoi()" [formControl]="code" (complet)="saisi.emit($event)" />
-      @if (attente() > 0) {
-        <span class="text-label text-text-2" i18n="@@secondFacteur.attente">Renvoyer le code dans <strong class="text-text tabular-nums">{{ minuteur() }}</strong></span>
-      } @else {
-        <button fg-button variante="ghost" taille="sm" type="button" class="self-start" (click)="envoyer()" i18n="@@secondFacteur.renvoyer">
-          Renvoyer le code
-        </button>
-      }
-      <button fg-button variante="secondary" type="button" (click)="annule.emit()" i18n="@@commun.annuler">Annuler</button>
+      <span class="flex flex-wrap items-center gap-x-1 text-label text-text-2">
+        @if (attente() > 0) {
+          <span i18n="@@secondFacteur.attente">Renvoyer le code dans <strong class="text-text tabular-nums">{{ minuteur() }}</strong></span>
+        } @else {
+          <button fg-button variante="ghost" taille="sm" type="button" (click)="envoyer()" i18n="@@secondFacteur.renvoyer">Renvoyer le code</button>
+        }
+        <!-- Un code neuf permet trois essais ; après une erreur, le message du serveur dit combien il en reste. -->
+        @if (!erreur()) {
+          <span i18n="@@secondFacteur.essais">· 3 essais</span>
+        }
+      </span>
+      <button fg-button taille="lg" type="button" [disabled]="!codeComplet()" (click)="saisi.emit(code.value)" i18n="@@secondFacteur.confirmer">Confirmer</button>
     </fg-sheet>
   `,
 })
@@ -41,13 +50,21 @@ export class SecondFacteur {
   readonly annule = output<void>();
 
   private readonly client = inject(ClientProfil);
+  /** Numéro masqué du compte, rappelé pour que le parent sache où chercher le SMS. */
+  protected readonly telephone = signal<string | null>(null);
+  private readonly saisie = signal('');
+  protected readonly codeComplet = computed(() => /^\d{6}$/.test(this.saisie()));
 
   protected readonly code = new FormControl('', { nonNullable: true });
   protected readonly attente = signal(0);
   protected readonly erreurEnvoi = signal<string | null>(null);
-  protected readonly minuteur = computed(() => `0:${String(this.attente()).padStart(2, '0')}`);
+  protected readonly minuteur = computed(() => `${Math.floor(this.attente() / 60)}:${String(this.attente() % 60).padStart(2, '0')}`);
 
   constructor() {
+    this.code.valueChanges.subscribe((valeur) => this.saisie.set(valeur));
+    inject(ClientAuthentification)
+      .moi()
+      .subscribe({ next: (compte) => this.telephone.set(compte.telephoneMasque), error: () => undefined });
     effect(() => {
       if (this.ouverte()) {
         this.code.setValue('');

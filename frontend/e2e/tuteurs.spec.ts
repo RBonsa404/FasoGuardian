@@ -28,7 +28,7 @@ test('un tuteur invite un second tuteur, qui accède à l’enfant après sa pro
   const feuille = page.getByRole('dialog', { name: 'Inviter un second tuteur' });
   await feuille.getByLabel('Numéro mobile du second tuteur').fill(invite.telephone);
   await feuille.getByRole('button', { name: 'Continuer' }).click();
-  const code = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  const code = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   // Le minuteur de renvoi n'apparaît qu'une fois le code envoyé.
   await expect(code.getByText('Renvoyer le code dans')).toBeVisible();
   await code.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));

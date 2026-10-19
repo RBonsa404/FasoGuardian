@@ -51,7 +51,7 @@ test('un parent associe un bracelet, le déclare perdu, le retrouve puis le dés
   await page.getByText('Perdu', { exact: true }).click();
   await expect(page.getByText('Le suivi continue 72 h')).toBeVisible();
   await page.getByRole('button', { name: 'Déclarer · code SMS' }).click();
-  const feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  const feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
   await expect(page.getByText(/Déclaré perdu\. La page QR est désactivée/)).toBeVisible();

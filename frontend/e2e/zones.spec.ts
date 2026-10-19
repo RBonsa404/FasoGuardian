@@ -57,7 +57,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   await page.getByText('10 min', { exact: true }).click();
   await page.screenshot({ path: 'e2e/.etat/ecran-22-edition-zone.png', fullPage: true });
   await page.getByRole('button', { name: 'Enregistrer · code SMS' }).click();
-  let feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  let feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
 
@@ -71,7 +71,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   await zone.click();
   let actions = page.getByRole('dialog', { name: 'Maison de Tampouy' });
   await actions.getByRole('button', { name: 'Suspendre · code SMS' }).click();
-  feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('pour suspendre « Maison de Tampouy »')).toBeVisible();
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
@@ -92,7 +92,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   await expect(page.getByLabel('Fin')).toHaveValue('18:00');
   await page.getByLabel('Nom de la zone').fill('Maison');
   await page.getByRole('button', { name: 'Enregistrer · code SMS' }).click();
-  feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
   const renommee = page.getByRole('button', { name: /^Maison Cercle 300 m/ });
@@ -102,7 +102,7 @@ test('un parent trace une Safe Zone, la suspend, la réactive, la modifie puis l
   await renommee.click();
   actions = page.getByRole('dialog', { name: 'Maison', exact: true });
   await actions.getByRole('button', { name: 'Supprimer la zone' }).click();
-  feuille = page.getByRole('dialog', { name: 'Confirmez par code SMS' });
+  feuille = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(feuille.getByText('pour supprimer « Maison »')).toBeVisible();
   await expect(feuille.getByText('Renvoyer le code dans')).toBeVisible();
   await feuille.getByLabel('Code à 6 chiffres').fill(await dernierCodeSms(request, telephone));
