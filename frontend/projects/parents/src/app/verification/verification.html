@@ -195,19 +195,37 @@
         <button fg-button taille="lg" type="button" [chargement]="enCours()" (click)="envoyer()" i18n="@@verification.recap.action">
           Envoyer mon dossier
         </button>
-        <span class="py-2 text-center text-label font-medium text-text-3" i18n="@@verification.recap.pied">Réponse sous 48 h ouvrées.</span>
+        <span class="py-2 text-center text-label font-medium text-text-3" i18n="@@verification.recap.pied">Vous recevrez un SMS dès la décision.</span>
       </ng-container>
     </app-etape>
   }
   @case ('instruction') {
-    <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7">
-      @if (dossier(); as d) {
-        @if (d.statut === 'APPROUVE') {
-          <fg-badge class="self-start" ton="succes" icone="valider" i18n="@@kyc.statut.approuve">Compte activé</fg-badge>
-          <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.approuve.titre">Votre compte est activé</h1>
-          <p class="m-0 text-body text-text-2" i18n="@@kyc.approuve.texte">Votre lien avec l'enfant est vérifié.</p>
-          <button fg-button class="mt-auto" taille="lg" type="button" (click)="accueil()" i18n="@@commun.continuer">Continuer</button>
-        } @else {
+    @if (dossier()?.statut === 'APPROUVE') {
+      @let d = dossier()!;
+      <!-- Écran 11i : célébration discrète, sur le dégradé de marque, sans animation. -->
+      <div class="flex min-h-dvh flex-col bg-(image:--fond-hero) text-hero-fg">
+        <div class="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-45 text-center">
+          <span class="grid size-24 place-items-center rounded-full bg-success text-on-success" aria-hidden="true"><fg-icon nom="valider" [taille]="48" /></span>
+          <h1 class="m-0 mt-7 text-[28px] leading-tight font-bold tracking-tight" i18n="@@kyc.approuve.titre">Votre compte est activé</h1>
+          <p class="m-0 mt-2.5 text-base text-hero-fg-2">
+            @if (d.secondTuteur) {
+              <ng-container i18n="@@kyc.approuve.texte.tuteur">{{ d.prenomDemandeur }}, votre lien avec {{ d.prenomEnfant }} est vérifié. Vous suivez désormais l'enfant avec les autres tuteurs.</ng-container>
+            } @else {
+              <ng-container i18n="@@kyc.approuve.texte">{{ d.prenomDemandeur }}, votre lien avec {{ d.prenomEnfant }} est vérifié. Associons maintenant son bracelet.</ng-container>
+            }
+          </p>
+        </div>
+        <div class="mx-auto mt-auto w-full max-w-md px-6 pb-7">
+          @if (d.secondTuteur) {
+            <button fg-button class="w-full bg-hero-btn! text-hero-btn-fg!" taille="lg" type="button" (click)="accueil()" i18n="@@commun.continuer">Continuer</button>
+          } @else {
+            <button fg-button class="w-full bg-hero-btn! text-hero-btn-fg!" taille="lg" type="button" (click)="associer()" i18n="@@kyc.approuve.action">Associer le bracelet</button>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7">
+        @if (dossier(); as d) {
           <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.etat.titre">Vérification de votre dossier</h1>
           <section class="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-4">
             @switch (d.statut) {
@@ -239,15 +257,15 @@
           @if (d.statut !== 'COMPLEMENT_DEMANDE' && d.statut !== 'REJETE') {
             <button fg-button class="mt-auto" taille="lg" type="button" (click)="accueil()" i18n="@@kyc.instruction.action">Découvrir l'application</button>
           }
+        } @else if (erreur(); as message) {
+          <fg-banner ton="erreur">{{ message }}</fg-banner>
+          <button fg-button variante="secondary" type="button" (click)="chargerDossier()" i18n="@@commun.reessayer">Réessayer</button>
+        } @else {
+          <fg-skeleton forme="ligne" class="w-1/3" />
+          <fg-skeleton forme="carte" />
         }
-      } @else if (erreur(); as message) {
-        <fg-banner ton="erreur">{{ message }}</fg-banner>
-        <button fg-button variante="secondary" type="button" (click)="chargerDossier()" i18n="@@commun.reessayer">Réessayer</button>
-      } @else {
-        <fg-skeleton forme="ligne" class="w-1/3" />
-        <fg-skeleton forme="carte" />
-      }
-    </div>
+      </div>
+    }
   }
 }
 

@@ -38,6 +38,11 @@ export interface DossierKycParent {
   readonly deposeLe: string | null;
   readonly decideLe: string | null;
   readonly pieces: readonly PieceKyc[];
+  /** Prénoms déclarés par le parent lui-même, repris à l'activation du compte. */
+  readonly prenomDemandeur: string;
+  readonly prenomEnfant: string;
+  /** Dossier d'un second tuteur : l'enfant a déjà son bracelet. */
+  readonly secondTuteur: boolean;
 }
 
 export interface DemandeDossierKyc {

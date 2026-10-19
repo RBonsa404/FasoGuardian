@@ -23,6 +23,9 @@ const DOSSIER: DossierKycParent = {
   deposeLe: null,
   decideLe: null,
   pieces: [],
+  prenomDemandeur: 'Mariam',
+  prenomEnfant: 'Awa',
+  secondTuteur: false,
 };
 
 describe('Verification', () => {
@@ -38,6 +41,7 @@ describe('Verification', () => {
           [
             { path: '', component: AccueilFactice },
             { path: 'verification/:etape', component: Verification },
+            { path: 'bracelet/associer', component: AccueilFactice },
           ],
           withComponentInputBinding(),
         ),
@@ -221,6 +225,28 @@ describe('Verification', () => {
     serveur.expectOne('/api/v1/kyc/dossiers/d-1/depot').flush({ ...DOSSIER, statut: 'DEPOSE' });
     await stable();
     serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'DEPOSE' });
+  });
+
+  it('compte activé (écran 11i) : salue le parent par son prénom et propose d’associer le bracelet', async () => {
+    await harnais.navigateByUrl('/verification/instruction');
+    serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'APPROUVE' });
+    await stable();
+    expect(page.querySelector('h1')?.textContent).toContain('Votre compte est activé');
+    expect(page.textContent).toContain('Mariam, votre lien avec Awa est vérifié. Associons maintenant son bracelet.');
+
+    await suivant();
+    expect(router.url).toBe('/bracelet/associer');
+  });
+
+  it('second tuteur activé : le bracelet est déjà associé, il continue vers l’accueil', async () => {
+    await harnais.navigateByUrl('/verification/instruction');
+    serveur.expectOne('/api/v1/kyc/dossiers/courant').flush({ ...DOSSIER, statut: 'APPROUVE', prenomDemandeur: 'Issa', secondTuteur: true });
+    await stable();
+    expect(page.textContent).toContain('Issa, votre lien avec Awa est vérifié.');
+    expect(boutonPrincipal().textContent).toContain('Continuer');
+
+    await suivant();
+    expect(router.url).toBe('/');
   });
 
   it('sans dossier, la page de suivi renvoie au début du parcours', async () => {

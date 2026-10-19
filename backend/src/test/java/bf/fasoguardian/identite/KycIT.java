@@ -72,6 +72,11 @@ class KycIT extends TestIntegration {
 
         mvc.perform(get("/api/v1/moi").header("Authorization", "Bearer " + parent.jeton()))
                 .andExpect(jsonPath("$.statut").value("ACTIF"));
+        mvc.perform(get("/api/v1/kyc/dossiers/courant").header("Authorization", "Bearer " + parent.jeton()))
+                .andExpect(jsonPath("$.statut").value("APPROUVE"))
+                .andExpect(jsonPath("$.prenomDemandeur").value("Mariam"))
+                .andExpect(jsonPath("$.prenomEnfant").value("Awa"))
+                .andExpect(jsonPath("$.secondTuteur").value(false));
         assertThat(acteurs.dernierSms(parent.telephone())).contains("votre compte est activé").doesNotContain("Awa");
         assertThat(jdbc.queryForObject("""
                 SELECT count(*) FROM identite.lien_tutelle l JOIN identite.dossier_kyc d ON d.enfant_id = l.enfant_id

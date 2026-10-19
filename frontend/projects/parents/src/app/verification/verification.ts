@@ -216,6 +216,10 @@ export class Verification {
     void this.router.navigate(['/verification', 'mode']);
   }
 
+  protected associer(): void {
+    void this.router.navigate(['/bracelet/associer']);
+  }
+
   protected accueil(): void {
     void this.router.navigate(['/']);
   }

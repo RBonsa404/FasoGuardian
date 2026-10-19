@@ -65,7 +65,10 @@ test("un parent s'inscrit, dépose son dossier, et son compte est activé après
   // Le parent est informé et son compte est actif
   await page.goto('/verification/instruction');
   await expect(page.getByRole('heading', { name: 'Votre compte est activé' })).toBeVisible();
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await expect(page.getByText('Mariam, votre lien avec Awa est vérifié. Associons maintenant son bracelet.')).toBeVisible();
+  await page.getByRole('button', { name: 'Associer le bracelet' }).click();
+  await expect(page.getByRole('heading', { name: 'Associer le bracelet' })).toBeVisible();
   // Compte actif : la barre d'onglets propose la carte et les alertes.
+  await page.goto('/');
   await expect(onglets(page).getByRole('link', { name: 'Carte' })).toBeVisible();
 });

@@ -67,9 +67,13 @@ public class InstructionKyc {
     public record PieceVue(UUID id, TypePiece type, String typeMime, int tailleOctets) {
     }
 
-    /** Vue du parent : aucun contenu de pièce, aucune identité de l'agent. */
+    /**
+     * Vue du parent : aucun contenu de pièce, aucune identité de l'agent. Les prénoms sont ceux que le parent a
+     * lui-même déclarés (premier prénom du demandeur, prénom de l'enfant), repris sur l'écran d'activation (écran 11i).
+     */
     public record DossierParent(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
-            String motif, Instant deposeLe, Instant decideLe, List<PieceVue> pieces) {
+            String motif, Instant deposeLe, Instant decideLe, List<PieceVue> pieces, String prenomDemandeur,
+            String prenomEnfant, boolean secondTuteur) {
     }
 
     /** Ligne de la file d'instruction, réservée aux agents KYC (identité du parent, prénom et âge de l'enfant). */
@@ -330,9 +334,12 @@ public class InstructionKyc {
     }
 
     private DossierParent vueParent(DossierKyc d) {
+        String prenoms = dechiffrerJson(d.identiteChiffree(), IdentiteDeclaree.class).prenoms().strip();
         return new DossierParent(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(), d.motif(),
                 d.deposeLe(), d.decideLe(),
-                pieces.findByDossierId(d.id()).stream().map(InstructionKyc::vue).toList());
+                pieces.findByDossierId(d.id()).stream().map(InstructionKyc::vue).toList(),
+                prenoms.split("\s+")[0], dechiffrerJson(d.enfantChiffre(), EnfantDeclare.class).prenom(),
+                d.invitationId() != null);
     }
 
     private DossierInstruction vueInstruction(DossierKyc d) {

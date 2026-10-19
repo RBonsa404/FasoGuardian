@@ -16,6 +16,11 @@
   --color-on-danger: #0a0e1a;
   /* Pastilles posées sur la carte (sélecteur d'enfant, cloche) : fond translucide flouté. */
   --color-glass: rgba(18, 24, 41, 0.78);
+  /* Écrans de marque (activation du compte, écran 11i) : fond « hero », texte et bouton inversé. */
+  --color-hero-fg: #f3f5fa;
+  --color-hero-fg-2: #c6ccdc;
+  --color-hero-btn: #f3f5fa;
+  --color-hero-btn-fg: #0a0e1a;
 
   --radius-banner: 14px;
   --text-titre-ecran: 26px;
@@ -29,6 +34,11 @@
   --animate-spinner: spin 800ms linear infinite;
 }
 
+:root {
+  --fond-hero: radial-gradient(90% 60% at 70% 20%, rgba(47, 168, 255, 0.28), transparent 60%),
+    linear-gradient(165deg, #0a0e1a, #123c7a);
+}
+
 [data-theme='clair'],
 .theme-clair {
   --color-accent-soft: rgba(0, 103, 181, 0.12);
@@ -39,4 +49,11 @@
   --color-on-success: #ffffff;
   --color-on-danger: #ffffff;
   --color-glass: rgba(255, 255, 255, 0.9);
+  --color-hero-fg: #0a0e1a;
+  --color-hero-fg-2: #3d4767;
+  --color-hero-btn: #123c7a;
+  --color-hero-btn-fg: #ffffff;
+  --fond-hero: radial-gradient(90% 60% at 70% 20%, rgba(47, 168, 255, 0.25), transparent 60%),
+    linear-gradient(165deg, #eaf6ff, #d3e2f7);
 }
+
