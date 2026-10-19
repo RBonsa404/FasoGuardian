@@ -44,7 +44,7 @@ test("un parent s'inscrit, dépose son dossier, et son compte est activé après
   await expect(page.getByText('Ouédraogo Mariam')).toBeVisible();
   await page.getByRole('button', { name: 'Envoyer mon dossier' }).click();
   await expect(page.getByRole('heading', { name: 'Dossier en instruction' })).toBeVisible();
-  const reference = (await page.getByText(/Réf\. KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
+  const reference = (await page.getByText(/Dossier KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
 
   // Le compte n'est pas actif tant que le dossier n'est pas validé
   await page.getByRole('button', { name: "Découvrir l'application" }).click();

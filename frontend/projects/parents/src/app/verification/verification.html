@@ -202,53 +202,44 @@
   @case ('instruction') {
     <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7">
       @if (dossier(); as d) {
-        @switch (d.statut) {
-          @case ('APPROUVE') {
-            <fg-badge class="self-start" ton="succes" icone="valider" i18n="@@kyc.statut.approuve">Compte activé</fg-badge>
-            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.approuve.titre">Votre compte est activé</h1>
-            <p class="m-0 text-body text-text-2" i18n="@@kyc.approuve.texte">Votre lien avec l'enfant est vérifié.</p>
-          }
-          @case ('COMPLEMENT_DEMANDE') {
-            <fg-badge class="self-start" ton="attention" icone="info" i18n="@@kyc.statut.complement">Complément demandé</fg-badge>
-            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.complement.titre">Un complément est nécessaire</h1>
-            <p class="m-0 text-body text-text-2">{{ d.motif }}</p>
-          }
-          @case ('REJETE') {
-            <fg-badge class="self-start" ton="attention" icone="info" i18n="@@kyc.statut.rejete">Dossier non validé</fg-badge>
-            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.rejete.titre">Votre dossier n'a pas pu être validé</h1>
-            <p class="m-0 text-body text-text-2">{{ d.motif }}</p>
-          }
-          @default {
-            <fg-badge class="self-start" ton="accent" icone="horloge" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
-            <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.instruction.titre">Dossier en instruction</h1>
-            <p class="m-0 text-body text-text-2" i18n="@@kyc.instruction.texte">Un agent vérifie vos documents. Vous recevrez un SMS dès la décision.</p>
+        @if (d.statut === 'APPROUVE') {
+          <fg-badge class="self-start" ton="succes" icone="valider" i18n="@@kyc.statut.approuve">Compte activé</fg-badge>
+          <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.approuve.titre">Votre compte est activé</h1>
+          <p class="m-0 text-body text-text-2" i18n="@@kyc.approuve.texte">Votre lien avec l'enfant est vérifié.</p>
+          <button fg-button class="mt-auto" taille="lg" type="button" (click)="accueil()" i18n="@@commun.continuer">Continuer</button>
+        } @else {
+          <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.etat.titre">Vérification de votre dossier</h1>
+          <section class="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-4">
+            @switch (d.statut) {
+              @case ('COMPLEMENT_DEMANDE') {
+                <fg-badge class="self-start" ton="attention" i18n="@@kyc.statut.complement">Complément demandé</fg-badge>
+                <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.complement.titre">Un complément est nécessaire</h2>
+                <p class="m-0 text-label text-text-2">{{ d.motif }}</p>
+                <button fg-button type="button" (click)="completer(d)" i18n="@@kyc.complement.action">Compléter mon dossier</button>
+              }
+              @case ('REJETE') {
+                <fg-badge class="self-start" ton="alerte" i18n="@@kyc.statut.rejete">Refusé</fg-badge>
+                <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.rejete.titre">Votre dossier n'a pas pu être validé</h2>
+                <p class="m-0 text-label text-text-2">{{ d.motif }}</p>
+                <button fg-button type="button" (click)="recommencer()" i18n="@@kyc.rejete.action">Déposer un nouveau dossier</button>
+              }
+              @default {
+                <fg-badge class="self-start" ton="accent" i18n="@@kyc.statut.instruction">En instruction</fg-badge>
+                <h2 class="m-0 text-h3 font-semibold" i18n="@@kyc.instruction.titre">Dossier en instruction</h2>
+                <p class="m-0 text-label text-text-2">
+                  @if (d.deposeLe) {
+                    <ng-container i18n="@@kyc.instruction.texteDepot">Dossier {{ d.reference }} déposé le {{ d.deposeLe | date: 'd MMMM' }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
+                  } @else {
+                    <ng-container i18n="@@kyc.instruction.texte">Dossier {{ d.reference }}. Un agent vérifie vos documents ; vous recevrez un SMS dès la décision. Vous pouvez déjà découvrir l'application.</ng-container>
+                  }
+                </p>
+              }
+            }
+          </section>
+          @if (d.statut !== 'COMPLEMENT_DEMANDE' && d.statut !== 'REJETE') {
+            <button fg-button class="mt-auto" taille="lg" type="button" (click)="accueil()" i18n="@@kyc.instruction.action">Découvrir l'application</button>
           }
         }
-        <div class="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5">
-          <span [class]="classesPastille(d.statut === 'APPROUVE')"><fg-icon [nom]="d.statut === 'APPROUVE' ? 'valider' : 'horloge'" [taille]="20" /></span>
-          <span class="flex flex-1 flex-col gap-0.5">
-            <strong class="text-body font-semibold" i18n="@@kyc.reference">Réf. {{ d.reference }}</strong>
-            @if (d.deposeLe) {
-              <span class="text-label text-text-2" i18n="@@kyc.deposeLe">Déposé le {{ d.deposeLe | date: 'd MMM à HH:mm' }}</span>
-            }
-          </span>
-        </div>
-        <div class="mt-auto flex flex-col gap-2">
-          @switch (d.statut) {
-            @case ('COMPLEMENT_DEMANDE') {
-              <button fg-button taille="lg" type="button" (click)="completer(d)" i18n="@@kyc.complement.action">Compléter mon dossier</button>
-            }
-            @case ('REJETE') {
-              <button fg-button taille="lg" type="button" (click)="recommencer()" i18n="@@kyc.rejete.action">Déposer un nouveau dossier</button>
-            }
-            @case ('APPROUVE') {
-              <button fg-button taille="lg" type="button" (click)="accueil()" i18n="@@commun.continuer">Continuer</button>
-            }
-            @default {
-              <button fg-button taille="lg" type="button" (click)="accueil()" i18n="@@kyc.instruction.action">Découvrir l'application</button>
-            }
-          }
-        </div>
       } @else if (erreur(); as message) {
         <fg-banner ton="erreur">{{ message }}</fg-banner>
         <button fg-button variante="secondary" type="button" (click)="chargerDossier()" i18n="@@commun.reessayer">Réessayer</button>

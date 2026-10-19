@@ -58,7 +58,7 @@ test('un tuteur invite un second tuteur, qui accède à l’enfant après sa pro
   await expect(invitePage.getByText(/Sur invitation de/)).toBeVisible();
   await invitePage.getByRole('button', { name: 'Envoyer mon dossier' }).click();
   await expect(invitePage.getByRole('heading', { name: 'Dossier en instruction' })).toBeVisible();
-  const reference = (await invitePage.getByText(/Réf\. KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
+  const reference = (await invitePage.getByText(/Dossier KYC-\d+/).textContent())!.match(/KYC-\d+/)![0];
 
   // Avant l'approbation, l'invité n'accède pas à l'enfant ; le tuteur voit la vérification en cours
   const jetonInvite = (await (await request.post(`${SERVEUR}/api/v1/auth/connexion`, { data: { telephone: invite.telephone, motDePasse: MOT_DE_PASSE_PARENT } })).json()).jetonAcces;
