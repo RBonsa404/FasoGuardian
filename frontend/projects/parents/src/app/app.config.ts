@@ -9,6 +9,7 @@ import { Theme } from 'ui';
 
 import { routes } from './app.routes';
 import { intercepteurHorsLigne } from './commun/file-hors-ligne';
+import { intercepteurLecturesLocales } from './commun/lectures-locales';
 
 // Dates et nombres au format français.
 registerLocaleData(localeFr);
@@ -20,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => void inject(Theme)),
     { provide: LOCALE_ID, useValue: 'fr' },
     provideRouter(routes, withComponentInputBinding()),
-    // La file hors ligne enveloppe le jeton : une action gardée repart avec un jeton frais.
-    provideHttpClient(withInterceptors([intercepteurHorsLigne, intercepteurJeton])),
+    // Lectures gardées et file hors ligne enveloppent le jeton : une action gardée repart avec un jeton frais.
+    provideHttpClient(withInterceptors([intercepteurLecturesLocales, intercepteurHorsLigne, intercepteurJeton])),
   ],
 };

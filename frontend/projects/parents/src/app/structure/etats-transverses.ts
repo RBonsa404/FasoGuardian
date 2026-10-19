@@ -4,10 +4,11 @@ import { GenreActionRejouable } from 'api';
 import { FgBanniere } from 'ui';
 
 import { FileHorsLigne } from '../commun/file-hors-ligne';
+import { LecturesLocales } from '../commun/lectures-locales';
+import { heure } from '../commun/temps';
 
 const GENRES: Record<GenreActionRejouable, string> = {
   FICHE_ENFANT: $localize`:@@attente.fiche:fiche de l'enfant`,
-  FICHE_SANTE: $localize`:@@attente.sante:fiche médicale`,
   CONTACT_URGENCE: $localize`:@@attente.contact:contact d'urgence`,
   PRISE_EN_CHARGE: $localize`:@@attente.priseEnCharge:prise en charge d'alerte`,
   LEVEE_ALERTE: $localize`:@@attente.levee:levée d'alerte`,
@@ -21,13 +22,23 @@ const GENRES: Record<GenreActionRejouable, string> = {
 
 /**
  * États transverses de l'application (écran 49) : ils s'affichent en tête de chaque écran, au-dessus de son
- * contenu. Les actions gardées hors ligne disent ce qui partira au retour du réseau (FG-DOC-06 §5.4).
+ * contenu. Hors ligne, il dit de quand datent les données affichées ; les actions gardées disent ce qui partira au
+ * retour du réseau (FG-DOC-06 §5.4).
  */
 @Component({
   selector: 'app-etats-transverses',
   imports: [FgBanniere],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    @if (!lectures.enLigne()) {
+      <fg-banner ton="hors-ligne">
+        @if (lectures.copieDu(); as le) {
+          <ng-container i18n="@@horsLigne.copie">Hors ligne · données gardées à {{ heure(le) }}. La fiche, les contacts et la dernière position restent consultables.</ng-container>
+        } @else {
+          <ng-container i18n="@@horsLigne.texte">Hors ligne. La fiche, les contacts et la dernière position déjà consultés restent lisibles.</ng-container>
+        }
+      </fg-banner>
+    }
     @if (attente(); as texte) {
       <fg-banner icone="historique">{{ texte }}</fg-banner>
     }
@@ -41,6 +52,8 @@ const GENRES: Record<GenreActionRejouable, string> = {
 })
 export class EtatsTransverses {
   protected readonly file = inject(FileHorsLigne);
+  protected readonly lectures = inject(LecturesLocales);
+  protected readonly heure = heure;
 
   /** « 2 actions seront envoyées dès le retour du réseau : fiche médicale, levée d'alerte. » */
   protected readonly attente = computed(() => {

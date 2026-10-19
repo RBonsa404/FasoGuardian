@@ -37,4 +37,16 @@ test('une modification faite hors ligne part au retour du réseau', async ({ pag
   await expect(page.getByText('sera envoyée dès le retour du réseau')).toHaveCount(0);
   await page.reload();
   await expect(page.getByText('Les Manguiers · CM1')).toBeVisible();
+
+  // Consultation sans réseau : la fiche déjà lue revient de l'appareil, et le bandeau dit de quand elle date.
+  await page.getByRole('link', { name: 'Tuteurs et contacts' }).click();
+  await expect(page.getByRole('button', { name: 'Ajouter un contact' })).toBeVisible();
+  await context.setOffline(true);
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Yacouba Zongo' })).toBeVisible();
+  await expect(page.getByText('Les Manguiers · CM1')).toBeVisible();
+  await expect(page.getByText(/Hors ligne · données gardées à \d{2}:\d{2}\. La fiche, les contacts et la dernière position restent consultables\./)).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: 'e2e/.etat/ecran-49-hors-ligne.png' });
+  await context.setOffline(false);
 });

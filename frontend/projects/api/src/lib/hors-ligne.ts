@@ -3,11 +3,12 @@ import { HttpContext, HttpContextToken } from '@angular/common/http';
 /**
  * Actions de configuration rejouables hors ligne (FG-DOC-06 §5.4, US-SYS-002). Une action protégée par un code
  * SMS n'en fait jamais partie : le code expire avant le retour du réseau. Une action liée à l'instant (localiser,
- * partager la position, suivi rapproché) non plus : la rejouer plus tard n'aurait plus de sens.
+ * partager la position, suivi rapproché) non plus : la rejouer plus tard n'aurait plus de sens. La fiche médicale
+ * non plus : hors ligne, seuls ses éléments critiques sont relus, et la renvoyer depuis cette copie effacerait
+ * les autres.
  */
 export type GenreActionRejouable =
   | 'FICHE_ENFANT'
-  | 'FICHE_SANTE'
   | 'CONTACT_URGENCE'
   | 'PRISE_EN_CHARGE'
   | 'LEVEE_ALERTE'

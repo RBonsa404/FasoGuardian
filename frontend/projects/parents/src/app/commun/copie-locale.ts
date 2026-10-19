@@ -4,6 +4,7 @@ import { catchError, firstValueFrom, of } from 'rxjs';
 import { ClientBracelet, ClientFamille } from 'api';
 
 import { FileHorsLigne } from './file-hors-ligne';
+import { LecturesLocales } from './lectures-locales';
 
 /**
  * Ce qui reste consultable d'un enfant sans session ni réseau (écran 14, US-PAR-019) : son identité, les
@@ -43,6 +44,7 @@ export class CopieLocale {
   private readonly famille = inject(ClientFamille);
   private readonly bracelets = inject(ClientBracelet);
   private readonly file = inject(FileHorsLigne);
+  private readonly lectures = inject(LecturesLocales);
   protected table: Promise<TableDeFiches | null> | null = null;
   /** Avance à chaque effacement : une synchronisation commencée avant ne doit plus rien écrire. */
   private effacements = 0;
@@ -96,7 +98,7 @@ export class CopieLocale {
   async vider(): Promise<void> {
     this.effacements++;
     // Les actions gardées hors ligne partent avec le reste : un appareil déconnecté ne garde rien.
-    await this.file.vider();
+    await Promise.all([this.file.vider(), this.lectures.vider()]);
     try {
       await (await this.ouvrir())?.clear();
     } catch {

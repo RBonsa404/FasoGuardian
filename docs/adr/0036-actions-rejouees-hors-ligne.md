@@ -10,13 +10,14 @@ L'écran 49 du paquet de design donne l'exemple d'une Safe Zone modifiée hors l
 
 ## Décision
 
-1. **Seules les actions sans code SMS sont rejouables** : fiche de l'enfant, fiche médicale, contacts
+1. **Seules les actions sans code SMS sont rejouables** : fiche de l'enfant, contacts
    d'urgence, prise en charge, levée et fausse alerte, réactivation d'une Safe Zone, mode économie,
    renouvellement automatique, notifications lues, message au support. Une action protégée par second facteur
    (modifier une Safe Zone, autoriser un retrait, signaler une disparition…) ne l'est pas : le code expire
    avant le retour du réseau, et le rejouer contournerait la confirmation. L'exemple de l'écran 49 n'est donc
    pas repris tel quel. Les actions liées à l'instant (localiser, partager la position, suivi rapproché) ne
-   sont pas rejouées non plus.
+   sont pas rejouées non plus. La fiche médicale non plus : hors ligne, seuls ses éléments critiques sont
+   relus sur l'appareil (FG-DOC-06, tableau 8), et l'enregistrer depuis cette copie effacerait les autres.
 2. **Idempotence générique côté serveur** (`plateforme/idempotence`, V33) : toute écriture qui porte
    l'en-tête `Idempotency-Key` n'est exécutée qu'une fois par compte ; un renvoi reçoit le même statut, sans
    corps, avec l'en-tête `Idempotent-Replayed`. Seuls le statut et une empreinte SHA-256 de la requête sont

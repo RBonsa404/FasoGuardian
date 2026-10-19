@@ -49,8 +49,8 @@ describe('file des actions hors ligne (FG-DOC-06 §5.4)', () => {
 
   /** Lance une écriture rejouable que le réseau ne laisse pas partir. */
   async function horsLigne(): Promise<unknown> {
-    const reponse = firstValueFrom(http.put('/api/v1/enfants/e-1/sante', { groupeSanguin: 'O+' }, rejouable('FICHE_SANTE'))).catch((erreur: unknown) => erreur);
-    const requete = serveur.expectOne('/api/v1/enfants/e-1/sante');
+    const reponse = firstValueFrom(http.patch('/api/v1/enfants/e-1', { ecole: 'Les Manguiers' }, rejouable('FICHE_ENFANT'))).catch((erreur: unknown) => erreur);
+    const requete = serveur.expectOne('/api/v1/enfants/e-1');
     requete.error(new ProgressEvent('error'), { status: 0 });
     const erreur = await reponse;
     await attendre();
@@ -62,7 +62,7 @@ describe('file des actions hors ligne (FG-DOC-06 §5.4)', () => {
 
     expect(erreur).toBeInstanceOf(ActionMiseEnAttente);
     expect(cle).toMatch(/^[A-Za-z0-9_-]{16,80}$/);
-    expect(file.enAttente()).toEqual([expect.objectContaining({ genre: 'FICHE_SANTE', methode: 'PUT', url: '/api/v1/enfants/e-1/sante', corps: { groupeSanguin: 'O+' }, cle })]);
+    expect(file.enAttente()).toEqual([expect.objectContaining({ genre: 'FICHE_ENFANT', methode: 'PATCH', url: '/api/v1/enfants/e-1', corps: { ecole: 'Les Manguiers' }, cle })]);
   });
 
   it('renvoie l’action au retour du réseau avec la même clé, puis la retire', async () => {
@@ -70,9 +70,9 @@ describe('file des actions hors ligne (FG-DOC-06 §5.4)', () => {
 
     const envoi = file.envoyer();
     await attendre();
-    const renvoi = serveur.expectOne('/api/v1/enfants/e-1/sante');
+    const renvoi = serveur.expectOne('/api/v1/enfants/e-1');
     expect(renvoi.request.headers.get('Idempotency-Key')).toBe(cle);
-    expect(renvoi.request.body).toEqual({ groupeSanguin: 'O+' });
+    expect(renvoi.request.body).toEqual({ ecole: 'Les Manguiers' });
     renvoi.flush({});
     await envoi;
     expect(file.enAttente()).toEqual([]);
@@ -82,13 +82,13 @@ describe('file des actions hors ligne (FG-DOC-06 §5.4)', () => {
     await horsLigne();
     let envoi = file.envoyer();
     await attendre();
-    serveur.expectOne('/api/v1/enfants/e-1/sante').flush(null, { status: 503, statusText: 'Indisponible' });
+    serveur.expectOne('/api/v1/enfants/e-1').flush(null, { status: 503, statusText: 'Indisponible' });
     await envoi;
     expect(file.enAttente()).toHaveLength(1);
 
     envoi = file.envoyer();
     await attendre();
-    serveur.expectOne('/api/v1/enfants/e-1/sante').flush({ code: 'REQUETE_INVALIDE' }, { status: 400, statusText: 'Refusée' });
+    serveur.expectOne('/api/v1/enfants/e-1').flush({ code: 'REQUETE_INVALIDE' }, { status: 400, statusText: 'Refusée' });
     await envoi;
     expect(file.enAttente()).toEqual([]);
     expect(file.refusees()).toBe(1);
@@ -108,6 +108,6 @@ describe('file des actions hors ligne (FG-DOC-06 §5.4)', () => {
     await horsLigne();
     const fixture = TestBed.createComponent(EtatsTransverses);
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('1 action sera envoyée dès le retour du réseau : fiche médicale.');
+    expect(fixture.nativeElement.textContent).toContain("1 action sera envoyée dès le retour du réseau : fiche de l'enfant.");
   });
 });

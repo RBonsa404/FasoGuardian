@@ -130,7 +130,7 @@ export class ClientFamille {
     id: string,
     fiche: { groupeSanguin: string | null; groupeSanguinSurQr: boolean; elements: readonly ElementMedical[] },
   ): Observable<FicheSante> {
-    return this.http.put<FicheSante>(`${BASE}/${id}/sante`, fiche, rejouable('FICHE_SANTE'));
+    return this.http.put<FicheSante>(`${BASE}/${id}/sante`, fiche);
   }
 
   revisionsSante(id: string): Observable<RevisionSante[]> {
