@@ -53,7 +53,7 @@ public class Conformite implements RegistrePurges, DemandesDroits {
     /** Durées de conservation appliquées (FG-DOC-06, tableau 18), telles que le rapport les présente. */
     private static final List<Duree> CONSERVATION = List.of(
             new Duree("Positions", "30 jours ; 24 h pour l'offre Essentiel, 90 jours pour l'offre Premium", "Purge quotidienne"),
-            new Duree("Alertes et journal d'acquittement", "5 ans (finalité probatoire)", "Journal en ajout seul"),
+            new Duree("Alertes et journal d'acquittement", "5 ans (finalité probatoire)", "Journal en ajout seul, effacé 5 ans après la clôture"),
             new Duree("Pièces KYC", "Durée de la relation + 1 an", "Purge quotidienne"),
             new Duree("Fiche santé", "Durée du compte", "Effacement à la clôture"),
             new Duree("Photo de l'enfant", "Durée du compte ; retirable à tout moment par un tuteur", "Effacement à la clôture"),
