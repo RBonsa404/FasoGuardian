@@ -28,6 +28,7 @@ test('un agent KYC active son second facteur, instruit un dossier et le valide',
   const ligne = page.getByRole('row').filter({ hasText: reference });
   await expect(ligne).toContainText('Zongo Aminata → Yacouba');
   await expect(ligne).toContainText('Non attribué');
+  await page.screenshot({ path: 'e2e/.etat/ecran-59-file-kyc.png' });
   await ligne.click();
 
   await page.getByRole('button', { name: 'Prendre en charge' }).click();

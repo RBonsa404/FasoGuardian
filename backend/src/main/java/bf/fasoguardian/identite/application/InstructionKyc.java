@@ -80,7 +80,7 @@ public class InstructionKyc {
     /** {@code secondTuteur} : dossier d'un adulte invité par le tuteur d'un enfant déjà suivi (US-PAR-003). */
     public record DossierFile(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
             String demandeur, String enfantPrenom, int enfantAge, Instant deposeLe, boolean prisEnCharge,
-            boolean prisEnChargeParMoi, boolean secondTuteur) {
+            boolean prisEnChargeParMoi, boolean secondTuteur, boolean complementRecu) {
     }
 
     public record DossierInstruction(UUID id, String reference, Statut statut, Canal canal, NatureLien natureLien,
@@ -218,7 +218,9 @@ public class InstructionKyc {
                     return new DossierFile(d.id(), d.reference(), d.statut(), d.canal(), d.natureLien(),
                             demandeur.nom() + " " + demandeur.prenoms(), enfant.prenom(),
                             java.time.Period.between(enfant.dateNaissance(), LocalDate.now(horloge)).getYears(),
-                            d.deposeLe(), d.agentId() != null, agentId.equals(d.agentId()), d.invitationId() != null);
+                            d.deposeLe(), d.agentId() != null, agentId.equals(d.agentId()), d.invitationId() != null,
+                            // Un dossier déposé qui porte déjà une décision revient d'une demande de complément.
+                            d.decideLe() != null);
                 });
     }
 

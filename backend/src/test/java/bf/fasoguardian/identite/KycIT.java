@@ -60,6 +60,7 @@ class KycIT extends TestIntegration {
                 .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].statut").value("DEPOSE"))
                 .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].demandeur").value("Ouédraogo Mariam"))
                 .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].enfantPrenom").value("Awa"))
+                .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].complementRecu").value(false))
                 .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("B12345678"))));
         assertThat(jdbc.queryForObject("SELECT count(*) FROM audit.entree WHERE action = 'CONSULTATION_FILE_KYC'",
                 Long.class)).isPositive();
@@ -119,6 +120,9 @@ class KycIT extends TestIntegration {
         // Le parent complète puis redépose ; l'agent peut alors rejeter avec un motif.
         ajouterPiece(parent, dossier, "PIECE_VERSO", JPEG, "image/jpeg").andExpect(status().isCreated());
         parentPost(parent, dossier, "depot").andExpect(status().isOk()).andExpect(jsonPath("$.statut").value("DEPOSE"));
+        // Dans la file, le dossier redéposé se signale comme un complément reçu (écran 59).
+        mvc.perform(get("/api/v1/console/kyc/dossiers").header("Authorization", "Bearer " + agent.jeton()))
+                .andExpect(jsonPath("$.elements[?(@.id == '" + dossier + "')].complementRecu").value(true));
         agentPost(agent, dossier, "prise-en-charge", null).andExpect(status().isOk());
         agentPost(agent, dossier, "decision", "{\"decision\":\"REJETER\",\"motif\":\"Lien non établi.\"}")
                 .andExpect(jsonPath("$.statut").value("REJETE"));

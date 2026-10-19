@@ -21,6 +21,8 @@ export interface DossierKycFile {
   readonly prisEnChargeParMoi: boolean;
   /** Dossier d'un adulte invité par le tuteur d'un enfant déjà suivi (US-PAR-003). */
   readonly secondTuteur: boolean;
+  /** Dossier redéposé après une demande de complément. */
+  readonly complementRecu: boolean;
 }
 
 export interface DossierKycInstruction {

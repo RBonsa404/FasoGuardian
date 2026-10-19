@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientConsole, DossierKycFile } from 'api';
+import { ClientConsole, ClientTableau, DossierKycFile, IndicateurConsole } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgSquelette, TonBadge } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
+import { libeller } from '../commun/indicateurs';
+
+type Filtre = 'TOUS' | 'PRIORITAIRES' | 'EN_LIGNE' | 'POINT' | 'COMPLEMENT';
 
 const SEUIL_URGENT_H = 36;
 
@@ -26,24 +29,42 @@ interface Ligne {
   template: `
     <div class="flex flex-col gap-1">
       <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@kyc.file.titre">Dossiers KYC</h1>
-      <span class="text-label text-text-2" i18n="@@kyc.file.objectif">Objectif : décision sous 48 h ouvrées</span>
+      <span class="text-body text-text-2 first-letter:uppercase" i18n="@@kyc.file.objectif">{{ jour }} · objectif : décision sous 48 h ouvrées</span>
     </div>
-    @if (lignes(); as liste) {
-      <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4">
-          <span class="text-caption font-medium text-text-3" i18n="@@kyc.kpi.file">En file</span>
-          <strong class="font-display text-data font-bold tabular-nums">{{ total() }}</strong>
-        </div>
-        <div class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4">
-          <span class="text-caption font-medium text-text-3" i18n="@@kyc.kpi.urgents">&gt; 36 h</span>
-          <strong class="font-display text-data font-bold tabular-nums">{{ urgents() }}</strong>
-          <span class="text-caption font-medium text-text-2" i18n="@@kyc.kpi.urgents.texte">à traiter en priorité</span>
-        </div>
+    @if (indicateurs().length > 0) {
+      <!-- Les mêmes indicateurs que le tableau de bord (écran 57) : des décomptes, sans donnée personnelle. -->
+      <dl class="m-0 grid grid-cols-2 gap-3 xl:grid-cols-4">
+        @for (i of indicateurs(); track i.code) {
+          @let l = libeller(i);
+          <div class="flex flex-col gap-1.5 rounded-[14px] border bg-surface p-4" [class]="i.alerte ? 'border-attention' : 'border-line'">
+            <dt class="text-caption font-medium text-text-3">{{ l.libelle }}</dt>
+            <dd class="m-0 font-display text-[28px] font-bold tabular-nums" [class.text-attention-text]="i.alerte">{{ l.valeur }}</dd>
+            <dd class="m-0 text-caption font-medium text-text-2">{{ l.detail }}</dd>
+          </div>
+        }
+      </dl>
+    }
+    @if (lignes(); as toutes) {
+      <div class="flex flex-wrap gap-2" role="group" i18n-aria-label="@@kyc.filtres" aria-label="Filtrer la file">
+        @for (f of filtres(); track f.code) {
+          <button
+            type="button"
+            class="h-9 rounded-md px-3 text-label font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+            [class]="filtre() === f.code ? 'border-[1.5px] border-accent bg-accent-soft text-text' : 'border border-line bg-surface text-text hover:border-line-strong'"
+            [attr.aria-pressed]="filtre() === f.code"
+            (click)="filtre.set(f.code)"
+          >
+            {{ f.libelle }}
+          </button>
+        }
       </div>
-      @if (liste.length === 0) {
+      @let liste = filtrees();
+      @if (toutes.length === 0) {
         <p class="m-0 rounded-lg border border-line bg-surface p-6 text-center text-body text-text-2" i18n="@@kyc.file.vide">
           Aucun dossier en attente d'instruction.
         </p>
+      } @else if (liste.length === 0) {
+        <p class="m-0 rounded-lg border border-line bg-surface p-6 text-center text-body text-text-2" i18n="@@kyc.file.filtreVide">Aucun dossier ne correspond à ce filtre.</p>
       } @else {
         <div class="overflow-hidden rounded-lg border border-line bg-surface" role="table" i18n-aria-label="@@kyc.file.table" aria-label="Dossiers à instruire">
           <div class="grid h-10 grid-cols-[120px_1.4fr_1fr_150px_110px_120px_120px] items-center bg-surface-2 px-4 text-caption font-semibold text-text-2" role="row">
@@ -91,6 +112,38 @@ export class FileKyc {
   protected readonly erreur = signal<string | null>(null);
   protected readonly lignes = computed(() => this.dossiers()?.map(ligne) ?? null);
   protected readonly urgents = computed(() => this.lignes()?.filter((l) => l.urgent).length ?? 0);
+  protected readonly indicateurs = signal<readonly IndicateurConsole[]>([]);
+  protected readonly filtre = signal<Filtre>('TOUS');
+  protected readonly libeller = libeller;
+  protected readonly jour = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+  private readonly tableau = inject(ClientTableau);
+
+  protected readonly filtres = computed(() => {
+    const lignes = this.lignes() ?? [];
+    const complements = lignes.filter((l) => l.dossier.complementRecu).length;
+    return [
+      { code: 'TOUS' as Filtre, libelle: $localize`:@@kyc.filtre.tous:Tous · ${this.total()}:n:` },
+      { code: 'PRIORITAIRES' as Filtre, libelle: $localize`:@@kyc.filtre.prio:> 36 h · ${this.urgents()}:n:` },
+      { code: 'EN_LIGNE' as Filtre, libelle: $localize`:@@kyc.canal.enLigne:En ligne` },
+      { code: 'POINT' as Filtre, libelle: $localize`:@@kyc.canal.point:Point d'inscription` },
+      { code: 'COMPLEMENT' as Filtre, libelle: $localize`:@@kyc.filtre.complement:Complément reçu · ${complements}:n:` },
+    ];
+  });
+  protected readonly filtrees = computed(() => {
+    const lignes = this.lignes() ?? [];
+    switch (this.filtre()) {
+      case 'PRIORITAIRES':
+        return lignes.filter((l) => l.urgent);
+      case 'EN_LIGNE':
+        return lignes.filter((l) => l.dossier.canal === 'EN_LIGNE');
+      case 'POINT':
+        return lignes.filter((l) => l.dossier.canal === 'POINT_INSCRIPTION');
+      case 'COMPLEMENT':
+        return lignes.filter((l) => l.dossier.complementRecu);
+      default:
+        return lignes;
+    }
+  });
 
   constructor() {
     this.charger();
@@ -98,7 +151,11 @@ export class FileKyc {
 
   protected charger(): void {
     this.erreur.set(null);
-    this.client.fileKyc().subscribe({
+    this.tableau.indicateurs().subscribe({
+      next: (groupes) => this.indicateurs.set(groupes.find((groupe) => groupe.role === 'KYC')?.indicateurs ?? []),
+      error: () => undefined,
+    });
+    this.client.fileKyc(0, 100).subscribe({
       next: (page) => {
         this.total.set(page.total);
         this.dossiers.set(page.elements);
@@ -127,7 +184,9 @@ function ligne(dossier: DossierKycFile): Ligne {
       : dossier.natureLien === 'TUTEUR'
         ? { libelle: $localize`:@@kyc.priorite.tutelle:Tutelle`, ton: 'accent' }
         : { libelle: $localize`:@@kyc.priorite.normale:Normale`, ton: 'neutre' },
-    statut: dossier.prisEnChargeParMoi
+    statut: dossier.complementRecu && !dossier.prisEnCharge
+      ? $localize`:@@kyc.statut.complement:Complément reçu`
+      : dossier.prisEnChargeParMoi
       ? $localize`:@@kyc.statut.aVous:À vous`
       : dossier.prisEnCharge
         ? $localize`:@@kyc.statut.attribue:Attribué`

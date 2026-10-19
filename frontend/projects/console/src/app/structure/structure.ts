@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { ClientAuthentification, Compte, RoleInterne, Session } from 'api';
+import { ClientAuthentification, ClientTableau, Compte, RoleInterne, Session } from 'api';
 import { FgBouton, PreferenceTheme, Theme } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
@@ -32,7 +32,10 @@ import { Verrou } from './verrou';
             routerLinkActive="bg-accent-soft font-semibold text-accent"
             [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
             [routerLink]="entree.lien"
-            >{{ entree.libelle }}</a
+            >{{ entree.libelle }}
+            @if (compteurs()[entree.lien]; as nombre) {
+              <span class="ml-auto text-caption font-semibold tabular-nums text-text-2">{{ nombre }}</span>
+            }</a
           >
         }
       </nav>
@@ -103,8 +106,20 @@ export class Structure {
       .join(' · '),
   );
 
+  /** Dossiers en file, rappelés dans la barre latérale (écran 59) ; un décompte, jamais une donnée personnelle. */
+  protected readonly compteurs = signal<Record<string, number>>({});
+
   constructor() {
     this.client.moi().subscribe({ next: (compte) => this.compte.set(compte), error: () => undefined });
+    inject(ClientTableau)
+      .indicateurs()
+      .subscribe({
+        next: (groupes) => {
+          const enFile = groupes.flatMap((groupe) => groupe.indicateurs).find((i) => i.code === 'kyc.enFile')?.valeur;
+          this.compteurs.set(enFile ? { '/kyc': enFile } : {});
+        },
+        error: () => undefined,
+      });
   }
 
   /** Système, puis sombre, puis clair, puis de nouveau le réglage du système. */
