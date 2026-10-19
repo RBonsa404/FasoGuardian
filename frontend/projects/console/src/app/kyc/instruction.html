@@ -58,11 +58,31 @@
         }
       </div>
       @if (pieceOuverte(); as ouverte) {
-        @if (ouverte.piece.typeMime === 'application/pdf') {
-          <iframe class="min-h-120 w-full flex-1 rounded-md border border-line bg-white" sandbox [src]="ouverte.sure" [title]="libellesPieces[ouverte.piece.type]"></iframe>
-        } @else {
-          <img class="max-h-150 w-full rounded-md object-contain" [src]="ouverte.sure" [alt]="libellesPieces[ouverte.piece.type]" />
-        }
+        <!-- Écran 60 : la pièce sur fond sombre, sous un filigrane au nom de l'agent qui la consulte. -->
+        <div #scene class="relative grid min-h-120 flex-1 place-items-center overflow-hidden rounded-lg border border-line bg-nuit-950">
+          @if (ouverte.piece.typeMime === 'application/pdf') {
+            <iframe class="absolute inset-0 size-full bg-white" sandbox [src]="ouverte.sure" [title]="libellesPieces[ouverte.piece.type]"></iframe>
+          } @else {
+            <img
+              class="absolute inset-6 size-[calc(100%-3rem)] object-contain transition-transform duration-(--duration-fast)"
+              [style.transform]="'scale(' + zoom() + ') rotate(' + rotation() + 'deg)'"
+              [src]="ouverte.sure"
+              [alt]="libellesPieces[ouverte.piece.type]"
+            />
+          }
+          <div class="pointer-events-none absolute inset-0 grid place-items-center overflow-hidden select-none" aria-hidden="true">
+            <span class="-rotate-30 font-display text-[26px] leading-[2.4] font-bold tracking-[.18em] text-white/12 uppercase">{{ filigrane() }}<br />{{ filigrane() }}<br />{{ filigrane() }}</span>
+          </div>
+          @if (ouverte.piece.typeMime !== 'application/pdf') {
+            <div class="absolute bottom-4 left-4 flex items-center gap-1 rounded-md bg-nuit-800/90 p-1 text-nuit-50" role="toolbar" i18n-aria-label="@@visionneuse.outils" aria-label="Affichage de la pièce">
+              <button type="button" class="grid size-9 place-items-center rounded-sm hover:bg-nuit-700 focus-visible:outline-2 focus-visible:outline-electrique-400" i18n-aria-label="@@visionneuse.moins" aria-label="Réduire" (click)="zoomer(-0.25)">−</button>
+              <span class="w-14 text-center text-label font-semibold tabular-nums" aria-live="polite">{{ zoom() * 100 }} %</span>
+              <button type="button" class="grid size-9 place-items-center rounded-sm hover:bg-nuit-700 focus-visible:outline-2 focus-visible:outline-electrique-400" i18n-aria-label="@@visionneuse.plus" aria-label="Agrandir" (click)="zoomer(0.25)">+</button>
+              <button type="button" class="grid size-9 place-items-center rounded-sm hover:bg-nuit-700 focus-visible:outline-2 focus-visible:outline-electrique-400" i18n-aria-label="@@visionneuse.tourner" aria-label="Tourner d'un quart de tour" (click)="rotation.set((rotation() + 90) % 360)">⟲</button>
+              <button type="button" class="grid size-9 place-items-center rounded-sm hover:bg-nuit-700 focus-visible:outline-2 focus-visible:outline-electrique-400" i18n-aria-label="@@visionneuse.pleinEcran" aria-label="Plein écran" (click)="pleinEcran(scene)">⤢</button>
+            </div>
+          }
+        </div>
       } @else if (d.pieces.length > 0) {
         <p class="m-0 grid min-h-60 place-items-center rounded-md bg-surface-2 text-label text-text-3" i18n="@@kyc.choisirPiece">
           Choisissez une pièce à afficher. Chaque consultation est journalisée.

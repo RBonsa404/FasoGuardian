@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 
-import { ClientConsole, DecisionKyc, DossierKycInstruction, PieceKyc, TypePieceKyc } from 'api';
+import { ClientAuthentification, ClientConsole, DecisionKyc, DossierKycInstruction, PieceKyc, TypePieceKyc } from 'api';
 import { FgBadge, FgBanniere, FgBouton, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
@@ -56,6 +56,10 @@ export class InstructionKyc {
   protected readonly decision = signal<DecisionKyc | null>(null);
   protected readonly motif = new FormControl('', { nonNullable: true });
   protected readonly libellesPieces = LIBELLES_PIECES;
+  protected readonly zoom = signal(1);
+  protected readonly rotation = signal(0);
+  /** Filigrane : dissuade la capture d'écran, et dit qui l'aurait faite. */
+  protected readonly filigrane = signal($localize`:@@visionneuse.filigrane:Confidentiel`);
 
   protected readonly enInstruction = computed(() => this.dossier()?.statut === 'EN_INSTRUCTION');
   protected readonly libelleAction = computed(() => {
@@ -68,6 +72,20 @@ export class InstructionKyc {
   constructor() {
     effect(() => this.charger(this.id()));
     inject(DestroyRef).onDestroy(() => this.fermerPiece());
+    inject(ClientAuthentification)
+      .moi()
+      .subscribe({
+        next: (compte) => compte.identifiant && this.filigrane.set($localize`:@@visionneuse.filigrane.agent:Confidentiel · ${compte.identifiant}:agent:`),
+        error: () => undefined,
+      });
+  }
+
+  protected zoomer(pas: number): void {
+    this.zoom.set(Math.min(3, Math.max(0.5, this.zoom() + pas)));
+  }
+
+  protected pleinEcran(scene: HTMLElement): void {
+    void scene.requestFullscreen?.().catch(() => undefined);
   }
 
   protected prendreEnCharge(): void {
@@ -79,6 +97,8 @@ export class InstructionKyc {
     this.client.pieceKyc(this.id(), piece.id).subscribe({
       next: (contenu) => {
         this.fermerPiece();
+        this.zoom.set(1);
+        this.rotation.set(0);
         const url = URL.createObjectURL(contenu);
         this.pieceOuverte.set({ piece, url, sure: this.assainisseur.bypassSecurityTrustResourceUrl(url) });
       },

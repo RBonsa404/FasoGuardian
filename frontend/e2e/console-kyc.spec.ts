@@ -36,6 +36,11 @@ test('un agent KYC active son second facteur, instruit un dossier et le valide',
   await expect(page.getByText('né le 2 mai 2017')).toBeVisible();
   await page.getByRole('button', { name: "Pièce d'identité · recto" }).click();
   await expect(page.getByRole('img', { name: "Pièce d'identité · recto" })).toBeVisible();
+  const outils = page.getByRole('toolbar', { name: 'Affichage de la pièce' });
+  await outils.getByRole('button', { name: 'Agrandir' }).click();
+  await expect(outils).toContainText('125 %');
+  await outils.getByRole('button', { name: 'Réduire' }).click();
+  await page.screenshot({ path: 'e2e/.etat/ecran-60-instruction.png' });
 
   await page.getByRole('radio', { name: 'Valider' }).click();
   await page.getByRole('button', { name: 'Confirmer : valider' }).click();
