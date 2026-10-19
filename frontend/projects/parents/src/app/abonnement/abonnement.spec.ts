@@ -5,7 +5,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { Abonnement, ClientAbonnements, ClientFamille, FicheEnfant, Offre, Paiement } from 'api';
 
 import { EcranAbonnement } from './abonnement';
-import { BandeauAbonnement } from './bandeau';
+import { BandeauAbonnement, palierDe } from './bandeau';
 import { jourCourt, jourLong, mois, montant, resumeOffre } from './libelles';
 import { EcranPaiement, INTERROGATION_MS } from './paiement';
 
@@ -181,10 +181,31 @@ describe('rappel d’impayé du tableau de bord', () => {
     expect((await monter(abonnement())).textContent?.trim()).toBe('');
   });
 
-  it('prévient d’un retard puis d’une suspension', async () => {
-    expect(lire(await monter(abonnement({ statut: 'EN_RETARD', restrictionLe: '2026-11-22' })))).toContain('réglez avant le 22 nov.');
+  it('suit les quatre paliers des écrans 44 et 45, en rappelant que la page QR et le SOS restent actifs', () => {
+    const le = Date.parse('2026-11-01T09:00:00Z');
+    expect(palierDe(abonnement({ prochaineEcheance: '2026-11-07' }), le)).toBe('ECHEANCE');
+    expect(palierDe(abonnement({ prochaineEcheance: '2026-11-09' }), le)).toBeNull();
+    expect(palierDe(abonnement({ statut: 'EN_RETARD', restrictionLe: '2026-11-15' }), le)).toBe('RAPPEL_1');
+    expect(palierDe(abonnement({ statut: 'EN_RETARD', restrictionLe: '2026-11-08' }), le)).toBe('RAPPEL_2');
+    expect(palierDe(abonnement({ statut: 'RESTREINT' }), le)).toBe('RESTREINT');
+  });
+
+  it('annonce le renouvellement, puis le retard, le dernier rappel et la suspension', async () => {
+    const demain = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+    const texte = lire(await monter(abonnement({ prochaineEcheance: demain })));
+    expect(texte).toContain('Votre abonnement se renouvelle le');
+    expect(texte).toContain('2 250 FCFA seront demandés sur Orange Money.');
+    expect(texte).toContain('Page QR et SOS toujours actifs');
     TestBed.resetTestingModule();
-    expect(lire(await monter(abonnement({ statut: 'RESTREINT' })))).toContain('Page QR et SOS toujours actifs');
+    const loin = new Date(Date.now() + 12 * 86_400_000).toISOString().slice(0, 10);
+    expect(lire(await monter(abonnement({ statut: 'EN_RETARD', restrictionLe: loin })))).toContain('Paiement non reçuTout fonctionne encore. Réglez avant le');
+    TestBed.resetTestingModule();
+    const proche = new Date(Date.now() + 5 * 86_400_000).toISOString().slice(0, 10);
+    expect(lire(await monter(abonnement({ statut: 'EN_RETARD', restrictionLe: proche })))).toContain('Dernier rappel avant suspension');
+    TestBed.resetTestingModule();
+    const suspendu = lire(await monter(abonnement({ statut: 'RESTREINT' })));
+    expect(suspendu).toContain('Suivi continu suspenduPosition à la demande uniquement, historique limité à 24 h.');
+    expect(suspendu).toContain('Page QR et SOS toujours actifs');
   });
 });
 

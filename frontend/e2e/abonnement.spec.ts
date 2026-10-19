@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, parentAvecEnfant, ongletReglages } from './aides';
+import { MOT_DE_PASSE_PARENT, parentAvecEnfant, ongletReglages, sqlPile } from './aides';
 
 /**
  * Module abonnements (US-PAR-015) : choix d'une offre, paiement mobile money, reçu. L'opérateur est celui du
@@ -69,4 +69,20 @@ test('un parent souscrit une offre, voit un paiement refusé, réessaie, puis t�
   await page.screenshot({ path: 'e2e/.etat/ecran-41-abonnement.png', fullPage: true });
   await page.getByRole('switch', { name: 'Renouvellement automatique' }).click();
   await expect(page.getByText(/à renouveler vous-même/)).toBeVisible();
+
+  // Écrans 44 et 45 : échéance passée de dix jours, le tableau de bord donne le dernier rappel avant suspension.
+  await page.goto('/enfants');
+  const fiche = await page.locator('a[href^="/enfants/"]').first().getAttribute('href');
+  const enfant = fiche!.split('/')[2];
+  expect(enfant).toMatch(/^[0-9a-f-]{36}$/);
+  sqlPile(`UPDATE abonnements.abonnement SET statut = 'EN_RETARD', prochaine_echeance = current_date - 10 WHERE enfant_id = '${enfant}'`);
+  await page.goto('/');
+  const rappel = page.getByRole('region', { name: 'Abonnement' });
+  await expect(rappel).toContainText('Dernier rappel avant suspension');
+  await expect(rappel).toContainText("le suivi continu et l'historique étendu seront suspendus");
+  await expect(rappel).toContainText('Page QR et SOS toujours actifs');
+  await rappel.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'e2e/.etat/ecran-45-rappel.png' });
+  await rappel.getByRole('link', { name: 'Régler' }).click();
+  await expect(page).toHaveURL(/\/abonnement\?enfant=/);
 });
