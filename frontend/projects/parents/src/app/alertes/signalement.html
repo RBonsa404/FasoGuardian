@@ -1,6 +1,9 @@
-<a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/alertes', aid()]" i18n-aria-label="@@etape.retour" aria-label="Retour">
-  <fg-icon nom="retour" [taille]="22" />
-</a>
+<div class="flex items-center gap-1">
+  <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/alertes', aid()]" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <fg-icon nom="retour" [taille]="22" />
+  </a>
+  <span class="text-body font-semibold" i18n="@@signalement.entete">Signaler une disparition</span>
+</div>
 
 @if (signalement(); as s) {
   <div class="flex flex-col gap-1.5">
@@ -37,49 +40,74 @@
   <p class="m-0 text-caption text-text-3" i18n="@@signalement.trace">La génération du dossier et chaque téléchargement sont inscrits au journal. Levez l'alerte dès que votre enfant est retrouvé.</p>
 } @else if (apercu(); as a) {
   <div class="flex flex-col gap-1.5">
-    <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@signalement.titre">Signaler une disparition</h1>
-    @if (a.conventionActive) {
-      <p class="m-0 text-body text-text-2" i18n="@@signalement.texte.convention">Le point de contact des forces de sécurité recevra ces informations.</p>
-    } @else {
-      <p class="m-0 text-body text-text-2" i18n="@@signalement.texte.remise">Aucun commissariat n'est encore relié à FasoGuardian : nous préparons un dossier PDF que vous remettrez vous-même aux autorités.</p>
-    }
+    <h1 class="m-0 text-titre-ecran font-bold tracking-tight">
+      @if (a.conventionActive) {
+        <ng-container i18n="@@signalement.titre.convention">Transmettre le dossier {{ a.enfant.prenom | de }} aux forces de sécurité</ng-container>
+      } @else {
+        <ng-container i18n="@@signalement.titre.remise">Préparer le dossier {{ a.enfant.prenom | de }} pour les autorités</ng-container>
+      }
+    </h1>
+    <p class="m-0 text-body text-text-2">
+      @if (a.conventionActive) {
+        <ng-container i18n="@@signalement.texte.convention">Le point de contact des forces de sécurité recevra ces informations. Un faux signalement est puni par la loi.</ng-container>
+      } @else {
+        <ng-container i18n="@@signalement.texte.remise">Aucun commissariat n'est encore relié à FasoGuardian : vous remettrez vous-même ce dossier PDF aux autorités. Un faux signalement est puni par la loi.</ng-container>
+      }
+    </p>
   </div>
 
-  <dl class="m-0 flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
-    <div class="flex flex-col gap-0.5 py-3">
-      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.enfant">Enfant</dt>
-      <dd class="m-0 text-body font-semibold">{{ identite() }}</dd>
-      @if (signes()) {
-        <dd class="m-0 text-label text-text-2">{{ signes() }}</dd>
-      }
-    </div>
-    <div class="flex flex-col gap-0.5 py-3">
-      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.medical">Informations médicales</dt>
-      @for (information of a.enfant.informationsMedicales; track information) {
-        <dd class="m-0 text-label font-semibold">{{ information }}</dd>
-      } @empty {
-        <dd class="m-0 text-label text-text-2" i18n="@@signalement.medical.aucune">Aucune information marquée critique</dd>
-      }
-    </div>
-    <div class="flex flex-col gap-0.5 py-3">
-      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.trajet">Trajet récent</dt>
-      <dd class="m-0 text-label font-semibold" i18n="@@signalement.trajet.valeur">2 h · {{ a.positionsDuTrajet }} position(s)</dd>
-    </div>
-    <div class="flex flex-col gap-0.5 py-3">
-      <dt class="text-caption font-medium text-text-3" i18n="@@signalement.position">Dernière position</dt>
-      @if (a.dernierePosition; as p) {
-        <dd class="m-0 text-label font-semibold tabular-nums">{{ heure(p.mesureeLe) }} · {{ ilYA(p.mesureeLe) }} · ± {{ p.precisionM }} m</dd>
+  <section class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" i18n-aria-label="@@signalement.contenu" aria-label="Contenu du dossier">
+    <div class="flex items-center gap-3 p-4">
+      @if (photo(); as url) {
+        <img class="size-14 flex-none rounded-md object-cover" [src]="url" alt="" />
       } @else {
-        <dd class="m-0 text-label text-text-2" i18n="@@signalement.position.aucune">Aucune depuis deux heures</dd>
+        <span class="grid size-14 flex-none place-items-center rounded-md bg-surface-2 text-text-3" aria-hidden="true"><fg-icon nom="filiation" [taille]="24" /></span>
       }
+      <span class="flex min-w-0 flex-col gap-0.5">
+        <strong class="text-body-lg font-semibold">{{ identite() }}</strong>
+        @if (signes()) {
+          <span class="text-label text-text-2">{{ signes() }}</span>
+        }
+      </span>
     </div>
-  </dl>
+    <dl class="m-0 flex flex-col divide-y divide-line">
+      <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+        <dt class="flex-none text-label text-text-2" i18n="@@signalement.medical">Infos médicales</dt>
+        <dd class="m-0 text-right text-label font-semibold">
+          @if (a.enfant.informationsMedicales.length) {
+            {{ a.enfant.informationsMedicales.join(' · ') }}
+          } @else {
+            <span class="font-normal text-text-2" i18n="@@signalement.medical.aucune">Aucune marquée critique</span>
+          }
+        </dd>
+      </div>
+      <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+        <dt class="flex-none text-label text-text-2" i18n="@@signalement.trajet">Trajet récent</dt>
+        <dd class="m-0 text-right text-label font-semibold tabular-nums" i18n="@@signalement.trajet.valeur">2 h · {a.positionsDuTrajet, plural, =0 {aucune position} =1 {1 position} other {{{ a.positionsDuTrajet }} positions}}</dd>
+      </div>
+      <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+        <dt class="flex-none text-label text-text-2" i18n="@@signalement.position">Dernière position</dt>
+        @if (a.dernierePosition; as p) {
+          <dd class="m-0 text-right text-label font-semibold tabular-nums">{{ heure(p.mesureeLe) }} · ± {{ p.precisionM }} m</dd>
+        } @else {
+          <dd class="m-0 text-right text-label text-text-2" i18n="@@signalement.position.aucune">Aucune depuis deux heures</dd>
+        }
+      </div>
+    </dl>
+  </section>
 
-  <fg-banner ton="attention" i18n="@@signalement.loi">Un faux signalement est puni par la loi. Le dossier reste téléchargeable pendant 30 jours.</fg-banner>
+  <p class="m-0 flex items-start gap-3 rounded-lg bg-surface-2 p-4 text-label text-text-2">
+    <fg-icon class="mt-0.5 flex-none" nom="cadenas" [taille]="16" />
+    @if (a.conventionActive) {
+      <span i18n="@@signalement.note.convention">Confirmation par code SMS. Le dossier reste consultable par les forces de sécurité pendant 30 jours.</span>
+    } @else {
+      <span i18n="@@signalement.note.remise">Confirmation par code SMS. Le dossier reste téléchargeable pendant 30 jours.</span>
+    }
+  </p>
   @if (erreur(); as message) {
     <fg-banner ton="erreur">{{ message }}</fg-banner>
   }
-  <button fg-button class="mt-auto" variante="alert" taille="lg" type="button" (click)="erreurCode.set(null); confirmation.set(true)" i18n="@@signalement.confirmer">Confirmer par code SMS</button>
+  <button fg-button class="mt-auto" taille="lg" type="button" (click)="erreurCode.set(null); confirmation.set(true)" i18n="@@signalement.confirmer">Confirmer par code SMS</button>
 
   <app-second-facteur
     action="ESCALADER_FORCES_SECURITE"

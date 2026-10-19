@@ -22,11 +22,12 @@ test('un parent signale une disparition, confirme par code SMS et télécharge l
 
   // Aperçu de ce que contiendra le dossier, puis confirmation par code SMS
   await page.getByRole('link', { name: 'Signaler une disparition' }).click();
+  await expect(page.getByRole('heading', { name: 'Préparer le dossier de Yacouba pour les autorités' })).toBeVisible();
   await expect(page.getByText("Aucun commissariat n'est encore relié à FasoGuardian")).toBeVisible();
   await expect(page.getByText(/Yacouba Zongo · \d+ ans/)).toBeVisible();
-  await expect(page.getByText('Aucune information marquée critique')).toBeVisible();
+  await expect(page.getByText('Aucune marquée critique')).toBeVisible();
   await expect(page.getByText('Un faux signalement est puni par la loi.')).toBeVisible();
-  await page.screenshot({ path: 'e2e/.etat/ecran-29-signalement.png', fullPage: true });
+  await page.screenshot({ path: 'e2e/.etat/ecran-29-signalement.png' });
   await page.getByRole('button', { name: 'Confirmer par code SMS' }).click();
   const code = page.getByRole('dialog', { name: 'Confirmez avec le code SMS' });
   await expect(code.getByText('Renvoyer le code dans')).toBeVisible();

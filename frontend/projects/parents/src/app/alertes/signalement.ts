@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { Alerte, ApercuSignalement, ClientAlertes, Signalement } from 'api';
+import { Alerte, ApercuSignalement, ClientAlertes, ClientFamille, Signalement } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
+import { DePipe } from '../commun/francais';
 import { SecondFacteur } from '../commun/second-facteur';
 import { heure, ilYA } from '../commun/temps';
 import { age } from '../enfants/enfants';
@@ -17,7 +18,7 @@ import { age } from '../enfants/enfants';
  */
 @Component({
   selector: 'app-signalement',
-  imports: [DatePipe, RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette, SecondFacteur],
+  imports: [DatePipe, DePipe, RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette, SecondFacteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './signalement.html',
   host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
@@ -31,6 +32,9 @@ export class EcranSignalement {
   protected readonly ilYA = ilYA;
 
   protected readonly alerte = signal<Alerte | null>(null);
+  /** Photo de l'enfant jointe au dossier (ADR 0033), chargée par l'API authentifiée. */
+  protected readonly photo = signal<string | null>(null);
+  private readonly famille = inject(ClientFamille);
   protected readonly apercu = signal<ApercuSignalement | null>(null);
   protected readonly signalement = signal<Signalement | null>(null);
   /** L'alerte n'est plus en attente d'escalade et n'a pas de dossier. */
@@ -56,6 +60,7 @@ export class EcranSignalement {
 
   constructor() {
     effect(() => this.charger(this.aid()));
+    inject(DestroyRef).onDestroy(() => this.liberer());
   }
 
   protected confirmer(code: string): void {
@@ -108,6 +113,13 @@ export class EcranSignalement {
     });
   }
 
+  private liberer(): void {
+    const url = this.photo();
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   private charger(id: string): void {
     this.erreur.set(null);
     this.client.alerte(id).subscribe({
@@ -115,7 +127,17 @@ export class EcranSignalement {
         this.alerte.set(alerte);
         if (alerte.statut === 'ACQUITTEE') {
           this.client.apercuSignalement(id).subscribe({
-            next: (apercu) => this.apercu.set(apercu),
+            next: (apercu) => {
+              this.apercu.set(apercu);
+              this.famille.photo(alerte.enfantId).subscribe({
+                next: (image) => {
+                  this.liberer();
+                  this.photo.set(URL.createObjectURL(image));
+                },
+                // Pas de photo : la vignette reste un pictogramme.
+                error: () => undefined,
+              });
+            },
             error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),
           });
         } else {
