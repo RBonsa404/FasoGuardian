@@ -104,6 +104,9 @@
       @for (carte of cartesPiece; track carte.type) {
         <ng-container *ngTemplateOutlet="fichier; context: { $implicit: carte, accept: 'image/jpeg,image/png' }" />
       }
+      @if (viseur(); as carte) {
+        <app-prise-de-vue [ouverte]="true" [titre]="titreViseur(carte)" (photo)="photographiee(carte, $event)" (fermee)="viseur.set(null)" />
+      }
       <ng-container *ngTemplateOutlet="banniere" />
       <ng-container pied>
         <button fg-button taille="lg" type="button" (click)="validerPiece()" i18n="@@commun.continuer">Continuer</button>
@@ -313,6 +316,7 @@
   <label
     class="flex cursor-pointer items-center gap-3 rounded-lg bg-surface p-3.5 has-focus-visible:outline-2 has-focus-visible:outline-accent"
     [class]="fichierDe(carte.type) ? 'border border-success' : 'border border-dashed border-line-strong'"
+    (click)="ouvrirViseur($event, carte, accept)"
   >
     <span [class]="classesPastille(!!fichierDe(carte.type))"><fg-icon [nom]="icone(fichierDe(carte.type))" [taille]="20" /></span>
     <span class="flex flex-1 flex-col gap-0.5">

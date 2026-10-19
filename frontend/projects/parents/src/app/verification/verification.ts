@@ -10,6 +10,7 @@ import { FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquel
 import { erreurLisible } from '../commun/erreurs';
 import { Etape } from '../gabarit/etape';
 import { EtatVerification, allegerPhoto } from './etat-verification';
+import { PriseDeVue, viseurDisponible } from './prise-de-vue';
 
 type NomEtape = 'mode' | 'identite' | 'piece' | 'filiation' | 'recap' | 'instruction';
 
@@ -29,7 +30,7 @@ interface CarteFichier {
  */
 @Component({
   selector: 'app-verification',
-  imports: [DatePipe, NgTemplateOutlet, ReactiveFormsModule, Etape, FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquelette],
+  imports: [DatePipe, NgTemplateOutlet, ReactiveFormsModule, Etape, FgBadge, FgBanniere, FgBouton, FgChamp, FgIcon, FgInterrupteur, FgSquelette, PriseDeVue],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './verification.html',
 })
@@ -126,6 +127,30 @@ export class Verification {
     const { nom, prenoms, numeroPiece } = this.identite.getRawValue();
     this.etat.identite.set({ nom: nom.trim(), prenoms: prenoms.trim(), typePiece: 'CNIB', numeroPiece: numeroPiece.trim() });
     this.avancer();
+  }
+
+  /** Pièce en cours de prise de vue dans le viseur de l'application (écran 11b). */
+  protected readonly viseur = signal<CarteFichier | null>(null);
+
+  /** Recto et verso s'ouvrent dans le viseur quand la page a accès à la caméra ; sinon, le sélecteur du téléphone. */
+  protected ouvrirViseur(evenement: Event, carte: CarteFichier, accept: string): void {
+    if (accept.includes('pdf') || !viseurDisponible()) {
+      return;
+    }
+    evenement.preventDefault();
+    this.viseur.set(carte);
+  }
+
+  protected titreViseur(carte: CarteFichier): string {
+    return carte.type === 'PIECE_VERSO'
+      ? $localize`:@@priseDeVue.titre.verso:Verso de la CNIB`
+      : $localize`:@@priseDeVue.titre.recto:Recto de la CNIB`;
+  }
+
+  protected async photographiee(carte: CarteFichier, photo: Blob): Promise<void> {
+    this.viseur.set(null);
+    this.erreur.set(null);
+    this.etat.joindre(carte.type, await allegerPhoto(photo));
   }
 
   protected async joindre(type: TypePieceKyc, evenement: Event): Promise<void> {
