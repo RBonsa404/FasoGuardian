@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 export type StatutDemandeSupport = 'OUVERTE' | 'EN_ATTENTE_PARENT' | 'RESOLUE';
 export type CategorieAide = 'BRACELET' | 'ALERTES' | 'SAFE_ZONES' | 'PAIEMENT' | 'COMPTE' | 'VIE_PRIVEE';
 
@@ -83,11 +85,11 @@ export class ClientSupport {
   }
 
   ouvrir(objet: string, message: string): Observable<DemandeSupport> {
-    return this.http.post<DemandeSupport>('/api/v1/support/demandes', { objet, message });
+    return this.http.post<DemandeSupport>('/api/v1/support/demandes', { objet, message }, rejouable('MESSAGE_SUPPORT'));
   }
 
   completer(id: string, message: string): Observable<DemandeSupport> {
-    return this.http.post<DemandeSupport>(`/api/v1/support/demandes/${id}/messages`, { message });
+    return this.http.post<DemandeSupport>(`/api/v1/support/demandes/${id}/messages`, { message }, rejouable('MESSAGE_SUPPORT'));
   }
 
   // Opérateur

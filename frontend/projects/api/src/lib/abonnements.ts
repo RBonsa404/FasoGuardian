@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 export type CodeOffre = 'ESSENTIEL' | 'INTERMEDIAIRE' | 'PREMIUM' | 'ECOLE';
 export type MoyenPaiement = 'ORANGE_MONEY' | 'MOOV_MONEY';
 export type StatutAbonnement = 'ACTIF' | 'EN_RETARD' | 'RESTREINT';
@@ -105,7 +107,7 @@ export class ClientAbonnements {
   }
 
   choisirRenouvellement(enfantId: string, automatique: boolean): Observable<Abonnement> {
-    return this.http.put<Abonnement>(`${this.base(enfantId)}/renouvellement`, { automatique });
+    return this.http.put<Abonnement>(`${this.base(enfantId)}/renouvellement`, { automatique }, rejouable('RENOUVELLEMENT'));
   }
 
   recus(): Observable<Recu[]> {

@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
+import { ActionMiseEnAttente } from './hors-ligne';
 import { CodeErreur, estProbleme } from './probleme';
 
 export interface ErreurLisible {
   /** Code métier stable, ou HORS_LIGNE / INCONNUE lorsque le serveur n'a pas répondu en RFC 9457. */
-  readonly code: CodeErreur | 'HORS_LIGNE' | 'INCONNUE';
+  readonly code: CodeErreur | 'HORS_LIGNE' | 'EN_ATTENTE' | 'INCONNUE';
   /** Message à afficher à l'utilisateur. */
   readonly message: string;
 }
@@ -13,7 +14,10 @@ export interface ErreurLisible {
  * Traduit une erreur HTTP en message utilisateur. Le serveur fournit déjà un détail en français et sans
  * donnée personnelle ; seules la perte de réseau et les réponses inattendues sont formulées par l'application appelante.
  */
-export function lireErreur(erreur: unknown, messages: { horsLigne: string; inconnue: string }): ErreurLisible {
+export function lireErreur(erreur: unknown, messages: { horsLigne: string; enAttente?: string; inconnue: string }): ErreurLisible {
+  if (erreur instanceof ActionMiseEnAttente) {
+    return { code: 'EN_ATTENTE', message: messages.enAttente ?? messages.horsLigne };
+  }
   if (erreur instanceof HttpErrorResponse) {
     if (erreur.status === 0) {
       return { code: 'HORS_LIGNE', message: messages.horsLigne };

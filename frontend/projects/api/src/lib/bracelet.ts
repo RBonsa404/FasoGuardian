@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 export type StatutBracelet = 'EN_STOCK' | 'ACTIF' | 'PERDU' | 'VOLE' | 'EN_SAV' | 'REFORME';
 
 export type MotifDeclaration = 'PERDU' | 'VOLE' | 'CASSE';
@@ -105,7 +107,7 @@ export class ClientBracelet {
   }
 
   reglerModeEconomie(enfantId: string, modeEconomie: boolean): Observable<Bracelet> {
-    return this.http.put<Bracelet>(`${this.base(enfantId)}/configuration`, { modeEconomie });
+    return this.http.put<Bracelet>(`${this.base(enfantId)}/configuration`, { modeEconomie }, rejouable('MODE_ECONOMIE'));
   }
 
   desappairer(enfantId: string): Observable<void> {

@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 export interface ProfilEnfant {
   readonly ecole: string | null;
   readonly quartier: string | null;
@@ -113,7 +115,7 @@ export class ClientFamille {
   }
 
   modifierEnfant(id: string, modification: { prenom?: string; nom?: string; profil?: ProfilEnfant }): Observable<FicheEnfant> {
-    return this.http.patch<FicheEnfant>(`${BASE}/${id}`, modification);
+    return this.http.patch<FicheEnfant>(`${BASE}/${id}`, modification, rejouable('FICHE_ENFANT'));
   }
 
   historique(id: string): Observable<RevisionEnfant[]> {
@@ -128,7 +130,7 @@ export class ClientFamille {
     id: string,
     fiche: { groupeSanguin: string | null; groupeSanguinSurQr: boolean; elements: readonly ElementMedical[] },
   ): Observable<FicheSante> {
-    return this.http.put<FicheSante>(`${BASE}/${id}/sante`, fiche);
+    return this.http.put<FicheSante>(`${BASE}/${id}/sante`, fiche, rejouable('FICHE_SANTE'));
   }
 
   revisionsSante(id: string): Observable<RevisionSante[]> {
@@ -168,14 +170,14 @@ export class ClientFamille {
   }
 
   ajouterContact(id: string, contact: SaisieContact): Observable<ContactUrgence> {
-    return this.http.post<ContactUrgence>(`${BASE}/${id}/contacts`, contact);
+    return this.http.post<ContactUrgence>(`${BASE}/${id}/contacts`, contact, rejouable('CONTACT_URGENCE'));
   }
 
   modifierContact(id: string, contactId: string, contact: SaisieContact): Observable<ContactUrgence> {
-    return this.http.put<ContactUrgence>(`${BASE}/${id}/contacts/${contactId}`, contact);
+    return this.http.put<ContactUrgence>(`${BASE}/${id}/contacts/${contactId}`, contact, rejouable('CONTACT_URGENCE'));
   }
 
   supprimerContact(id: string, contactId: string): Observable<void> {
-    return this.http.delete<void>(`${BASE}/${id}/contacts/${contactId}`);
+    return this.http.delete<void>(`${BASE}/${id}/contacts/${contactId}`, rejouable('CONTACT_URGENCE'));
   }
 }

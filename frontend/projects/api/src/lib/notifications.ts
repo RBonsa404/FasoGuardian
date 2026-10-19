@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 /** Abonnement d'un navigateur, tel que le rend `PushSubscription.toJSON()`. */
 export interface AbonnementPush {
   readonly endpoint: string;
@@ -33,11 +35,11 @@ export class ClientNotifications {
 
   /** Trente dernières notifications, hors alertes. */
   marquerLue(id: string): Observable<void> {
-    return this.http.post<void>(`/api/v1/notifications/${id}/lecture`, null);
+    return this.http.post<void>(`/api/v1/notifications/${id}/lecture`, null, rejouable('NOTIFICATIONS_LUES'));
   }
 
   toutMarquerLu(): Observable<void> {
-    return this.http.post<void>('/api/v1/notifications/lecture', null);
+    return this.http.post<void>('/api/v1/notifications/lecture', null, rejouable('NOTIFICATIONS_LUES'));
   }
 
   recues(): Observable<NotificationRecue[]> {

@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { rejouable } from './hors-ligne';
+
 export type TypeAlerte = 'SOS' | 'RETRAIT' | 'SIGNALEMENT' | 'SORTIE_ZONE' | 'BATTERIE_CRITIQUE' | 'CHUTE';
 export type GraviteAlerte = 'CRITIQUE' | 'IMPORTANTE';
 export type StatutAlerte = 'OUVERTE' | 'ACQUITTEE' | 'ESCALADEE' | 'LEVEE' | 'FAUSSE_ALERTE';
@@ -101,20 +103,20 @@ export class ClientAlertes {
   }
 
   acquitter(id: string): Observable<Alerte> {
-    return this.http.post<Alerte>(`/api/v1/alertes/${id}/acquittement`, {});
+    return this.http.post<Alerte>(`/api/v1/alertes/${id}/acquittement`, {}, rejouable('PRISE_EN_CHARGE'));
   }
 
   /** Une seule prise en charge pour toutes les alertes ouvertes de l'enfant. */
   prendreEnCharge(enfantId: string): Observable<Alerte[]> {
-    return this.http.post<Alerte[]>(`/api/v1/enfants/${enfantId}/alertes/prise-en-charge`, {});
+    return this.http.post<Alerte[]>(`/api/v1/enfants/${enfantId}/alertes/prise-en-charge`, {}, rejouable('PRISE_EN_CHARGE'));
   }
 
   lever(id: string, motif: string): Observable<Alerte> {
-    return this.http.post<Alerte>(`/api/v1/alertes/${id}/levee`, { motif });
+    return this.http.post<Alerte>(`/api/v1/alertes/${id}/levee`, { motif }, rejouable('LEVEE_ALERTE'));
   }
 
   classerFausseAlerte(id: string, motif: string): Observable<Alerte> {
-    return this.http.post<Alerte>(`/api/v1/alertes/${id}/fausse-alerte`, { motif });
+    return this.http.post<Alerte>(`/api/v1/alertes/${id}/fausse-alerte`, { motif }, rejouable('FAUSSE_ALERTE'));
   }
 
   signaler(enfantId: string): Observable<Alerte> {

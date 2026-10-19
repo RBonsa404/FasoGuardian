@@ -4,6 +4,7 @@ import { ErreurLisible, lireErreur } from 'api';
 export function erreurLisible(erreur: unknown): ErreurLisible {
   return lireErreur(erreur, {
     horsLigne: $localize`:@@erreur.horsLigne:Pas de connexion. Vérifiez votre réseau puis réessayez.`,
+    enAttente: $localize`:@@erreur.enAttente:Pas de connexion : c'est enregistré sur ce téléphone et sera envoyé dès le retour du réseau.`,
     inconnue: $localize`:@@erreur.inconnue:Une erreur est survenue. Réessayez dans un instant.`,
   });
 }

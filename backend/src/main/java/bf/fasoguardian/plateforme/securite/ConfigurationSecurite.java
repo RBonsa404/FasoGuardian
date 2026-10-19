@@ -5,6 +5,8 @@ import java.time.Clock;
 
 import bf.fasoguardian.plateforme.erreurs.CodeErreur;
 import bf.fasoguardian.plateforme.erreurs.Problemes;
+import bf.fasoguardian.plateforme.idempotence.DepotIdempotence;
+import bf.fasoguardian.plateforme.idempotence.FiltreIdempotence;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -28,9 +31,11 @@ import tools.jackson.databind.json.JsonMapper;
 class ConfigurationSecurite {
 
     @Bean
-    SecurityFilterChain chaineDeFiltres(HttpSecurity http, JsonMapper json, JournalisationRefus refus)
-            throws Exception {
+    SecurityFilterChain chaineDeFiltres(HttpSecurity http, JsonMapper json, JournalisationRefus refus,
+            DepotIdempotence idempotence, Clock horloge) throws Exception {
         http
+                // Écritures rejouées hors ligne : après l'autorisation, pour ranger chaque clé sous son compte.
+                .addFilterAfter(new FiltreIdempotence(idempotence, json, horloge), AuthorizationFilter.class)
                 // API sans état authentifiée par en-tête Authorization : pas de jeton CSRF nécessaire ici.
                 // Les points utilisant un cookie (rafraîchissement) reçoivent leur propre protection dans identite.
                 .csrf(AbstractHttpConfigurer::disable)

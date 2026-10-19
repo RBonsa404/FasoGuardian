@@ -5,6 +5,7 @@ export * from './lib/probleme';
 export * from './lib/authentification';
 export * from './lib/intercepteur-jeton';
 export * from './lib/erreurs';
+export * from './lib/hors-ligne';
 export * from './lib/kyc';
 export * from './lib/console';
 export * from './lib/profil';

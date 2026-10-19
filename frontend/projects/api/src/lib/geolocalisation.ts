@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PositionConnue } from './bracelet';
+import { rejouable } from './hors-ligne';
 
 export interface PointGeo {
   readonly latitude: number;
@@ -85,7 +86,7 @@ export class ClientZones {
   }
 
   reactiver(enfantId: string, zoneId: string): Observable<SafeZone> {
-    return this.http.post<SafeZone>(`${this.base(enfantId)}/${zoneId}/reactivation`, {});
+    return this.http.post<SafeZone>(`${this.base(enfantId)}/${zoneId}/reactivation`, {}, rejouable('ZONE_REACTIVEE'));
   }
 
   supprimer(enfantId: string, zoneId: string, codeSecondFacteur: string): Observable<void> {

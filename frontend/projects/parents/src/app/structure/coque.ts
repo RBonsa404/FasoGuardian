@@ -8,6 +8,7 @@ import { FgBouton, FgIcon, NomIcone } from 'ui';
 
 import { CopieLocale } from '../commun/copie-locale';
 import { EnfantCourant } from '../commun/enfant-courant';
+import { EtatsTransverses } from './etats-transverses';
 
 interface Onglet {
   readonly libelle: string;
@@ -46,7 +47,7 @@ const ENTREES: readonly Entree[] = [
  */
 @Component({
   selector: 'app-coque',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgIcon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgIcon, EtatsTransverses],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside
@@ -88,7 +89,7 @@ const ENTREES: readonly Entree[] = [
         </button>
       </div>
     </aside>
-    <div [class]="ongletsVisibles() ? 'min-w-0 flex-1 max-lg:pb-18' : 'min-w-0 flex-1'"><router-outlet /></div>
+    <div [class]="ongletsVisibles() ? 'min-w-0 flex-1 max-lg:pb-18' : 'min-w-0 flex-1'"><app-etats-transverses /><router-outlet /></div>
     @if (ongletsVisibles()) {
       <nav class="fixed inset-x-0 bottom-0 z-1100 grid h-18 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden" [style.grid-template-columns]="'repeat(' + onglets().length + ', minmax(0, 1fr))'" i18n-aria-label="@@coque.onglets" aria-label="Onglets">
         @for (onglet of onglets(); track onglet.libelle) {
