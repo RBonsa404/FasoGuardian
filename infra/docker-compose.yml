@@ -104,6 +104,25 @@ services:
       - ./observabilite/regles-alertes.yml:/etc/prometheus/regles-alertes.yml:ro
     ports:
       - "127.0.0.1:9090:9090"
+    depends_on:
+      - alertmanager
+
+  # Acheminement des alertes d'exploitation par courriel ; le gabarit est complété au démarrage par les variables
+  # FG_ALERTES_* (aucun secret dans le dépôt). Sans ces variables, le conteneur refuse de démarrer.
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    environment:
+      FG_ALERTES_SMTP_HOTE: ${FG_ALERTES_SMTP_HOTE:?définir FG_ALERTES_SMTP_HOTE dans .env}
+      FG_ALERTES_SMTP_UTILISATEUR: ${FG_ALERTES_SMTP_UTILISATEUR:?définir FG_ALERTES_SMTP_UTILISATEUR dans .env}
+      FG_ALERTES_SMTP_MOT_DE_PASSE: ${FG_ALERTES_SMTP_MOT_DE_PASSE:?définir FG_ALERTES_SMTP_MOT_DE_PASSE dans .env}
+      FG_ALERTES_DE: ${FG_ALERTES_DE:?définir FG_ALERTES_DE dans .env}
+      FG_ALERTES_A: ${FG_ALERTES_A:?définir FG_ALERTES_A dans .env}
+    entrypoint: ["/bin/sh", "/etc/alertmanager/demarrer.sh"]
+    volumes:
+      - ./observabilite/alertmanager.gabarit.yml:/etc/alertmanager/gabarit.yml:ro
+      - ./observabilite/demarrer-alertmanager.sh:/etc/alertmanager/demarrer.sh:ro
+    ports:
+      - "127.0.0.1:9093:9093"
 
   loki:
     image: grafana/loki:3.5.3

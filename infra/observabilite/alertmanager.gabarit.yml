@@ -1,0 +1,41 @@
+# Acheminement des alertes d'exploitation (FG-DOC-06, tableau 20 ; US-ADM-004). Gabarit sans secret : au
+# démarrage du conteneur, les valeurs __FG_ALERTES_*__ sont remplacées par les variables d'environnement du
+# même nom (voir .env.example). Alertmanager tourne à part du serveur : l'alerte « serveur indisponible » part
+# même quand le serveur est arrêté.
+global:
+  smtp_smarthost: "__FG_ALERTES_SMTP_HOTE__"
+  smtp_from: "__FG_ALERTES_DE__"
+  smtp_auth_username: "__FG_ALERTES_SMTP_UTILISATEUR__"
+  smtp_auth_password: "__FG_ALERTES_SMTP_MOT_DE_PASSE__"
+  smtp_require_tls: true
+  resolve_timeout: 5m
+
+route:
+  receiver: exploitation
+  group_by: [alertname]
+  group_wait: 30s
+  group_interval: 5m
+  # Une alerte qui dure est rappelée : toutes les heures si elle est critique, toutes les quatre heures sinon.
+  repeat_interval: 4h
+  routes:
+    - matchers: [gravite="critique"]
+      receiver: exploitation
+      group_wait: 10s
+      repeat_interval: 1h
+
+# Une alerte critique en cours rend muets les avertissements qu'elle explique (serveur arrêté → latence, etc.).
+inhibit_rules:
+  - source_matchers: [alertname="ServeurIndisponible"]
+    target_matchers: [gravite="avertissement"]
+
+receivers:
+  - name: exploitation
+    email_configs:
+      - to: "__FG_ALERTES_A__"
+        send_resolved: true
+        headers:
+          Subject: '[FasoGuardian] {{ if eq .Status "firing" }}Alerte{{ else }}Fin d''alerte{{ end }} · {{ .CommonLabels.alertname }}'
+        text: |-
+          {{ range .Alerts }}{{ if eq .Status "firing" }}En cours{{ else }}Terminée{{ end }} : {{ .Annotations.resume }}
+          Gravité : {{ .Labels.gravite }} · depuis {{ .StartsAt.Format "02/01/2006 15:04 MST" }}
+          {{ end }}
