@@ -63,17 +63,17 @@ export function situation(vague: VagueOta): string {
           <p class="m-0 text-label text-text-2">
             <ng-container i18n="@@ota.image">Image signée (ECDSA P-256)</ng-container> · {{ tailleDe(campagne) }}@if (campagne.note) { · {{ campagne.note }}}. <ng-container i18n="@@ota.parents">Les parents sont informés avant l'installation.</ng-container>
           </p>
-          <ol class="m-0 flex list-none flex-col gap-2 p-0">
+          <ol class="m-0 flex list-none flex-col gap-3 p-0">
             @for (vague of campagne.vagues; track vague.numero) {
-              <li class="grid grid-cols-[220px_1fr_130px] items-center gap-4 rounded-md bg-bg px-4 py-3 text-label">
-                <strong class="font-semibold"><ng-container i18n="@@ota.vague">Vague</ng-container> {{ vague.numero }} · {{ vague.pourcentage }} %</strong>
-                <div class="flex flex-col gap-1.5">
-                  <div class="h-1.5 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuemin="0" [attr.aria-valuemax]="vague.cibles" [attr.aria-valuenow]="vague.installes" [attr.aria-label]="avancement(vague)">
-                    <div class="h-full rounded-full" [class]="vague.etat === 'TERMINEE' ? 'bg-success' : 'bg-accent'" [style.width.%]="part(vague)"></div>
-                  </div>
-                  <span class="text-caption text-text-2">{{ situationDe(vague) }}</span>
+              <li class="flex flex-col gap-2.5 rounded-[14px] border border-line bg-surface px-4 py-3.5 text-label">
+                <span class="flex items-baseline justify-between gap-4">
+                  <strong class="text-body font-semibold"><ng-container i18n="@@ota.vague">Vague</ng-container> {{ vague.numero }} · {{ vague.pourcentage }} %</strong>
+                  <span class="font-semibold tabular-nums text-text-2">{{ vague.installes }} / {{ vague.cibles }}</span>
+                </span>
+                <div class="h-1.5 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuemin="0" [attr.aria-valuemax]="vague.cibles" [attr.aria-valuenow]="vague.installes" [attr.aria-label]="avancement(vague)">
+                  <div class="h-full rounded-full" [class]="vague.etat === 'TERMINEE' ? 'bg-success' : 'bg-accent'" [style.width.%]="part(vague)"></div>
                 </div>
-                <span class="text-right text-text-2 tabular-nums">{{ vague.installes }} / {{ vague.cibles }}</span>
+                <span class="text-caption text-text-2">{{ situationDe(vague) }}</span>
               </li>
             }
           </ol>
@@ -82,7 +82,7 @@ export function situation(vague: VagueOta): string {
               <button fg-button type="button" [chargement]="enCours() === campagne.id" [disabled]="campagne.statut === 'EN_PAUSE'" (click)="lancer(campagne)"><ng-container i18n="@@ota.lancer">Lancer la vague</ng-container> {{ vague.numero }} ({{ vague.pourcentage }} %)</button>
             }
             @if (campagne.statut === 'EN_COURS') {
-              <button fg-button variante="secondary" type="button" [chargement]="enCours() === campagne.id" (click)="pause(campagne)" i18n="@@ota.pause">Mettre en pause</button>
+              <button fg-button variante="danger" type="button" [chargement]="enCours() === campagne.id" (click)="pause(campagne)" i18n="@@ota.pause">Mettre en pause</button>
             } @else if (campagne.statut === 'EN_PAUSE') {
               <button fg-button variante="secondary" type="button" [chargement]="enCours() === campagne.id" (click)="reprise(campagne)" i18n="@@ota.reprendre">Reprendre</button>
             }

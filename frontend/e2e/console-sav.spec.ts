@@ -69,6 +69,7 @@ test('un agent SAV suit un bracelet du parc, enregistre son retour puis le remet
   await expect(page.getByText('> 3 intervalles sans nouvelles · ticket ouvert automatiquement')).toBeVisible();
   await page.getByRole('button', { name: 'Résolus' }).click();
   await expect(page.getByRole('button', { name: 'Résolus' })).toHaveAttribute('aria-pressed', 'true');
+  await page.waitForTimeout(400);
   await page.screenshot({ path: 'e2e/.etat/ecran-66-muets.png', fullPage: true });
 
   // Écran 56 : Ctrl K, le numéro gravé, Entrée : la fiche du bracelet
