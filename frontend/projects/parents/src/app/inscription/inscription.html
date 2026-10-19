@@ -80,7 +80,7 @@
       i18n-titre="@@inscription.mdp.titre"
       titre="Choisissez un mot de passe"
       i18n-texte="@@inscription.mdp.texte"
-      texte="10 caractères minimum, avec un chiffre."
+      texte="Il protège la position de votre enfant. Ne le partagez avec personne."
       [numero]="numero()"
       [total]="4"
       (retour)="reculer()"
@@ -92,11 +92,34 @@
           [longueurMax]="128"
           i18n-libelle="@@inscription.mdp.libelle"
           libelle="Mot de passe"
-          [aide]="motDePasseRobuste() ? aideRobuste : undefined"
-          [aideValide]="true"
+          [revelable]="true"
+          i18n-libelleAfficher="@@commun.afficher"
+          libelleAfficher="Afficher"
+          i18n-libelleMasquer="@@commun.masquer"
+          libelleMasquer="Masquer"
           [erreur]="erreurChamp()"
           [formControl]="motDePasse"
         />
+        <div class="flex gap-1" aria-hidden="true">
+          @for (plein of segments(); track $index) {
+            <span class="h-1.5 flex-1 rounded-full" [class]="plein ? (motDePasseRobuste() ? 'bg-success' : 'bg-attention') : 'bg-surface-2'"></span>
+          }
+        </div>
+        @if (motDePasseRobuste()) {
+          <span class="text-label font-semibold text-success" role="status" i18n="@@inscription.mdp.robuste.libelle">Robuste</span>
+        }
+        <ul class="m-0 flex list-none flex-col gap-2 p-0 text-label" i18n-aria-label="@@inscription.mdp.criteres" aria-label="Critères de robustesse">
+          @for (critere of criteres(); track critere.libelle) {
+            <li class="flex items-center gap-2" [class]="critere.rempli ? 'font-medium text-text' : 'text-text-3'">
+              @if (critere.rempli) {
+                <fg-icon class="text-success" nom="valider" [taille]="16" />
+              } @else {
+                <span class="mx-0.5 size-3 rounded-full border-[1.5px] border-text-3" aria-hidden="true"></span>
+              }
+              <span><span class="sr-only">{{ critere.rempli ? critereRempli : critereManquant }}</span>{{ critere.libelle }}</span>
+            </li>
+          }
+        </ul>
       </form>
       <ng-container pied>
         <button fg-button taille="lg" type="submit" form="formulaire" i18n="@@inscription.mdp.action">Continuer</button>
@@ -115,23 +138,55 @@
       [total]="4"
       (retour)="reculer()"
     >
-      <div class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface px-4">
-        <fg-switch class="py-3" [verrouille]="true" [formControl]="obligatoire" i18n-libelle="@@accords.cgu.titre" libelle="Conditions générales (obligatoire)">
-          <strong class="text-body font-semibold" i18n="@@accords.cgu.titre">Conditions générales (obligatoire)</strong>
-          <span class="text-label text-text-2" i18n="@@accords.cgu.texte">J'accepte les conditions d'utilisation du service.</span>
-        </fg-switch>
-        <fg-switch class="py-3" [verrouille]="true" [formControl]="obligatoire" i18n-libelle="@@accords.donnees.titre" libelle="Traitement des données de l'enfant (obligatoire)">
-          <strong class="text-body font-semibold" i18n="@@accords.donnees.titre">Traitement des données de l'enfant (obligatoire)</strong>
-          <span class="text-label text-text-2" i18n="@@accords.donnees.texte">Position, alertes et fiche médicale, conservées selon votre offre.</span>
-        </fg-switch>
-        <fg-switch class="py-3" [formControl]="partageFds" i18n-libelle="@@accords.fds.titre" libelle="Partage avec les forces de sécurité">
-          <strong class="text-body font-semibold" i18n="@@accords.fds.titre">Partage avec les forces de sécurité</strong>
-          <span class="text-label text-text-2" i18n="@@accords.fds.texte">Seulement si je signale une disparition, après code SMS.</span>
-        </fg-switch>
-        <fg-switch class="py-3" [formControl]="conseilsSms" i18n-libelle="@@accords.sms.titre" libelle="Conseils et actualités par SMS">
-          <strong class="text-body font-semibold" i18n="@@accords.sms.titre">Conseils et actualités par SMS</strong>
-          <span class="text-label text-text-2" i18n="@@accords.sms.texte">Facultatif, 2 messages par mois au plus.</span>
-        </fg-switch>
+      <div class="flex flex-col gap-2.5">
+        <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-accent cursor-default">
+          <input type="checkbox" class="peer sr-only" checked disabled />
+          <span class="mt-0.5 grid size-6 flex-none place-items-center rounded-xs border-2 text-white" [class]="true ? 'border-primary bg-primary' : 'border-line-strong'" aria-hidden="true">
+            @if (true) {
+              <fg-icon nom="valider" [taille]="14" />
+            }
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@accords.cgu.titre">Conditions générales (obligatoire)</strong>
+            <span class="text-label text-text-2" i18n="@@accords.cgu.texte">J'accepte les conditions d'utilisation du service.</span>
+          </span>
+        </label>
+        <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-accent cursor-default">
+          <input type="checkbox" class="peer sr-only" checked disabled />
+          <span class="mt-0.5 grid size-6 flex-none place-items-center rounded-xs border-2 text-white" [class]="true ? 'border-primary bg-primary' : 'border-line-strong'" aria-hidden="true">
+            @if (true) {
+              <fg-icon nom="valider" [taille]="14" />
+            }
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@accords.donnees.titre">Traitement des données de l'enfant (obligatoire)</strong>
+            <span class="text-label text-text-2" i18n="@@accords.donnees.texte">Position, alertes et fiche médicale, conservées selon votre offre.</span>
+          </span>
+        </label>
+        <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-accent">
+          <input type="checkbox" class="peer sr-only" [formControl]="partageFds" />
+          <span class="mt-0.5 grid size-6 flex-none place-items-center rounded-xs border-2 text-white" [class]="partageFds.value ? 'border-primary bg-primary' : 'border-line-strong'" aria-hidden="true">
+            @if (partageFds.value) {
+              <fg-icon nom="valider" [taille]="14" />
+            }
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@accords.fds.titre">Partage avec les forces de sécurité</strong>
+            <span class="text-label text-text-2" i18n="@@accords.fds.texte">Seulement si je signale une disparition, après code SMS.</span>
+          </span>
+        </label>
+        <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-accent">
+          <input type="checkbox" class="peer sr-only" [formControl]="conseilsSms" />
+          <span class="mt-0.5 grid size-6 flex-none place-items-center rounded-xs border-2 text-white" [class]="conseilsSms.value ? 'border-primary bg-primary' : 'border-line-strong'" aria-hidden="true">
+            @if (conseilsSms.value) {
+              <fg-icon nom="valider" [taille]="14" />
+            }
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <strong class="text-body font-semibold" i18n="@@accords.sms.titre">Conseils et actualités par SMS</strong>
+            <span class="text-label text-text-2" i18n="@@accords.sms.texte">Facultatif, 2 messages par mois au plus.</span>
+          </span>
+        </label>
       </div>
       <ng-container *ngTemplateOutlet="banniere" />
       <ng-container pied>

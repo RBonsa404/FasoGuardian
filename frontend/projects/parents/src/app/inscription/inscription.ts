@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { ClientAuthentification, TypeConsentement } from 'api';
-import { FgBanniere, FgBouton, FgChamp, FgCode, FgInterrupteur, FgTelephone } from 'ui';
+import { FgBanniere, FgBouton, FgChamp, FgCode, FgIcon, FgTelephone } from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 import { Etape } from '../gabarit/etape';
@@ -21,7 +21,7 @@ const DELAI_RENVOI_S = 60;
  */
 @Component({
   selector: 'app-inscription',
-  imports: [NgTemplateOutlet, ReactiveFormsModule, RouterLink, Etape, FgBouton, FgBanniere, FgChamp, FgCode, FgTelephone, FgInterrupteur],
+  imports: [NgTemplateOutlet, ReactiveFormsModule, RouterLink, Etape, FgBouton, FgBanniere, FgChamp, FgCode, FgIcon, FgTelephone],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './inscription.html',
 })
@@ -37,7 +37,6 @@ export class Inscription {
   protected readonly motDePasse = new FormControl('', { nonNullable: true });
   protected readonly partageFds = new FormControl(true, { nonNullable: true });
   protected readonly conseilsSms = new FormControl(false, { nonNullable: true });
-  protected readonly obligatoire = new FormControl(true, { nonNullable: true });
 
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
@@ -47,7 +46,8 @@ export class Inscription {
   private readonly saisieMotDePasse = signal('');
 
   protected readonly numero = computed(() => ORDRE.indexOf(this.etape()) + 1);
-  protected readonly aideRobuste = $localize`:@@inscription.mdp.robuste:Robuste ✓`;
+  protected readonly critereRempli = $localize`:@@inscription.mdp.rempli:Rempli : `;
+  protected readonly critereManquant = $localize`:@@inscription.mdp.manquant:À remplir : `;
   protected get texteCode(): string {
     const numero = this.telephone.value.replace(/(\d{2})(?=\d)/g, '$1 ');
     return $localize`:@@inscription.code.texte:Envoyé au +226 ${numero}:numero:.`;
@@ -55,6 +55,24 @@ export class Inscription {
   protected readonly motDePasseRobuste = computed(
     () => this.saisieMotDePasse().length >= 10 && /\d/.test(this.saisieMotDePasse()),
   );
+  /**
+   * Critères affichés sous le mot de passe (écran 10c). Les deux premiers sont exigés par le serveur ; le
+   * troisième est un conseil : il ne bloque pas l'inscription.
+   */
+  protected readonly criteres = computed(() => {
+    const saisie = this.saisieMotDePasse();
+    const numero = this.telephone.value.replace(/\D/g, '');
+    return [
+      { libelle: $localize`:@@inscription.mdp.critere.longueur:10 caractères ou plus`, rempli: saisie.length >= 10 },
+      { libelle: $localize`:@@inscription.mdp.critere.chiffre:Un chiffre`, rempli: /\d/.test(saisie) },
+      { libelle: $localize`:@@inscription.mdp.critere.numero:Pas votre numéro de téléphone`, rempli: saisie.length > 0 && (numero.length < 4 || !saisie.replace(/\D/g, '').includes(numero.slice(-6))) },
+    ];
+  });
+  /** Jauge en quatre segments : un par critère rempli, le quatrième pour une phrase de 14 caractères ou plus. */
+  protected readonly segments = computed(() => {
+    const remplis = this.criteres().filter((critere) => critere.rempli).length;
+    return [0, 1, 2, 3].map((rang) => (rang < 3 ? rang < remplis : this.motDePasseRobuste() && this.saisieMotDePasse().length >= 14));
+  });
   protected readonly renvoi = computed(() => {
     const secondes = this.attenteRenvoi();
     return `${Math.floor(secondes / 60)}:${String(secondes % 60).padStart(2, '0')}`;

@@ -17,7 +17,7 @@ let suite = 0;
       <input
         class="min-w-0 flex-1 bg-transparent outline-none placeholder:text-text-3 disabled:text-text-3"
         [id]="id"
-        [type]="type()"
+        [type]="typeAffiche()"
         [value]="valeur()"
         [disabled]="desactive()"
         [attr.autocomplete]="autocomplete()"
@@ -27,6 +27,17 @@ let suite = 0;
         (input)="saisir($event)"
         (blur)="toucher()"
       />
+      @if (revelable() && type() === 'password') {
+        <button
+          type="button"
+          class="flex-none rounded-xs px-1 text-label font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent"
+          [attr.aria-pressed]="revele()"
+          [attr.aria-controls]="id"
+          (click)="revele.set(!revele())"
+        >
+          {{ revele() ? libelleMasquer() : libelleAfficher() }}
+        </button>
+      }
     </div>
     @if (erreur(); as message) {
       <span class="flex items-center gap-1.5 text-caption font-medium text-danger" [id]="id + '-message'">
@@ -49,6 +60,12 @@ export class FgChamp implements ControlValueAccessor {
   /** Affiche l'aide en couleur de succès (par exemple « Robuste »), toujours accompagnée de son texte. */
   readonly aideValide = input(false);
   readonly erreur = input<string | null>();
+  /** Mot de passe : un bouton permet de le lire en clair, le temps de vérifier sa saisie. */
+  readonly revelable = input(false);
+  readonly libelleAfficher = input('Afficher');
+  readonly libelleMasquer = input('Masquer');
+  protected readonly revele = signal(false);
+  protected readonly typeAffiche = computed(() => (this.type() === 'password' && this.revele() ? 'text' : this.type()));
 
   protected readonly id = `fg-champ-${++suite}`;
   protected readonly valeur = signal('');

@@ -22,7 +22,7 @@ test("un parent s'inscrit, dépose son dossier, et son compte est activé après
   await page.getByLabel('Mot de passe').fill('soleil-de-ouaga-2026');
   await expect(page.getByText('Robuste')).toBeVisible();
   await page.getByRole('button', { name: 'Continuer' }).click();
-  await expect(page.getByRole('switch', { name: 'Conditions générales (obligatoire)' })).toBeDisabled();
+  await expect(page.getByRole('checkbox', { name: /Conditions générales \(obligatoire\)/ })).toBeDisabled();
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
 
   // Dossier de vérification

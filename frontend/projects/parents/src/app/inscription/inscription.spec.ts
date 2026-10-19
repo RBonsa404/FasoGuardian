@@ -75,13 +75,32 @@ describe('Inscription', () => {
     await harnais.fixture.whenStable();
     expect(TestBed.inject(Router).url).toBe('/inscription/mot-de-passe');
 
+    // Critères affichés au fil de la saisie ; le mot de passe peut être lu en clair.
+    saisir(champ(), 'soleil');
+    await harnais.fixture.whenStable();
+    const criteres = () => Array.from(page.querySelectorAll('[aria-label="Critères de robustesse"] li')).map((li) => (li.textContent ?? '').replace(/\s+/g, ' ').trim());
+    expect(criteres()).toEqual(['À remplir : 10 caractères ou plus', 'À remplir : Un chiffre', 'Rempli : Pas votre numéro de téléphone']);
+    expect(page.textContent).not.toContain('Robuste');
+    const afficher = Array.from(page.querySelectorAll('button')).find((b) => b.textContent?.trim() === 'Afficher') as HTMLButtonElement;
+    afficher.click();
+    await harnais.fixture.whenStable();
+    expect(champ().type).toBe('text');
+    // Le numéro dans le mot de passe est déconseillé, sans être bloquant.
+    saisir(champ(), 'mot70123456');
+    await harnais.fixture.whenStable();
+    expect(criteres()[2]).toBe('À remplir : Pas votre numéro de téléphone');
+    expect(page.textContent).toContain('Robuste');
+
     saisir(champ(), 'soleil2026');
+    await harnais.fixture.whenStable();
+    expect(criteres().every((critere) => critere.startsWith('Rempli'))).toBe(true);
     await soumettre();
     expect(TestBed.inject(Router).url).toBe('/inscription/accords');
-    const interrupteurs = Array.from(page.querySelectorAll('button[role=switch]')) as HTMLButtonElement[];
-    expect(interrupteurs.map((i) => i.getAttribute('aria-checked'))).toEqual(['true', 'true', 'true', 'false']);
-    expect(interrupteurs[0].disabled).toBe(true);
-    interrupteurs[2].click();
+    const cases = Array.from(page.querySelectorAll('input[type=checkbox]')) as HTMLInputElement[];
+    expect(cases.map((c) => c.checked)).toEqual([true, true, true, false]);
+    expect(cases[0].disabled).toBe(true);
+    expect(cases[1].disabled).toBe(true);
+    cases[2].click();
     await harnais.fixture.whenStable();
 
     action().click();
