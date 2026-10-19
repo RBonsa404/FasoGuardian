@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { Alerte, ClientAlertes, ClientFamille, ClientNotifications, FicheEnfant, NotificationRecue } from 'api';
 
-import { CentreAlertes, libelleJour } from './centre';
+import { CentreAlertes, iconeNotification, libelleJour } from './centre';
 
 function alerte(partiel: Partial<Alerte>): Alerte {
   return {
@@ -145,6 +145,14 @@ describe('centre des alertes (écrans 24 et 27)', () => {
     ([...page.querySelectorAll('button')].find((b) => lire(b).trim() === 'Toutes') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(lire(page)).toContain('Mise à jour du bracelet');
+  });
+
+  it('choisit l’icône d’après ce que la notification concerne (écran 26)', () => {
+    const notification = (modele: string, lien: string | null) => ({ ...INFORMATIONS[0], modele, lien });
+    expect(iconeNotification(notification('BRACELET_MUET', '/maintenance'))).toBe('hors-ligne');
+    expect(iconeNotification(notification('MISE_A_JOUR_BRACELET', '/enfants/e-1/bracelet'))).toBe('bracelet');
+    expect(iconeNotification(notification('PAIEMENT_RECU', '/abonnement/recus'))).toBe('recu');
+    expect(iconeNotification(notification('REPONSE_DU_SUPPORT', '/aide/demandes/t-1'))).toBe('support');
   });
 
   it('nomme les jours du fil', () => {

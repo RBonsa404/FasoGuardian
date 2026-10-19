@@ -41,7 +41,7 @@ interface Jour {
 }
 
 /** Icône d'une notification, d'après ce qu'elle concerne. */
-function iconeNotification(notification: NotificationRecue): NomIcone {
+export function iconeNotification(notification: NotificationRecue): NomIcone {
   if (notification.modele.startsWith('PAIEMENT') || notification.lien?.startsWith('/abonnement')) {
     return 'recu';
   }
@@ -50,6 +50,9 @@ function iconeNotification(notification: NotificationRecue): NomIcone {
   }
   if (notification.modele.startsWith('SIGNALEMENT')) {
     return 'drapeau';
+  }
+  if (notification.modele === 'BRACELET_MUET') {
+    return 'hors-ligne';
   }
   if (notification.lien?.includes('/bracelet/retrait')) {
     return 'retrait';
