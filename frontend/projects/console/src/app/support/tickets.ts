@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } fro
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ClientSupport, DemandeSupport, StatutDemandeSupport } from 'api';
+import { ClientSupport, ClientTableau, DemandeSupport, StatutDemandeSupport } from 'api';
 import { FgBanniere, FgBouton, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
@@ -33,7 +33,12 @@ export function attente(iso: string, maintenant = Date.now()): string {
     <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@tickets.titre">Tickets</h1>
     <div class="flex flex-wrap gap-2" role="group" i18n-aria-label="@@tickets.files" aria-label="File affichée">
       @for (file of files; track file.statut) {
-        <button fg-button taille="sm" type="button" [variante]="statut() === file.statut ? 'primary' : 'secondary'" [attr.aria-pressed]="statut() === file.statut" (click)="montrer(file.statut)">{{ file.libelle }}</button>
+        <button fg-button taille="sm" type="button" [variante]="statut() === file.statut ? 'primary' : 'secondary'" [attr.aria-pressed]="statut() === file.statut" (click)="montrer(file.statut)">
+          {{ file.libelle }}
+          @if (compteurs()[file.statut] !== undefined) {
+            · {{ compteurs()[file.statut] }}
+          }
+        </button>
       }
     </div>
     @if (erreur(); as message) {
@@ -92,8 +97,11 @@ export function attente(iso: string, maintenant = Date.now()): string {
 export class Tickets implements OnInit {
   private readonly client = inject(ClientSupport);
   private readonly router = inject(Router);
+  private readonly tableau = inject(ClientTableau);
 
   protected readonly files = FILES;
+  /** Demandes ouvertes et en attente du parent : les décomptes du tableau de bord (écran 57). */
+  protected readonly compteurs = signal<Partial<Record<StatutDemandeSupport, number>>>({});
   protected readonly attente = attente;
   protected readonly support = $localize`:@@tickets.vous:Support`;
   protected readonly parent = $localize`:@@tickets.leParent:Parent`;
@@ -161,7 +169,18 @@ export class Tickets implements OnInit {
     });
   }
 
+  private compter(): void {
+    this.tableau.indicateurs().subscribe({
+      next: (groupes) => {
+        const valeur = (code: string) => groupes.flatMap((groupe) => groupe.indicateurs).find((i) => i.code === code)?.valeur ?? undefined;
+        this.compteurs.set({ OUVERTE: valeur('support.ouvertes'), EN_ATTENTE_PARENT: valeur('support.attenteParent') });
+      },
+      error: () => undefined,
+    });
+  }
+
   private charger(): void {
+    this.compter();
     this.client.demandes(this.statut()).subscribe({
       next: (demandes) => {
         this.demandes.set(demandes);
