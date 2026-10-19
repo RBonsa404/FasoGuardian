@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { ClientLitiges, DecisionLitige, FondementLitige, Litige } from 'api';
-import { FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette } from 'ui';
+import { FgBadge, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
 
@@ -32,7 +32,7 @@ interface Mesure {
  */
 @Component({
   selector: 'app-litige',
-  imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
+  imports: [ReactiveFormsModule, RouterLink, FgBadge, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="flex items-center gap-1.5 self-start text-label font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/kyc/litiges">
@@ -43,7 +43,7 @@ interface Mesure {
     }
     @if (litige(); as l) {
       <div class="flex flex-col gap-1.5">
-        <span class="text-label font-semibold" [class]="l.statut === 'OUVERT' ? 'text-attention-text' : 'text-text-2'">{{ entete() }}</span>
+        <fg-badge class="self-start" [ton]="l.statut === 'OUVERT' ? 'danger' : 'neutre'">{{ entete() }}</fg-badge>
         <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@litige.titre">Contestation de la filiation : {{ l.tuteur }} → {{ l.enfant }}</h1>
         <p class="m-0 max-w-3xl text-body text-text-2">{{ l.motif }}</p>
         @if (l.dossierKyc) {
@@ -63,11 +63,17 @@ interface Mesure {
 
       <section class="flex flex-col gap-2" aria-labelledby="titre-chronologie">
         <h2 id="titre-chronologie" class="m-0 text-h3 font-semibold" i18n="@@litige.chronologie">Chronologie</h2>
-        <ol class="m-0 flex list-none flex-col rounded-lg border border-line bg-surface p-0">
-          @for (etape of chronologie(); track etape.quand) {
-            <li class="flex items-baseline gap-4 border-b border-line px-4 py-3 text-label last:border-b-0">
-              <span class="w-36 flex-none tabular-nums text-text-2">{{ etape.quand }}</span>
-              <span>{{ etape.quoi }}</span>
+        <ol class="m-0 flex list-none flex-col gap-0 p-0">
+          @for (etape of chronologie(); track etape.quand; let dernier = $last) {
+            <li class="grid grid-cols-[8.5rem_1.25rem_1fr] items-start gap-x-2 text-label">
+              <span class="pt-0.5 font-medium tabular-nums text-text-2">{{ etape.quand }}</span>
+              <span class="relative flex h-full justify-center" aria-hidden="true">
+                <span class="mt-1.5 size-2.5 rounded-full bg-accent"></span>
+                @if (!dernier) {
+                  <span class="absolute top-5 bottom-0 w-px bg-line-strong"></span>
+                }
+              </span>
+              <span class="pb-5 font-semibold">{{ etape.quoi }}</span>
             </li>
           }
         </ol>

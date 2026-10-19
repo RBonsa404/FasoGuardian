@@ -72,4 +72,7 @@ test("un opérateur support ne voit pas la file KYC et s'en voit refuser l'accè
   await page.goto(`${CONSOLE}/kyc`);
   await expect(page.getByRole('heading', { name: 'Accès refusé' })).toBeVisible();
   await expect(page.getByText(/Votre rôle « Opérateur support »/)).toBeVisible();
+  await page.screenshot({ path: 'e2e/.etat/ecran-58-refuse.png' });
+  await page.getByRole('button', { name: 'Retour à mon tableau de bord' }).click();
+  await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
 });
