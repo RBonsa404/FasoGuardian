@@ -32,10 +32,12 @@ export function age(dateNaissance: string, aujourdhui = new Date()): number {
   imports: [RouterLink, FgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col items-center gap-3 pt-6 text-center">
-      <span class="grid size-14 place-items-center rounded-full bg-attention-soft text-attention" aria-hidden="true"><fg-icon nom="cadenas" [taille]="26" /></span>
-      <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@session.titre">Votre session a expiré</h1>
-      <p class="m-0 text-body text-text-2">{{ texte() }}</p>
+    <div class="mt-6 flex gap-3 rounded-lg bg-surface-2 p-4" role="status">
+      <fg-icon class="mt-0.5 flex-none text-text" nom="cadenas" [taille]="20" />
+      <div class="flex flex-col gap-1">
+        <h1 class="m-0 text-body font-semibold" i18n="@@session.titre">Votre session a expiré</h1>
+        <p class="m-0 text-label text-text-2">{{ texte() }}</p>
+      </div>
     </div>
 
     @for (fiche of fiches(); track fiche.id) {
@@ -43,19 +45,19 @@ export function age(dateNaissance: string, aujourdhui = new Date()): number {
         <div class="flex items-center gap-3">
           <span class="grid size-11 flex-none place-items-center rounded-full bg-surface-2 font-display text-h3 font-semibold" aria-hidden="true">{{ fiche.prenom.charAt(0) }}</span>
           <div class="flex min-w-0 flex-col">
-            <strong class="truncate text-body font-semibold">{{ fiche.prenom }} {{ fiche.nom }}</strong>
+            <strong class="truncate font-display text-h3 font-semibold">{{ fiche.prenom }} {{ fiche.nom }}</strong>
             <span class="text-label text-text-2">{{ resume(fiche) }}</span>
           </div>
         </div>
         <dl class="m-0 flex flex-col">
           @if (fiche.groupeSanguin) {
-            <div class="flex items-baseline justify-between gap-4 border-t border-line py-2.5"><dt class="text-label text-text-2" i18n="@@session.groupe">Groupe sanguin</dt><dd class="m-0 text-label font-semibold">{{ fiche.groupeSanguin }}</dd></div>
+            <div class="flex items-baseline justify-between gap-4 py-1"><dt class="text-label text-text-2" i18n="@@session.groupe">Groupe sanguin</dt><dd class="m-0 text-label font-semibold">{{ fiche.groupeSanguin }}</dd></div>
           }
           @for (element of fiche.critiques; track element.libelle) {
-            <div class="flex items-baseline justify-between gap-4 border-t border-line py-2.5"><dt class="text-label text-text-2">{{ type(element.type) }}</dt><dd class="m-0 text-right text-label font-semibold">{{ element.libelle }}</dd></div>
+            <div class="flex items-baseline justify-between gap-4 py-1"><dt class="text-label text-text-2">{{ type(element.type) }}</dt><dd class="m-0 text-right text-label font-semibold">{{ element.libelle }}</dd></div>
           }
           @if (fiche.bracelet) {
-            <div class="flex items-baseline justify-between gap-4 border-t border-line py-2.5"><dt class="text-label text-text-2" i18n="@@session.bracelet">Bracelet</dt><dd class="m-0 font-mono text-label font-semibold">{{ fiche.bracelet }}</dd></div>
+            <div class="flex items-baseline justify-between gap-4 py-1"><dt class="text-label text-text-2" i18n="@@session.bracelet">Bracelet</dt><dd class="m-0 font-mono text-label font-semibold">{{ fiche.bracelet }}</dd></div>
           }
         </dl>
         <span class="text-caption text-text-3" i18n="@@session.copie">Copie locale du {{ copie(fiche.copieLe) }}</span>
