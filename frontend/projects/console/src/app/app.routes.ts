@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { roleRequis, sessionRequise } from './commun/acces';
+import { routeParc } from './sav/route-parc';
 
 export const routes: Routes = [
   { path: 'connexion', loadComponent: () => import('./connexion/connexion').then((m) => m.Connexion) },
@@ -26,12 +27,7 @@ export const routes: Routes = [
       { path: 'support/tickets', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/tickets').then((m) => m.Tickets) },
       { path: 'support/faq', canActivate: [roleRequis('SUPPORT')], loadComponent: () => import('./support/faq').then((m) => m.Faq) },
       { path: 'fds', canActivate: [roleRequis('FDS')], loadComponent: () => import('./fds/signalement').then((m) => m.SignalementFds) },
-      { path: 'sav/parc', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/parc').then((m) => m.Parc) },
-      {
-        path: 'sav/parc/:numero',
-        canActivate: [roleRequis('SAV')],
-        loadComponent: () => import('./sav/fiche-bracelet').then((m) => m.FicheBracelet),
-      },
+      { matcher: routeParc, canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/parc').then((m) => m.Parc) },
       { path: 'sav/ota', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/ota').then((m) => m.CampagnesOta) },
       { path: 'sav/muets', canActivate: [roleRequis('SAV')], loadComponent: () => import('./sav/muets').then((m) => m.Muets) },
       { path: 'admin/agents', canActivate: [roleRequis('ADMIN')], loadComponent: () => import('./admin/agents').then((m) => m.Agents) },

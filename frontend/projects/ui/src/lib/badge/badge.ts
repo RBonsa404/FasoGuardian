@@ -3,13 +3,15 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FgIcon } from '../icone/icone';
 import { NomIcone } from '../icone/icones';
 
-export type TonBadge = 'accent' | 'neutre' | 'attention' | 'succes' | 'alerte';
+export type TonBadge = 'accent' | 'neutre' | 'attention' | 'succes' | 'danger' | 'alerte';
 
 const TONS: Record<TonBadge, string> = {
   accent: 'bg-accent-soft text-accent font-semibold',
   neutre: 'bg-surface-2 text-text-2 font-semibold',
   attention: 'bg-attention-soft text-attention font-semibold',
   succes: 'bg-success-soft text-success font-semibold',
+  // Rouge d'erreur : perte, vol, échec ; jamais une alerte en cours, qui reste ambre.
+  danger: 'bg-danger/12 text-danger font-semibold',
   // Ambre réservé aux alertes (SOS, retrait non autorisé, sortie de zone).
   alerte: 'bg-alert-soft text-alert-ink font-bold',
 };

@@ -40,20 +40,24 @@ test('un agent SAV suit un bracelet du parc, enregistre son retour puis le remet
   await page.screenshot({ path: 'e2e/.etat/ecran-64-parc.png', fullPage: true });
   await ligne.click();
 
-  // Écran 65 : fiche, retour au SAV, remise en stock avec une nouvelle carte d'activation
-  await expect(page.getByRole('heading', { name: carte.numeroSerie })).toBeVisible();
-  await expect(page.getByText(/→ en cours/)).toBeVisible();
+  // Écran 65 : fiche à côté de la liste, retour au SAV, remise en stock avec une nouvelle carte d'activation
+  const fiche = page.getByRole('complementary', { name: 'Fiche du bracelet' });
+  await expect(fiche.getByRole('heading', { name: carte.numeroSerie })).toBeVisible();
+  await expect(ligne).toHaveAttribute('aria-current', 'true');
+  await expect(fiche.getByText(/appairage · en cours/)).toBeVisible();
   await page.getByRole('button', { name: 'Retour au SAV' }).click();
   await page.getByRole('dialog', { name: 'Enregistrer le retour au SAV ?' }).getByRole('button', { name: 'Retour au SAV' }).click();
-  await expect(page.getByText('En SAV', { exact: true })).toBeVisible();
-  await expect(page.getByText('Désappairage').or(page.getByText('Panne'))).toBeVisible();
+  await expect(fiche.locator('fg-badge').getByText('En SAV', { exact: true })).toBeVisible();
+  // Le parc se met à jour : filtré sur les actifs, il n'affiche plus ce bracelet, et la fiche reste ouverte.
+  await expect(ligne).toHaveCount(0);
+  await expect(fiche.getByText('Désappairage').or(fiche.getByText('Panne'))).toBeVisible();
   await page.getByRole('button', { name: 'Remettre en stock' }).click();
   await page.getByRole('dialog', { name: 'Remettre en stock ?' }).getByRole('button', { name: 'Remettre en stock' }).click();
   await expect(page.getByText("Carte d'activation à imprimer — affichée une seule fois")).toBeVisible();
   const nouveauCode = (await page.locator('[data-code-appairage]').textContent())!.trim();
   expect(nouveauCode).toMatch(/^[A-Z0-9]{4}-[A-Z0-9]{3}$/);
   expect(nouveauCode).not.toBe(carte.codeAppairage);
-  await expect(page.getByText('En stock', { exact: true })).toBeVisible();
+  await expect(fiche.locator('fg-badge').getByText('En stock', { exact: true })).toBeVisible();
   await page.screenshot({ path: 'e2e/.etat/ecran-65-fiche-bracelet.png', fullPage: true });
 
   // Le parent n'a plus de bracelet associé

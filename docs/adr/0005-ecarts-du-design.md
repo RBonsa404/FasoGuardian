@@ -43,6 +43,12 @@ traçabilité.
   tableau 18) : l'écran montre le début de ce pseudonyme et la date du blocage. Le seuil est celui de
   US-SYS-010 (plus de 20 jetons invalides en une minute), non les « 10 min » de la maquette.
 - **Écrans 64 et 66, identité de l'enfant.** Voir ADR 0009 : le rôle SAV ne voit que l'état des bracelets.
+- **Écrans 64 et 65, parc et fiche.** Mise en page maître-détail reprise : cinq indicateurs (pertes et vols
+  comptés ensemble, unités réformées appelées « Retirés »), liste et fiche du bracelet choisi côte à côte. La
+  colonne « Titulaire · zone » devient « Porté » (ADR 0009). Batterie, réseau et dernier contact ne sont connus
+  que d'un bracelet en service et seulement depuis son appairage en cours : ailleurs, un tiret. La fiche ne
+  montre ni la SIM, ni le coloris, ni les cycles de charge, ni le rendu du bracelet : le parc ne les enregistre
+  pas. « Mise en service » est le premier appairage ; les interventions sont les appairages et leurs fins.
 - **Écran 16, tableau de bord.** La mise en page de la maquette est reprise (carte en tête, choix de l'enfant
   et cloche posés dessus, carte d'état, quatre actions rapides, dernière alerte, barre d'onglets Accueil, Carte,
   Alertes, Réglages). Trois écarts : l'autonomie restante (« ≈ 41 h ») n'est pas affichée, la plateforme ne

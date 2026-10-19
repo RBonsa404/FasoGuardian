@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { BraceletParc, CarteActivationParc, ClientSav, FicheBraceletParc, ResolutionTicket, TicketMaintenance } from 'api';
 
 import { FicheBracelet } from './fiche-bracelet';
-import { depuis } from './libelles';
+import { contact, depuis } from './libelles';
 import { Muets, etapeDe } from './muets';
 import { Parc } from './parc';
 
@@ -64,6 +64,10 @@ class ClientFactice {
 
   parc() {
     return of(this.unites);
+  }
+
+  etatsParc() {
+    return of([{ numeroSerie: 'FG-3307', batterie: 46, reseau: '2G', dernierContact: new Date(Date.now() - 2 * 60_000).toISOString() }]);
   }
 
   fiche() {
@@ -140,16 +144,24 @@ function preparer(client: ClientFactice) {
 }
 
 describe('parc de bracelets', () => {
-  it('compte les unités par état et filtre la vue d’un appui', async () => {
-    preparer(new ClientFactice());
+  it('compte les unités par groupe d’états, montre l’état technique et filtre la vue d’un appui', async () => {
+    const client = new ClientFactice();
+    client.unites.push(bracelet({ numeroSerie: 'FG-4004', statut: 'PERDU' }), bracelet({ numeroSerie: 'FG-5005', statut: 'VOLE', appaire: false }));
+    preparer(client);
     const fixture = TestBed.createComponent(Parc);
     await fixture.whenStable();
     const page = fixture.nativeElement as HTMLElement;
 
-    expect(page.querySelectorAll('a[role="row"]')).toHaveLength(3);
+    expect(page.querySelectorAll('a[role="row"]')).toHaveLength(5);
     expect(lire(bouton(page, 'En SAV'))).toContain('1');
-    // Le service après-vente sait qu'un bracelet est porté, pas par qui.
-    expect(lire(page)).toContain('Par un enfant');
+    // Pertes et vols sont comptés ensemble, comme sur la maquette.
+    expect(lire(bouton(page, 'Perdus ou volés'))).toContain('2');
+    // Le service après-vente sait qu'un bracelet est porté, pas par qui ; il voit sa batterie et son réseau.
+    const porte = lire(page.querySelector('a[href="/sav/parc/FG-3307"]')!);
+    expect(porte).toContain('Par un enfant');
+    expect(porte).toContain('46 %');
+    expect(porte).toContain('2G');
+    expect(porte).toContain('il y a 2 min');
 
     bouton(page, 'En SAV').click();
     await fixture.whenStable();
@@ -158,7 +170,27 @@ describe('parc de bracelets', () => {
 
     bouton(page, 'En SAV').click();
     await fixture.whenStable();
-    expect(page.querySelectorAll('a[role="row"]')).toHaveLength(3);
+    expect(page.querySelectorAll('a[role="row"]')).toHaveLength(5);
+    expect(lire(page)).toContain('Choisissez un bracelet pour voir sa fiche.');
+  });
+
+  it('ouvre la fiche du bracelet désigné par l’adresse à côté de la liste', async () => {
+    preparer(new ClientFactice());
+    const fixture = TestBed.createComponent(Parc);
+    fixture.componentRef.setInput('numero', 'FG-2002');
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+
+    expect(page.querySelector('a[aria-current="true"]')?.getAttribute('href')).toBe('/sav/parc/FG-2002');
+    expect(lire(page.querySelector('aside')!)).toContain('35•••••••••1234');
+  });
+
+  it('dit le dernier contact en minutes dans l’heure, puis à l’heure, puis au jour', () => {
+    const maintenant = Date.parse('2026-10-07T15:00:00');
+    expect(contact(null, maintenant)).toBe('—');
+    expect(contact(new Date(maintenant - 9 * 60_000).toISOString(), maintenant)).toBe('il y a 9 min');
+    expect(contact(new Date('2026-10-07T11:04:00').toISOString(), maintenant)).toBe('11:04');
+    expect(contact(new Date('2026-10-02T11:04:00').toISOString(), maintenant)).toBe('2 oct.');
   });
 });
 
@@ -168,11 +200,16 @@ describe('fiche d’un bracelet', () => {
     preparer(client);
     const fixture = TestBed.createComponent(FicheBracelet);
     fixture.componentRef.setInput('numero', 'FG-2002');
+    const modifie = vi.fn();
+    fixture.componentInstance.modifie.subscribe(modifie);
     await fixture.whenStable();
     const page = fixture.nativeElement as HTMLElement;
 
     expect(lire(page)).toContain('35•••••••••1234');
-    expect(lire(page)).toContain('Panne');
+    expect(lire(page)).toContain("1 oct. 2026 · fin d'appairage · Panne");
+    expect(lire(page)).toContain('1 sept. 2026 · appairage');
+    // Cycle de vie : l'unité est au SAV, après avoir été en stock, remise et active.
+    expect(lire(page.querySelector('[aria-current="step"]')!)).toContain('En SAV');
     // En SAV : ni « retour » (déjà fait), ni action sans confirmation.
     expect(bouton(page, 'Retour au SAV')).toBeUndefined();
 
@@ -185,6 +222,7 @@ describe('fiche d’un bracelet', () => {
     await fixture.whenStable();
 
     expect(client.mouvements).toEqual(['remise FG-2002']);
+    expect(modifie).toHaveBeenCalledTimes(1);
     expect(page.querySelector('[data-code-appairage]')?.textContent).toBe('NU7D-AU5');
     expect(lire(page)).toContain('En stock');
   });

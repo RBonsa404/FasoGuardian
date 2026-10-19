@@ -17,6 +17,14 @@ export interface BraceletParc {
   readonly modifieLe: string;
 }
 
+/** État technique d'un bracelet en service, depuis son appairage en cours ; chaque mesure peut manquer. */
+export interface EtatTechniqueBracelet {
+  readonly numeroSerie: string;
+  readonly batterie: number | null;
+  readonly reseau: string | null;
+  readonly dernierContact: string;
+}
+
 export interface PeriodeAppairage {
   readonly debut: string;
   readonly fin: string | null;
@@ -81,6 +89,11 @@ export class ClientSav {
   }
 
   /** Consultation journalisée. */
+  /** Batterie, réseau et dernier contact des bracelets en service, sans l'enfant ni la position. */
+  etatsParc(): Observable<EtatTechniqueBracelet[]> {
+    return this.http.get<EtatTechniqueBracelet[]>(`${PARC}/etats`);
+  }
+
   fiche(numeroSerie: string): Observable<FicheBraceletParc> {
     return this.http.get<FicheBraceletParc>(`${PARC}/${encodeURIComponent(numeroSerie)}`);
   }

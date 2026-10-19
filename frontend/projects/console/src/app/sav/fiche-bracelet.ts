@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CarteActivationParc, ClientSav, FicheBraceletParc } from 'api';
-import { FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette } from 'ui';
+import { CarteActivationParc, ClientSav, EtatTechniqueBracelet, FicheBraceletParc, StatutBraceletParc } from 'api';
+import { FgBadge, FgBanniere, FgBouton, FgFeuille, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
-import { LIBELLES_MOTIF_FIN, LIBELLES_STATUT, TONS_STATUT, jour, jourEtHeure } from './libelles';
+import { LIBELLES_MOTIF_FIN, LIBELLES_STATUT, TONS_STATUT, jour } from './libelles';
 
 type Action = 'retour' | 'remise' | 'reforme';
 
@@ -22,39 +22,50 @@ const ACTIONS: Record<Action, { titre: string; texte: string; bouton: string }> 
     bouton: $localize`:@@fiche.remise:Remettre en stock`,
   },
   reforme: {
-    titre: $localize`:@@fiche.reforme.titre:Réformer ce bracelet ?`,
+    titre: $localize`:@@fiche.reforme.titre:Retirer ce bracelet du parc ?`,
     texte: $localize`:@@fiche.reforme.texte:Le bracelet est retiré définitivement du parc et son certificat est révoqué. Cette action ne se défait pas.`,
-    bouton: $localize`:@@fiche.reforme:Réformer`,
+    bouton: $localize`:@@fiche.reforme:Retirer du parc`,
   },
 };
 
+const ETAPES = [
+  $localize`:@@fiche.cycle.stock:En stock`,
+  $localize`:@@fiche.cycle.remis:Remis`,
+  $localize`:@@fiche.cycle.actif:Actif`,
+  $localize`:@@fiche.cycle.sav:En SAV`,
+  $localize`:@@fiche.cycle.retire:Retiré`,
+];
+
+/** Étape du cycle de vie où se trouve l'unité ; un bracelet perdu ou volé s'est arrêté à « Actif ». */
+const ETAPE: Record<StatutBraceletParc, number> = { EN_STOCK: 0, ACTIF: 2, PERDU: 2, VOLE: 2, EN_SAV: 3, REFORME: 4 };
+
 /**
- * Fiche d'un bracelet (écran 65, US-SAV-002) : identité matérielle, historique des appairages sans le nom des
- * enfants, et mouvements de stock. La consultation est journalisée.
+ * Fiche d'un bracelet (écran 65, US-SAV-002), dans le panneau du parc : identité matérielle, cycle de vie et
+ * interventions (appairages, sans le nom des enfants). La consultation est journalisée. La maquette montre aussi
+ * la SIM, le coloris et les cycles de charge, que le parc n'enregistre pas : ils ne sont pas affichés.
  */
 @Component({
   selector: 'app-fiche-bracelet',
-  imports: [RouterLink, FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette],
+  imports: [FgBadge, FgBanniere, FgBouton, FgFeuille, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="flex items-center gap-1.5 self-start text-label font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/sav/parc">
-      <fg-icon nom="retour" [taille]="16" /><ng-container i18n="@@fiche.parc">Parc de bracelets</ng-container>
-    </a>
     @if (fiche(); as f) {
-      <div class="flex flex-wrap items-center gap-3">
-        <h1 class="m-0 font-mono text-titre-ecran font-bold tracking-tight">{{ f.bracelet.numeroSerie }}</h1>
-        <fg-badge [ton]="tons[f.bracelet.statut]">{{ libelles[f.bracelet.statut] }}</fg-badge>
-        @if (f.bracelet.certificatRevoque) {
-          <fg-badge ton="attention" i18n="@@fiche.revoque">Certificat révoqué</fg-badge>
-        }
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="m-0 font-mono text-lg font-semibold">{{ f.bracelet.numeroSerie }}</h2>
+        <div class="flex flex-wrap justify-end gap-1.5">
+          @if (f.bracelet.certificatRevoque) {
+            <fg-badge ton="danger" i18n="@@fiche.revoque">Certificat révoqué</fg-badge>
+          }
+          <fg-badge [ton]="tons[f.bracelet.statut]">{{ libelles[f.bracelet.statut] }}</fg-badge>
+        </div>
       </div>
       @if (erreur(); as message) {
         <fg-banner ton="erreur">{{ message }}</fg-banner>
       }
       @if (carte(); as c) {
-        <section class="flex flex-col gap-2 rounded-lg border border-accent bg-surface p-4" role="status">
-          <strong class="text-body font-semibold" i18n="@@fiche.carte.titre">Carte d'activation à imprimer — affichée une seule fois</strong>
-          <dl class="m-0 grid grid-cols-[160px_1fr] gap-y-1.5 text-label">
+        <section class="flex flex-col gap-2 rounded-xl border border-accent bg-surface p-4" role="status">
+          <strong class="text-label font-semibold" i18n="@@fiche.carte.titre">Carte d'activation à imprimer — affichée une seule fois</strong>
+          <dl class="m-0 grid grid-cols-[130px_1fr] gap-y-1.5 text-label">
             <dt class="text-text-2" i18n="@@fiche.carte.code">Code d'appairage</dt>
             <dd class="m-0 font-mono font-semibold" data-code-appairage>{{ c.codeAppairage }}</dd>
             @if (c.jetonQr) {
@@ -68,35 +79,53 @@ const ACTIONS: Record<Action, { titre: string; texte: string; bouton: string }> 
         </section>
       }
 
-      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <section class="flex flex-col gap-2" aria-labelledby="titre-materiel">
-          <h2 id="titre-materiel" class="m-0 text-h3 font-semibold" i18n="@@fiche.materiel">Matériel</h2>
-          <dl class="m-0 flex flex-col rounded-lg border border-line bg-surface">
-            <div class="flex items-baseline justify-between gap-4 border-b border-line px-4 py-3"><dt class="text-label font-medium" i18n="@@fiche.imei">IMEI</dt><dd class="m-0 font-mono text-caption text-text-2">{{ f.imeiMasque }}</dd></div>
-            <div class="flex items-baseline justify-between gap-4 border-b border-line px-4 py-3"><dt class="text-label font-medium" i18n="@@parc.col.materiel">Matériel</dt><dd class="m-0 text-label text-text-2">{{ f.bracelet.revisionMaterielle }}</dd></div>
-            <div class="flex items-baseline justify-between gap-4 border-b border-line px-4 py-3"><dt class="text-label font-medium" i18n="@@parc.col.logiciel">Logiciel</dt><dd class="m-0 text-label text-text-2 tabular-nums">{{ f.bracelet.versionLogiciel }}</dd></div>
-            <div class="flex items-baseline justify-between gap-4 border-b border-line px-4 py-3"><dt class="text-label font-medium" i18n="@@parc.col.garantie">Garantie</dt><dd class="m-0 text-label text-text-2">{{ jour(f.bracelet.garantieJusquAu) }}</dd></div>
-            <div class="flex items-baseline justify-between gap-4 px-4 py-3"><dt class="text-label font-medium" i18n="@@fiche.certificat">Certificat</dt><dd class="m-0 max-w-64 truncate font-mono text-caption text-text-2" [attr.title]="f.empreinteCertificat">{{ f.empreinteCertificat }}</dd></div>
-          </dl>
-        </section>
-        <section class="flex flex-col gap-2" aria-labelledby="titre-appairages">
-          <h2 id="titre-appairages" class="m-0 text-h3 font-semibold" i18n="@@fiche.appairages">Appairages</h2>
-          @if (f.appairages.length === 0) {
-            <p class="m-0 rounded-lg border border-line bg-surface p-4 text-body text-text-2" i18n="@@fiche.appairages.vide">Ce bracelet n'a encore été porté par aucun enfant.</p>
-          } @else {
-            <ol class="m-0 flex list-none flex-col rounded-lg border border-line bg-surface p-0">
-              @for (periode of f.appairages; track periode.debut) {
-                <li class="flex items-baseline justify-between gap-4 border-b border-line px-4 py-3 text-label last:border-b-0">
-                  <span class="tabular-nums">{{ jourEtHeure(periode.debut) }} → {{ periode.fin ? jourEtHeure(periode.fin) : enCours }}</span>
-                  <span class="text-text-2">{{ periode.motifFin ? motifs[periode.motifFin] : '' }}</span>
-                </li>
-              }
-            </ol>
-          }
-        </section>
-      </div>
+      <dl class="m-0 flex flex-col rounded-xl border border-line bg-surface" i18n-aria-label="@@fiche.materiel" aria-label="Matériel">
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.imei">IMEI</dt><dd class="m-0 font-mono text-caption">{{ f.imeiMasque }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.revision">Révision matérielle</dt><dd class="m-0">{{ f.bracelet.revisionMaterielle }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.miseEnService">Mise en service</dt><dd class="m-0 tabular-nums">{{ jour(miseEnService()) }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.batterie">Batterie</dt><dd class="m-0 tabular-nums">{{ etat()?.batterie != null ? etat()!.batterie + ' %' : '—' }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@parc.col.logiciel">Logiciel</dt><dd class="m-0 tabular-nums">{{ f.bracelet.versionLogiciel }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 border-b border-line px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.garantie">Garantie</dt><dd class="m-0 tabular-nums">{{ jour(f.bracelet.garantieJusquAu) }}</dd>
+        </div>
+        <div class="flex h-[38px] items-center justify-between gap-4 px-3 text-label font-medium">
+          <dt class="text-text-2" i18n="@@fiche.certificat">Certificat</dt>
+          <dd class="m-0 max-w-48 truncate font-mono text-caption" [attr.title]="f.empreinteCertificat">{{ f.empreinteCertificat }}</dd>
+        </div>
+      </dl>
 
-      <div class="flex flex-wrap gap-2">
+      <h3 class="m-0 font-display text-sm font-semibold" i18n="@@fiche.cycle">Cycle de vie</h3>
+      <ol class="m-0 flex list-none gap-1 p-0" i18n-aria-label="@@fiche.cycle" aria-label="Cycle de vie">
+        @for (etape of etapes; track etape; let i = $index) {
+          <li class="flex flex-1 flex-col gap-1.5" [attr.aria-current]="i === etape_() ? 'step' : null">
+            <span class="h-1.5 rounded-full" [class]="i < etape_() ? 'bg-success' : i === etape_() ? 'bg-accent' : 'bg-surface-2'"></span>
+            <span class="text-[11px] font-medium text-text-2">{{ etape }}</span>
+          </li>
+        }
+      </ol>
+
+      <h3 class="m-0 font-display text-sm font-semibold" i18n="@@fiche.interventions">Interventions</h3>
+      @if (interventions().length === 0) {
+        <p class="m-0 text-caption text-text-2" i18n="@@fiche.appairages.vide">Ce bracelet n'a encore été porté par aucun enfant.</p>
+      } @else {
+        <ul class="m-0 flex list-none flex-col gap-1.5 p-0 text-caption font-medium text-text-2">
+          @for (ligne of interventions(); track $index) {
+            <li class="tabular-nums">{{ ligne }}</li>
+          }
+        </ul>
+      }
+
+      <div class="mt-auto flex flex-wrap gap-2 pt-2">
         @if (f.bracelet.statut === 'ACTIF' || f.bracelet.statut === 'PERDU') {
           <button fg-button variante="secondary" type="button" (click)="action.set('retour')">{{ actions.retour.bouton }}</button>
         }
@@ -126,17 +155,19 @@ const ACTIONS: Record<Action, { titre: string; texte: string; bouton: string }> 
 })
 export class FicheBracelet {
   readonly numero = input.required<string>();
+  /** Dernier état technique connu, s'il est en service. */
+  readonly etat = input<EtatTechniqueBracelet | null>(null);
+  /** Émis après un retour, une remise en stock ou un retrait, pour que le parc se mette à jour. */
+  readonly modifie = output<void>();
 
   private readonly client = inject(ClientSav);
   private readonly router = inject(Router);
 
   protected readonly libelles = LIBELLES_STATUT;
   protected readonly tons = TONS_STATUT;
-  protected readonly motifs = LIBELLES_MOTIF_FIN;
   protected readonly actions = ACTIONS;
+  protected readonly etapes = ETAPES;
   protected readonly jour = jour;
-  protected readonly jourEtHeure = jourEtHeure;
-  protected readonly enCours = $localize`:@@fiche.enCours:en cours`;
 
   protected readonly fiche = signal<FicheBraceletParc | null>(null);
   protected readonly carte = signal<CarteActivationParc | null>(null);
@@ -144,8 +175,26 @@ export class FicheBracelet {
   protected readonly enCoursDAction = signal(false);
   protected readonly erreur = signal<string | null>(null);
 
+  protected readonly etape_ = computed(() => ETAPE[this.fiche()?.bracelet.statut ?? 'EN_STOCK']);
+  /** Premier appairage : la mise en service de l'unité. */
+  protected readonly miseEnService = computed(() => this.fiche()?.appairages.at(-1)?.debut ?? null);
+  /** Appairages du plus récent au plus ancien, une ligne par événement, sans l'enfant. */
+  protected readonly interventions = computed(() =>
+    (this.fiche()?.appairages ?? []).flatMap((periode) => [
+      ...(periode.fin
+        ? [`${jour(periode.fin)} · ${$localize`:@@fiche.intervention.fin:fin d'appairage`}${periode.motifFin ? ` · ${LIBELLES_MOTIF_FIN[periode.motifFin]}` : ''}`]
+        : []),
+      `${jour(periode.debut)} · ${$localize`:@@fiche.intervention.appairage:appairage`}${periode.fin ? '' : ` · ${$localize`:@@fiche.enCours:en cours`}`}`,
+    ]),
+  );
+
   constructor() {
-    effect(() => this.charger(this.numero()));
+    effect(() => {
+      this.carte.set(null);
+      this.fiche.set(null);
+      this.erreur.set(null);
+      this.charger(this.numero());
+    });
   }
 
   protected executer(action: Action): void {
@@ -163,6 +212,7 @@ export class FicheBracelet {
         this.action.set(null);
         this.carte.set(action === 'remise' ? (reponse as CarteActivationParc) : null);
         this.charger(numero);
+        this.modifie.emit();
       },
       error: (cause: unknown) => {
         this.enCoursDAction.set(false);

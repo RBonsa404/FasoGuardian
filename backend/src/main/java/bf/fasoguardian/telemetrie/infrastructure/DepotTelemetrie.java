@@ -1,9 +1,13 @@
 package bf.fasoguardian.telemetrie.infrastructure;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +16,7 @@ import bf.fasoguardian.telemetrie.domaine.EtatBracelet;
 import bf.fasoguardian.telemetrie.domaine.Mesure;
 import bf.fasoguardian.telemetrie.domaine.PositionConnue;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -73,11 +78,25 @@ public class DepotTelemetrie {
         return jdbc.query("""
                 SELECT batterie, signal_dbm, reseau, operateur, en_mouvement, en_ligne, version_logiciel, dernier_contact
                 FROM telemetrie.etat_bracelet WHERE bracelet_id = ?
-                """, (rs, i) -> new EtatBracelet((Integer) rs.getObject("batterie", Integer.class),
-                rs.getObject("signal_dbm", Integer.class), rs.getString("reseau"), rs.getString("operateur"),
-                rs.getObject("en_mouvement", Boolean.class), rs.getObject("en_ligne", Boolean.class),
-                rs.getString("version_logiciel"), rs.getTimestamp("dernier_contact").toInstant()), braceletId)
-                .stream().findFirst();
+                """, (rs, i) -> etat(rs), braceletId).stream().findFirst();
+    }
+
+    /** Dernier état connu de chaque bracelet, en une lecture, pour la vue du parc. */
+    public Map<UUID, EtatBracelet> etats() {
+        Map<UUID, EtatBracelet> etats = new HashMap<>();
+        jdbc.query("""
+                SELECT bracelet_id, batterie, signal_dbm, reseau, operateur, en_mouvement, en_ligne, version_logiciel,
+                       dernier_contact
+                FROM telemetrie.etat_bracelet
+                """, (RowCallbackHandler) rs -> etats.put(rs.getObject("bracelet_id", UUID.class), etat(rs)));
+        return etats;
+    }
+
+    private static EtatBracelet etat(ResultSet rs) throws SQLException {
+        return new EtatBracelet(rs.getObject("batterie", Integer.class), rs.getObject("signal_dbm", Integer.class),
+                rs.getString("reseau"), rs.getString("operateur"), rs.getObject("en_mouvement", Boolean.class),
+                rs.getObject("en_ligne", Boolean.class), rs.getString("version_logiciel"),
+                rs.getTimestamp("dernier_contact").toInstant());
     }
 
     /** Dernière position mesurée depuis l'instant donné (début de l'appairage en cours). */

@@ -254,6 +254,30 @@ class MaintenanceIT extends TestIntegration {
         assertThat(configurations(carte)).containsExactly("900/1");
     }
 
+    @Test
+    void leParcMontreLEtatTechniqueDesBraceletsEnServiceAuSeulServiceApresVente() throws Exception {
+        ParentAvecEnfant famille = acteurs.parentAvecEnfant();
+        Carte carte = equiper(famille, "1 hour");
+        emettre(carte, 120, 1, 64);
+        String etats = "/api/v1/console/parc/etats";
+        String filtre = "$[?(@.numeroSerie == '" + carte.numeroSerie() + "')]";
+
+        avec(get(etats), acteurs.jetonSav()).andExpect(status().isOk())
+                .andExpect(jsonPath(filtre + ".batterie").value(64))
+                .andExpect(jsonPath(filtre + ".dernierContact").isNotEmpty())
+                // Ni l'enfant ni la position : le service après-vente ne voit que le matériel.
+                .andExpect(jsonPath(filtre + ".enfantId").doesNotExist())
+                .andExpect(jsonPath(filtre + ".latitude").doesNotExist());
+
+        // Un message antérieur à l'appairage en cours concerne un autre porteur : il n'est pas montré.
+        jdbc.update("UPDATE dispositifs.appairage SET debut = now() WHERE enfant_id = ?::uuid AND fin IS NULL", famille.enfantId());
+        avec(get(etats), acteurs.jetonSav()).andExpect(status().isOk()).andExpect(jsonPath(filtre).isEmpty());
+
+        avec(get(etats), famille.parent().jeton()).andExpect(status().isForbidden());
+        avec(get(etats), acteurs.agent("[\"KYC\"]").jeton()).andExpect(status().isForbidden());
+        avec(get(etats), null).andExpect(status().isUnauthorized());
+    }
+
     // -------------------------------------------------------------------- aides
 
     private Carte equiper(ParentAvecEnfant famille, String anciennete) throws Exception {
