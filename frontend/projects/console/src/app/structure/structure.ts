@@ -7,11 +7,12 @@ import { FgBouton, PreferenceTheme, Theme } from 'ui';
 import { LIBELLES_ROLES } from '../commun/acces';
 import { ENTREES } from './entrees';
 import { Recherche } from './recherche';
+import { Verrou } from './verrou';
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */
 @Component({
   selector: 'app-structure',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, Recherche],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, Recherche, Verrou],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside class="flex w-62 flex-none flex-col gap-1 border-r border-line bg-surface px-3.5 py-5">
@@ -71,6 +72,9 @@ import { Recherche } from './recherche';
       </header>
       <main id="contenu" class="flex min-w-0 flex-1 flex-col gap-5 overflow-auto px-7 py-6"><router-outlet /></main>
     </div>
+    @if (compte()?.identifiant; as identifiant) {
+      <app-verrou [identifiant]="identifiant" />
+    }
   `,
   host: { class: 'flex h-dvh' },
 })

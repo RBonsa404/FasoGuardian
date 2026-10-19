@@ -45,3 +45,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0035](0035-rendez-vous-en-point-d-inscription.md) | Point d'inscription : où se présenter avec la référence et les originaux, sans réservation de créneau ; liste des points partagée avec le site | Acceptée |
 | [0036](0036-actions-rejouees-hors-ligne.md) | Actions de configuration rejouées hors ligne : file locale, idempotence générique côté serveur, jamais une action protégée par code SMS | Acceptée |
 | [0037](0037-etats-transverses.md) | États transverses de l'écran 49 : hors ligne, actions en attente, connexion lente (photos non chargées), service indisponible sans promesse de SMS ; pas de bandeau de maintenance | Acceptée |
+| [0038](0038-verrou-de-session-console.md) | Verrou de session de la console après 30 min d'inactivité, session close côté serveur, reprise par mot de passe et code TOTP | Acceptée |
