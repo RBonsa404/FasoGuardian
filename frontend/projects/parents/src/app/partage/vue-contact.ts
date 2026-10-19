@@ -21,20 +21,18 @@ const RAFRAICHISSEMENT_MS = 30_000;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (vue(); as v) {
-      <div class="flex flex-col gap-1">
-        <h1 class="m-0 text-h2 font-bold tracking-tight">{{ titre() }}</h1>
-        <span class="text-label text-text-2" i18n="@@contact.personnel">Lien personnel · ne le transférez pas</span>
-      </div>
-      <div class="flex items-center justify-between gap-3 rounded-lg bg-accent-soft px-4 py-3" role="timer">
-        <span class="text-label text-text-2" i18n="@@contact.restant">Partage encore actif</span>
-        <strong class="font-display text-h3 font-bold tabular-nums text-accent">{{ restant() }}</strong>
-      </div>
       @if (v.position; as p) {
-        <div class="relative h-80 overflow-hidden rounded-xl border border-line">
-          <app-carte class="absolute inset-0" [libelle]="libelleCarte" [position]="repere()" />
-        </div>
-        <section class="flex flex-col gap-1 rounded-lg border border-line bg-surface p-4" aria-live="polite">
-          <strong class="text-body font-semibold tabular-nums">{{ heure(p.mesureeLe) }} · {{ ilYA(p.mesureeLe) }}</strong>
+        <!-- Écran 50 : la carte occupe l'écran, l'en-tête et la position flottent au-dessus. -->
+        <app-carte class="absolute inset-0" [libelle]="libelleCarte" [position]="repere()" [margeBas]="140" />
+        <header class="relative z-1000 mx-3 mt-10 flex items-center justify-between gap-3 rounded-lg border border-line bg-glass px-3.5 py-3 backdrop-blur-md">
+          <span class="flex min-w-0 flex-col gap-0.5">
+            <h1 class="m-0 text-body font-semibold">{{ titre() }}</h1>
+            <span class="text-label text-text-2" i18n="@@contact.personnel">Lien personnel · ne le transférez pas</span>
+          </span>
+          <strong class="flex-none font-display text-h3 font-bold tabular-nums text-accent" role="timer" i18n-aria-label="@@contact.restant" aria-label="Partage encore actif">{{ restant() }}</strong>
+        </header>
+        <section class="relative z-1000 mx-3 mt-auto mb-7 flex flex-col gap-1 rounded-xl border border-line bg-surface p-4" aria-live="polite">
+          <strong class="text-body-lg font-semibold tabular-nums">{{ heure(p.mesureeLe) }} · {{ ilYA(p.mesureeLe) }}</strong>
           <span class="text-label text-text-2">
             @if (p.approximative) {
               <ng-container i18n="@@contact.approximative">Position approximative ± {{ p.precisionM }} m</ng-container>
@@ -44,6 +42,14 @@ const RAFRAICHISSEMENT_MS = 30_000;
           </span>
         </section>
       } @else {
+        <div class="flex flex-col gap-1">
+          <h1 class="m-0 text-h2 font-bold tracking-tight">{{ titre() }}</h1>
+          <span class="text-label text-text-2" i18n="@@contact.personnel">Lien personnel · ne le transférez pas</span>
+        </div>
+        <div class="flex items-center justify-between gap-3 rounded-lg bg-accent-soft px-4 py-3">
+          <span class="text-label text-text-2" i18n="@@contact.restant">Partage encore actif</span>
+          <strong class="font-display text-h3 font-bold tabular-nums text-accent" role="timer">{{ restant() }}</strong>
+        </div>
         <p class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2" i18n="@@contact.sansPosition">Le bracelet n'a pas donné de position récente. Cette page se met à jour toute seule.</p>
       }
     } @else if (termine()) {
@@ -57,7 +63,7 @@ const RAFRAICHISSEMENT_MS = 30_000;
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { '[class]': 'classes()' },
 })
 export class VueContact {
   /** Jeton du lien personnel (segment de l'adresse). */
@@ -69,6 +75,12 @@ export class VueContact {
   protected readonly libelleCarte = $localize`:@@contact.carte:Carte de la position partagée`;
 
   protected readonly vue = signal<VuePartagee | null>(null);
+  /** Avec une position, la carte remplit l'écran ; sinon, une colonne de lecture. */
+  protected readonly classes = computed(() =>
+    this.vue()?.position
+      ? 'relative flex h-dvh w-full flex-col overflow-hidden'
+      : 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7',
+  );
   protected readonly termine = signal(false);
   private readonly maintenant = signal(Date.now());
 
