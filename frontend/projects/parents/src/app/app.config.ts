@@ -8,6 +8,7 @@ import { intercepteurJeton } from 'api';
 import { Theme } from 'ui';
 
 import { routes } from './app.routes';
+import { intercepteurEtatReseau } from './commun/etat-reseau';
 import { intercepteurHorsLigne } from './commun/file-hors-ligne';
 import { intercepteurLecturesLocales } from './commun/lectures-locales';
 
@@ -22,6 +23,6 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'fr' },
     provideRouter(routes, withComponentInputBinding()),
     // Lectures gardées et file hors ligne enveloppent le jeton : une action gardée repart avec un jeton frais.
-    provideHttpClient(withInterceptors([intercepteurLecturesLocales, intercepteurHorsLigne, intercepteurJeton])),
+    provideHttpClient(withInterceptors([intercepteurEtatReseau, intercepteurLecturesLocales, intercepteurHorsLigne, intercepteurJeton])),
   ],
 };

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { GenreActionRejouable } from 'api';
 import { FgBanniere } from 'ui';
 
+import { EtatReseau } from '../commun/etat-reseau';
 import { FileHorsLigne } from '../commun/file-hors-ligne';
 import { LecturesLocales } from '../commun/lectures-locales';
 import { heure } from '../commun/temps';
@@ -39,6 +40,11 @@ const GENRES: Record<GenreActionRejouable, string> = {
         }
       </fg-banner>
     }
+    @if (lectures.enLigne() && reseau.serveurIndisponible()) {
+      <fg-banner ton="erreur" i18n="@@etat.serveur">Service momentanément indisponible : réessayez dans un instant. Urgence concernant un enfant ? Appelez le 17 (Police) ou le 18 (Pompiers).</fg-banner>
+    } @else if (lectures.enLigne() && reseau.lent()) {
+      <fg-banner ton="hors-ligne" i18n="@@etat.lent">Connexion lente : les photos ne sont pas chargées, pour aller à l'essentiel.</fg-banner>
+    }
     @if (attente(); as texte) {
       <fg-banner icone="historique">{{ texte }}</fg-banner>
     }
@@ -53,6 +59,7 @@ const GENRES: Record<GenreActionRejouable, string> = {
 export class EtatsTransverses {
   protected readonly file = inject(FileHorsLigne);
   protected readonly lectures = inject(LecturesLocales);
+  protected readonly reseau = inject(EtatReseau);
   protected readonly heure = heure;
 
   /** « 2 actions seront envoyées dès le retour du réseau : fiche médicale, levée d'alerte. » */
