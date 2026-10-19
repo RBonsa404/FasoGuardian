@@ -15,3 +15,5 @@ export * from './lib/interrupteur/interrupteur';
 export * from './lib/feuille/feuille';
 export * from './lib/theme/theme';
 export * from './lib/theme/choix-theme';
+export * from './lib/bracelet-3d/modele';
+export * from './lib/bracelet-3d/bracelet-3d';

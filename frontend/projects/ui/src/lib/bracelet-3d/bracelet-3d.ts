@@ -16,12 +16,12 @@ export function repliDemande(fenetre: Window): boolean {
 }
 
 /**
- * Bracelet en trois dimensions (HANDOFF §6). three.js n'est chargé qu'à l'entrée de la scène dans la
+ * Bracelet en trois dimensions (HANDOFF §6), partagé par le site vitrine et l'écran « Mon bracelet ». three.js n'est chargé qu'à l'entrée de la scène dans la
  * fenêtre ; avant cela, et sur un appareil modeste, en mode économie de données ou si les animations sont
  * réduites, une illustration fixe tient la place. La scène se tourne à la souris, au doigt ou au clavier.
  */
 @Component({
-  selector: 'app-bracelet-3d',
+  selector: 'fg-bracelet-3d',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (!pret()) {
@@ -60,7 +60,7 @@ export function repliDemande(fenetre: Window): boolean {
   `,
   host: { class: 'relative block overflow-hidden' },
 })
-export class Bracelet3d {
+export class FgBracelet3d {
   /** Description lue par les lecteurs d'écran : la scène elle-même ne leur dit rien. */
   readonly libelle = input.required<string>();
   /** Vue éclatée, de 0 (assemblé) à 1. */

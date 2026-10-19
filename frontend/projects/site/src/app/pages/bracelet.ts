@@ -1,8 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
 
-import { Bracelet3d } from '../bracelet-3d/bracelet-3d';
-import { COLORIS, Coloris } from '../bracelet-3d/modele';
+import { COLORIS, Coloris, FgBracelet3d } from 'ui';
+
 import { CARACTERISTIQUES } from '../contenu';
 
 /** Part du défilement accomplie dans la section, entre 0 (elle entre dans la fenêtre) et 1 (elle en sort). */
@@ -17,7 +17,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
  */
 @Component({
   selector: 'app-page-bracelet',
-  imports: [Bracelet3d],
+  imports: [FgBracelet3d],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section #defilement class="relative lg:h-[220vh]" aria-labelledby="titre-bracelet">
@@ -44,7 +44,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
             </div>
           </div>
         </div>
-        <app-bracelet-3d class="h-96 rounded-xl border border-line bg-surface lg:h-[70vh]" [explosion]="explosion()" [tour]="tour()" [coloris]="couleur()" libelle="Vue éclatée du bracelet : de haut en bas, le capot gravé du QR code, les antennes 4G et GNSS, la carte électronique, la batterie et la coque, tenus par une sangle à fermoir de sécurité." />
+        <fg-bracelet-3d class="h-96 rounded-xl border border-line bg-surface lg:h-[70vh]" [explosion]="explosion()" [tour]="tour()" [coloris]="couleur()" libelle="Vue éclatée du bracelet : de haut en bas, le capot gravé du QR code, les antennes 4G et GNSS, la carte électronique, la batterie et la coque, tenus par une sangle à fermoir de sécurité." />
       </div>
     </section>
 

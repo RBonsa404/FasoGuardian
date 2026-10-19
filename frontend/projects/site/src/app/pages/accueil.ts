@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FgIcon } from 'ui';
+import { FgBracelet3d, FgIcon } from 'ui';
 
-import { Bracelet3d } from '../bracelet-3d/bracelet-3d';
 import { ATOUTS, ETAPES, OFFRES, PRIX_BRACELET, SCENARIOS } from '../contenu';
 
 const TONS = {
@@ -15,7 +14,7 @@ const TONS = {
 /** Accueil (écran 1) : promesse, bracelet en trois dimensions, étapes, scénarios, offres, écoles. */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, FgIcon, Bracelet3d],
+  imports: [RouterLink, FgIcon, FgBracelet3d],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="mx-auto grid w-full max-w-6xl items-center gap-8 px-5 py-12 lg:grid-cols-2 lg:px-8 lg:py-20">
@@ -34,7 +33,7 @@ const TONS = {
         </ul>
       </div>
       <div class="flex flex-col gap-2">
-        <app-bracelet-3d class="h-80 rounded-xl border border-line bg-surface lg:h-112" libelle="Bracelet FasoGuardian en trois dimensions : boîtier bleu sans écran, QR code gravé, bouton SOS ambre sur la tranche. Tournez-le avec les flèches gauche et droite." />
+        <fg-bracelet-3d class="h-80 rounded-xl border border-line bg-surface lg:h-112" libelle="Bracelet FasoGuardian en trois dimensions : boîtier bleu sans écran, QR code gravé, bouton SOS ambre sur la tranche. Tournez-le avec les flèches gauche et droite." />
         <span class="text-center text-caption text-text-3">Faites tourner le bracelet</span>
       </div>
     </section>

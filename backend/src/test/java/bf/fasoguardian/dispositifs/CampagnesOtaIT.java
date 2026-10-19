@@ -133,6 +133,18 @@ class CampagnesOtaIT extends TestIntegration {
                 .isEqualTo(version);
         avec(get(OTA), sav).andExpect(jsonPath("$[0].vagues[0].installes").value(1)).andExpect(jsonPath("$[0].vagues[0].etat").value("TERMINEE"));
 
+        // Le parent voit son bracelet à jour et la mise à jour installée ; les autres ne le sont pas encore.
+        for (int i = 0; i < 3; i++) {
+            boolean installe = cartes.get(i).numeroSerie().equals(premier);
+            ResultActions vue = avec(get("/api/v1/enfants/" + familles.get(i).enfantId() + "/bracelet"), familles.get(i).parent().jeton())
+                    .andExpect(jsonPath("$.logicielAJour").value(installe));
+            if (installe) {
+                vue.andExpect(jsonPath("$.miseAJourInstallee").value(version)).andExpect(jsonPath("$.miseAJourInstalleeLe").isNotEmpty());
+            } else {
+                vue.andExpect(jsonPath("$.miseAJourInstallee").isEmpty());
+            }
+        }
+
         // Vagues 2 et 3 : sur un parc de trois, la part visée est déjà atteinte. Vague 4 : tout le reste.
         avec(post(OTA + "/" + id + "/vagues"), sav).andExpect(jsonPath("$.vagues[1].cibles").value(0));
         avec(post(OTA + "/" + id + "/vagues"), sav).andExpect(jsonPath("$.vagues[2].cibles").value(0));

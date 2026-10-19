@@ -3,7 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { Bracelet, ClientBracelet, ClientFamille, ContactUrgence, FicheSante, SuiviMaintenance } from 'api';
+import {
+  Bracelet,
+  ClientBracelet,
+  ClientFamille,
+  ContactUrgence,
+  FicheSante,
+  SuiviMaintenance,
+} from 'api';
 
 import { MaintenanceBracelet } from '../bracelet/maintenance';
 import { TEMOIN_INTRODUCTION, introductionVue } from '../commun/introduction';
@@ -20,11 +27,28 @@ const BRACELET: Bracelet = {
   intervalleS: 300,
   appaireLe: '2026-10-01T08:00:00Z',
   suiviJusquAu: null,
+  logicielAJour: true,
+  miseAJourInstallee: null,
+  miseAJourInstalleeLe: null,
 };
 
 const CONTACTS: ContactUrgence[] = [
-  { id: 'c-1', lien: 'Mère', nom: 'Mariam Ouédraogo', telephone: '+22670123456', visibleSurQr: true, rang: 1 },
-  { id: 'c-2', lien: 'Oncle', nom: 'Issouf Ouédraogo', telephone: '+22676445508', visibleSurQr: false, rang: 2 },
+  {
+    id: 'c-1',
+    lien: 'Mère',
+    nom: 'Mariam Ouédraogo',
+    telephone: '+22670123456',
+    visibleSurQr: true,
+    rang: 1,
+  },
+  {
+    id: 'c-2',
+    lien: 'Oncle',
+    nom: 'Issouf Ouédraogo',
+    telephone: '+22676445508',
+    visibleSurQr: false,
+    rang: 2,
+  },
 ];
 
 const SANTE: FicheSante = {
@@ -50,24 +74,38 @@ const SUIVI: SuiviMaintenance = {
   rendezVousLe: null,
 };
 
-const INTROUVABLE = new HttpErrorResponse({ status: 404, error: { status: 404, code: 'RESSOURCE_INTROUVABLE', detail: 'Absent.' } });
+const INTROUVABLE = new HttpErrorResponse({
+  status: 404,
+  error: { status: 404, code: 'RESSOURCE_INTROUVABLE', detail: 'Absent.' },
+});
 
 function lire(element: Element): string {
   return (element.textContent ?? '').replace(/\s+/g, ' ');
 }
 
 function bouton(page: HTMLElement, nom: string): HTMLButtonElement {
-  return [...page.querySelectorAll('button')].find((b) => lire(b).includes(nom)) as HTMLButtonElement;
+  return [...page.querySelectorAll('button')].find((b) =>
+    lire(b).includes(nom),
+  ) as HTMLButtonElement;
 }
 
-async function ouvrir<T>(composant: new (...args: never[]) => T, bracelet: Partial<ClientBracelet>, famille: Partial<ClientFamille> = {}) {
+async function ouvrir<T>(
+  composant: new (...args: never[]) => T,
+  bracelet: Partial<ClientBracelet>,
+  famille: Partial<ClientFamille> = {},
+) {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
       { provide: ClientBracelet, useValue: bracelet },
       {
         provide: ClientFamille,
-        useValue: { contacts: () => of(CONTACTS), sante: () => of(SANTE), enfant: () => of({ id: 'e-1', prenom: 'Awa' }), ...famille },
+        useValue: {
+          contacts: () => of(CONTACTS),
+          sante: () => of(SANTE),
+          enfant: () => of({ id: 'e-1', prenom: 'Awa' }),
+          ...famille,
+        },
       },
     ],
   });
@@ -97,11 +135,10 @@ describe('aperçu de la page QR', () => {
   });
 
   it('prévient quand aucun contact n’est joignable, et tait le groupe sanguin non autorisé', async () => {
-    const page = await ouvrir(
-      ApercuQr,
-      { bracelet: () => of(BRACELET) },
-      { contacts: () => of([CONTACTS[1]]), sante: () => of({ ...SANTE, groupeSanguinSurQr: false }) } as Partial<ClientFamille>,
-    );
+    const page = await ouvrir(ApercuQr, { bracelet: () => of(BRACELET) }, {
+      contacts: () => of([CONTACTS[1]]),
+      sante: () => of({ ...SANTE, groupeSanguinSurQr: false }),
+    } as Partial<ClientFamille>);
 
     expect(lire(page)).toContain("Aucun contact n'est joignable depuis la page");
     expect(lire(page.querySelector('section')!)).not.toContain('Groupe sanguin');
@@ -109,7 +146,9 @@ describe('aperçu de la page QR', () => {
   });
 
   it('dit que la page est désactivée pour un bracelet perdu, et qu’elle n’existe pas sans bracelet', async () => {
-    const perdu = await ouvrir(ApercuQr, { bracelet: () => of({ ...BRACELET, statut: 'PERDU' } as Bracelet) });
+    const perdu = await ouvrir(ApercuQr, {
+      bracelet: () => of({ ...BRACELET, statut: 'PERDU' } as Bracelet),
+    });
     expect(lire(perdu)).toContain('Ce bracelet est désactivé');
     expect(lire(perdu.querySelector('section')!)).not.toContain('Arachides');
 
@@ -138,25 +177,42 @@ describe('suivi de maintenance', () => {
   });
 
   it('dit quand un agent a pris le ticket en charge, sans le nommer', async () => {
-    const page = await ouvrir(MaintenanceBracelet, { maintenance: () => of({ ...SUIVI, statut: 'EN_COURS', prisEnChargeLe: '2026-10-09T11:20:00Z' } as SuiviMaintenance) });
+    const page = await ouvrir(MaintenanceBracelet, {
+      maintenance: () =>
+        of({
+          ...SUIVI,
+          statut: 'EN_COURS',
+          prisEnChargeLe: '2026-10-09T11:20:00Z',
+        } as SuiviMaintenance),
+    });
 
     expect(lire(page.querySelectorAll('ol li')[2])).toContain('Pris en charge par un agent');
   });
 
   it('montre le rendez-vous en point relais et mène à l’association du bracelet de remplacement', async () => {
     const page = await ouvrir(MaintenanceBracelet, {
-      maintenance: () => of({ ...SUIVI, statut: 'EN_COURS', pointRelais: 'Dassasgho', rendezVousLe: '2026-10-17T10:00:00Z' } as SuiviMaintenance),
+      maintenance: () =>
+        of({
+          ...SUIVI,
+          statut: 'EN_COURS',
+          pointRelais: 'Dassasgho',
+          rendezVousLe: '2026-10-17T10:00:00Z',
+        } as SuiviMaintenance),
     });
 
     expect(lire(page.querySelectorAll('ol li')[3])).toContain('Rendez-vous en point relais');
     expect(lire(page.querySelectorAll('ol li')[3])).toContain('Dassasgho');
     expect(lire(page)).toContain('Apportez le bracelet au rendez-vous');
-    const associer = [...page.querySelectorAll('a')].find((a) => lire(a).includes('Associer le bracelet de remplacement')) as HTMLAnchorElement;
+    const associer = [...page.querySelectorAll('a')].find((a) =>
+      lire(a).includes('Associer le bracelet de remplacement'),
+    ) as HTMLAnchorElement;
     expect(associer.getAttribute('href')).toContain('/bracelet/associer?enfant=');
   });
 
   it('rassure quand aucun ticket n’est ouvert', async () => {
-    const page = await ouvrir(MaintenanceBracelet, { maintenance: () => throwError(() => INTROUVABLE) });
+    const page = await ouvrir(MaintenanceBracelet, {
+      maintenance: () => throwError(() => INTROUVABLE),
+    });
 
     expect(lire(page)).toContain('Aucun incident en cours');
     expect(page.querySelector('ol')).toBeNull();

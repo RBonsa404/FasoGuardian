@@ -1,17 +1,34 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ClientSupport, DemandeSupport, MessageSupport, StatutDemandeSupport } from 'api';
-import { FgBadge, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette, TonBadge } from 'ui';
+import {
+  FgBadge,
+  FgBanniere,
+  FgBouton,
+  FgChamp,
+  FgFeuille,
+  FgIcon,
+  FgSquelette,
+  TonBadge,
+} from 'ui';
 
 import { erreurLisible } from '../commun/erreurs';
 
-const DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const DATE = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 
 export const STATUTS: Record<StatutDemandeSupport, { libelle: string; ton: TonBadge }> = {
   OUVERTE: { libelle: $localize`:@@demande.ouverte:En cours`, ton: 'accent' },
-  EN_ATTENTE_PARENT: { libelle: $localize`:@@demande.attente:Votre réponse est attendue`, ton: 'attention' },
+  EN_ATTENTE_PARENT: {
+    libelle: $localize`:@@demande.attente:Votre réponse est attendue`,
+    ton: 'attention',
+  },
   RESOLUE: { libelle: $localize`:@@demande.resolue:Résolue`, ton: 'succes' },
 };
 
@@ -21,10 +38,25 @@ export const STATUTS: Record<StatutDemandeSupport, { libelle: string; ton: TonBa
  */
 @Component({
   selector: 'app-demandes-support',
-  imports: [ReactiveFormsModule, RouterLink, FgBadge, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    FgBadge,
+    FgBanniere,
+    FgBouton,
+    FgChamp,
+    FgFeuille,
+    FgIcon,
+    FgSquelette,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a
+      class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent"
+      routerLink="/aide"
+      i18n-aria-label="@@etape.retour"
+      aria-label="Retour"
+    >
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@demandes.titre">Mes demandes</h1>
@@ -33,34 +65,91 @@ export const STATUTS: Record<StatutDemandeSupport, { libelle: string; ton: TonBa
     }
     @if (demandes(); as liste) {
       @for (demande of liste; track demande.id) {
-        <a class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/aide/demandes', demande.id]">
-          <fg-badge class="self-start" [ton]="statuts[demande.statut].ton">{{ statuts[demande.statut].libelle }} · {{ demande.reference }}</fg-badge>
+        <a
+          class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-4 focus-visible:outline-2 focus-visible:outline-accent"
+          [routerLink]="['/aide/demandes', demande.id]"
+        >
+          <fg-badge class="self-start" [ton]="statuts[demande.statut].ton"
+            >{{ statuts[demande.statut].libelle }} · {{ demande.reference }}</fg-badge
+          >
           <strong class="text-body font-semibold">{{ demande.objet }}</strong>
-          <span class="text-caption text-text-3" i18n="@@demandes.messages">{{ demande.messages.length }} messages · dernier le {{ date(demande.modifieeLe) }}</span>
+          <span class="text-caption text-text-3" i18n="@@demandes.messages"
+            >{{ demande.messages.length }} messages · dernier le
+            {{ date(demande.modifieeLe) }}</span
+          >
         </a>
       } @empty {
-        <p class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2" i18n="@@demandes.vide">Vous n'avez encore rien demandé au support.</p>
+        <p
+          class="m-0 rounded-lg border border-line bg-surface p-5 text-body text-text-2"
+          i18n="@@demandes.vide"
+        >
+          Vous n'avez encore rien demandé au support.
+        </p>
       }
     } @else if (!erreur()) {
       <fg-skeleton forme="carte" />
     }
-    <button fg-button class="mt-auto" taille="lg" type="button" (click)="ouvrirFeuille()" i18n="@@demandes.nouvelle">Écrire au support</button>
+    <button
+      fg-button
+      class="mt-auto"
+      taille="lg"
+      type="button"
+      (click)="ouvrirFeuille()"
+      i18n="@@demandes.nouvelle"
+    >
+      Écrire au support
+    </button>
 
-    <fg-sheet i18n-titre="@@demandes.nouvelle" titre="Écrire au support" [ouverte]="feuille()" (fermee)="feuille.set(false)">
-      <fg-input [formControl]="objet" i18n-libelle="@@demandes.objet" libelle="Objet" [longueurMax]="120" />
+    <fg-sheet
+      i18n-titre="@@demandes.nouvelle"
+      titre="Écrire au support"
+      [ouverte]="feuille()"
+      (fermee)="feuille.set(false)"
+    >
+      <fg-input
+        [formControl]="objet"
+        i18n-libelle="@@demandes.objet"
+        libelle="Objet"
+        [longueurMax]="120"
+      />
       <label class="flex flex-col gap-1.5 text-label font-semibold">
         <span i18n="@@demandes.message">Votre message</span>
-        <textarea class="min-h-28 rounded-md border border-line-strong bg-surface p-3 text-saisie font-normal outline-none focus-visible:outline-2 focus-visible:outline-accent" [formControl]="message" maxlength="2000"></textarea>
+        <textarea
+          class="min-h-28 rounded-md border border-line-strong bg-surface p-3 text-saisie font-normal outline-none focus-visible:outline-2 focus-visible:outline-accent"
+          [formControl]="message"
+          maxlength="2000"
+        ></textarea>
       </label>
-      <p class="m-0 text-caption text-text-3" i18n="@@demandes.conseil">N'écrivez ni mot de passe ni code reçu par SMS : le support ne vous les demandera jamais.</p>
+      <p class="m-0 text-caption text-text-3" i18n="@@demandes.conseil">
+        N'écrivez ni mot de passe ni code reçu par SMS : le support ne vous les demandera jamais.
+      </p>
       @if (erreurFeuille(); as texte) {
         <fg-banner ton="erreur">{{ texte }}</fg-banner>
       }
-      <button fg-button type="button" [chargement]="enCours()" (click)="envoyer()" i18n="@@demandes.envoyer">Envoyer</button>
-      <button fg-button variante="ghost" type="button" (click)="feuille.set(false)" i18n="@@commun.annuler">Annuler</button>
+      <button
+        fg-button
+        type="button"
+        [chargement]="enCours()"
+        (click)="envoyer()"
+        i18n="@@demandes.envoyer"
+      >
+        Envoyer
+      </button>
+      <button
+        fg-button
+        variante="ghost"
+        type="button"
+        (click)="feuille.set(false)"
+        i18n="@@commun.annuler"
+      >
+        Annuler
+      </button>
     </fg-sheet>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: {
+    class:
+      'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10',
+  },
 })
 export class DemandesSupport {
   private readonly client = inject(ClientSupport);
@@ -76,6 +165,11 @@ export class DemandesSupport {
   protected readonly message = new FormControl('', { nonNullable: true });
 
   constructor() {
+    const objet = inject(ActivatedRoute).snapshot.queryParamMap.get('objet');
+    if (objet) {
+      this.ouvrirFeuille();
+      this.objet.setValue(objet.slice(0, 120));
+    }
     this.client.mesDemandes().subscribe({
       next: (demandes) => this.demandes.set(demandes),
       error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),
@@ -98,7 +192,9 @@ export class DemandesSupport {
       return;
     }
     if (!this.objet.value.trim() || !this.message.value.trim()) {
-      this.erreurFeuille.set($localize`:@@demandes.incomplet:Donnez un objet et décrivez votre demande.`);
+      this.erreurFeuille.set(
+        $localize`:@@demandes.incomplet:Donnez un objet et décrivez votre demande.`,
+      );
       return;
     }
     this.enCours.set(true);
@@ -123,18 +219,34 @@ export class DemandesSupport {
   imports: [ReactiveFormsModule, RouterLink, FgBadge, FgBanniere, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide/demandes" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a
+      class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent"
+      routerLink="/aide/demandes"
+      i18n-aria-label="@@etape.retour"
+      aria-label="Retour"
+    >
       <fg-icon nom="retour" [taille]="22" />
     </a>
     @if (demande(); as d) {
       <div class="flex flex-col gap-1.5">
-        <fg-badge class="self-start" [ton]="statuts[d.statut].ton">{{ statuts[d.statut].libelle }} · {{ d.reference }}</fg-badge>
-        <h1 class="m-0 font-display text-[22px] leading-tight font-bold tracking-tight">{{ d.objet }}</h1>
+        <fg-badge class="self-start" [ton]="statuts[d.statut].ton"
+          >{{ statuts[d.statut].libelle }} · {{ d.reference }}</fg-badge
+        >
+        <h1 class="m-0 font-display text-[22px] leading-tight font-bold tracking-tight">
+          {{ d.objet }}
+        </h1>
       </div>
       <ol class="m-0 flex flex-1 list-none flex-col gap-2.5 p-0" aria-live="polite">
         @for (m of d.messages; track m.creeLe) {
-          <li class="flex max-w-[82%] flex-col gap-1" [class]="m.duSupport ? 'self-start' : 'self-end items-end'">
-            <span class="whitespace-pre-line rounded-lg px-3.5 py-3 text-body" [class]="m.duSupport ? 'border border-line bg-surface' : 'bg-primary text-white'">{{ m.texte }}</span>
+          <li
+            class="flex max-w-[82%] flex-col gap-1"
+            [class]="m.duSupport ? 'self-start' : 'self-end items-end'"
+          >
+            <span
+              class="whitespace-pre-line rounded-lg px-3.5 py-3 text-body"
+              [class]="m.duSupport ? 'border border-line bg-surface' : 'bg-primary text-white'"
+              >{{ m.texte }}</span
+            >
             <span class="text-caption text-text-3">{{ auteur(m) }} · {{ date(m.creeLe) }}</span>
           </li>
         }
@@ -144,9 +256,24 @@ export class DemandesSupport {
       }
       <form class="flex items-end gap-2" (submit)="$event.preventDefault(); repondre()">
         <label class="sr-only" for="reponse" i18n="@@fil.reponse">Votre réponse</label>
-        <textarea id="reponse" class="min-h-12 flex-1 rounded-lg border-(length:--border-width-trait) border-line-strong bg-surface px-3.5 py-3 text-saisie outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent" rows="1" maxlength="2000" [formControl]="reponse" i18n-placeholder="@@fil.reponse.exemple" placeholder="Votre réponse…"></textarea>
-        <button type="submit" class="grid size-12 flex-none place-items-center rounded-lg bg-primary text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60" [disabled]="enCours()" [attr.aria-busy]="enCours()">
-          <fg-icon nom="envoyer" [taille]="20" /><span class="sr-only" i18n="@@demandes.envoyer">Envoyer</span>
+        <textarea
+          id="reponse"
+          class="min-h-12 flex-1 rounded-lg border-(length:--border-width-trait) border-line-strong bg-surface px-3.5 py-3 text-saisie outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent"
+          rows="1"
+          maxlength="2000"
+          [formControl]="reponse"
+          i18n-placeholder="@@fil.reponse.exemple"
+          placeholder="Votre réponse…"
+        ></textarea>
+        <button
+          type="submit"
+          class="grid size-12 flex-none place-items-center rounded-lg bg-primary text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+          [disabled]="enCours()"
+          [attr.aria-busy]="enCours()"
+        >
+          <fg-icon nom="envoyer" [taille]="20" /><span class="sr-only" i18n="@@demandes.envoyer"
+            >Envoyer</span
+          >
         </button>
       </form>
     } @else if (erreur(); as message) {
@@ -155,7 +282,10 @@ export class DemandesSupport {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: {
+    class:
+      'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10',
+  },
 })
 export class FilDemande {
   readonly tid = input.required<string>();

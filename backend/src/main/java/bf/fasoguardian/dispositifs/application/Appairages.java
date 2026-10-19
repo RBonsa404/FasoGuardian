@@ -20,6 +20,8 @@ import bf.fasoguardian.dispositifs.domaine.ConfigurationBracelet;
 import bf.fasoguardian.dispositifs.domaine.MotifFin;
 import bf.fasoguardian.dispositifs.domaine.StatutBracelet;
 import bf.fasoguardian.dispositifs.infrastructure.DepotAppairages;
+import bf.fasoguardian.dispositifs.infrastructure.DepotOta.Installation;
+import bf.fasoguardian.dispositifs.infrastructure.DepotOta;
 import bf.fasoguardian.dispositifs.infrastructure.DepotBracelets;
 import bf.fasoguardian.dispositifs.infrastructure.DepotConfigurations;
 import bf.fasoguardian.famille.AccesEnfant;
@@ -58,13 +60,19 @@ public class Appairages {
         CASSE
     }
 
+    /**
+     * @param logicielAJour        le bracelet exécute la version de la dernière campagne lancée, ou aucune n'a été lancée
+     * @param miseAJourInstallee   dernière version installée par une campagne, ou {@code null}
+     * @param miseAJourInstalleeLe moment où le bracelet l'a annoncée, ou {@code null}
+     */
     public record BraceletVue(String numeroSerie, StatutBracelet statut, String versionLogiciel,
             String revisionMaterielle, LocalDate garantieJusquAu, boolean modeEconomie, int intervalleS,
-            Instant appaireLe, Instant suiviJusquAu) {
+            Instant appaireLe, Instant suiviJusquAu, boolean logicielAJour, String miseAJourInstallee, Instant miseAJourInstalleeLe) {
     }
 
     private final DepotBracelets bracelets;
     private final DepotAppairages appairages;
+    private final DepotOta ota;
     private final DepotConfigurations configurations;
     private final AccesEnfant acces;
     private final ProfilsQr profilsQr;
@@ -86,7 +94,8 @@ public class Appairages {
     Appairages(DepotBracelets bracelets, DepotAppairages appairages, DepotConfigurations configurations,
             AccesEnfant acces, ProfilsQr profilsQr, SecondFacteur secondFacteur, LiensTutelle liens,
             Notifications notifications, ServiceChiffrement chiffrement, CommandesBracelet commandes, Maintenance maintenance, Droits droits,
-            JournalAudit journal, Clock horloge) {
+            JournalAudit journal, Clock horloge, DepotOta ota) {
+        this.ota = ota;
         this.commandes = commandes;
         this.maintenance = maintenance;
         this.droits = droits;
@@ -330,9 +339,12 @@ public class Appairages {
     private BraceletVue vue(Bracelet bracelet, Appairage appairage) {
         ConfigurationBracelet configuration = configurations.findById(bracelet.id()).orElseThrow();
         DroitsEnfant ouverts = droits.de(appairage.enfantId());
+        boolean aJour = ota.derniereVersionDeployee().map(version -> version.equals(bracelet.versionLogiciel())).orElse(true);
+        Optional<Installation> installation = ota.derniereInstallation(bracelet.id());
         return new BraceletVue(bracelet.numeroSerie(), bracelet.statut(), bracelet.versionLogiciel(),
                 bracelet.revisionMaterielle(), bracelet.garantieJusquAu(), configuration.modeEconomie(),
-                configuration.intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()), appairage.debut(), bracelet.suiviJusquAu());
+                configuration.intervalleS(ouverts.intervalleS(), ouverts.suiviContinu()), appairage.debut(), bracelet.suiviJusquAu(),
+                aJour, installation.map(Installation::version).orElse(null), installation.map(Installation::installeeLe).orElse(null));
     }
 
     private static ErreurMetier conflit() {

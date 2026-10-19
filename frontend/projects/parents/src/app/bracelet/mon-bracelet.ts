@@ -1,14 +1,23 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { Bracelet, ClientBracelet, EtatBracelet } from 'api';
-import { FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette } from 'ui';
+import { Bracelet, ClientAlertes, ClientBracelet, EtatBracelet } from 'api';
+import { FgBanniere, FgBouton, FgBracelet3d, FgIcon, FgInterrupteur, FgSquelette } from 'ui';
 
 import { forceDuSignal } from '../carte/lecture';
 import { erreurLisible } from '../commun/erreurs';
 import { heure, ilYA } from '../commun/temps';
+import { autonomieRestanteH, duree } from './autonomie';
 import { VisuelBracelet } from './visuel';
 
 /**
@@ -17,25 +26,81 @@ import { VisuelBracelet } from './visuel';
  */
 @Component({
   selector: 'app-mon-bracelet',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette, VisuelBracelet],
+  imports: [
+    DatePipe,
+    ReactiveFormsModule,
+    RouterLink,
+    FgBanniere,
+    FgBouton,
+    FgBracelet3d,
+    FgIcon,
+    FgInterrupteur,
+    FgSquelette,
+    VisuelBracelet,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id()]" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a
+      class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent"
+      [routerLink]="['/enfants', id()]"
+      i18n-aria-label="@@etape.retour"
+      aria-label="Retour"
+    >
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <h1 class="sr-only" i18n="@@bracelet.titre">Mon bracelet</h1>
 
     @if (bracelet(); as b) {
-      <div class="-mx-5 grid h-62.5 place-items-center bg-surface-2">
-        <app-visuel-bracelet [numero]="b.numeroSerie" [grand]="true" />
+      <div class="relative -mx-5 grid h-62.5 place-items-center bg-surface-2">
+        @if (apercu3d()) {
+          <fg-bracelet-3d
+            class="h-62.5 w-full"
+            i18n-libelle="@@bracelet.3d"
+            libelle="Le bracelet de votre enfant en trois dimensions : boîtier sans écran, QR code gravé, bouton SOS sur la tranche. Tournez-le avec les flèches gauche et droite."
+          />
+        } @else {
+          <app-visuel-bracelet [numero]="b.numeroSerie" [grand]="true" />
+          <!-- La scène 3D n'est chargée que sur demande : elle pèse plus que tout l'écran. -->
+          <button
+            type="button"
+            class="absolute bottom-3 rounded-full bg-surface px-3.5 py-1.5 text-caption font-semibold shadow-e1 focus-visible:outline-2 focus-visible:outline-accent"
+            (click)="apercu3d.set(true)"
+            i18n="@@bracelet.3d.ouvrir"
+          >
+            Aperçu 3D · chargé à la demande
+          </button>
+        }
       </div>
 
       @if (ticket(); as reference) {
-        <fg-banner ton="attention"><ng-container i18n="@@bracelet.muet">Le bracelet ne répond plus. Le service après-vente est prévenu</ng-container> ({{ reference }}). <a class="font-semibold underline" [routerLink]="['/enfants', id(), 'bracelet', 'maintenance']" i18n="@@bracelet.suivre">Suivre le ticket</a></fg-banner>
+        <fg-banner ton="attention"
+          ><ng-container i18n="@@bracelet.muet"
+            >Le bracelet ne répond plus. Le service après-vente est prévenu</ng-container
+          >
+          ({{ reference }}).
+          <a
+            class="font-semibold underline"
+            [routerLink]="['/enfants', id(), 'bracelet', 'maintenance']"
+            i18n="@@bracelet.suivre"
+            >Suivre le ticket</a
+          ></fg-banner
+        >
       }
       @if (b.statut === 'PERDU') {
-        <fg-banner ton="attention" i18n="@@bracelet.perdu">Déclaré perdu. La page QR est désactivée ; le suivi continue jusqu'au {{ b.suiviJusquAu | date: "d MMM 'à' HH:mm" }}.</fg-banner>
-        <button fg-button variante="secondary" type="button" [chargement]="enCours()" (click)="retrouver()" i18n="@@bracelet.retrouve">Je l'ai retrouvé</button>
+        <fg-banner ton="attention" i18n="@@bracelet.perdu"
+          >Déclaré perdu. La page QR est désactivée ; le suivi continue jusqu'au
+          {{ b.suiviJusquAu | date: "d MMM 'à' HH:mm" }}.</fg-banner
+        >
+        <button
+          fg-button
+          variante="secondary"
+          type="button"
+          [chargement]="enCours()"
+          (click)="retrouver()"
+          i18n="@@bracelet.retrouve"
+        >
+          Je l'ai retrouvé
+        </button>
       }
 
       <dl class="m-0 grid grid-cols-2 gap-2">
@@ -48,25 +113,62 @@ import { VisuelBracelet } from './visuel';
         }
       </dl>
 
-      <fg-switch class="rounded-lg border border-line bg-surface p-3.5" [formControl]="economie" i18n-libelle="@@bracelet.economie" libelle="Mode économie">
+      <fg-switch
+        class="rounded-lg border border-line bg-surface p-3.5"
+        [formControl]="economie"
+        i18n-libelle="@@bracelet.economie"
+        libelle="Mode économie"
+      >
         <strong class="text-body font-semibold" i18n="@@bracelet.economie">Mode économie</strong>
-        <span class="text-caption text-text-3" i18n="@@bracelet.economie.texte">Position toutes les {{ minutes() }} min · le mode économie prolonge l'autonomie</span>
+        <span class="text-caption text-text-3">{{ texteEconomie() }}</span>
       </fg-switch>
+
+      @if (b.miseAJourInstallee && b.miseAJourInstalleeLe) {
+        <p
+          class="m-0 rounded-banner bg-surface-2 p-3.5 text-label text-text-2"
+          i18n="@@bracelet.maj"
+        >
+          Mise à jour {{ b.miseAJourInstallee }} installée le
+          {{ b.miseAJourInstalleeLe | date: 'd MMM' }} · image signée vérifiée.
+        </p>
+      }
 
       @if (erreur(); as message) {
         <fg-banner ton="erreur">{{ message }}</fg-banner>
       }
 
-      <nav class="mt-auto flex flex-col divide-y divide-line" i18n-aria-label="@@bracelet.actions" aria-label="Actions sur le bracelet">
-        <a class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet', 'retrait']">
+      <nav
+        class="mt-auto flex flex-col divide-y divide-line"
+        i18n-aria-label="@@bracelet.actions"
+        aria-label="Actions sur le bracelet"
+      >
+        <a
+          class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+          routerLink="/aide/demandes"
+          [queryParams]="{ objet: objetRemplacement() }"
+        >
+          <ng-container i18n="@@bracelet.remplacement">Demander un remplacement</ng-container>
+          <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
+        </a>
+        <a
+          class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+          [routerLink]="['/enfants', id(), 'bracelet', 'retrait']"
+        >
           <ng-container i18n="@@bracelet.retrait">Autoriser un retrait</ng-container>
           <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
         </a>
-        <a class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet', 'perte']">
+        <a
+          class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+          [routerLink]="['/enfants', id(), 'bracelet', 'perte']"
+        >
           <ng-container i18n="@@bracelet.declarer">Déclarer perdu ou volé</ng-container>
           <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
         </a>
-        <a class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', id(), 'bracelet', 'perte']" fragment="desappairer">
+        <a
+          class="flex min-h-12 items-center justify-between text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent"
+          [routerLink]="['/enfants', id(), 'bracelet', 'perte']"
+          fragment="desappairer"
+        >
           <ng-container i18n="@@bracelet.desappairer">Désappairer</ng-container>
           <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
         </a>
@@ -75,8 +177,19 @@ import { VisuelBracelet } from './visuel';
       <div class="grid place-items-center pt-6">
         <app-visuel-bracelet numero="FG-····" />
       </div>
-      <p class="m-0 text-center text-body text-text-2" i18n="@@bracelet.absent">Aucun bracelet n'est associé à cet enfant.</p>
-      <button fg-button class="mt-auto" taille="lg" type="button" (click)="associer()" i18n="@@bracelet.associer">Associer un bracelet</button>
+      <p class="m-0 text-center text-body text-text-2" i18n="@@bracelet.absent">
+        Aucun bracelet n'est associé à cet enfant.
+      </p>
+      <button
+        fg-button
+        class="mt-auto"
+        taille="lg"
+        type="button"
+        (click)="associer()"
+        i18n="@@bracelet.associer"
+      >
+        Associer un bracelet
+      </button>
     } @else if (erreur(); as message) {
       <fg-banner ton="erreur">{{ message }}</fg-banner>
     } @else {
@@ -84,12 +197,16 @@ import { VisuelBracelet } from './visuel';
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: {
+    class:
+      'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10',
+  },
 })
 export class MonBracelet {
   readonly id = input.required<string>();
 
   private readonly client = inject(ClientBracelet);
+  private readonly alertes = inject(ClientAlertes);
   private readonly router = inject(Router);
 
   protected readonly bracelet = signal<Bracelet | null>(null);
@@ -100,6 +217,27 @@ export class MonBracelet {
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly economie = new FormControl(false, { nonNullable: true });
+  protected readonly apercu3d = signal(false);
+  private readonly modeAlerte = signal(false);
+  protected readonly objetRemplacement = computed(
+    () =>
+      $localize`:@@bracelet.remplacement.objet:Remplacement du bracelet ${this.bracelet()?.numeroSerie ?? ''}:numero:`,
+  );
+  /** Rythme et gain d'autonomie du mode économie (une position toutes les quinze minutes). */
+  protected readonly texteEconomie = computed(() => {
+    const b = this.bracelet();
+    const batterie = this.etat()?.batterie;
+    const rythme = $localize`:@@bracelet.economie.rythme:Position toutes les ${this.minutes()}:minutes: min`;
+    if (!b || batterie == null || b.modeEconomie) {
+      return rythme;
+    }
+    const gain =
+      autonomieRestanteH(batterie, 900, this.etat()?.reseau ?? null) -
+      autonomieRestanteH(batterie, b.intervalleS, this.etat()?.reseau ?? null, this.modeAlerte());
+    return gain > 0
+      ? $localize`:@@bracelet.economie.gain:${rythme}:rythme: · +${gain}:gain: h en mode économie`
+      : rythme;
+  });
   protected readonly minutes = computed(() => Math.round((this.bracelet()?.intervalleS ?? 0) / 60));
   protected readonly cartes = computed(() => {
     const b = this.bracelet();
@@ -112,23 +250,44 @@ export class MonBracelet {
       {
         cle: $localize`:@@bracelet.batterie:Batterie`,
         valeur: etat?.batterie != null ? `${etat.batterie} %` : '—',
-        detail: etat?.batterie == null ? attente : etat.batterie < 20 ? $localize`:@@bracelet.batterie.faible:batterie faible` : $localize`:@@bracelet.batterie.bonne:niveau suffisant`,
+        detail:
+          etat?.batterie == null
+            ? attente
+            : $localize`:@@bracelet.batterie.restant:${duree(autonomieRestanteH(etat.batterie, b.intervalleS, etat.reseau ?? null, this.modeAlerte()))}:duree: restantes`,
       },
       {
         cle: $localize`:@@bracelet.signal:Signal`,
-        valeur: etat?.signalDbm != null ? [etat.reseau, forceDuSignal(etat.signalDbm)].filter(Boolean).join(' · ') : '—',
-        detail: etat?.signalDbm == null ? attente : (etat.operateur ?? $localize`:@@bracelet.signal.operateur:opérateur inconnu`),
+        valeur:
+          etat?.signalDbm != null
+            ? [etat.reseau, forceDuSignal(etat.signalDbm)].filter(Boolean).join(' · ')
+            : '—',
+        detail:
+          etat?.signalDbm == null
+            ? attente
+            : (etat.operateur ?? $localize`:@@bracelet.signal.operateur:opérateur inconnu`),
       },
       {
         cle: $localize`:@@bracelet.contact:Dernier contact`,
         valeur: etat ? heure(etat.dernierContact) : '—',
         detail: etat ? ilYA(etat.dernierContact) : attente,
       },
-      { cle: $localize`:@@bracelet.logiciel:Logiciel`, valeur: b.versionLogiciel, detail: $localize`:@@bracelet.logiciel.detail:révision ${b.revisionMaterielle}:revision:` },
-      { cle: $localize`:@@bracelet.etancheite:Étanchéité`, valeur: 'IP67', detail: $localize`:@@bracelet.etancheite.detail:1 m pendant 30 min` },
+      {
+        cle: $localize`:@@bracelet.logiciel:Logiciel`,
+        valeur: b.versionLogiciel,
+        detail: b.logicielAJour
+          ? $localize`:@@bracelet.logiciel.ajour:à jour`
+          : $localize`:@@bracelet.logiciel.attente:mise à jour disponible`,
+      },
+      {
+        cle: $localize`:@@bracelet.etancheite:Étanchéité`,
+        valeur: 'IP67',
+        detail: $localize`:@@bracelet.etancheite.detail:1 m pendant 30 min`,
+      },
       {
         cle: $localize`:@@bracelet.garantie:Garantie`,
-        valeur: b.garantieJusquAu ? $localize`:@@bracelet.garantie.valeur:jusqu'au ${moisAnnee(b.garantieJusquAu)}:date:` : '—',
+        valeur: b.garantieJusquAu
+          ? $localize`:@@bracelet.garantie.valeur:jusqu'au ${moisAnnee(b.garantieJusquAu)}:date:`
+          : '—',
         detail: $localize`:@@bracelet.garantie.detail:12 mois`,
       },
     ];
@@ -195,8 +354,15 @@ export class MonBracelet {
     this.etat.set(null);
     this.ticket.set(null);
     // Aucun ticket ouvert est le cas courant : le bracelet répond.
-    this.client.maintenance(id).subscribe({ next: (suivi) => this.ticket.set(suivi.reference), error: () => undefined });
-    this.client.situation(id).subscribe({ next: (situation) => this.etat.set(situation.etat), error: () => undefined });
+    this.client
+      .maintenance(id)
+      .subscribe({ next: (suivi) => this.ticket.set(suivi.reference), error: () => undefined });
+    this.client
+      .situation(id)
+      .subscribe({ next: (situation) => this.etat.set(situation.etat), error: () => undefined });
+    this.alertes
+      .modeAlerte(id)
+      .subscribe({ next: (mode) => this.modeAlerte.set(mode.actif), error: () => undefined });
   }
 
   private afficher(bracelet: Bracelet): void {

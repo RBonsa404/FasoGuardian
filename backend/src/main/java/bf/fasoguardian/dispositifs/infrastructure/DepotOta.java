@@ -36,6 +36,24 @@ public class DepotOta {
         this.jdbc = jdbc;
     }
 
+    /** Version de la dernière campagne dont au moins une vague a été lancée : celle que le parc doit exécuter. */
+    public Optional<String> derniereVersionDeployee() {
+        return jdbc.queryForList("SELECT version FROM dispositifs.campagne_ota WHERE vague_courante > 0 ORDER BY creee_le DESC LIMIT 1",
+                String.class).stream().findFirst();
+    }
+
+    /** Dernière mise à jour installée sur ce bracelet par une campagne. */
+    public record Installation(String version, Instant installeeLe) {
+    }
+
+    public Optional<Installation> derniereInstallation(UUID braceletId) {
+        return jdbc.query("""
+                SELECT o.version, c.installee_le FROM dispositifs.cible_ota c JOIN dispositifs.campagne_ota o ON o.id = c.campagne_id
+                WHERE c.bracelet_id = ? AND c.installee_le IS NOT NULL ORDER BY c.installee_le DESC LIMIT 1
+                """, (rs, i) -> new Installation(rs.getString("version"), rs.getTimestamp("installee_le").toInstant()), braceletId)
+                .stream().findFirst();
+    }
+
     public List<Campagne> campagnes() {
         return jdbc.query("SELECT * FROM dispositifs.campagne_ota ORDER BY creee_le DESC", CAMPAGNE);
     }

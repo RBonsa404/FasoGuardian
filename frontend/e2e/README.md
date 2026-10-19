@@ -24,6 +24,7 @@ Parcours critiques joués dans un vrai navigateur, contre le vrai serveur et une
 | `site.spec.ts` | Site vitrine : contenu rendu côté serveur, navigation, bracelet 3D chargé à la demande et vue éclatée au défilement ; repli sans animation et menu sur téléphone | écrans 1 à 8 |
 | `carte.spec.ts` | Carte plein écran : position approximative, bascule du mode alerte (suivi rapproché de 30 min) et son arrêt, recentrage | US-PAR-006, US-PAR-009 |
 | `trajets.spec.ts` | Historique des trajets : frise des lieux (départ, arrêt, entrée dans une zone), mention de l'offre, relecture du trajet | US-PAR-008 |
+| `mon-bracelet.spec.ts` | Mon bracelet : autonomie estimée, logiciel à jour, aperçu 3D chargé au clic, demande de remplacement préremplie | US-PAR-013 |
 
 ## Lancer les tests
 

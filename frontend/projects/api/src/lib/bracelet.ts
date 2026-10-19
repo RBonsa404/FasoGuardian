@@ -20,6 +20,11 @@ export interface Bracelet {
   readonly appaireLe: string;
   /** Après une déclaration de perte, le suivi continue jusqu'à cette date. */
   readonly suiviJusquAu: string | null;
+  /** Le bracelet exécute la version de la dernière campagne de mise à jour lancée. */
+  readonly logicielAJour: boolean;
+  /** Dernière mise à jour installée par une campagne, et quand le bracelet l'a annoncée. */
+  readonly miseAJourInstallee: string | null;
+  readonly miseAJourInstalleeLe: string | null;
 }
 
 export interface PositionConnue {

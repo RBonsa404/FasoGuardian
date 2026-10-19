@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import * as THREE from 'three';
 
-import { repliDemande } from './bracelet-3d/bracelet-3d';
-import { COLORIS, colorer, construireBracelet, eclater } from './bracelet-3d/modele';
+import { COLORIS, colorer, construireBracelet, eclater, repliDemande } from 'ui';
+
 import { COMPARATIF, OFFRES } from './contenu';
 import { Faq, Introuvable, PointsRelais } from './pages/aide';
 import { avancement } from './pages/bracelet';
