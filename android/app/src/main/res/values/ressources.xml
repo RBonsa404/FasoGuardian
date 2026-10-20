@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nom">FasoGuardian</string>
+    <!-- Fond de l'application en thème sombre (couleur de fond de tokens.css). -->
+    <color name="fond">#0A0E1A</color>
+</resources>

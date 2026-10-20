@@ -32,7 +32,8 @@ export async function dernierCodeSms(api: APIRequestContext, telephone: string):
   const messages: { destinataire: string; texte: string }[] = await (await api.get(`${SERVEUR}/api/v1/dev/sms`)).json();
   const code = messages
     .filter((message) => message.destinataire === `+226${telephone}`)
-    .map((message) => message.texte.match(/\d{6}/)?.[0])
+    // Un numéro de bracelet (FG-123456) a aussi six chiffres : il n'est jamais pris pour un code.
+    .map((message) => message.texte.match(/(?<![\d-])\d{6}(?!\d)/)?.[0])
     .filter(Boolean)
     .pop();
   expect(code, `aucun code SMS pour ${telephone}`).toBeTruthy();

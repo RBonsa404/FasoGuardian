@@ -123,7 +123,7 @@ export class Accueil {
     // mise en cache pour s'ouvrir sans réseau (US-PAR-019).
     void this.copie.synchroniser();
     if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-      void navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+      void navigator.serviceWorker.register(new URL('sw.js', document.baseURI)).catch(() => undefined);
     }
     const minuterie = setInterval(() => {
       if (this.compte()?.statut === 'ACTIF') {

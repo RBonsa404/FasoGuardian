@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Seule l'image de l'écran de lancement est partagée avec le navigateur, le temps de l'afficher. -->
+<paths>
+    <files-path name="ecran_de_lancement" path="twa_splash/" />
+</paths>

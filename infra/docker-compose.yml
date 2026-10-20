@@ -44,6 +44,7 @@ services:
       FG_SMS_ADAPTATEUR: ${FG_SMS_ADAPTATEUR:-bac-a-sable}
       FG_CAPACITE_BASE: ${FG_CAPACITE_BASE:-}
       FG_CASCADE_CONTACT_INSTITUTIONNEL: ${FG_CASCADE_CONTACT_INSTITUTIONNEL:-}
+      # Adresse de l'application Parents, reprise dans les liens envoyés par SMS : https://<FG_DOMAINE>/app.
       FG_URL_PARENTS: ${FG_URL_PARENTS:-http://localhost:4201}
       FG_SMS_SECRET_PASSERELLE: ${FG_SMS_SECRET_PASSERELLE:-}
       FG_LORAWAN_SECRET: ${FG_LORAWAN_SECRET:-}
@@ -85,14 +86,31 @@ services:
       retries: 30
       start_period: 30s
 
+  # Proxy inverse et service des applications web (ADR 0040). Les applications sont construites avant
+  # (« npm run build » dans frontend) ; les noms de domaine et l'empreinte de la clé Android viennent de .env.
   proxy:
     image: nginx:1.28-alpine
     ports:
       - "127.0.0.1:${FG_PROXY_PORT:-8443}:8443"
+    environment:
+      FG_DOMAINE: ${FG_DOMAINE:?définir FG_DOMAINE dans .env}
+      FG_DOMAINE_CONSOLE: ${FG_DOMAINE_CONSOLE:?définir FG_DOMAINE_CONSOLE dans .env}
+      FG_ANDROID_PAQUET: ${FG_ANDROID_PAQUET:-bf.fasoguardian.parents}
+      FG_ANDROID_EMPREINTE: ${FG_ANDROID_EMPREINTE:-}
+      # Les blocs « server » complétés vont dans un dossier à part : le serveur par défaut de l'image n'est pas chargé.
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/fasoguardian
+    tmpfs:
+      - /etc/nginx/fasoguardian
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy-serveur.conf:/etc/nginx/proxy-serveur.conf:ro
+      - ./nginx/entetes:/etc/nginx/entetes:ro
+      - ./nginx/modeles:/etc/nginx/templates:ro
       - ./certs/proxy.crt:/etc/nginx/certs/proxy.crt:ro
       - ./certs/proxy.key:/etc/nginx/certs/proxy.key:ro
+      - ../frontend/dist/site/browser:/usr/share/fasoguardian/site:ro
+      - ../frontend/dist/parents/browser:/usr/share/fasoguardian/parents:ro
+      - ../frontend/dist/console/browser:/usr/share/fasoguardian/console:ro
     depends_on:
       serveur:
         condition: service_healthy

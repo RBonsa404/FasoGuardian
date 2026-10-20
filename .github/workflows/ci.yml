@@ -61,6 +61,22 @@ jobs:
         working-directory: firmware
         run: make essais
 
+  android:
+    name: Application Android (Trusted Web Activity, construction de contrôle)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - name: APK de publication non signée, pour un domaine d'essai
+        working-directory: android
+        env:
+          FG_DOMAINE: fasoguardian.test
+        run: ./gradlew -B assembleRelease
+
   e2e:
     name: Parcours de bout en bout (Playwright, pile complète)
     runs-on: ubuntu-latest

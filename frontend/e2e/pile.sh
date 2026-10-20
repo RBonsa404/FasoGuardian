@@ -69,6 +69,9 @@ case "${1:-}" in
       echo "FG_DB_PORT=55432"
       echo "FG_GRAFANA_ADMIN_PASSWORD=$(openssl rand -hex 16)"
       # Alertes d'exploitation : la pile d'essai ne lance pas Alertmanager, ces valeurs ne servent qu'à Compose.
+      # Noms de la plateforme : la pile d'essai ne lance pas le proxy, ces valeurs ne servent qu'à Compose.
+      echo "FG_DOMAINE=fasoguardian.test"
+      echo "FG_DOMAINE_CONSOLE=console.fasoguardian.test"
       echo "FG_ALERTES_SMTP_HOTE=smtp.essais.test:587"
       echo "FG_ALERTES_SMTP_UTILISATEUR=essais"
       echo "FG_ALERTES_SMTP_MOT_DE_PASSE=$(openssl rand -hex 12)"

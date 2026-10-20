@@ -56,7 +56,7 @@ export class NotificationsPush {
       this.etat.set(Notification.permission === 'denied' ? 'refusees' : 'a-activer');
       return;
     }
-    const enregistrement = await navigator.serviceWorker.register('/sw.js');
+    const enregistrement = await navigator.serviceWorker.register(new URL('sw.js', document.baseURI));
     await navigator.serviceWorker.ready;
     const abonnement = await enregistrement.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: octets(clePublique) });
     await firstValueFrom(this.client.abonner(abonnement.toJSON() as AbonnementPush));

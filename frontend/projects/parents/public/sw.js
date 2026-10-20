@@ -13,6 +13,13 @@
  */
 
 const CACHE = 'fasoguardian-parents-v1';
+/**
+ * Portée du service worker : la racine de l'application, « /app/ » en production, « / » en développement. Tous
+ * les fichiers de l'application s'y résolvent ; l'API, elle, reste à la racine du domaine.
+ */
+const PORTEE = self.registration.scope;
+const dans = (chemin) => new URL(chemin.replace(/^\//, ''), PORTEE).href;
+const ENTREE = dans('index.html');
 const CACHE_TUILES = 'fasoguardian-tuiles-v1';
 const TUILES_MAXIMUM = 300;
 /** Adresse d'une tuile de fond de carte : …/{z}/{x}/{y}.png. */
@@ -29,17 +36,17 @@ self.addEventListener('install', (evenement) => {
  */
 async function garder() {
   const cache = await caches.open(CACHE);
-  let fichiers = ['/index.html'];
+  let fichiers = [ENTREE];
   try {
-    const liste = await fetch('/precache.json', { cache: 'no-store' });
+    const liste = await fetch(dans('precache.json'), { cache: 'no-store' });
     if (liste.ok) {
-      fichiers = await liste.json();
+      fichiers = (await liste.json()).map(dans);
     }
   } catch {
     // Pas de liste : on s'en tient à la page d'entrée.
   }
   await cache.addAll(fichiers);
-  const gardes = new Set(fichiers.map((fichier) => new URL(fichier, self.location.origin).href));
+  const gardes = new Set(fichiers);
   for (const requete of await cache.keys()) {
     if (!gardes.has(requete.url)) {
       await cache.delete(requete);
@@ -63,7 +70,7 @@ self.addEventListener('fetch', (evenement) => {
     evenement.respondWith(tuile(requete));
     return;
   }
-  if (requete.method !== 'GET' || adresse.origin !== self.location.origin || adresse.pathname.startsWith('/api/') || adresse.pathname === '/sw.js') {
+  if (requete.method !== 'GET' || adresse.origin !== self.location.origin || adresse.pathname.startsWith('/api/') || adresse.href === dans('sw.js') || !adresse.href.startsWith(PORTEE)) {
     return;
   }
   if (requete.mode === 'navigate') {
@@ -72,10 +79,10 @@ self.addEventListener('fetch', (evenement) => {
       fetch(requete)
         .then((reponse) => {
           const copie = reponse.clone();
-          void caches.open(CACHE).then((cache) => cache.put('/index.html', copie));
+          void caches.open(CACHE).then((cache) => cache.put(ENTREE, copie));
           return reponse;
         })
-        .catch(() => caches.match('/index.html').then((gardee) => gardee || Response.error())),
+        .catch(() => caches.match(ENTREE).then((gardee) => gardee || Response.error())),
     );
     return;
   }
@@ -121,8 +128,8 @@ self.addEventListener('push', (evenement) => {
   const affichage = self.registration.showNotification(message.titre || 'FasoGuardian', {
     body: message.texte || "Ouvrez l'application.",
     tag: message.id,
-    icon: '/icone-192.png',
-    badge: '/icone-192.png',
+    icon: dans('icone-192.png'),
+    badge: dans('icone-192.png'),
     data: { lien: message.lien || '/' },
     // Une alerte critique reste à l'écran jusqu'à ce que le parent y touche.
     requireInteraction: message.critique === true,
@@ -137,7 +144,9 @@ self.addEventListener('push', (evenement) => {
 self.addEventListener('notificationclick', (evenement) => {
   evenement.notification.close();
   // Seuls les chemins de l'application sont suivis, jamais une adresse externe.
-  const lien = typeof evenement.notification.data?.lien === 'string' && evenement.notification.data.lien.startsWith('/') ? evenement.notification.data.lien : '/';
+  // Le serveur donne un chemin de l'application (« /alertes/… ») : il est résolu dans la portée, jamais ailleurs.
+  const chemin = typeof evenement.notification.data?.lien === 'string' && evenement.notification.data.lien.startsWith('/') ? evenement.notification.data.lien : '/';
+  const lien = dans(chemin);
   evenement.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((fenetres) => {
       const ouverte = fenetres.find((fenetre) => 'focus' in fenetre);

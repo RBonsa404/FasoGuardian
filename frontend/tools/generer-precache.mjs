@@ -19,10 +19,10 @@ function parcourir(dossier) {
 const fichiers = parcourir(sortie)
   .map((chemin) => relative(sortie, chemin).replaceAll('\\', '/'))
   .filter((nom) => GARDES.test(nom) && !EXCLUS.has(nom))
-  .sort()
-  .map((nom) => `/${nom}`);
+  // Chemins relatifs à la portée du service worker : l'application peut être servie sous « /app/ ».
+  .sort();
 
-if (!fichiers.includes('/index.html')) {
+if (!fichiers.includes('index.html')) {
   throw new Error(`Aucune page d'entrée dans ${sortie} : lancer « ng build parents » d'abord.`);
 }
 writeFileSync(join(sortie, 'precache.json'), JSON.stringify(fichiers));
