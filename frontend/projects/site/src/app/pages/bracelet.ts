@@ -4,6 +4,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, PLATFORM_ID
 import { COLORIS, Coloris, FgBracelet3d } from 'ui';
 
 import { CARACTERISTIQUES } from '../contenu';
+import { Apparition } from '../apparition';
+import { DecorScene } from '../scene-bracelet';
 
 /** Part du défilement accomplie dans la section, entre 0 (elle entre dans la fenêtre) et 1 (elle en sort). */
 export function avancement(haut: number, hauteur: number, fenetre: number): number {
@@ -17,14 +19,14 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
  */
 @Component({
   selector: 'app-page-bracelet',
-  imports: [FgBracelet3d],
+  imports: [FgBracelet3d, Apparition, DecorScene],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section #defilement class="relative lg:h-[220vh]" aria-labelledby="titre-bracelet">
       <div class="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:grid-cols-2 lg:items-center lg:px-8 lg:py-0">
         <div class="flex flex-col gap-5">
           <span class="text-caption font-semibold tracking-widest text-accent uppercase">Le bracelet</span>
-          <h1 id="titre-bracelet" class="m-0 text-h1 font-bold tracking-tight lg:text-display">Robuste, simple, sans écran.</h1>
+          <h1 id="titre-bracelet" class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight text-balance lg:text-display">Robuste, simple, sans écran.</h1>
           <p class="m-0 text-body-lg text-text-2">Faites défiler : le bracelet s'ouvre. Sous le capot gravé, deux antennes, une carte électronique et une batterie. Rien d'autre.</p>
           <ol class="m-0 flex list-none flex-col gap-2 p-0 text-label">
             @for (piece of pieces; track piece.nom; let i = $index) {
@@ -44,7 +46,12 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
             </div>
           </div>
         </div>
-        <fg-bracelet-3d class="h-96 rounded-xl border border-line bg-surface lg:h-[70vh]" [explosion]="explosion()" [tour]="tour()" [coloris]="couleur()" libelle="Vue éclatée du bracelet : de haut en bas, le capot gravé du QR code, les antennes 4G et GNSS, la carte électronique, la batterie et la coque, tenus par une sangle à fermoir de sécurité." />
+        <div class="relative h-96 overflow-hidden rounded-xl border border-line shadow-e3 lg:h-[70vh]">
+          <app-decor-scene />
+          <div class="absolute inset-0">
+            <fg-bracelet-3d class="size-full" [explosion]="explosion()" [tour]="tour()" [coloris]="couleur()" libelle="Vue éclatée du bracelet : de haut en bas, le capot gravé du QR code, les antennes 4G et GNSS, la carte électronique, la batterie et la coque, tenus par une sangle à fermoir de sécurité." />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -52,7 +59,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
       <h2 id="titre-fiche" class="m-0 text-h2 font-bold tracking-tight lg:text-h1">Fiche technique</h2>
       <dl class="m-0 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @for (ligne of caracteristiques; track ligne.cle) {
-          <div class="flex flex-col gap-1 rounded-lg border border-line bg-surface p-5">
+          <div class="carte-vivante flex flex-col gap-1 rounded-lg border border-line bg-surface p-5" [apparition]="$index * 90">
             <dd class="m-0 font-display text-h2 font-bold tabular-nums">{{ ligne.valeur }}</dd>
             <dt class="text-label text-text-2">{{ ligne.cle }}</dt>
           </div>

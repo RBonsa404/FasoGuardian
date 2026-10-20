@@ -82,11 +82,11 @@ export const CARACTERISTIQUES = [
 ] as const;
 
 export const FONCTIONNEMENT = [
-  { surtitre: 'LOCALISATION', titre: 'Quand vous en avez besoin', texte: "Toutes les 5 ou 15 minutes selon l'offre, toutes les 60 secondes pendant une alerte.", ton: 'accent' },
-  { surtitre: 'SAFE ZONES', titre: 'Des lieux de confiance', texte: 'Cercle ou polygone, plages horaires, délai de tolérance.', ton: 'succes' },
-  { surtitre: 'ALERTES', titre: 'Ce qui compte, rien de plus', texte: 'SOS, retrait, sortie de zone, batterie, bracelet muet.', ton: 'alerte' },
-  { surtitre: 'PAGE QR', titre: 'Un inconnu peut aider', texte: 'Numéro du bracelet, informations médicales que vous marquez critiques, appel des contacts que vous choisissez.', ton: 'accent' },
-  { surtitre: 'VIE PRIVÉE', titre: "Personne d'autre ne voit", texte: "Ni la position, ni le nom. Chaque accès interne est inscrit dans un journal scellé.", ton: 'neutre' },
+  { surtitre: 'LOCALISATION', titre: 'Quand vous en avez besoin', texte: "Toutes les 5 ou 15 minutes selon l'offre, toutes les 60 secondes pendant une alerte.", ton: 'accent', icone: 'position' },
+  { surtitre: 'SAFE ZONES', titre: 'Des lieux de confiance', texte: 'Cercle ou polygone, plages horaires, délai de tolérance.', ton: 'succes', icone: 'safe-zone' },
+  { surtitre: 'ALERTES', titre: 'Ce qui compte, rien de plus', texte: 'SOS, retrait, sortie de zone, batterie, bracelet muet.', ton: 'alerte', icone: 'sos' },
+  { surtitre: 'PAGE QR', titre: 'Un inconnu peut aider', texte: 'Numéro du bracelet, informations médicales que vous marquez critiques, appel des contacts que vous choisissez.', ton: 'accent', icone: 'qr' },
+  { surtitre: 'VIE PRIVÉE', titre: "Personne d'autre ne voit", texte: "Ni la position, ni le nom. Chaque accès interne est inscrit dans un journal scellé.", ton: 'neutre', icone: 'cadenas' },
 ] as const;
 
 export const ETAPES_ECOLE = [

@@ -4,24 +4,30 @@ import { RouterLink } from '@angular/router';
 import { FgIcon } from 'ui';
 
 import { COMPARATIF, CONSERVATION, ENGAGEMENTS, ETAPES_ECOLE, FONCTIONNEMENT, OFFRES, PRIX_BRACELET, QUESTIONS_TARIFS } from '../contenu';
+import { Apparition } from '../apparition';
 
 const TONS = { accent: 'text-accent', succes: 'text-success', alerte: 'text-alert-ink', neutre: 'text-text-2' } as const;
+const PASTILLES = { accent: 'bg-accent-soft text-accent', succes: 'bg-success-soft text-success', alerte: 'bg-alert-soft text-alert-ink', neutre: 'bg-surface-2 text-text-2' } as const;
 
 /** Fonctionnement (écran 3) : ce que voit le parent, ce que voit un inconnu, ce que personne ne voit. */
 @Component({
   selector: 'app-fonctionnement',
-  imports: [RouterLink],
+  imports: [RouterLink, FgIcon, Apparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+    <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+      <div class="trame pointer-events-none absolute inset-x-0 top-0 -z-10 h-80" aria-hidden="true"></div>
       <div class="flex flex-col gap-3">
         <span class="text-caption font-semibold tracking-widest text-accent uppercase">Fonctionnement</span>
-        <h1 class="m-0 text-h1 font-bold tracking-tight lg:text-display">Ce que vous voyez, ce que voit un inconnu, ce que personne ne voit.</h1>
+        <h1 class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight text-balance lg:text-display">Ce que vous voyez, ce que voit un inconnu, ce que personne ne voit.</h1>
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 lg:grid-cols-2">
         @for (bloc of blocs; track bloc.surtitre) {
-          <li class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-6">
-            <span class="text-caption font-semibold tracking-widest" [class]="tons[bloc.ton]">{{ bloc.surtitre }}</span>
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
+            <span class="flex items-center gap-3">
+              <span class="grid size-11 place-items-center rounded-md" [class]="pastilles[bloc.ton]"><fg-icon [nom]="bloc.icone" [taille]="22" /></span>
+              <span class="text-caption font-semibold tracking-widest" [class]="tons[bloc.ton]">{{ bloc.surtitre }}</span>
+            </span>
             <h2 class="m-0 text-h3 font-semibold">{{ bloc.titre }}</h2>
             <p class="m-0 text-body text-text-2">{{ bloc.texte }}</p>
           </li>
@@ -38,18 +44,20 @@ const TONS = { accent: 'text-accent', succes: 'text-success', alerte: 'text-aler
 export class Fonctionnement {
   protected readonly blocs = FONCTIONNEMENT;
   protected readonly tons = TONS;
+  protected readonly pastilles = PASTILLES;
 }
 
 /** Offres, comparatif et questions tarifaires (écran 4). */
 @Component({
   selector: 'app-offres',
-  imports: [RouterLink, FgIcon],
+  imports: [RouterLink, FgIcon, Apparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+    <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+      <div class="trame pointer-events-none absolute inset-x-0 top-0 -z-10 h-80" aria-hidden="true"></div>
       <div class="flex flex-col gap-3">
         <span class="text-caption font-semibold tracking-widest text-accent uppercase">Offres</span>
-        <h1 class="m-0 text-h1 font-bold tracking-tight lg:text-display">SOS, retrait et page QR inclus partout.</h1>
+        <h1 class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight text-balance lg:text-display">SOS, retrait et page QR inclus partout.</h1>
         <p class="m-0 text-body-lg text-text-2">Bracelet {{ prix }}, puis un abonnement mensuel sans engagement, par enfant.</p>
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
@@ -98,7 +106,7 @@ export class Fonctionnement {
       </div>
       <dl class="m-0 grid gap-4 lg:grid-cols-2">
         @for (question of questions; track question.question) {
-          <div class="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-5">
+          <div class="carte-vivante flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-5" [apparition]="$index * 90">
             <dt class="text-body font-semibold">{{ question.question }}</dt>
             <dd class="m-0 text-label text-text-2">{{ question.reponse }}</dd>
           </div>
@@ -119,18 +127,19 @@ export class Offres {
 /** Établissements scolaires (écran 5). */
 @Component({
   selector: 'app-ecoles',
-  imports: [RouterLink],
+  imports: [RouterLink, Apparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+    <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+      <div class="trame pointer-events-none absolute inset-x-0 top-0 -z-10 h-80" aria-hidden="true"></div>
       <div class="flex flex-col gap-3">
         <span class="text-caption font-semibold tracking-widest text-accent uppercase">Pour les établissements</span>
-        <h1 class="m-0 text-h1 font-bold tracking-tight lg:text-display">L'offre École : le bracelet fourni par l'établissement.</h1>
+        <h1 class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight text-balance lg:text-display">L'offre École : le bracelet fourni par l'établissement.</h1>
         <p class="m-0 max-w-3xl text-body-lg text-text-2">4 000 FCFA par élève et par mois, sur convention : les bracelets, l'inscription des familles sur place et leur accompagnement. Chaque parent garde son compte ; l'établissement n'accède à aucune position.</p>
       </div>
       <ol class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
         @for (etape of etapes; track etape.numero) {
-          <li class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-6">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
             <span class="font-display text-h2 font-bold text-accent">{{ etape.numero }}</span>
             <h2 class="m-0 text-h3 font-semibold">{{ etape.titre }}</h2>
             <p class="m-0 text-label text-text-2">{{ etape.texte }}</p>
@@ -150,18 +159,19 @@ export class Ecoles {
 /** Sécurité et protection des données (écran 6). */
 @Component({
   selector: 'app-securite',
-  imports: [RouterLink],
+  imports: [RouterLink, Apparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+    <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
+      <div class="trame pointer-events-none absolute inset-x-0 top-0 -z-10 h-80" aria-hidden="true"></div>
       <div class="flex flex-col gap-3">
         <span class="text-caption font-semibold tracking-widest text-accent uppercase">Sécurité et données</span>
-        <h1 class="m-0 text-h1 font-bold tracking-tight lg:text-display">Sécurité et protection des données</h1>
+        <h1 class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight text-balance lg:text-display">Sécurité et protection des données</h1>
         <p class="m-0 max-w-3xl text-body-lg text-text-2">Les données d'un enfant ne servent qu'à le protéger. Voici ce que nous faisons, et pendant combien de temps nous gardons quoi.</p>
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
         @for (engagement of engagements; track engagement.titre) {
-          <li class="flex flex-col gap-2 rounded-lg border border-line bg-surface p-6">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
             <h2 class="m-0 text-h3 font-semibold">{{ engagement.titre }}</h2>
             <p class="m-0 text-label text-text-2">{{ engagement.texte }}</p>
           </li>
