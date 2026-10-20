@@ -6,7 +6,8 @@ const SITE = process.env['FG_E2E_SITE'] ?? 'http://localhost:4203';
 test('le site se lit sans script, puis présente le bracelet, les offres et les pages d’aide', async ({ page, request }) => {
   // Rendu côté serveur : le contenu est dans la page avant tout script
   const accueil = await (await request.get(`${SITE}/`)).text();
-  expect(accueil).toContain("Toujours près d'eux. Jamais sur leur dos.");
+  expect(accueil).toContain("Toujours près d'eux.");
+  expect(accueil).toContain('Jamais sur leur dos.');
   expect(accueil).toContain('Trois étapes, une seule fois.');
   expect(await (await request.get(`${SITE}/confidentialite`)).text()).toContain('Journal des alertes : 5 ans.');
 

@@ -1,23 +1,23 @@
 <a class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2" href="#contenu">Aller au contenu</a>
-<header class="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur">
+<header class="site-entete sticky top-0 z-40 border-b bg-bg/80 backdrop-blur-xl transition-[box-shadow,border-color] duration-(--duration-base)" [class]="defile() ? 'border-line shadow-e1' : 'border-transparent'">
   <div class="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-5 lg:px-8">
     <a class="flex flex-none items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" routerLink="/" aria-label="FasoGuardian, accueil">
       <img src="logo-sombre.svg" alt="" height="32" class="h-8 w-auto clair:hidden" />
       <img src="logo-clair.svg" alt="" height="32" class="hidden h-8 w-auto clair:block" />
     </a>
-    <nav class="ml-auto hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
+    <nav class="ml-auto hidden items-center gap-0.5 xl:flex" aria-label="Navigation principale">
       @for (entree of navigation; track entree.lien) {
-        <a class="flex h-11 items-center rounded-sm px-3 text-label font-medium text-text-2 hover:text-text focus-visible:outline-2 focus-visible:outline-accent" routerLinkActive="font-semibold text-text" [routerLink]="entree.lien">{{ entree.libelle }}</a>
+        <a class="relative flex h-11 items-center rounded-sm px-3 text-label font-medium whitespace-nowrap text-text-2 transition-colors duration-(--duration-fast) after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-accent after:transition-transform after:duration-(--duration-base) hover:text-text hover:after:scale-x-100 focus-visible:outline-2 focus-visible:outline-accent" routerLinkActive="font-semibold text-text after:scale-x-100" [routerLink]="entree.lien">{{ entree.libelle }}</a>
       }
-      <a class="flex h-11 items-center rounded-sm px-3 text-label font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" [href]="espaceParents">Espace parents</a>
+      <a class="flex h-11 items-center rounded-sm px-3 text-label font-semibold whitespace-nowrap text-accent focus-visible:outline-2 focus-visible:outline-accent" [href]="espaceParents">Espace parents</a>
     </nav>
-    <a class="ml-auto inline-flex h-11 items-center rounded-md bg-primary px-4 text-label font-semibold text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:ml-2" routerLink="/points-relais">Où l'acheter · {{ prix }}</a>
-    <button type="button" class="grid size-11 flex-none place-items-center rounded-md border border-line-strong focus-visible:outline-2 focus-visible:outline-accent lg:hidden" [attr.aria-expanded]="menu()" aria-controls="menu-mobile" aria-label="Menu" (click)="menu.set(!menu())">
+    <a class="ml-auto inline-flex h-11 items-center rounded-md bg-primary px-4 text-label font-semibold whitespace-nowrap text-white shadow-e1 transition-[background-color,transform] duration-(--duration-fast) hover:bg-primary-hover active:scale-[.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:ml-2" routerLink="/points-relais">Où l'acheter<span class="hidden sm:inline">&nbsp;· {{ prix }}</span></a>
+    <button type="button" class="grid size-11 flex-none place-items-center rounded-md border border-line-strong focus-visible:outline-2 focus-visible:outline-accent xl:hidden" [attr.aria-expanded]="menu()" aria-controls="menu-mobile" aria-label="Menu" (click)="menu.set(!menu())">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
     </button>
   </div>
   @if (menu()) {
-    <nav id="menu-mobile" class="flex flex-col border-t border-line px-5 py-2 lg:hidden" aria-label="Navigation principale">
+    <nav id="menu-mobile" class="flex animate-(--animate-rise) flex-col border-t border-line px-5 py-2 xl:hidden" aria-label="Navigation principale">
       @for (entree of navigation; track entree.lien) {
         <a class="flex min-h-12 items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="entree.lien" (click)="menu.set(false)">{{ entree.libelle }}</a>
       }

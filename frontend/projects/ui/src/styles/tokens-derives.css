@@ -49,6 +49,10 @@
   --color-on-success: #ffffff;
   --color-on-danger: #ffffff;
   --color-glass: rgba(255, 255, 255, 0.9);
+  /* Ombres du thème clair : celles de tokens.css sont dosées pour un fond nuit et grisent un fond clair. */
+  --shadow-e1: 0 1px 2px rgba(10, 14, 26, 0.08);
+  --shadow-e2: 0 8px 24px rgba(10, 14, 26, 0.1);
+  --shadow-e3: 0 24px 64px rgba(10, 14, 26, 0.14), 0 0 0 1px rgba(0, 103, 181, 0.1);
   --color-hero-fg: #0a0e1a;
   --color-hero-fg-2: #3d4767;
   --color-hero-btn: #123c7a;
