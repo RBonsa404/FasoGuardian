@@ -37,6 +37,13 @@ import org.springframework.web.bind.annotation.RestController;
 class ControleurAuthentification {
 
     static final String COOKIE = "fg_rafraichissement";
+    /**
+     * Cookie de la console, distinct de celui des parents : sur un même hôte (poste de développement, démonstration),
+     * une connexion d'agent ne remplace jamais la session d'un parent, ni l'inverse. L'en-tête anti-CSRF dit de
+     * quel espace vient la demande (« console », sinon parents).
+     */
+    static final String COOKIE_AGENT = "fg_rafraichissement_agent";
+    static final String ESPACE_CONSOLE = "console";
     static final String CHEMIN_COOKIE = "/api/v1/auth";
     static final String ENTETE_ANTI_CSRF = "X-FG-Requete";
 
@@ -96,19 +103,23 @@ class ControleurAuthentification {
     @Operation(summary = "Échange le cookie de rafraîchissement contre un nouveau jeton d'accès (rotation)")
     @PostMapping("/rafraichir")
     ResponseEntity<JetonAccesDto> rafraichir(@CookieValue(name = COOKIE, required = false) String jeton,
+            @CookieValue(name = COOKIE_AGENT, required = false) String jetonAgent,
             @RequestHeader(name = ENTETE_ANTI_CSRF, required = false) String entete) {
         exigerEntete(entete);
-        return reponse(HttpStatus.OK, sessions.rafraichir(jeton));
+        boolean console = ESPACE_CONSOLE.equals(entete);
+        return reponse(HttpStatus.OK, sessions.rafraichir(console ? jetonAgent : jeton), console);
     }
 
     @Operation(summary = "Ferme la session et révoque ses jetons de rafraîchissement")
     @PostMapping("/deconnexion")
     ResponseEntity<Void> deconnexion(@CookieValue(name = COOKIE, required = false) String jeton,
+            @CookieValue(name = COOKIE_AGENT, required = false) String jetonAgent,
             @RequestHeader(name = ENTETE_ANTI_CSRF, required = false) String entete) {
         exigerEntete(entete);
-        sessions.fermer(jeton);
+        boolean console = ESPACE_CONSOLE.equals(entete);
+        sessions.fermer(console ? jetonAgent : jeton);
         return ResponseEntity.noContent()
-                .header(HttpHeaders.SET_COOKIE, cookie("", Duration.ZERO).toString())
+                .header(HttpHeaders.SET_COOKIE, cookie(console ? COOKIE_AGENT : COOKIE, "", Duration.ZERO).toString())
                 .build();
     }
 
@@ -119,15 +130,19 @@ class ControleurAuthentification {
     }
 
     static ResponseEntity<JetonAccesDto> reponse(HttpStatus statut, Session session) {
+        return reponse(statut, session, false);
+    }
+
+    static ResponseEntity<JetonAccesDto> reponse(HttpStatus statut, Session session, boolean console) {
         Duration duree = Duration.between(java.time.Instant.now(), session.rafraichissementExpireLe());
         return ResponseEntity.status(statut)
-                .header(HttpHeaders.SET_COOKIE, cookie(session.jetonRafraichissement(), duree).toString())
+                .header(HttpHeaders.SET_COOKIE, cookie(console ? COOKIE_AGENT : COOKIE, session.jetonRafraichissement(), duree).toString())
                 .header(HttpHeaders.CACHE_CONTROL, "no-store")
                 .body(new JetonAccesDto(session.jetonAcces(), session.expireDansSecondes()));
     }
 
-    private static ResponseCookie cookie(String valeur, Duration duree) {
-        return ResponseCookie.from(COOKIE, valeur)
+    private static ResponseCookie cookie(String nom, String valeur, Duration duree) {
+        return ResponseCookie.from(nom, valeur)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")

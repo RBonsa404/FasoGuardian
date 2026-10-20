@@ -160,7 +160,8 @@ export class Accueil {
                 this.courant.choisir(choisi.id);
               }
             },
-            error: () => this.enfants.set([]),
+            // Une erreur n'est pas une absence d'enfant : le parent doit le savoir, plutôt que de lire « Aucun enfant ».
+            error: (cause: unknown) => this.erreur.set(erreurLisible(cause).message),
           });
           this.lireAlertes();
         }

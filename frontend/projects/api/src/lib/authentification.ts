@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
 import { Observable, finalize, map, shareReplay, tap } from 'rxjs';
 
 export type TypeConsentement =
@@ -26,7 +26,14 @@ export interface Compte {
 export const ENTETE_ANTI_CSRF = 'X-FG-Requete';
 
 const BASE = '/api/v1/auth';
-const AVEC_COOKIE = { withCredentials: true, headers: { [ENTETE_ANTI_CSRF]: '1' } };
+/**
+ * Espace de l'application : la console a son propre cookie de session, pour ne jamais remplacer celle d'un parent
+ * ouverte sur le même hôte. La valeur part dans l'en-tête anti-CSRF des demandes de session.
+ */
+export const ESPACE_APPLICATION = new InjectionToken<'parents' | 'console'>('ESPACE_APPLICATION', {
+  providedIn: 'root',
+  factory: () => 'parents',
+});
 
 /**
  * Session de l'utilisateur. Le jeton d'accès ne vit qu'en mémoire : il n'est jamais écrit dans le
@@ -93,6 +100,7 @@ export class ClientAuthentification {
   private readonly http = inject(HttpClient);
   private readonly session = inject(Session);
   private rafraichissementEnCours: Observable<JetonAcces> | null = null;
+  private readonly avecCookie = { withCredentials: true, headers: { [ENTETE_ANTI_CSRF]: inject(ESPACE_APPLICATION) } };
 
   demanderCode(telephone: string): Observable<void> {
     return this.http.post<void>(`${BASE}/inscription/numero`, { telephone });
@@ -118,7 +126,7 @@ export class ClientAuthentification {
 
   /** Un seul échange à la fois : les requêtes concurrentes en échec partagent le même rafraîchissement. */
   rafraichir(): Observable<JetonAcces> {
-    this.rafraichissementEnCours ??= this.http.post<JetonAcces>(`${BASE}/rafraichir`, null, AVEC_COOKIE).pipe(
+    this.rafraichissementEnCours ??= this.http.post<JetonAcces>(`${BASE}/rafraichir`, null, this.avecCookie).pipe(
       tap({
         next: (jeton) => this.session.ouvrir(jeton),
         error: () => this.session.signalerExpiration(),
@@ -131,7 +139,7 @@ export class ClientAuthentification {
 
   deconnecter(): Observable<void> {
     return this.http
-      .post<void>(`${BASE}/deconnexion`, null, AVEC_COOKIE)
+      .post<void>(`${BASE}/deconnexion`, null, this.avecCookie)
       .pipe(finalize(() => this.session.fermer()));
   }
 

@@ -41,7 +41,7 @@ describe('intercepteurJeton', () => {
     serveur.expectOne('/api/v1/moi').flush(null, { status: 401, statusText: 'Unauthorized' });
     const echange = serveur.expectOne('/api/v1/auth/rafraichir');
     expect(echange.request.withCredentials).toBe(true);
-    expect(echange.request.headers.get(ENTETE_ANTI_CSRF)).toBe('1');
+    expect(echange.request.headers.get(ENTETE_ANTI_CSRF)).toBe('parents');
     echange.flush({ jetonAcces: 'neuf', expireDansSecondes: 900 });
 
     const rejeu = serveur.expectOne('/api/v1/moi');

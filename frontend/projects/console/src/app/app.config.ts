@@ -4,7 +4,7 @@ import localeFr from '@angular/common/locales/fr';
 import { ApplicationConfig, LOCALE_ID, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
-import { intercepteurJeton } from 'api';
+import { ESPACE_APPLICATION, intercepteurJeton } from 'api';
 import { Theme } from 'ui';
 
 import { routes } from './app.routes';
@@ -18,6 +18,8 @@ export const appConfig: ApplicationConfig = {
     // L'apparence choisie s'applique dès le démarrage et suit ensuite le système.
     provideAppInitializer(() => void inject(Theme)),
     { provide: LOCALE_ID, useValue: 'fr' },
+    // Session de la console : son propre cookie, distinct de celui de l'espace parents.
+    { provide: ESPACE_APPLICATION, useValue: 'console' },
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([intercepteurJeton])),
   ],

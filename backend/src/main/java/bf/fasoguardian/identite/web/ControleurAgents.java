@@ -60,7 +60,7 @@ class ControleurAgents {
     @PostMapping("/api/v1/auth/agents/connexion")
     ResponseEntity<ControleurAuthentification.JetonAccesDto> connexion(@Valid @RequestBody DemandeConnexionAgent demande) {
         Session session = agents.connecter(demande.identifiant(), demande.motDePasse(), demande.codeTotp());
-        return ControleurAuthentification.reponse(HttpStatus.OK, session);
+        return ControleurAuthentification.reponse(HttpStatus.OK, session, true);
     }
 
     @Operation(summary = "Crée un agent et lui attribue ses rôles")
