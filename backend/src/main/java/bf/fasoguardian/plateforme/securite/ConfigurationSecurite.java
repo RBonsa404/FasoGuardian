@@ -19,6 +19,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.header.writers.CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy;
+import org.springframework.security.web.header.writers.CrossOriginResourcePolicyHeaderWriter.CrossOriginResourcePolicy;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -45,7 +47,11 @@ class ConfigurationSecurite {
                 .logout(AbstractHttpConfigurer::disable)
                 .headers(entetes -> entetes
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
-                        .referrerPolicy(politique -> politique.policy(ReferrerPolicy.NO_REFERRER)))
+                        .referrerPolicy(politique -> politique.policy(ReferrerPolicy.NO_REFERRER))
+                        // Isolation contre les attaques par canal auxiliaire (Spectre) : aucune réponse n'est chargeable
+                        // depuis une autre origine, et une fenêtre ouverte ailleurs ne garde pas de référence à la nôtre.
+                        .crossOriginResourcePolicy(politique -> politique.policy(CrossOriginResourcePolicy.SAME_ORIGIN))
+                        .crossOriginOpenerPolicy(politique -> politique.policy(CrossOriginOpenerPolicy.SAME_ORIGIN)))
                 .authorizeHttpRequests(regles -> regles
                         .requestMatchers("/actuator/health/**", "/actuator/prometheus").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

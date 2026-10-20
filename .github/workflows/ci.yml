@@ -93,6 +93,19 @@ jobs:
       - name: Parcours
         working-directory: frontend
         run: sh e2e/pile.sh tester
+      - name: Balayage de sécurité de l'API (OWASP ZAP, contrat OpenAPI)
+        # Bloquant sur tout constat de niveau FAIL ; les avertissements figurent dans le rapport (-I).
+        run: |
+          mkdir -p zap && chmod 777 zap
+          docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:2.16.1             zap-api-scan.py -t http://localhost:8080/v3/api-docs -f openapi -I -r rapport-zap.html
+      - name: Rapport ZAP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-zap
+          retention-days: 14
+          path: zap/rapport-zap.html
+          if-no-files-found: ignore
       - name: Rapport et journaux en cas d'échec
         if: failure()
         uses: actions/upload-artifact@v4
