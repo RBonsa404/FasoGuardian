@@ -69,7 +69,20 @@ test('un opérateur publie un article et répond à la demande d’un parent, qu
   await console_.getByRole('button', { name: new RegExp(`La sangle se détache \\(${marque}\\)`) }).click();
   await expect(console_.getByText(`+226${telephone}`)).toBeVisible();
   await expect(console_.getByText('Est-ce normal ?')).toBeVisible();
-  await console_.getByLabel('Réponse au parent').fill('Ce n’est pas normal. Échange gratuit de sangle au point relais de Dassasgho.');
+  // Un modèle de réponse (ADR 0041), inséré par son raccourci puis relu avant l'envoi
+  await console_.getByRole('button', { name: 'Modèles de réponse' }).click();
+  await console_.getByLabel('Raccourci').fill(`sangle-${marque}`);
+  await console_.getByLabel('Titre').fill('Échange de sangle');
+  await console_.getByLabel('Texte').fill('Bonjour {prénom}, ce n’est pas normal. Échange gratuit de sangle au point relais de Dassasgho.');
+  await console_.getByRole('button', { name: 'Enregistrer le modèle' }).click();
+  await expect(console_.getByRole('button', { name: 'Supprimer' })).toBeVisible();
+  await console_.getByRole('button', { name: 'Fermer' }).click();
+  await console_.getByRole('button', { name: new RegExp(`La sangle se détache \\(${marque}\\)`) }).click();
+  const reponse = console_.getByLabel('Réponse au parent');
+  await reponse.fill(`/sangle-${marque}`);
+  await expect(console_.getByRole('button', { name: new RegExp(`/sangle-${marque}`) })).toBeVisible();
+  await reponse.press('Tab');
+  await expect(reponse).toHaveValue(/^Bonjour .+, ce n’est pas normal\. Échange gratuit de sangle au point relais de Dassasgho\.$/);
   await console_.screenshot({ path: 'e2e/.etat/ecran-62-tickets.png', fullPage: true });
   await console_.getByRole('button', { name: 'Répondre et attendre le parent' }).click();
   await expect(console_.getByRole('button', { name: new RegExp(`\\(${marque}\\)`) })).toHaveCount(0);

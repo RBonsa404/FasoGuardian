@@ -8,7 +8,9 @@ import bf.fasoguardian.identite.application.Support.ArticleVue;
 import bf.fasoguardian.identite.application.Support.Categorie;
 import bf.fasoguardian.identite.application.Support.CategorieVue;
 import bf.fasoguardian.identite.application.Support.DemandeVue;
+import bf.fasoguardian.identite.application.Support.ModeleVue;
 import bf.fasoguardian.identite.application.Support.SaisieArticle;
+import bf.fasoguardian.identite.application.Support.SaisieModele;
 import bf.fasoguardian.identite.application.Support.Statut;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,6 +59,10 @@ class ControleurSupport {
     }
 
     record DemandeArticle(@NotNull Categorie categorie, @NotBlank @Size(max = 120) String titre, @NotBlank @Size(max = 6000) String contenu) {
+    }
+
+    record DemandeModele(@NotBlank @Size(max = 31) String raccourci, @NotBlank @Size(max = 80) String titre,
+            @NotBlank @Size(max = 2000) String texte) {
     }
 
     // ------------------------------------------------------------------ parent
@@ -170,6 +177,37 @@ class ControleurSupport {
     @PostMapping("/api/v1/console/support/articles/{articleId}/retrait")
     ResponseEntity<ArticleVue> retirer(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID articleId) {
         return sansCache(support.publier(id(jeton), articleId, false));
+    }
+
+    @Operation(summary = "Modèles de réponse, par raccourci")
+    @PreAuthorize(OPERATEUR)
+    @GetMapping("/api/v1/console/support/modeles")
+    ResponseEntity<List<ModeleVue>> modeles() {
+        return sansCache(support.modeles());
+    }
+
+    @Operation(summary = "Crée un modèle de réponse")
+    @PreAuthorize(OPERATEUR)
+    @PostMapping("/api/v1/console/support/modeles")
+    ResponseEntity<ModeleVue> creerModele(@AuthenticationPrincipal Jwt jeton, @Valid @RequestBody DemandeModele demande) {
+        return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(support.creerModele(id(jeton), new SaisieModele(demande.raccourci(), demande.titre(), demande.texte())));
+    }
+
+    @Operation(summary = "Modifie un modèle de réponse")
+    @PreAuthorize(OPERATEUR)
+    @PutMapping("/api/v1/console/support/modeles/{modeleId}")
+    ResponseEntity<ModeleVue> modifierModele(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID modeleId,
+            @Valid @RequestBody DemandeModele demande) {
+        return sansCache(support.modifierModele(id(jeton), modeleId, new SaisieModele(demande.raccourci(), demande.titre(), demande.texte())));
+    }
+
+    @Operation(summary = "Supprime un modèle de réponse ; les réponses déjà envoyées ne changent pas")
+    @PreAuthorize(OPERATEUR)
+    @DeleteMapping("/api/v1/console/support/modeles/{modeleId}")
+    ResponseEntity<Void> supprimerModele(@AuthenticationPrincipal Jwt jeton, @PathVariable UUID modeleId) {
+        support.supprimerModele(id(jeton), modeleId);
+        return ResponseEntity.noContent().build();
     }
 
     private static UUID id(Jwt jeton) {

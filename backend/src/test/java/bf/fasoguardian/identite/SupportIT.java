@@ -1,6 +1,7 @@
 package bf.fasoguardian.identite;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -28,6 +29,7 @@ class SupportIT extends TestIntegration {
     private static final String MES_DEMANDES = "/api/v1/support/demandes";
     private static final String DEMANDES = "/api/v1/console/support/demandes";
     private static final String ARTICLES = "/api/v1/console/support/articles";
+    private static final String MODELES = "/api/v1/console/support/modeles";
 
     @Autowired
     MockMvc mvc;
@@ -144,6 +146,39 @@ class SupportIT extends TestIntegration {
         avec(get("/api/v1/aide/articles"), null).andExpect(status().isUnauthorized());
         assertThat(jdbc.queryForList("SELECT action FROM audit.entree WHERE type_cible = 'ARTICLE_AIDE' AND cible_id = ? ORDER BY id",
                 String.class, slug)).containsExactly("ARTICLE_REDIGE", "ARTICLE_PUBLIE", "ARTICLE_MODIFIE", "ARTICLE_RETIRE");
+    }
+
+    @Test
+    void lOperateurGereSesModelesDeReponseParRaccourci() throws Exception {
+        String raccourci = "sangle-" + UUID.randomUUID().toString().substring(0, 6);
+        String modele = "{\"raccourci\":\"/" + raccourci + "\",\"titre\":\"Échange de sangle\",\"texte\":\"Bonjour {prénom}, ce n'est pas "
+                + "normal. Nous vous proposons un échange gratuit de sangle au point relais.\"}";
+
+        // La barre oblique saisie avec le raccourci n'est pas conservée.
+        String cree = json(post(MODELES), modele, operateur).andExpect(status().isCreated()).andExpect(jsonPath("$.raccourci").value(raccourci))
+                .andReturn().getResponse().getContentAsString();
+        String id = Acteurs.extraire(cree, "\"id\":\"([0-9a-f-]{36})\"");
+        json(post(MODELES), modele, operateur).andExpect(status().isConflict());
+        json(post(MODELES), modele.replace("/" + raccourci, "Sangle cassée"), operateur).andExpect(status().isBadRequest());
+        avec(get(MODELES), operateur).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.raccourci == '" + raccourci + "')].titre").value("Échange de sangle"));
+
+        json(put(MODELES + "/" + id), modele.replace("point relais", "point relais de Dassasgho"), operateur).andExpect(status().isOk())
+                .andExpect(jsonPath("$.texte").value(org.hamcrest.Matchers.endsWith("point relais de Dassasgho.")));
+        json(put(MODELES + "/" + UUID.randomUUID()), modele, operateur).andExpect(status().isNotFound());
+
+        // Seul l'opérateur support gère et lit les modèles.
+        avec(get(MODELES), acteurs.parent().jeton()).andExpect(status().isForbidden());
+        avec(get(MODELES), acteurs.jetonSav()).andExpect(status().isForbidden());
+        json(post(MODELES), modele, acteurs.agent("[\"KYC\"]").jeton()).andExpect(status().isForbidden());
+        avec(delete(MODELES + "/" + id), acteurs.jetonSav()).andExpect(status().isForbidden());
+        avec(get(MODELES), null).andExpect(status().isUnauthorized());
+
+        avec(delete(MODELES + "/" + id), operateur).andExpect(status().isNoContent());
+        avec(get(MODELES), operateur).andExpect(jsonPath("$[?(@.raccourci == '" + raccourci + "')]").isEmpty());
+        avec(delete(MODELES + "/" + id), operateur).andExpect(status().isNotFound());
+        assertThat(jdbc.queryForList("SELECT action FROM audit.entree WHERE type_cible = 'MODELE_REPONSE' AND cible_id = ? ORDER BY id",
+                String.class, raccourci)).containsExactly("MODELE_REPONSE_CREE", "MODELE_REPONSE_MODIFIE", "MODELE_REPONSE_SUPPRIME");
     }
 
     private ResultActions avec(MockHttpServletRequestBuilder requete, String jeton) throws Exception {

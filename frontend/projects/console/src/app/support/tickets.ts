@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ClientSupport, ClientTableau, DemandeSupport, StatutDemandeSupport } from 'api';
+import { ClientSupport, ClientTableau, DemandeSupport, ModeleReponse, StatutDemandeSupport } from 'api';
 import { FgBanniere, FgBouton, FgSquelette } from 'ui';
 
 import { erreurLisible, estRefus } from '../commun/acces';
+import { Modeles, insererModele, raccourciSaisi } from './modeles';
 
 const DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
@@ -27,10 +29,13 @@ export function attente(iso: string, maintenant = Date.now()): string {
  */
 @Component({
   selector: 'app-tickets',
-  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgSquelette],
+  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgSquelette, Modeles],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@tickets.titre">Tickets</h1>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@tickets.titre">Tickets</h1>
+      <button fg-button variante="secondary" taille="sm" type="button" [attr.aria-pressed]="gestion()" (click)="gestion.set(!gestion())" i18n="@@tickets.modeles">Modèles de réponse</button>
+    </div>
     <div class="flex flex-wrap gap-2" role="group" i18n-aria-label="@@tickets.files" aria-label="File affichée">
       @for (file of files; track file.statut) {
         <button fg-button taille="sm" type="button" [variante]="statut() === file.statut ? 'primary' : 'secondary'" [attr.aria-pressed]="statut() === file.statut" (click)="montrer(file.statut)">
@@ -64,7 +69,9 @@ export function attente(iso: string, maintenant = Date.now()): string {
         }
       </div>
 
-      @if (choisie(); as d) {
+      @if (gestion()) {
+        <app-modeles [modeles]="modeles()" (change)="chargerModeles()" (fermer)="gestion.set(false)" />
+      } @else if (choisie(); as d) {
         <section class="flex min-h-0 flex-col gap-3 rounded-lg border border-line bg-surface p-5" [attr.aria-label]="d.reference">
           <div class="flex flex-col gap-1">
             <h2 class="m-0 text-h3 font-semibold">{{ d.reference }} · {{ d.objet }}</h2>
@@ -80,7 +87,28 @@ export function attente(iso: string, maintenant = Date.now()): string {
           </ol>
           <form class="mt-auto flex flex-col gap-2" (submit)="$event.preventDefault()">
             <label class="sr-only" for="reponse-ticket" i18n="@@tickets.reponse">Réponse au parent</label>
-            <textarea id="reponse-ticket" class="min-h-24 rounded-md border border-line-strong bg-surface p-3 text-label outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent" maxlength="2000" [formControl]="reponse" i18n-placeholder="@@tickets.reponse.exemple" placeholder="Répondre…"></textarea>
+            <textarea
+              id="reponse-ticket"
+              class="min-h-24 rounded-md border border-line-strong bg-surface p-3 text-label outline-none placeholder:text-text-3 focus-visible:outline-2 focus-visible:outline-accent"
+              maxlength="2000"
+              [formControl]="reponse"
+              aria-describedby="modeles-proposes"
+              (keydown)="clavier($event, d)"
+              i18n-placeholder="@@tickets.reponse.exemple"
+              placeholder="Répondre… (modèle : /raccourci)"
+            ></textarea>
+            <!-- Modèles dont le raccourci commence par ce qui suit la barre oblique ; Tab ou Entrée insère le premier. -->
+            <div id="modeles-proposes" class="flex flex-wrap gap-1.5" aria-live="polite">
+              @if (suggestions(); as liste) {
+                @for (modele of liste; track modele.id) {
+                  <button type="button" class="flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-caption hover:border-accent focus-visible:outline-2 focus-visible:outline-accent" (click)="inserer(modele, d)">
+                    <span class="font-mono text-accent">/{{ modele.raccourci }}</span>{{ modele.titre }}
+                  </button>
+                } @empty {
+                  <span class="text-caption text-text-3" i18n="@@tickets.modeles.aucun">Aucun modèle pour ce raccourci.</span>
+                }
+              }
+            </div>
             <div class="flex flex-wrap justify-end gap-2">
               <button fg-button variante="secondary" type="button" [chargement]="enCours()" (click)="repondre('RESOLUE')" i18n="@@tickets.resoudre">Répondre et résoudre</button>
               <button fg-button type="button" [chargement]="enCours()" (click)="repondre('EN_ATTENTE_PARENT')" i18n="@@tickets.envoyer">Répondre et attendre le parent</button>
@@ -117,10 +145,37 @@ export class Tickets implements OnInit {
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly reponse = new FormControl('', { nonNullable: true });
+  protected readonly gestion = signal(false);
+  protected readonly modeles = signal<readonly ModeleReponse[]>([]);
+  private readonly saisie = toSignal(this.reponse.valueChanges, { initialValue: '' });
+  /** Modèles proposés pendant la saisie d'un raccourci, sinon rien. */
+  protected readonly suggestions = computed(() => {
+    const debut = raccourciSaisi(this.saisie());
+    return debut === null ? null : this.modeles().filter((modele) => modele.raccourci.startsWith(debut)).slice(0, 6);
+  });
 
   // Au premier chargement, la référence éventuelle de la recherche (paramètre d'adresse) est déjà liée.
   ngOnInit(): void {
     this.charger();
+    this.chargerModeles();
+  }
+
+  protected chargerModeles(): void {
+    this.client.modeles().subscribe({ next: (modeles) => this.modeles.set(modeles), error: (cause: unknown) => this.signaler(cause) });
+  }
+
+  /** Le texte du modèle remplace le raccourci ; l'opérateur le relit avant de l'envoyer. */
+  protected inserer(modele: ModeleReponse, demande: DemandeSupport): void {
+    this.reponse.setValue(insererModele(this.reponse.value, modele, demande.parent));
+    document.getElementById('reponse-ticket')?.focus();
+  }
+
+  protected clavier(evenement: KeyboardEvent, demande: DemandeSupport): void {
+    const premier = this.suggestions()?.[0];
+    if (premier && (evenement.key === 'Tab' || (evenement.key === 'Enter' && !evenement.shiftKey))) {
+      evenement.preventDefault();
+      this.inserer(premier, demande);
+    }
   }
 
   protected date(iso: string): string {

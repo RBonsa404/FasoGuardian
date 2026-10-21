@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import bf.fasoguardian.audit.JournalAudit;
 import bf.fasoguardian.audit.JournalAudit.Resultat;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class Support {
 
     private static final String ROLE = "SUPPORT";
+    private static final Pattern RACCOURCI = Pattern.compile("[a-z0-9][a-z0-9-]{0,29}");
 
     public enum Statut {
         OUVERTE,
@@ -70,6 +72,13 @@ public class Support {
     }
 
     public record SaisieArticle(Categorie categorie, String titre, String contenu) {
+    }
+
+    /** @param raccourci saisi après une barre oblique dans la réponse (« /sangle ») */
+    public record ModeleVue(UUID id, String raccourci, String titre, String texte, Instant modifieLe) {
+    }
+
+    public record SaisieModele(String raccourci, String titre, String texte) {
     }
 
     private final JdbcTemplate jdbc;
@@ -241,6 +250,52 @@ public class Support {
         return vue;
     }
 
+    // ------------------------------------------------------ modèles de réponse
+
+    /** Modèles de réponse de l'opérateur, par raccourci : un texte préparé, relu et complété avant l'envoi. */
+    @Transactional(readOnly = true)
+    public List<ModeleVue> modeles() {
+        return jdbc.query("SELECT * FROM identite.modele_reponse ORDER BY raccourci", Support::modele);
+    }
+
+    @Transactional
+    public ModeleVue creerModele(UUID agentId, SaisieModele saisie) {
+        String raccourci = valider(saisie);
+        UUID id = UUID.randomUUID();
+        try {
+            jdbc.update("INSERT INTO identite.modele_reponse (id, raccourci, titre, texte, auteur_id, modifie_le) VALUES (?, ?, ?, ?, ?, ?)", id,
+                    raccourci, saisie.titre().strip(), saisie.texte().strip(), agentId, Timestamp.from(horloge.instant()));
+        } catch (DuplicateKeyException doublon) {
+            throw raccourciPris(raccourci);
+        }
+        journal.consigner(agentId, ROLE, "MODELE_REPONSE_CREE", "MODELE_REPONSE", raccourci, Resultat.SUCCES);
+        return modele(id);
+    }
+
+    @Transactional
+    public ModeleVue modifierModele(UUID agentId, UUID modeleId, SaisieModele saisie) {
+        String raccourci = valider(saisie);
+        try {
+            if (jdbc.update("UPDATE identite.modele_reponse SET raccourci = ?, titre = ?, texte = ?, auteur_id = ?, modifie_le = ?,"
+                    + " version = version + 1 WHERE id = ?", raccourci, saisie.titre().strip(), saisie.texte().strip(), agentId,
+                    Timestamp.from(horloge.instant()), modeleId) == 0) {
+                throw modeleIntrouvable();
+            }
+        } catch (DuplicateKeyException doublon) {
+            throw raccourciPris(raccourci);
+        }
+        journal.consigner(agentId, ROLE, "MODELE_REPONSE_MODIFIE", "MODELE_REPONSE", raccourci, Resultat.SUCCES);
+        return modele(modeleId);
+    }
+
+    /** Supprimer un modèle ne touche aucune réponse déjà envoyée : son texte y a été recopié. */
+    @Transactional
+    public void supprimerModele(UUID agentId, UUID modeleId) {
+        String raccourci = modele(modeleId).raccourci();
+        jdbc.update("DELETE FROM identite.modele_reponse WHERE id = ?", modeleId);
+        journal.consigner(agentId, ROLE, "MODELE_REPONSE_SUPPRIME", "MODELE_REPONSE", raccourci, Resultat.SUCCES);
+    }
+
     /** Les demandes résolues depuis douze mois sont effacées, avec leurs messages. */
     @Scheduled(cron = "${fasoguardian.support.purge:0 35 3 * * *}")
     @SchedulerLock(name = "identite-purge-support")
@@ -300,6 +355,36 @@ public class Support {
         return new ArticleVue(ligne.getObject("id", UUID.class), ligne.getString("slug"), Categorie.valueOf(ligne.getString("categorie")),
                 ligne.getString("titre"), ligne.getString("contenu"), "PUBLIE".equals(ligne.getString("statut")), ligne.getLong("lectures"),
                 ligne.getTimestamp("modifie_le").toInstant());
+    }
+
+    private ModeleVue modele(UUID modeleId) {
+        return jdbc.query("SELECT * FROM identite.modele_reponse WHERE id = ?", Support::modele, modeleId).stream().findFirst()
+                .orElseThrow(Support::modeleIntrouvable);
+    }
+
+    private static ModeleVue modele(ResultSet ligne, int rang) throws SQLException {
+        return new ModeleVue(ligne.getObject("id", UUID.class), ligne.getString("raccourci"), ligne.getString("titre"), ligne.getString("texte"),
+                ligne.getTimestamp("modifie_le").toInstant());
+    }
+
+    /** @return le raccourci, sans la barre oblique s'il a été saisi avec */
+    private static String valider(SaisieModele saisie) {
+        String raccourci = texte(saisie.raccourci(), 31, "Donnez un raccourci au modèle.").replaceFirst("^/", "");
+        if (!RACCOURCI.matcher(raccourci).matches()) {
+            throw new ErreurMetier(CodeErreur.REQUETE_INVALIDE,
+                    "Le raccourci ne contient que des lettres minuscules sans accent, des chiffres et des tirets.");
+        }
+        texte(saisie.titre(), 80, "Donnez un titre au modèle.");
+        texte(saisie.texte(), 2000, "Rédigez le texte du modèle.");
+        return raccourci;
+    }
+
+    private static ErreurMetier raccourciPris(String raccourci) {
+        return new ErreurMetier(CodeErreur.CONFLIT, "Un modèle utilise déjà le raccourci /" + raccourci + ".");
+    }
+
+    private static ErreurMetier modeleIntrouvable() {
+        return new ErreurMetier(CodeErreur.RESSOURCE_INTROUVABLE, "Modèle introuvable.");
     }
 
     private static void valider(SaisieArticle saisie) {

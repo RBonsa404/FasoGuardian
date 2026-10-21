@@ -48,3 +48,4 @@ Ordre de priorité des sources : FG-DOC-04 > FG-DOC-06 > FG-DOC-05 > FG-DOC-07 >
 | [0038](0038-verrou-de-session-console.md) | Verrou de session de la console après 30 min d'inactivité, session close côté serveur, reprise par mot de passe et code TOTP | Acceptée |
 | [0039](0039-historique-de-la-supervision.md) | Écran 72 : les six indicateurs de FG-DOC-06 avec leurs objectifs, relevés chaque heure en base pour montrer leur évolution ; latence mesurée toutes routes confondues ; occupation du disque rapportée à une capacité déclarée | Acceptée |
 | [0040](0040-topologie-web-et-application-android.md) | Production : site à la racine, Parents sous /app/, console sur son propre nom, CSP par application ; application Android en Trusted Web Activity | Acceptée |
+| [0041](0041-modeles-de-reponse-du-support.md) | Modèles de réponse du support : partagés entre opérateurs, insérés par raccourci et relus avant l'envoi, sans donnée d'un parent | Acceptée |

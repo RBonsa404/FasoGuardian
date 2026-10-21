@@ -47,6 +47,21 @@ export interface SaisieArticleAide {
   readonly contenu: string;
 }
 
+/** Modèle de réponse de l'opérateur (ADR 0041) : inséré dans une réponse en tapant « /raccourci ». */
+export interface ModeleReponse {
+  readonly id: string;
+  readonly raccourci: string;
+  readonly titre: string;
+  readonly texte: string;
+  readonly modifieLe: string;
+}
+
+export interface SaisieModeleReponse {
+  readonly raccourci: string;
+  readonly titre: string;
+  readonly texte: string;
+}
+
 const CONSOLE = '/api/v1/console/support';
 
 /** Client de l'aide et du support (US-PAR-017, US-SUP-001), côté parent et côté opérateur. */
@@ -125,6 +140,22 @@ export class ClientSupport {
 
   retirer(id: string): Observable<ArticleAide> {
     return this.http.post<ArticleAide>(`${CONSOLE}/articles/${id}/retrait`, null);
+  }
+
+  modeles(): Observable<ModeleReponse[]> {
+    return this.http.get<ModeleReponse[]>(`${CONSOLE}/modeles`);
+  }
+
+  creerModele(modele: SaisieModeleReponse): Observable<ModeleReponse> {
+    return this.http.post<ModeleReponse>(`${CONSOLE}/modeles`, modele);
+  }
+
+  modifierModele(id: string, modele: SaisieModeleReponse): Observable<ModeleReponse> {
+    return this.http.put<ModeleReponse>(`${CONSOLE}/modeles/${id}`, modele);
+  }
+
+  supprimerModele(id: string): Observable<void> {
+    return this.http.delete<void>(`${CONSOLE}/modeles/${id}`);
   }
 }
 

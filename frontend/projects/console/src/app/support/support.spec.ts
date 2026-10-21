@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
-import { ArticleAide, ClientSupport, DemandeSupport, SaisieArticleAide, StatutDemandeSupport } from 'api';
+import { ArticleAide, ClientSupport, DemandeSupport, ModeleReponse, SaisieArticleAide, SaisieModeleReponse, StatutDemandeSupport } from 'api';
 
 import { Faq } from './faq';
+import { insererModele, raccourciSaisi } from './modeles';
 import { Tickets, attente } from './tickets';
 
 const DEMANDE: DemandeSupport = {
@@ -23,6 +24,14 @@ function article(partiel: Partial<ArticleAide> = {}): ArticleAide {
   return { id: 'a-1', slug: 'sangle', categorie: 'BRACELET', titre: 'Sangle qui s’ouvre', contenu: 'Le fermoir…', publie: false, lectures: 0, modifieLe: '2026-10-01T10:00:00Z', ...partiel };
 }
 
+const SANGLE: ModeleReponse = {
+  id: 'm-1',
+  raccourci: 'sangle',
+  titre: 'Échange de sangle',
+  texte: 'Bonjour {prénom}, ce n’est pas normal. Échange gratuit au point relais.',
+  modifieLe: '2026-10-01T10:00:00Z',
+};
+
 /** Double du client : retient ce que l'opérateur demande. */
 class SupportFactice {
   files: StatutDemandeSupport[] = [];
@@ -30,6 +39,19 @@ class SupportFactice {
   redactions: SaisieArticleAide[] = [];
   publications: string[] = [];
   liste: ArticleAide[] = [];
+  modelesEnregistres: ModeleReponse[] = [SANGLE, { ...SANGLE, id: 'm-2', raccourci: 'recu', titre: 'Reçu de paiement', texte: 'Votre reçu est dans l’application.' }];
+  creations: SaisieModeleReponse[] = [];
+
+  modeles() {
+    return of(this.modelesEnregistres);
+  }
+
+  creerModele(saisie: SaisieModeleReponse) {
+    this.creations.push(saisie);
+    const cree = { ...saisie, id: 'm-3', modifieLe: '2026-10-21T10:00:00Z' };
+    this.modelesEnregistres = [...this.modelesEnregistres, cree];
+    return of(cree);
+  }
 
   demandes(statut: StatutDemandeSupport) {
     this.files.push(statut);
@@ -104,6 +126,66 @@ describe('tickets support', () => {
 
     expect(client.reponses).toEqual([{ message: 'Échange gratuit au point relais.', suite: 'EN_ATTENTE_PARENT' }]);
     expect(lire(page)).toContain('Aucune demande dans cette file.');
+  });
+
+  it('insère un modèle par son raccourci, avec le prénom du parent, avant que l’opérateur envoie', async () => {
+    const client = new SupportFactice();
+    preparer(client);
+    const fixture = TestBed.createComponent(Tickets);
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+    bouton(page, 'La sangle se détache').click();
+    await fixture.whenStable();
+
+    const champ = page.querySelector('textarea') as HTMLTextAreaElement;
+    saisir(champ, '/s');
+    await fixture.whenStable();
+    expect(lire(page.querySelector('#modeles-proposes')!)).toContain('/sangle');
+    expect(lire(page.querySelector('#modeles-proposes')!)).not.toContain('/recu');
+
+    champ.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+    await fixture.whenStable();
+    expect(champ.value).toBe('Bonjour Mariam, ce n’est pas normal. Échange gratuit au point relais.');
+    // Rien n'est parti : l'opérateur relit, puis choisit l'envoi.
+    expect(client.reponses).toEqual([]);
+
+    saisir(champ, '/inconnu');
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Aucun modèle pour ce raccourci.');
+  });
+
+  it('crée un modèle de réponse depuis l’écran des tickets', async () => {
+    const client = new SupportFactice();
+    preparer(client);
+    const fixture = TestBed.createComponent(Tickets);
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+
+    bouton(page, 'Modèles de réponse').click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Reçu de paiement');
+    bouton(page, 'Enregistrer le modèle').click();
+    await fixture.whenStable();
+    expect(lire(page)).toContain('Donnez un raccourci, un titre et un texte au modèle.');
+
+    const champs = page.querySelectorAll('app-modeles fg-input input');
+    saisir(champs[0] as HTMLInputElement, 'rdv-relais');
+    saisir(champs[1] as HTMLInputElement, 'Rendez-vous au point relais');
+    saisir(page.querySelector('app-modeles textarea') as HTMLTextAreaElement, 'Présentez-vous au point relais avec le bracelet.');
+    bouton(page, 'Enregistrer le modèle').click();
+    await fixture.whenStable();
+
+    expect(client.creations).toEqual([{ raccourci: 'rdv-relais', titre: 'Rendez-vous au point relais', texte: 'Présentez-vous au point relais avec le bracelet.' }]);
+    expect(lire(page)).toContain('/rdv-relais');
+    expect(bouton(page, 'Supprimer')).toBeDefined();
+  });
+
+  it('reconnaît le raccourci en fin de saisie et garde le repère sans prénom connu', () => {
+    expect(raccourciSaisi('Bonjour,\n/san')).toBe('san');
+    expect(raccourciSaisi('/')).toBe('');
+    expect(raccourciSaisi('voir https://fasoguardian.bf/aide')).toBeNull();
+    expect(raccourciSaisi('Bonjour')).toBeNull();
+    expect(insererModele('Merci. /sangle', SANGLE, null)).toBe('Merci. Bonjour {prénom}, ce n’est pas normal. Échange gratuit au point relais.');
   });
 
   it('change de file et écrit l’attente en heures puis en jours', async () => {
