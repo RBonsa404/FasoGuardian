@@ -1,6 +1,7 @@
 /* Point d'entrée des styles FasoGuardian : à importer une seule fois par application. */
 @import './tokens.css';
 @import './tokens-derives.css';
+@import './mouvement.css';
 
 /* Les classes utilitaires des composants fg-* vivent dans la bibliothèque. */
 @source '../lib';

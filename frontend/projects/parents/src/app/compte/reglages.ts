@@ -20,7 +20,7 @@ type Feuille = 'mot-de-passe' | 'telephone' | 'cloture' | null;
   imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgChoixTheme, FgCode, FgFeuille, FgIcon, FgTelephone, SecondFacteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reglages.html',
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class Reglages {
   private readonly client = inject(ClientProfil);

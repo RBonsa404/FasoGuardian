@@ -103,7 +103,7 @@ export function resumer(situation: Situation | null | undefined, zones: readonly
   imports: [RouterLink, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@enfants.titre">Mes enfants</h1>
@@ -144,7 +144,7 @@ export function resumer(situation: Situation | null | undefined, zones: readonly
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class Enfants {
   private readonly client = inject(ClientFamille);
@@ -221,7 +221,7 @@ export class Enfants {
   imports: [DePipe, DatePipe, ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgChamp, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fiche-enfant.html',
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class FicheEnfantEcran {
   readonly id = input.required<string>();

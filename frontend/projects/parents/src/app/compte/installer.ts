@@ -21,7 +21,7 @@ interface InviteInstallation extends Event {
   imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgIcon, FgInterrupteur],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <div class="flex flex-col items-center gap-2 text-center">
@@ -64,7 +64,7 @@ interface InviteInstallation extends Event {
       <a class="grid min-h-12 place-items-center text-body font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n="@@installer.plusTard">Plus tard</a>
     </div>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class Installer {
   protected readonly push = inject(NotificationsPush);

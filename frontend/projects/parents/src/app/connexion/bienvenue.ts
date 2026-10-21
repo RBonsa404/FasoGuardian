@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { FgBouton, FgIcon, NomIcone } from 'ui';
+import { FgBouton, FgDecorMarque, FgIcon, NomIcone } from 'ui';
 
 import { noterIntroductionVue } from '../commun/introduction';
 
@@ -35,7 +35,7 @@ const VOLETS: readonly Volet[] = [
  */
 @Component({
   selector: 'app-bienvenue',
-  imports: [FgBouton, FgIcon],
+  imports: [FgBouton, FgDecorMarque, FgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex justify-end px-5 py-4">
@@ -48,11 +48,15 @@ const VOLETS: readonly Volet[] = [
         Passer
       </button>
     </div>
-    <div
-      class="mx-5 grid h-72 place-items-center rounded-xl border border-line bg-accent-soft text-accent"
-      aria-hidden="true"
-    >
-      <fg-icon [nom]="volets[volet()].icone" [taille]="96" />
+    <div class="relative mx-5 grid h-72 place-items-center overflow-hidden rounded-xl border border-line text-accent" aria-hidden="true">
+      <fg-decor-marque />
+      @for (v of volets; track v.titre; let i = $index) {
+        @if (i === volet()) {
+          <span class="flottant relative grid size-36 animate-(--animate-rise) place-items-center rounded-full bg-glass shadow-e3 backdrop-blur-md">
+            <fg-icon [nom]="v.icone" [taille]="72" />
+          </span>
+        }
+      }
     </div>
     <div class="flex flex-col gap-2.5 px-6 pt-7" aria-live="polite">
       <img src="logo-sombre.svg" alt="FasoGuardian" class="h-6 w-auto self-start clair:hidden" />
@@ -102,7 +106,7 @@ const VOLETS: readonly Volet[] = [
       </button>
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col lg:my-10 lg:min-h-[min(40rem,calc(100dvh-5rem))] lg:animate-(--animate-rise) lg:overflow-hidden lg:rounded-xl lg:border lg:border-line lg:bg-surface lg:shadow-e2' },
 })
 export class Bienvenue {
   private readonly router = inject(Router);

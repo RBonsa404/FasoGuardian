@@ -1,11 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
 
-import { COLORIS, Coloris, FgBracelet3d } from 'ui';
+import { COLORIS, Coloris, FgApparition, FgBracelet3d, FgDecorMarque } from 'ui';
 
 import { CARACTERISTIQUES } from '../contenu';
-import { Apparition } from '../apparition';
-import { DecorScene } from '../scene-bracelet';
 
 /** Part du défilement accomplie dans la section, entre 0 (elle entre dans la fenêtre) et 1 (elle en sort). */
 export function avancement(haut: number, hauteur: number, fenetre: number): number {
@@ -19,7 +17,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
  */
 @Component({
   selector: 'app-page-bracelet',
-  imports: [FgBracelet3d, Apparition, DecorScene],
+  imports: [FgBracelet3d, FgApparition, FgDecorMarque],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section #defilement class="relative lg:h-[220vh]" aria-labelledby="titre-bracelet">
@@ -47,7 +45,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
           </div>
         </div>
         <div class="relative h-96 overflow-hidden rounded-xl border border-line shadow-e3 lg:h-[70vh]">
-          <app-decor-scene />
+          <fg-decor-marque />
           <div class="absolute inset-0">
             <fg-bracelet-3d class="size-full" [explosion]="explosion()" [tour]="tour()" [coloris]="couleur()" libelle="Vue éclatée du bracelet : de haut en bas, le capot gravé du QR code, les antennes 4G et GNSS, la carte électronique, la batterie et la coque, tenus par une sangle à fermoir de sécurité." />
           </div>
@@ -59,7 +57,7 @@ export function avancement(haut: number, hauteur: number, fenetre: number): numb
       <h2 id="titre-fiche" class="m-0 text-h2 font-bold tracking-tight lg:text-h1">Fiche technique</h2>
       <dl class="m-0 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @for (ligne of caracteristiques; track ligne.cle) {
-          <div class="carte-vivante flex flex-col gap-1 rounded-lg border border-line bg-surface p-5" [apparition]="$index * 90">
+          <div class="carte-vivante flex flex-col gap-1 rounded-lg border border-line bg-surface p-5" [fgApparition]="$index * 90">
             <dd class="m-0 font-display text-h2 font-bold tabular-nums">{{ ligne.valeur }}</dd>
             <dt class="text-label text-text-2">{{ ligne.cle }}</dt>
           </div>

@@ -54,7 +54,7 @@ const GENRES: Record<GenreActionRejouable, string> = {
       </fg-banner>
     }
   `,
-  host: { class: 'empty:hidden mx-auto flex w-full max-w-md flex-col gap-2 px-5 pt-4 lg:mx-0 lg:max-w-2xl lg:px-10' },
+  host: { class: 'empty:hidden mx-auto flex w-full max-w-md flex-col gap-2 px-5 pt-4 lg:max-w-3xl lg:px-10' },
 })
 export class EtatsTransverses {
   protected readonly file = inject(FileHorsLigne);

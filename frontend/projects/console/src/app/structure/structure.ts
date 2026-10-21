@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { ClientAuthentification, ClientTableau, Compte, RoleInterne, Session } from 'api';
-import { FgBouton, PreferenceTheme, Theme } from 'ui';
+import { FgBouton, FgIcon, PreferenceTheme, Theme } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
 import { ENTREES } from './entrees';
@@ -12,37 +12,47 @@ import { Verrou } from './verrou';
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */
 @Component({
   selector: 'app-structure',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, Recherche, Verrou],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgIcon, Recherche, Verrou],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <aside class="flex w-62 flex-none flex-col gap-1 border-r border-line bg-surface px-3.5 py-5">
-      <div class="flex flex-wrap items-center gap-2.5 px-2 pb-4.5">
-        <img src="favicon.svg" alt="" class="size-6" />
-        <strong class="font-display text-body font-bold" i18n="@@console.titre">Console</strong>
-        <span class="ml-auto flex flex-wrap justify-end gap-1">
-          @for (role of session.roles(); track role) {
-            <span class="rounded-xs bg-surface-2 px-1.5 py-0.5 text-caption font-semibold text-text-2">{{ role }}</span>
-          }
+    <aside class="flex w-66 flex-none flex-col gap-1 overflow-y-auto border-r border-line bg-surface px-3.5 py-5">
+      <a routerLink="/" class="group flex items-center gap-3 rounded-md px-2 pb-5 focus-visible:outline-2 focus-visible:outline-accent">
+        <span class="grid size-10 flex-none place-items-center rounded-md bg-(image:--fond-hero) shadow-e2 transition-transform duration-(--duration-base) group-hover:-rotate-6">
+          <img src="favicon.svg" alt="" class="size-6" />
         </span>
-      </div>
-      <nav class="flex flex-col gap-1" i18n-aria-label="@@nav.libelle" aria-label="Navigation principale">
-        @for (entree of entrees(); track entree.lien) {
+        <span class="flex min-w-0 flex-col leading-tight">
+          <strong class="font-display text-body font-bold" i18n="@@console.titre">Console</strong>
+          <span class="flex flex-wrap gap-1 pt-0.5">
+            @for (role of session.roles(); track role) {
+              <span class="rounded-xs bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-text-2">{{ role }}</span>
+            }
+          </span>
+        </span>
+      </a>
+      <nav class="flex flex-col gap-0.5" i18n-aria-label="@@nav.libelle" aria-label="Navigation principale">
+        @for (entree of entrees(); track entree.lien; let i = $index) {
+          @if (entree.role && entree.role !== entrees()[i - 1]?.role) {
+            <span class="px-3 pt-4 pb-1 text-[11px] font-semibold tracking-widest text-text-3 uppercase">{{ libellesRoles[entree.role] }}</span>
+          }
           <a
-            class="flex h-10 items-center rounded-sm px-3 text-label font-medium text-text hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent"
-            routerLinkActive="bg-accent-soft font-semibold text-accent"
+            class="entree group relative flex h-10 items-center gap-3 rounded-md px-3 text-label font-medium text-text-2 transition-colors duration-(--duration-fast) hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-accent"
+            routerLinkActive="entree-active bg-accent-soft font-semibold text-accent!"
             [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
             [routerLink]="entree.lien"
-            >{{ entree.libelle }}
+            ><fg-icon [nom]="entree.icone" [taille]="18" class="flex-none transition-transform duration-(--duration-fast) group-hover:scale-110" /><span class="min-w-0 flex-1 truncate">{{ entree.libelle }}</span>
             @if (compteurs()[entree.lien]; as nombre) {
-              <span class="ml-auto text-caption font-semibold tabular-nums text-text-2">{{ nombre }}</span>
+              <span class="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1.5 text-[11px] font-bold text-white tabular-nums">{{ nombre }}</span>
             }</a
           >
         }
       </nav>
-      <div class="mt-auto flex flex-col gap-2.5 rounded-md border border-line bg-bg p-3">
-        <div class="flex flex-col gap-0.5">
-          <strong class="text-label font-semibold break-all">{{ compte()?.identifiant }}</strong>
-          <span class="text-caption text-text-3">{{ fonctions() }}</span>
+      <div class="mt-auto flex flex-col gap-3 rounded-lg border border-line bg-bg p-3.5 shadow-e1">
+        <div class="flex items-center gap-3">
+          <span class="grid size-9 flex-none place-items-center rounded-full bg-accent-soft text-accent"><fg-icon nom="agent" [taille]="18" /></span>
+          <span class="flex min-w-0 flex-col gap-0.5 leading-tight">
+            <strong class="text-label font-semibold break-all">{{ compte()?.identifiant }}</strong>
+            <span class="text-caption text-text-3">{{ fonctions() }}</span>
+          </span>
         </div>
         <button fg-button variante="secondary" taille="sm" type="button" (click)="deconnecter()" i18n="@@nav.deconnexion">
           Se déconnecter
@@ -50,7 +60,7 @@ import { Verrou } from './verrou';
       </div>
     </aside>
     <div class="flex min-w-0 flex-1 flex-col">
-      <header class="flex h-16 flex-none items-center gap-3.5 border-b border-line px-7">
+      <header class="sticky top-0 z-10 flex h-16 flex-none items-center gap-3.5 border-b border-line bg-bg/85 px-7 backdrop-blur-md">
         <app-recherche />
         <!-- Apparence (écran 56) : un bouton qui passe de « système » à « sombre » puis « clair ». -->
         <button
@@ -79,6 +89,23 @@ import { Verrou } from './verrou';
       <app-verrou [identifiant]="identifiant" />
     }
   `,
+  styles: `
+    /* Écran ouvert : un filet d'accent glisse à gauche de l'entrée. */
+    .entree::before {
+      content: '';
+      position: absolute;
+      inset-block: 9px;
+      left: 0;
+      width: 3px;
+      border-radius: 3px;
+      background: var(--color-accent);
+      transform: scaleY(0);
+      transition: transform var(--duration-base) var(--ease-enter);
+    }
+    .entree-active::before {
+      transform: scaleY(1);
+    }
+  `,
   host: { class: 'flex h-dvh' },
 })
 export class Structure {
@@ -96,6 +123,7 @@ export class Structure {
   private readonly router = inject(Router);
 
   protected readonly compte = signal<Compte | null>(null);
+  protected readonly libellesRoles = LIBELLES_ROLES;
   protected readonly entrees = computed(() =>
     ENTREES.filter((entree) => !entree.role || this.session.roles().includes(entree.role)),
   );

@@ -43,7 +43,7 @@ import { FgIcon } from 'ui';
     <div class="flex flex-1 flex-col gap-3 p-5"><ng-content /></div>
     <div class="flex flex-col gap-2 px-5 pt-4 pb-7"><ng-content select="[pied]" /></div>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col lg:my-10 lg:min-h-[min(40rem,calc(100dvh-5rem))] lg:animate-(--animate-rise) lg:overflow-hidden lg:rounded-xl lg:border lg:border-line lg:bg-surface lg:shadow-e2' },
 })
 export class Etape {
   readonly surtitre = input.required<string>();

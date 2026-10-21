@@ -1,3 +1,24 @@
-<main id="contenu">
-  <router-outlet />
+<main id="contenu" class="lg:flex">
+  @if (panneauMarque()) {
+    <!-- Grand écran, pages sans session : le décor de marque occupe la gauche, le formulaire reste à droite. -->
+    <aside class="relative hidden overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-[44%] lg:flex-none lg:flex-col lg:justify-between lg:p-12 xl:p-16" aria-hidden="true">
+      <fg-decor-marque />
+      <div class="relative flex items-center gap-3">
+        <img src="favicon.svg" alt="" class="size-10" />
+        <strong class="font-display text-h3 font-bold text-hero-fg">FasoGuardian</strong>
+      </div>
+      <div class="relative flex max-w-md flex-col gap-6">
+        <p class="m-0 font-display text-h1 leading-tight font-bold tracking-tight text-balance text-hero-fg">{{ accroche }}</p>
+        <ul class="m-0 flex list-none flex-col gap-3 p-0">
+          @for (point of points; track point.texte) {
+            <li class="flex items-center gap-3 text-body text-hero-fg-2">
+              <span class="grid size-9 flex-none place-items-center rounded-md bg-glass text-accent backdrop-blur-md"><fg-icon [nom]="point.icone" [taille]="18" /></span>
+              {{ point.texte }}
+            </li>
+          }
+        </ul>
+      </div>
+    </aside>
+  }
+  <div class="min-w-0 flex-1 lg:flex lg:flex-col lg:justify-center"><router-outlet /></div>
 </main>

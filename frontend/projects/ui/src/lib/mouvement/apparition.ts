@@ -6,10 +6,10 @@ import { isPlatformBrowser } from '@angular/common';
  * que la page n'est pas hydratée, le contenu est visible tel quel ; la classe qui le masque n'est posée qu'au
  * navigateur, juste avant d'observer le bloc. « Réduire les animations » du système coupe l'effet (styles.css).
  */
-@Directive({ selector: '[apparition]' })
-export class Apparition {
+@Directive({ selector: '[fgApparition]' })
+export class FgApparition {
   /** Décalage en millisecondes, pour faire entrer les éléments d'une liste l'un après l'autre. */
-  readonly apparition = input<number | ''>('');
+  readonly fgApparition = input<number | ''>('');
 
   constructor() {
     const element = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
@@ -23,7 +23,7 @@ export class Apparition {
       if (rect.top < innerHeight && rect.bottom > 0) {
         return;
       }
-      const delai = this.apparition();
+      const delai = this.fgApparition();
       if (delai !== '') {
         element.style.setProperty('--delai-apparition', `${delai}ms`);
       }

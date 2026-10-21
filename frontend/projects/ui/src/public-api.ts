@@ -18,3 +18,5 @@ export * from './lib/theme/choix-theme';
 export * from './lib/bracelet-3d/modele';
 export * from './lib/bracelet-3d/bracelet-3d';
 export * from './lib/reseau/points-relais';
+export * from './lib/mouvement/apparition';
+export * from './lib/mouvement/decor-marque';

@@ -25,7 +25,7 @@ export const LIBELLES_CATEGORIES: Record<CategorieAide, string> = {
   imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@aide.titre">Aide</h1>
@@ -63,7 +63,7 @@ export const LIBELLES_CATEGORIES: Record<CategorieAide, string> = {
 
     <a class="mt-auto grid min-h-13 place-items-center rounded-md border border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" routerLink="/aide/demandes" i18n="@@aide.demandes">Mes demandes au support</a>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class Aide {
   private readonly client = inject(ClientSupport);
@@ -136,7 +136,7 @@ export class Aide {
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class ArticleDAide {
   readonly slug = input.required<string>();

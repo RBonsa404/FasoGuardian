@@ -69,7 +69,7 @@ export function age(dateNaissance: string, aujourdhui = new Date()): number {
       <a class="grid min-h-12 place-items-center rounded-md border border-line-strong text-body font-semibold focus-visible:outline-2 focus-visible:outline-accent" href="tel:17" i18n="@@session.appeler">Appeler le 17</a>
     </div>
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:my-10 lg:min-h-[min(40rem,calc(100dvh-5rem))] lg:animate-(--animate-rise) lg:overflow-hidden lg:rounded-xl lg:border lg:border-line lg:bg-surface lg:shadow-e2' },
 })
 export class SessionExpiree {
   protected readonly fiches = signal<readonly FicheLocale[]>([]);

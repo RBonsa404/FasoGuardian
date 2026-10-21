@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClientConsole } from 'api';
-import { FgBanniere, FgBouton, FgChamp, FgCode } from 'ui';
+import { FgBanniere, FgBouton, FgChamp, FgCode, FgDecorMarque } from 'ui';
 
 import { erreurLisible } from '../commun/acces';
 import { QrEnrolement } from './qr-enrolement';
@@ -14,10 +14,11 @@ type Etat = 'identifiants' | 'code' | 'enrolement';
 /** Connexion d'un agent (écran 55, US-ADM-001) : identifiant, mot de passe, puis code TOTP obligatoire. */
 @Component({
   selector: 'app-connexion',
-  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgChamp, FgCode, QrEnrolement],
+  imports: [ReactiveFormsModule, FgBanniere, FgBouton, FgChamp, FgCode, FgDecorMarque, QrEnrolement],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <form class="flex w-full max-w-sm flex-col gap-4 rounded-lg border border-line bg-surface p-7 shadow-e2" (submit)="$event.preventDefault(); valider()">
+    <fg-decor-marque />
+    <form class="relative flex w-full max-w-sm animate-(--animate-rise) flex-col gap-4 rounded-lg border border-line bg-surface/95 p-7 shadow-e3 backdrop-blur-md" (submit)="$event.preventDefault(); valider()">
       <div class="flex items-center gap-2.5">
         <img src="favicon.svg" alt="" class="size-7" />
         <strong class="font-display text-body font-bold" i18n="@@console.titre">Console</strong>
@@ -68,7 +69,7 @@ type Etat = 'identifiants' | 'code' | 'enrolement';
       </p>
     </form>
   `,
-  host: { class: 'grid min-h-dvh place-items-center p-6' },
+  host: { class: 'relative grid min-h-dvh place-items-center overflow-hidden p-6' },
 })
 export class Connexion {
   private readonly client = inject(ClientConsole);

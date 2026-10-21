@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FgIcon } from 'ui';
+import { FgIcon, FgApparition } from 'ui';
 
 import { COMPARATIF, CONSERVATION, ENGAGEMENTS, ETAPES_ECOLE, FONCTIONNEMENT, OFFRES, PRIX_BRACELET, QUESTIONS_TARIFS } from '../contenu';
-import { Apparition } from '../apparition';
 
 const TONS = { accent: 'text-accent', succes: 'text-success', alerte: 'text-alert-ink', neutre: 'text-text-2' } as const;
 const PASTILLES = { accent: 'bg-accent-soft text-accent', succes: 'bg-success-soft text-success', alerte: 'bg-alert-soft text-alert-ink', neutre: 'bg-surface-2 text-text-2' } as const;
@@ -12,7 +11,7 @@ const PASTILLES = { accent: 'bg-accent-soft text-accent', succes: 'bg-success-so
 /** Fonctionnement (écran 3) : ce que voit le parent, ce que voit un inconnu, ce que personne ne voit. */
 @Component({
   selector: 'app-fonctionnement',
-  imports: [RouterLink, FgIcon, Apparition],
+  imports: [RouterLink, FgIcon, FgApparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
@@ -23,7 +22,7 @@ const PASTILLES = { accent: 'bg-accent-soft text-accent', succes: 'bg-success-so
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 lg:grid-cols-2">
         @for (bloc of blocs; track bloc.surtitre) {
-          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [fgApparition]="$index * 90">
             <span class="flex items-center gap-3">
               <span class="grid size-11 place-items-center rounded-md" [class]="pastilles[bloc.ton]"><fg-icon [nom]="bloc.icone" [taille]="22" /></span>
               <span class="text-caption font-semibold tracking-widest" [class]="tons[bloc.ton]">{{ bloc.surtitre }}</span>
@@ -50,7 +49,7 @@ export class Fonctionnement {
 /** Offres, comparatif et questions tarifaires (écran 4). */
 @Component({
   selector: 'app-offres',
-  imports: [RouterLink, FgIcon, Apparition],
+  imports: [RouterLink, FgIcon, FgApparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
@@ -106,7 +105,7 @@ export class Fonctionnement {
       </div>
       <dl class="m-0 grid gap-4 lg:grid-cols-2">
         @for (question of questions; track question.question) {
-          <div class="carte-vivante flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-5" [apparition]="$index * 90">
+          <div class="carte-vivante flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-5" [fgApparition]="$index * 90">
             <dt class="text-body font-semibold">{{ question.question }}</dt>
             <dd class="m-0 text-label text-text-2">{{ question.reponse }}</dd>
           </div>
@@ -127,7 +126,7 @@ export class Offres {
 /** Établissements scolaires (écran 5). */
 @Component({
   selector: 'app-ecoles',
-  imports: [RouterLink, Apparition],
+  imports: [RouterLink, FgApparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
@@ -139,7 +138,7 @@ export class Offres {
       </div>
       <ol class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
         @for (etape of etapes; track etape.numero) {
-          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [fgApparition]="$index * 90">
             <span class="font-display text-h2 font-bold text-accent">{{ etape.numero }}</span>
             <h2 class="m-0 text-h3 font-semibold">{{ etape.titre }}</h2>
             <p class="m-0 text-label text-text-2">{{ etape.texte }}</p>
@@ -159,7 +158,7 @@ export class Ecoles {
 /** Sécurité et protection des données (écran 6). */
 @Component({
   selector: 'app-securite',
-  imports: [RouterLink, Apparition],
+  imports: [RouterLink, FgApparition],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="halo relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20">
@@ -171,7 +170,7 @@ export class Ecoles {
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
         @for (engagement of engagements; track engagement.titre) {
-          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="$index * 90">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [fgApparition]="$index * 90">
             <h2 class="m-0 text-h3 font-semibold">{{ engagement.titre }}</h2>
             <p class="m-0 text-label text-text-2">{{ engagement.texte }}</p>
           </li>

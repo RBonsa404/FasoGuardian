@@ -25,8 +25,9 @@ const AUTRES: readonly { chemin: string; libelle: string; icone: NomIcone }[] = 
 ];
 
 const CARTE_ACTION =
-  'flex min-w-0 flex-col items-center gap-1.5 text-center text-[11px] leading-tight font-medium text-text-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md';
-const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border border-line bg-surface text-text';
+  'group flex min-w-0 flex-col items-center gap-1.5 text-center text-[11px] leading-tight font-medium text-text-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md disabled:opacity-60 lg:flex-row lg:gap-3 lg:rounded-lg lg:border lg:border-line lg:bg-surface lg:p-3 lg:text-left lg:text-label lg:text-text lg:transition-[transform,box-shadow,border-color] lg:duration-(--duration-base) lg:hover:-translate-y-0.5 lg:hover:border-line-strong lg:hover:shadow-e2';
+const PASTILLE_ACTION =
+  'grid size-13 flex-none place-items-center rounded-lg border border-line bg-surface text-text transition-colors duration-(--duration-fast) group-hover:text-accent lg:size-10 lg:rounded-md lg:border-0 lg:bg-accent-soft lg:text-accent';
 
 /**
  * Aperçu d'un enfant sur le tableau de bord (écran 16, US-PAR-006) : carte en tête d'écran avec le choix de
@@ -38,7 +39,7 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
   imports: [DePipe, RouterLink, Carte, FgBanniere, FgBouton, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="relative -mx-5 -mt-10 h-[330px] overflow-hidden lg:row-span-8 lg:mx-0 lg:mt-0 lg:h-128 lg:rounded-xl lg:border lg:border-line">
+    <div class="relative -mx-5 -mt-10 h-[330px] overflow-hidden lg:sticky lg:top-8 lg:row-span-8 lg:mx-0 lg:mt-0 lg:h-[min(44rem,calc(100dvh-10rem))] lg:rounded-xl lg:border lg:border-line lg:shadow-e2">
       @if (situation()) {
         <app-carte class="absolute inset-0" [libelle]="libelleCarte()" [position]="repere()" [zones]="zones()" />
       } @else {
@@ -63,7 +64,7 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
     </div>
 
     @if (situation(); as s) {
-      <section class="relative z-1000 mx-[-8px] -mt-7 flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-4 shadow-e2 lg:mx-0 lg:mt-0" aria-live="polite">
+      <section class="relative z-1000 mx-[-8px] -mt-7 flex animate-(--animate-rise) flex-col gap-3 rounded-[22px] border border-line bg-surface p-4 shadow-e2 lg:mx-0 lg:mt-0 lg:p-5" aria-live="polite">
         <div class="flex items-start justify-between gap-3">
           <div class="flex min-w-0 flex-col gap-0.75">
             <h2 class="m-0 font-display text-[18px] font-semibold">{{ titre() }}</h2>
@@ -114,7 +115,7 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
     <ng-content />
 
     @if (situation()) {
-      <nav class="grid grid-cols-4 gap-2 pt-0.5" [attr.aria-label]="libelleActions()">
+      <nav class="grid grid-cols-4 gap-2 pt-0.5 lg:grid-cols-2" [attr.aria-label]="libelleActions()">
         <button type="button" [class]="carteAction" [disabled]="enDemande()" (click)="localiser()">
           <span [class]="pastilleAction"><fg-icon nom="localiser" [taille]="22" /></span>
           <ng-container i18n="@@apercu.localiser">Localiser maintenant</ng-container>
@@ -156,17 +157,17 @@ const PASTILLE_ACTION = 'grid size-13 place-items-center rounded-lg border borde
 
       <nav class="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface" [attr.aria-label]="libelleAutres()">
         @for (autre of autres; track autre.chemin) {
-          <a class="flex min-h-12 items-center gap-3 px-3.5 text-label font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="'/enfants/' + enfant().id + '/' + autre.chemin">
+          <a class="group flex min-h-12 items-center gap-3 px-3.5 text-label font-medium transition-colors duration-(--duration-fast) first:rounded-t-lg last:rounded-b-lg hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" [routerLink]="'/enfants/' + enfant().id + '/' + autre.chemin">
             <fg-icon class="text-accent" [nom]="autre.icone" [taille]="20" />
             <span class="flex-1">{{ autre.libelle }}</span>
-            <fg-icon class="rotate-180 text-text-3" nom="retour" [taille]="16" />
+            <fg-icon class="rotate-180 text-text-3 transition-transform duration-(--duration-fast) group-hover:translate-x-0.5" nom="retour" [taille]="16" />
           </a>
         }
       </nav>
     }
   `,
   // Grand écran : la carte à gauche, sur toute la hauteur ; état, actions et alertes à droite.
-  host: { class: 'flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-4' },
+  host: { class: 'flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start lg:gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]' },
 })
 export class ApercuEnfant {
   readonly enfant = input.required<FicheEnfant>();

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 import { Alerte, ClientAlertes, ClientAuthentification, ClientFamille, Compte, FicheEnfant } from 'api';
@@ -17,12 +18,31 @@ import { ApercuEnfant } from './apercu-enfant';
  */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, ApercuEnfant, BandeauAbonnement, FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette],
+  imports: [DatePipe, RouterLink, ApercuEnfant, BandeauAbonnement, FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (compte()?.statut === 'ACTIF') {
-      <h1 class="sr-only" i18n="@@accueil.tableau">Tableau de bord</h1>
-      @if (enfants(); as liste) {
+      <!-- Grand écran : un vrai en-tête de page, la date du jour et les enfants à portée de clic. -->
+      <header class="flex flex-wrap items-end justify-between gap-4 max-lg:contents">
+        <div class="flex flex-col gap-1 max-lg:sr-only">
+          <span class="text-caption font-semibold tracking-widest text-accent uppercase">{{ aujourdhui | date: 'EEEE d MMMM' }}</span>
+          <h1 class="m-0 animate-(--animate-rise) text-h1 font-bold tracking-tight" i18n="@@accueil.tableau">Tableau de bord</h1>
+        </div>
+        @if ((enfants() ?? []).length > 1) {
+          <div class="hidden gap-2 lg:flex" role="group" i18n-aria-label="@@accueil.choixEnfant" aria-label="Enfant affiché">
+            @for (enfant of enfants() ?? []; track enfant.id) {
+              <button type="button" class="flex h-11 items-center gap-2 rounded-full border py-1 pr-4 pl-1.5 text-label font-semibold transition-colors duration-(--duration-fast) focus-visible:outline-2 focus-visible:outline-accent" [class]="enfant.id === choisi()?.id ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-surface text-text-2 hover:border-line-strong hover:text-text'" [attr.aria-pressed]="enfant.id === choisi()?.id" (click)="choisir(enfant.id)">
+                <span class="grid size-8 place-items-center rounded-full border-2 border-accent bg-surface-2 font-display text-label font-bold text-text" aria-hidden="true">{{ enfant.prenom.charAt(0) }}</span>
+                {{ enfant.prenom }}
+              </button>
+            }
+          </div>
+        }
+      </header>
+      @if (erreur(); as message) {
+        <fg-banner ton="erreur">{{ message }}</fg-banner>
+        <button fg-button variante="secondary" type="button" class="self-start" (click)="charger()" i18n="@@commun.reessayer">Réessayer</button>
+      } @else if (enfants(); as liste) {
         @if (choisi(); as enfant) {
           <app-apercu-enfant [enfant]="enfant" [alertes]="alertesDe(enfant.id)" [alertesEnCours]="alertesEnCours()" (changerEnfant)="choixOuvert.set(true)">
             @if (alertesEnCours(); as nombre) {
@@ -38,7 +58,7 @@ import { ApercuEnfant } from './apercu-enfant';
                 <span class="text-label" i18n="@@accueil.alertes.voir">Voir</span>
               </a>
             }
-            <app-bandeau-abonnement [enfant]="enfant.id" />
+            <app-bandeau-abonnement class="empty:hidden" [enfant]="enfant.id" />
           </app-apercu-enfant>
         } @else {
           <section class="flex flex-col gap-3 rounded-lg border border-line bg-surface p-5 lg:max-w-md">
@@ -92,7 +112,7 @@ import { ApercuEnfant } from './apercu-enfant';
       }
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:mx-0 lg:max-w-6xl lg:px-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-10 pb-7 lg:mx-0 lg:max-w-7xl lg:gap-6 lg:px-10 lg:pt-8' },
 })
 export class Accueil {
   private readonly client = inject(ClientAuthentification);
@@ -116,6 +136,7 @@ export class Accueil {
     return liste.find((enfant) => enfant.id === this.courant.id()) ?? liste[0] ?? null;
   });
   protected readonly erreur = signal<string | null>(null);
+  protected readonly aujourdhui = new Date();
 
   constructor() {
     this.charger();

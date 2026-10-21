@@ -17,7 +17,7 @@ import { jourCourt, montant, nomMoyen, resumeOffre } from './libelles';
   imports: [ReactiveFormsModule, RouterLink, FgBanniere, FgBouton, FgIcon, FgInterrupteur, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
+    <a class="-ml-2.5 grid size-11 place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-accent lg:hidden" routerLink="/" i18n-aria-label="@@etape.retour" aria-label="Retour">
       <fg-icon nom="retour" [taille]="22" />
     </a>
     <h1 class="m-0 text-h2 font-bold tracking-tight" i18n="@@abonnement.titre">Mon abonnement</h1>
@@ -87,22 +87,22 @@ import { jourCourt, montant, nomMoyen, resumeOffre } from './libelles';
       }
 
       <h2 class="m-0 pt-1 text-label font-semibold" i18n="@@abonnement.comparer">Comparer les offres</h2>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:gap-3">
         @for (offre of offres(); track offre.code) {
           <button
             type="button"
-            class="flex flex-col gap-1.5 rounded-lg bg-surface px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent"
+            class="carte-vivante flex flex-col gap-1.5 rounded-lg bg-surface px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent lg:gap-3 lg:p-5"
             [class]="offre.code === a.offre ? 'border-2 border-accent' : 'border border-line'"
             (click)="payer(offre)"
           >
-            <span class="flex items-center justify-between gap-3">
+            <span class="flex items-center justify-between gap-3 lg:flex-col lg:items-start lg:gap-1">
               <strong class="text-body font-semibold">
                 {{ offre.libelle }}
                 @if (offre.code === a.offre) {
                   <ng-container i18n="@@abonnement.actuelle"> · actuelle</ng-container>
                 }
               </strong>
-              <span class="text-label font-semibold tabular-nums">{{ montant(offre.prixFcfa) }} FCFA</span>
+              <span class="text-label font-semibold tabular-nums lg:font-display lg:text-h2 lg:font-bold">{{ montant(offre.prixFcfa) }} FCFA</span>
             </span>
             <span class="text-caption text-text-2">{{ resume(offre) }}</span>
           </button>
@@ -129,7 +129,7 @@ import { jourCourt, montant, nomMoyen, resumeOffre } from './libelles';
       <fg-skeleton forme="carte" />
     }
   `,
-  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:mx-0 lg:max-w-2xl lg:px-10 lg:pt-10' },
+  host: { class: 'mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class EcranAbonnement {
   /** Enfant à montrer (paramètre de requête) ; à défaut, le premier. */

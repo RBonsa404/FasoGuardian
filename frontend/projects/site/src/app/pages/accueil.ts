@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FgIcon } from 'ui';
+import { FgIcon, FgApparition } from 'ui';
 
-import { Apparition } from '../apparition';
 import { SceneBracelet } from '../scene-bracelet';
 import { ATOUTS, ETAPES, OFFRES, PRIX_BRACELET, SCENARIOS } from '../contenu';
 
@@ -16,7 +15,7 @@ const TONS = {
 /** Accueil (écran 1) : promesse, bracelet en trois dimensions, étapes, scénarios, offres, écoles. */
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, FgIcon, Apparition, SceneBracelet],
+  imports: [RouterLink, FgIcon, FgApparition, SceneBracelet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="halo relative mx-auto grid w-full max-w-6xl items-center gap-10 px-5 py-14 lg:grid-cols-2 lg:px-8 lg:py-24">
@@ -64,7 +63,7 @@ const TONS = {
       <ol class="relative m-0 grid list-none gap-4 p-0 lg:grid-cols-3">
         <span class="pointer-events-none absolute top-12 right-[16%] left-[16%] hidden border-t-2 border-dashed border-line-strong lg:block" aria-hidden="true"></span>
         @for (etape of etapes; track etape.numero; let rang = $index) {
-          <li class="carte-vivante relative flex flex-col gap-3 rounded-lg border border-line bg-surface p-6" [apparition]="rang * 120">
+          <li class="carte-vivante relative flex flex-col gap-3 rounded-lg border border-line bg-surface p-6" [fgApparition]="rang * 120">
             <div class="flex items-center justify-between">
               <span class="font-display text-h2 font-bold text-accent tabular-nums">{{ etape.numero }}</span>
               <span class="grid size-12 place-items-center rounded-full bg-accent-soft text-accent"><fg-icon [nom]="etape.icone" [taille]="24" /></span>
@@ -76,7 +75,7 @@ const TONS = {
       </ol>
       <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
         @for (atout of atouts; track atout.titre; let rang = $index) {
-          <li class="flex flex-col gap-2" [apparition]="rang * 90">
+          <li class="flex flex-col gap-2" [fgApparition]="rang * 90">
             <span class="grid size-11 place-items-center rounded-md" [class]="tons[atout.ton]"><fg-icon [nom]="atout.icone" [taille]="22" /></span>
             <h3 class="m-0 text-body font-semibold">{{ atout.titre }}</h3>
             <p class="m-0 text-label text-text-2">{{ atout.texte }}</p>
@@ -93,7 +92,7 @@ const TONS = {
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 lg:grid-cols-3">
         @for (scenario of scenarios; track scenario.titre; let rang = $index) {
-          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [apparition]="rang * 120">
+          <li class="carte-vivante flex flex-col gap-2 rounded-lg border border-line bg-surface p-6" [fgApparition]="rang * 120">
             <span class="text-caption font-semibold text-text-3">Scénario · {{ scenario.lieu }}</span>
             <h3 class="m-0 text-h3 font-semibold">{{ scenario.titre }}</h3>
             <p class="m-0 text-body text-text-2">{{ scenario.texte }}</p>
@@ -110,7 +109,7 @@ const TONS = {
       </div>
       <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
         @for (offre of offres; track offre.nom; let rang = $index) {
-          <li class="carte-vivante flex flex-col gap-3 rounded-lg bg-surface p-6" [class]="offre.miseEnAvant ? 'border-2 border-accent shadow-e3' : 'border border-line'" [apparition]="rang * 90">
+          <li class="carte-vivante flex flex-col gap-3 rounded-lg bg-surface p-6" [class]="offre.miseEnAvant ? 'border-2 border-accent shadow-e3' : 'border border-line'" [fgApparition]="rang * 90">
             <div class="flex min-h-6 items-center justify-between gap-2">
               <h3 class="m-0 text-h3 font-semibold">{{ offre.nom }}</h3>
               @if (offre.etiquette) {
@@ -130,7 +129,7 @@ const TONS = {
     </section>
 
     <section class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-14 lg:px-8 lg:py-20" aria-labelledby="titre-ecoles">
-      <div class="halo relative flex flex-col gap-4 overflow-hidden rounded-xl border border-line bg-surface p-8 lg:p-12" apparition>
+      <div class="halo relative flex flex-col gap-4 overflow-hidden rounded-xl border border-line bg-surface p-8 lg:p-12" fgApparition>
         <span class="text-caption font-semibold tracking-widest text-accent uppercase">Établissements scolaires</span>
         <h2 id="titre-ecoles" class="m-0 text-h2 font-bold tracking-tight lg:text-h1">L'offre École : le bracelet fourni par l'établissement.</h2>
         <p class="m-0 max-w-2xl text-body-lg text-text-2">4 000 FCFA par élève et par mois, sur convention. Inscription accompagnée des familles sur place.</p>
@@ -140,7 +139,7 @@ const TONS = {
 
     <!-- Appel final : les deux gestes qui suivent la visite, acheter et trouver où. -->
     <section class="mx-auto w-full max-w-6xl px-5 pb-20 lg:px-8" aria-labelledby="titre-appel">
-      <div class="relative overflow-hidden rounded-xl bg-(image:--fond-hero) px-8 py-12 text-hero-fg shadow-e3 lg:px-14 lg:py-16" apparition>
+      <div class="relative overflow-hidden rounded-xl bg-(image:--fond-hero) px-8 py-12 text-hero-fg shadow-e3 lg:px-14 lg:py-16" fgApparition>
         <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div class="flex max-w-xl flex-col gap-3">
             <h2 id="titre-appel" class="m-0 text-h2 font-bold tracking-tight text-balance lg:text-h1">Un bracelet, et vous savez qu'on vous préviendra.</h2>

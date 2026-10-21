@@ -222,10 +222,13 @@ export class Verification {
       .subscribe({
         next: () => {
           this.enCours.set(false);
-          this.etat.effacer();
-          this.identite.reset();
-          this.enfant.reset();
-          void this.router.navigate(['/verification', 'instruction']);
+          // L'état n'est effacé qu'une fois sur l'écran d'instruction : effacé plus tôt, pendant la transition
+          // d'écran, il ramènerait le parent à la première étape faute de préalables.
+          void this.router.navigate(['/verification', 'instruction']).then(() => {
+            this.etat.effacer();
+            this.identite.reset();
+            this.enfant.reset();
+          });
         },
         error: (cause: unknown) => {
           this.enCours.set(false);
