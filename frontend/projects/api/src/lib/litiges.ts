@@ -56,3 +56,20 @@ export class ClientLitiges {
     return this.http.post<Litige>(`${LITIGES}/${id}/decision`, { decision, fondement, referenceDuFondement: referenceDuFondement || null });
   }
 }
+
+/** Litige ouvert sur un lien du parent connecté : l'enfant concerné et les mesures en vigueur, sans le motif. */
+export interface LitigeDuTuteur {
+  readonly enfant: string;
+  readonly geolocalisationSuspendue: boolean;
+  readonly ouvertLe: string;
+}
+
+/** Côté parent : savoir que les réglages d'un enfant sont gelés, et pourquoi (US-KYC-001). */
+@Injectable({ providedIn: 'root' })
+export class ClientMesLitiges {
+  private readonly http = inject(HttpClient);
+
+  mesLitiges(): Observable<LitigeDuTuteur[]> {
+    return this.http.get<LitigeDuTuteur[]>('/api/v1/moi/litiges');
+  }
+}

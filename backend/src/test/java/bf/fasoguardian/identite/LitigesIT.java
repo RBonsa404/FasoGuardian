@@ -60,6 +60,11 @@ class LitigesIT extends TestIntegration {
                 .andExpect(jsonPath("$.geolocalisationSuspendue").value(true)).andExpect(jsonPath("$.tuteur").isNotEmpty())
                 .andExpect(jsonPath("$.echeanceLe").exists()).andReturn().getResponse().getContentAsString(), "\"id\":\"([0-9a-f-]{36})\"");
         acteurs.attendreSms(famille.parent().telephone(), "en cours d'instruction", "Le SOS et la page QR restent actifs");
+        // L'application du parent sait pourquoi les réglages sont gelés, sans en lire le motif.
+        avec(get("/api/v1/moi/litiges"), parent).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].enfant").value(famille.enfantId())).andExpect(jsonPath("$[0].geolocalisationSuspendue").value(true))
+                .andExpect(jsonPath("$[0].motif").doesNotExist());
+        avec(get("/api/v1/moi/litiges"), kyc).andExpect(status().isForbidden());
 
         // Réglages gelés : rien ne se modifie autour de l'enfant, ni le numéro, ni la clôture du compte.
         json(post(enfant + "/contacts"), CONTACT, parent).andExpect(status().isLocked()).andExpect(jsonPath("$.code").value("COMPTE_GELE"));
@@ -87,6 +92,7 @@ class LitigesIT extends TestIntegration {
         // Un autre parent n'est pas concerné par ce litige.
         ParentAvecEnfant autre = acteurs.parentAvecEnfant();
         json(post("/api/v1/enfants/" + autre.enfantId() + "/contacts"), CONTACT, autre.parent().jeton()).andExpect(status().isCreated());
+        avec(get("/api/v1/moi/litiges"), autre.parent().jeton()).andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test
@@ -120,6 +126,7 @@ class LitigesIT extends TestIntegration {
         json(post(LITIGES + "/" + second + "/decision"), "{\"decision\":\"LIEN_MAINTENU\",\"fondement\":\"ACCORD_ECRIT\"}", kyc)
                 .andExpect(status().isOk());
         json(post("/api/v1/enfants/" + maintenu.enfantId() + "/contacts"), CONTACT, maintenu.parent().jeton()).andExpect(status().isCreated());
+        avec(get("/api/v1/moi/litiges"), maintenu.parent().jeton()).andExpect(jsonPath("$.length()").value(0));
         acteurs.attendreSms(maintenu.parent().telephone(), "est clos", "de nouveau modifiables");
     }
 

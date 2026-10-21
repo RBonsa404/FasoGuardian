@@ -7,6 +7,7 @@ import { FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette } from 'u
 
 import { enCours } from '../alertes/libelles';
 import { BandeauAbonnement } from '../abonnement/bandeau';
+import { BandeauLitige } from './bandeau-litige';
 import { CopieLocale } from '../commun/copie-locale';
 import { EnfantCourant } from '../commun/enfant-courant';
 import { erreurLisible } from '../commun/erreurs';
@@ -18,7 +19,7 @@ import { ApercuEnfant } from './apercu-enfant';
  */
 @Component({
   selector: 'app-accueil',
-  imports: [DatePipe, RouterLink, ApercuEnfant, BandeauAbonnement, FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette],
+  imports: [DatePipe, RouterLink, ApercuEnfant, BandeauAbonnement, BandeauLitige, FgBadge, FgBanniere, FgBouton, FgFeuille, FgIcon, FgSquelette],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (compte()?.statut === 'ACTIF') {
@@ -58,6 +59,7 @@ import { ApercuEnfant } from './apercu-enfant';
                 <span class="text-label" i18n="@@accueil.alertes.voir">Voir</span>
               </a>
             }
+            <app-bandeau-litige class="empty:hidden" [enfant]="enfant.id" [prenom]="enfant.prenom" />
             <app-bandeau-abonnement class="empty:hidden" [enfant]="enfant.id" />
           </app-apercu-enfant>
         } @else {

@@ -9,7 +9,7 @@ const CONTACT = { lien: 'Tante', nom: 'Fatou Sawadogo', telephone: '76112233', v
  * Litige de filiation (US-KYC-001) : l'agent KYC ouvre un litige sur un compte actif, ce qui gèle les réglages
  * du tuteur contesté et suspend sa vue de la position ; la décision lève les mesures et est notifiée.
  */
-test('un agent KYC ouvre un litige qui gèle le compte, puis enregistre la décision', async ({ page, request }) => {
+test('un agent KYC ouvre un litige qui gèle le compte, puis enregistre la décision', async ({ page, browser, request }) => {
   const { telephone, reference } = await parentAvecEnfant(request);
   const session = await (await request.post(`${SERVEUR}/api/v1/auth/connexion`, { data: { telephone, motDePasse: MOT_DE_PASSE_PARENT } })).json();
   const entetes = { Authorization: `Bearer ${session.jetonAcces}` };
@@ -50,6 +50,19 @@ test('un agent KYC ouvre un litige qui gèle le compte, puis enregistre la déci
   expect((await gele.json()).code).toBe('COMPTE_GELE');
   expect((await request.get(`${enfant}/position`, { headers: entetes })).status()).toBe(423);
   expect((await request.get(enfant, { headers: entetes })).status()).toBe(200);
+  // Le tableau de bord du parent dit pourquoi, sans le motif du signalement
+  const telephoneParent = await browser.newContext({ viewport: { width: 360, height: 800 }, baseURL: test.info().project.use.baseURL });
+  const parent = await telephoneParent.newPage();
+  await parent.goto('/connexion');
+  await parent.getByLabel('Numéro mobile').fill(telephone);
+  await parent.getByLabel('Mot de passe').fill(MOT_DE_PASSE_PARENT);
+  await parent.getByRole('button', { name: 'Se connecter' }).click();
+  const bandeau = parent.getByRole('region', { name: 'Signalement en cours' });
+  await expect(bandeau).toContainText('Ses réglages sont gelés');
+  await expect(bandeau).toContainText('Sa position est suspendue');
+  await expect(bandeau).not.toContainText('Jugement');
+  await parent.screenshot({ path: 'e2e/.etat/ecran-16-litige.png', fullPage: true });
+  await telephoneParent.close();
 
   // Décision : lien maintenu sur accord écrit ; le gel est levé
   await page.getByRole('button', { name: 'Enregistrer la décision' }).click();

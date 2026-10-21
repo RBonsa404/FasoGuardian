@@ -47,6 +47,10 @@ public class Litiges {
         public static final Mesures AUCUNE = new Mesures(false, false);
     }
 
+    /** Ce que le tuteur sait d'un litige qui le concerne : réglages gelés, position peut-être suspendue. */
+    public record LitigeDuTuteur(UUID enfant, boolean geolocalisationSuspendue, Instant ouvertLe) {
+    }
+
     /** @param tuteur et {@code enfant} : identités vérifiées du dossier KYC, visibles du seul agent KYC */
     public record LitigeVue(UUID id, String reference, String dossierKyc, String tuteur, String enfant, String motif,
             Statut statut, boolean geolocalisationSuspendue, Instant ouvertLe, Instant echeanceLe, Decision decision,
@@ -81,6 +85,16 @@ public class Litiges {
     public Mesures mesures(UUID tuteurId, UUID enfantId) {
         return litiges.findByTuteurIdAndEnfantIdAndStatut(tuteurId, enfantId, Statut.OUVERT)
                 .map(litige -> new Mesures(true, litige.geolocalisationSuspendue())).orElse(Mesures.AUCUNE);
+    }
+
+    /**
+     * Litiges ouverts sur les liens du tuteur, tels qu'il les voit : l'enfant concerné et les mesures en vigueur,
+     * ni le motif ni l'auteur du signalement.
+     */
+    @Transactional(readOnly = true)
+    public List<LitigeDuTuteur> enCoursPour(UUID tuteurId) {
+        return litiges.findByTuteurIdAndStatut(tuteurId, Statut.OUVERT).stream()
+                .map(litige -> new LitigeDuTuteur(litige.enfantId(), litige.geolocalisationSuspendue(), litige.ouvertLe())).toList();
     }
 
     /** Vrai si le tuteur est partie à un litige ouvert, pour quelque enfant que ce soit. */

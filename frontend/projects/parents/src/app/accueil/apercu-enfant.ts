@@ -104,6 +104,9 @@ const PASTILLE_ACTION =
         <p class="m-0 text-body text-text-2" i18n="@@apercu.associer.texte">Le code d'appairage est sur la carte glissée dans la boîte.</p>
         <button fg-button type="button" (click)="associer()" i18n="@@apercu.associer">Associer</button>
       </section>
+    } @else if (positionSuspendue(); as message) {
+      <!-- Litige en cours (ADR 0019) : réessayer n'y changerait rien, le bandeau du litige dit pourquoi. -->
+      <fg-banner ton="attention">{{ message }}</fg-banner>
     } @else if (erreur(); as message) {
       <fg-banner ton="erreur">{{ message }}</fg-banner>
       <button fg-button variante="secondary" type="button" class="self-start" (click)="rafraichir()" i18n="@@commun.reessayer">Réessayer</button>
@@ -188,6 +191,7 @@ export class ApercuEnfant {
   protected readonly zones = signal<readonly SafeZone[]>([]);
   protected readonly sansBracelet = signal(false);
   protected readonly erreur = signal<string | null>(null);
+  protected readonly positionSuspendue = signal<string | null>(null);
   protected readonly enDemande = signal(false);
   protected readonly demande = signal<string | null>(null);
   private readonly maintenant = signal(new Date());
@@ -249,6 +253,7 @@ export class ApercuEnfant {
       this.enfant();
       this.situation.set(null);
       this.sansBracelet.set(false);
+      this.positionSuspendue.set(null);
       this.demande.set(null);
       this.rafraichir();
     });
@@ -294,6 +299,7 @@ export class ApercuEnfant {
     forkJoin({ situation: this.bracelets.situation(id), zones: this.clientZones.zones(id) }).subscribe({
       next: ({ situation, zones }) => {
         this.erreur.set(null);
+        this.positionSuspendue.set(null);
         this.situation.set(situation);
         this.zones.set(zones.zones);
       },
@@ -301,6 +307,8 @@ export class ApercuEnfant {
         const lisible = erreurLisible(cause);
         if (lisible.code === 'RESSOURCE_INTROUVABLE') {
           this.sansBracelet.set(true);
+        } else if (lisible.code === 'GEOLOCALISATION_SUSPENDUE') {
+          this.positionSuspendue.set(lisible.message);
         } else if (!this.situation()) {
           // Une position déjà affichée reste à l'écran avec son heure si le réseau manque au rafraîchissement.
           this.erreur.set(lisible.message);

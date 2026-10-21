@@ -151,4 +151,16 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     expect(texte).toContain("Associez le bracelet d'Awa");
     expect(texte).toContain("Le code d'appairage est sur la carte glissée dans la boîte.");
   });
+
+  it('position suspendue pendant un litige : le message du serveur, sans proposer de réessayer', async () => {
+    const suspendue = new HttpErrorResponse({
+      status: 423,
+      error: { status: 423, code: 'GEOLOCALISATION_SUSPENDUE', detail: "La position est suspendue pendant l'instruction d'un signalement. Le SOS et la page QR restent actifs." },
+    });
+    const { texte } = await monter(throwError(() => suspendue));
+
+    expect(texte).toContain("La position est suspendue pendant l'instruction d'un signalement.");
+    expect(texte).not.toContain('Une erreur est survenue');
+    expect(texte).not.toContain('Réessayer');
+  });
 });
