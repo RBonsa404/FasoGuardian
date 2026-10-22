@@ -26,3 +26,13 @@ export const ENTREES: readonly Entree[] = [
   { libelle: $localize`:@@nav.securite:Sécurité`, icone: 'bouclier', lien: '/admin/securite', role: 'ADMIN' },
   { libelle: $localize`:@@nav.parametres:Paramétrage`, icone: 'reglages', lien: '/admin/parametres', role: 'ADMIN' },
 ];
+
+/**
+ * Entrée de la barre latérale qui correspond à l'adresse : la plus précise. « /kyc/litiges/… » ouvre les litiges,
+ * pas la file KYC, alors qu'un dossier « /kyc/… » reste rattaché à la file.
+ */
+export function entreeActive(liens: readonly string[], adresse: string): string | null {
+  const chemin = adresse.split(/[?#]/)[0];
+  const candidats = liens.filter((lien) => (lien === '/' ? chemin === '/' : chemin === lien || chemin.startsWith(lien + '/')));
+  return candidats.reduce<string | null>((meilleur, lien) => (meilleur === null || lien.length > meilleur.length ? lien : meilleur), null);
+}

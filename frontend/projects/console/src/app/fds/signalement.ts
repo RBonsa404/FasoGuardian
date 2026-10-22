@@ -22,9 +22,10 @@ import { erreurLisible, estRefus } from '../commun/acces';
       <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@fds.titre">Espace forces de sécurité</h1>
       <span class="text-caption font-medium text-text-2" i18n="@@fds.lectureSeule">Lecture seule</span>
     </div>
-    <form class="flex max-w-xl flex-wrap items-end gap-3" (submit)="$event.preventDefault(); chercher()">
+    <form class="flex max-w-xl flex-wrap items-start gap-3" (submit)="$event.preventDefault(); chercher()">
       <fg-input class="min-w-60 flex-1" [formControl]="reference" i18n-libelle="@@fds.reference" libelle="Référence du signalement" i18n-aide="@@fds.reference.aide" aide="Elle figure en tête du dossier, sous la forme FG-SIG-000412." [longueurMax]="20" />
-      <button fg-button variante="secondary" type="submit" [chargement]="recherche()" i18n="@@fds.chercher">Retrouver</button>
+      <!-- Aligné sur le champ, pas sur son aide. -->
+      <button fg-button variante="secondary" type="submit" class="mt-6.5" [chargement]="recherche()" i18n="@@fds.chercher">Retrouver</button>
     </form>
     @if (erreur(); as message) {
       <fg-banner ton="erreur">{{ message }}</fg-banner>

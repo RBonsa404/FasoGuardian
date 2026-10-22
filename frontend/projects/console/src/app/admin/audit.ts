@@ -25,14 +25,18 @@ const HEURE = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit
       <h1 class="m-0 text-titre-ecran font-bold tracking-tight" i18n="@@audit.titre">Journal d'audit</h1>
       @if (chaine(); as c) {
         @if (c.integre) {
-          <span class="flex items-center gap-2 rounded-full bg-success-soft px-3 py-1.5 text-label font-semibold text-success" role="status">
-            <fg-icon nom="valider" [taille]="16" />
-            @if (c.verifieeLe) {
+          <!-- Jamais vérifiée : un état neutre, pas une coche de réussite. -->
+          @if (c.verifieeLe) {
+            <span class="flex items-center gap-2 rounded-full bg-success-soft px-3 py-1.5 text-label font-semibold text-success" role="status">
+              <fg-icon nom="valider" [taille]="16" />
               <ng-container i18n="@@audit.integre">Chaîne intègre · vérifiée {{ heure(c.verifieeLe) }}</ng-container>
-            } @else {
+            </span>
+          } @else {
+            <span class="flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1.5 text-label font-semibold text-text-2" role="status">
+              <fg-icon nom="horloge" [taille]="16" />
               <ng-container i18n="@@audit.jamais">Chaîne pas encore vérifiée</ng-container>
-            }
-          </span>
+            </span>
+          }
         }
       }
     </div>

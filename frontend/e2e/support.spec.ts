@@ -82,7 +82,8 @@ test('un opérateur publie un article et répond à la demande d’un parent, qu
   await reponse.fill(`/sangle-${marque}`);
   await expect(console_.getByRole('button', { name: new RegExp(`/sangle-${marque}`) })).toBeVisible();
   await reponse.press('Tab');
-  await expect(reponse).toHaveValue(/^Bonjour .+, ce n’est pas normal\. Échange gratuit de sangle au point relais de Dassasgho\.$/);
+  // Ce parent n'a pas encore déposé de dossier : sans prénom connu, le repère s'efface (ADR 0041).
+  await expect(reponse).toHaveValue('Bonjour, ce n’est pas normal. Échange gratuit de sangle au point relais de Dassasgho.');
   await console_.screenshot({ path: 'e2e/.etat/ecran-62-tickets.png', fullPage: true });
   await console_.getByRole('button', { name: 'Répondre et attendre le parent' }).click();
   await expect(console_.getByRole('button', { name: new RegExp(`\\(${marque}\\)`) })).toHaveCount(0);

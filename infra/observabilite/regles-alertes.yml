@@ -55,3 +55,14 @@ groups:
           gravite: avertissement
         annotations:
           resume: "Plus d'un bracelet en service sur cinq ne donne plus de nouvelles."
+
+  - name: conformite
+    rules:
+      # US-ADM-002 : le contrôle quotidien du journal d'audit a trouvé une empreinte qui ne suit plus la chaîne.
+      # L'administrateur l'apprend hors de la console, par le récepteur d'Alertmanager.
+      - alert: JournalAuditAltere
+        expr: increase(fasoguardian_audit_chaine_rompue_total{job="serveur"}[1d]) > 0
+        labels:
+          gravite: critique
+        annotations:
+          resume: "Le contrôle d'intégrité du journal d'audit a détecté une altération : voir le journal d'audit de la console."

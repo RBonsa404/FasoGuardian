@@ -180,12 +180,13 @@ describe('tickets support', () => {
     expect(bouton(page, 'Supprimer')).toBeDefined();
   });
 
-  it('reconnaît le raccourci en fin de saisie et garde le repère sans prénom connu', () => {
+  it('reconnaît le raccourci en fin de saisie et efface le repère sans prénom connu', () => {
     expect(raccourciSaisi('Bonjour,\n/san')).toBe('san');
     expect(raccourciSaisi('/')).toBe('');
     expect(raccourciSaisi('voir https://fasoguardian.bf/aide')).toBeNull();
     expect(raccourciSaisi('Bonjour')).toBeNull();
-    expect(insererModele('Merci. /sangle', SANGLE, null)).toBe('Merci. Bonjour {prénom}, ce n’est pas normal. Échange gratuit au point relais.');
+    expect(insererModele('Merci. /sangle', SANGLE, null)).toBe('Merci. Bonjour, ce n’est pas normal. Échange gratuit au point relais.');
+    expect(insererModele('/sangle', SANGLE, 'Aminata')).toBe('Bonjour Aminata, ce n’est pas normal. Échange gratuit au point relais.');
   });
 
   it('change de file et écrit l’attente en heures puis en jours', async () => {

@@ -1,18 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 import { ClientAuthentification, ClientTableau, Compte, RoleInterne, Session } from 'api';
 import { FgBouton, FgIcon, PreferenceTheme, Theme } from 'ui';
 
 import { LIBELLES_ROLES } from '../commun/acces';
-import { ENTREES } from './entrees';
+import { ENTREES, entreeActive } from './entrees';
 import { Recherche } from './recherche';
 import { Verrou } from './verrou';
 
 /** Structure de la console (écran 56) : la barre latérale ne propose que les écrans du rôle de l'agent. */
 @Component({
   selector: 'app-structure',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FgBouton, FgIcon, Recherche, Verrou],
+  imports: [RouterOutlet, RouterLink, FgBouton, FgIcon, Recherche, Verrou],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <aside class="flex w-66 flex-none flex-col gap-1 overflow-y-auto border-r border-line bg-surface px-3.5 py-5">
@@ -36,8 +38,8 @@ import { Verrou } from './verrou';
           }
           <a
             class="entree group relative flex h-10 items-center gap-3 rounded-md px-3 text-label font-medium text-text-2 transition-colors duration-(--duration-fast) hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-accent"
-            routerLinkActive="entree-active bg-accent-soft font-semibold text-accent!"
-            [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
+            [class]="entree.lien === active() ? 'entree-active bg-accent-soft font-semibold text-accent!' : ''"
+            [attr.aria-current]="entree.lien === active() ? 'page' : null"
             [routerLink]="entree.lien"
             ><fg-icon [nom]="entree.icone" [taille]="18" class="flex-none transition-transform duration-(--duration-fast) group-hover:scale-110" /><span class="min-w-0 flex-1 truncate">{{ entree.libelle }}</span>
             @if (compteurs()[entree.lien]; as nombre) {
@@ -46,7 +48,7 @@ import { Verrou } from './verrou';
           >
         }
       </nav>
-      <div class="mt-auto flex flex-col gap-3 rounded-lg border border-line bg-bg p-3.5 shadow-e1">
+      <div class="mt-auto flex flex-col gap-3 rounded-lg border border-line bg-bg p-3.5">
         <div class="flex items-center gap-3">
           <span class="grid size-9 flex-none place-items-center rounded-full bg-accent-soft text-accent"><fg-icon nom="agent" [taille]="18" /></span>
           <span class="flex min-w-0 flex-col gap-0.5 leading-tight">
@@ -127,6 +129,15 @@ export class Structure {
   protected readonly entrees = computed(() =>
     ENTREES.filter((entree) => !entree.role || this.session.roles().includes(entree.role)),
   );
+  private readonly adresse = toSignal(
+    this.router.events.pipe(
+      filter((evenement) => evenement instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+  /** Une seule entrée surlignée : la plus précise pour l'adresse affichée. */
+  protected readonly active = computed(() => entreeActive(this.entrees().map((entree) => entree.lien), this.adresse()));
   protected readonly fonctions = computed(() =>
     this.session
       .roles()

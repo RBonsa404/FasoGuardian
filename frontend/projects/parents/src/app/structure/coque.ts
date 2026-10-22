@@ -78,7 +78,7 @@ const ENTREES: readonly Entree[] = [
           >
         }
       </nav>
-      <div class="mt-auto flex flex-col gap-3 rounded-lg border border-line bg-bg p-3.5 shadow-e1">
+      <div class="mt-auto flex flex-col gap-3 rounded-lg border border-line bg-bg p-3.5">
         @if (compte(); as c) {
           <div class="flex items-center gap-3">
             <span class="grid size-9 flex-none place-items-center rounded-full bg-accent-soft text-accent"><fg-icon nom="bouclier" [taille]="18" /></span>

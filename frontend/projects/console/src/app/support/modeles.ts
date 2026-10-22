@@ -15,9 +15,15 @@ export function raccourciSaisi(texte: string): string | null {
   return /(?:^|\s)\/([a-z0-9-]*)$/.exec(texte)?.[1] ?? null;
 }
 
-/** Remplace le raccourci saisi par le texte du modèle, où le repère devient le prénom du parent s'il est connu. */
+/**
+ * Remplace le raccourci saisi par le texte du modèle, où le repère devient le prénom du parent s'il est connu.
+ * Sans prénom, le repère s'efface avec l'espace qui le précède : « Bonjour {prénom}, » devient « Bonjour, » et
+ * jamais le parent ne lit le repère lui-même.
+ */
 export function insererModele(texte: string, modele: ModeleReponse, prenom: string | null): string {
-  const corps = prenom ? modele.texte.replaceAll(REPERE_PRENOM, prenom) : modele.texte;
+  const corps = prenom
+    ? modele.texte.replaceAll(REPERE_PRENOM, prenom)
+    : modele.texte.replaceAll(' ' + REPERE_PRENOM, '').replaceAll(REPERE_PRENOM, '');
   return texte.replace(/\/[a-z0-9-]*$/, corps);
 }
 

@@ -17,7 +17,8 @@ document de conception ne les décrit davantage.
    n'est pas conservée.
 3. **Insertion relue.** Taper `/` puis le début d'un raccourci dans la réponse propose les modèles correspondants ;
    le choix remplace le raccourci par le texte du modèle, où `{prénom}` devient le prénom du parent quand il est
-   connu. Rien n'est envoyé sans que l'opérateur ait relu le texte et choisi l'une des deux actions d'envoi.
+   connu ; sans prénom connu (parent qui n'a pas encore déposé son dossier), le repère s'efface avec l'espace qui le
+   précède, « Bonjour {prénom}, » devenant « Bonjour, » : le parent ne lit jamais le repère. Rien n'est envoyé sans que l'opérateur ait relu le texte et choisi l'une des deux actions d'envoi.
 4. **Texte simple.** Comme les articles d'aide (ADR 0021, point 4), un modèle ne porte aucun balisage. Il ne
    contient aucune donnée d'un parent : il n'entre ni dans l'export ni dans l'effacement des données
    personnelles. Supprimer un modèle ne touche aucune réponse déjà envoyée, qui en a recopié le texte.

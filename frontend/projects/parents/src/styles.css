@@ -1,2 +1,12 @@
 @import '../../ui/src/styles/polices.css';
 @import '../../ui/src/styles/index.css';
+
+/*
+ * Pages de l'espace connecté sur grand écran : l'action principale, posée en bas de l'écran du téléphone,
+ * suit le contenu au lieu de rester au pied d'une fenêtre haute.
+ */
+@media (min-width: 64rem) {
+  .page-parent > .mt-auto {
+    margin-top: calc(var(--spacing) * 6);
+  }
+}

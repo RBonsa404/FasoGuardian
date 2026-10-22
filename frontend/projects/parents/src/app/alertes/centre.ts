@@ -192,7 +192,7 @@ export function libelleJour(iso: string, maintenant = new Date()): string {
       <button fg-button variante="secondary" type="button" (click)="signalement.set(false)" i18n="@@commun.annuler">Annuler</button>
     </fg-sheet>
   `,
-  host: { class: 'mx-auto flex min-h-[calc(100dvh-4.5rem)] w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:min-h-dvh lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
+  host: { class: 'page-parent mx-auto flex min-h-[calc(100dvh-4.5rem)] w-full max-w-md flex-col gap-4 px-5 pt-6 pb-7 lg:min-h-dvh lg:max-w-3xl lg:gap-5 lg:px-10 lg:pt-10' },
 })
 export class CentreAlertes {
   private readonly client = inject(ClientAlertes);
