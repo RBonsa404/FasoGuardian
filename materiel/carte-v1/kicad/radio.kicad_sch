@@ -1,0 +1,1057 @@
+(kicad_sch (version 20250114) (generator "eeschema") (generator_version "9.0")
+(uuid "aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87") (paper "A3")
+(title_block (title "Antennes LTE et GNSS") (date "2026-10-22") (rev "V1.0") (company "Collectif Dedsec — FasoGuardian") (comment 1 "Bracelet FasoGuardian, carte V1 (FG-DOC-08 § 12)") (comment 2 "Généré par materiel/carte-v1/conception/generer_schema.py depuis carte.py"))
+(lib_symbols (symbol "Device:C"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0.254)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "C"
+			(at 0.635 2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 0.635 -2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 0.9652 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "cap capacitor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "C_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "C_0_1"
+			(polyline
+				(pts
+					(xy -2.032 0.762) (xy 2.032 0.762)
+				)
+				(stroke
+					(width 0.508)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.032 -0.762) (xy 2.032 -0.762)
+				)
+				(stroke
+					(width 0.508)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "C_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 2.794)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 2.794)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:D_TVS"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 1.016)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "D"
+			(at 0 2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "D_TVS"
+			(at 0 -2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Bidirectional transient-voltage-suppression diode"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "diode TVS thyrector"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "D_TVS_0_1"
+			(polyline
+				(pts
+					(xy -2.54 1.27) (xy -2.54 -1.27) (xy 2.54 1.27) (xy 2.54 -1.27) (xy -2.54 1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 0.508 1.27) (xy 0 1.27) (xy 0 -1.27) (xy -0.508 -1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 0) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "D_TVS_1_1"
+			(pin passive line
+				(at -3.81 0 0)
+				(length 2.54)
+				(name "A1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 3.81 0 180)
+				(length 2.54)
+				(name "A2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:L"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 1.016)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "L"
+			(at -1.27 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "L"
+			(at 1.905 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Inductor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "inductor choke coil reactor magnetic"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "Choke_* *Coil* Inductor_* L_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "L_0_1"
+			(arc
+				(start 0 2.54)
+				(mid 0.6323 1.905)
+				(end 0 1.27)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start 0 1.27)
+				(mid 0.6323 0.635)
+				(end 0 0)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start 0 0)
+				(mid 0.6323 -0.635)
+				(end 0 -1.27)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start 0 -1.27)
+				(mid 0.6323 -1.905)
+				(end 0 -2.54)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "L_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 1.27)
+				(name "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 1.27)
+				(name "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:R"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "R"
+			(at 2.032 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "R"
+			(at 0 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at -1.778 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "R res resistor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "R_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "R_0_1"
+			(rectangle
+				(start -1.016 -2.54)
+				(end 1.016 2.54)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "R_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:ECT818011998"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "RF"
+			(at 0 6.35 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "ECT818011998"
+			(at 0 -6.35 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:IPEX-SMD_ECT818011998"
+			(at 0 -8.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C437250.pdf"
+			(at 0 -11.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "ECT(电连)"
+			(at 0 -13.97 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "ECT818011998"
+			(at 0 -16.51 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C437250"
+			(at 0 -19.05 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "RF Connectors / Coaxial Connectors"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "ECT818011998_0_1"
+			(rectangle
+				(start -6.35 3.81)
+				(end 6.35 -3.81)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(circle
+				(center -5.08 2.54)
+				(radius 0.38)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin passive line
+				(at -8.89 1.27 0)
+				(length 2.54)
+				(name "IN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -8.89 -1.27 0)
+				(length 2.54)
+				(name "OUT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 8.89 -1.27 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 8.89 1.27 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:U.FL-R-SMT-1"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "JP"
+			(at 0 7.62 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "U.FL-R-SMT-1"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:RF-SMD_FRF05002-JSS103M"
+			(at 0 -12.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://lcsc.com/product-detail/Connectors_HRS_U-FL-R-SMT-1-80_3310472280-IPE-XBoard-end-IPXConnector-SMD_C88374.html"
+			(at 0 -15.24 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "3310472210，IPE-X IPX，"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "HRS(广濑)"
+			(at 0 -17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "U.FL-R-SMT-1(80)"
+			(at 0 -20.32 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C88374"
+			(at 0 -22.86 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "RF Connectors / Coaxial Connectors"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "U.FL-R-SMT-1_0_1"
+			(rectangle
+				(start -7.62 5.08)
+				(end 7.62 0)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(pin passive line
+				(at 0 -5.08 90)
+				(length 5.08)
+				(name "SIG"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -12.7 2.54 0)
+				(length 5.08)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 12.7 2.54 180)
+				(length 5.08)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	))
+(symbol (lib_id "Device:C") (at 44.45 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp yes) (uuid "c4d2450a-4296-51ea-97bd-e5c184026f64") (property "Reference" "C20" (at 44.45 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "NM" (at 44.45 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 44.45 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 44.45 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 44.45 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Adaptation : valeur donnée par l'accord de l'antenne" (at 44.45 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "98cdf607-a282-51f8-856a-569457dc3ca6")) (pin "2" (uuid "8631aae5-20c4-5389-bfd0-dce0cf750cf1")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C20") (unit 1)))))
+(global_label "RF_LTE_MOD" (shape passive) (at 44.45 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "7a742bd2-decc-5203-8ce4-a533df620395") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 44.45 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "dba874d1-9e94-5d76-b595-e8c730f1927a") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 80.01 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "9082c771-30ad-5325-b901-79c4bd191684") (property "Reference" "R20" (at 80.01 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "0 Ω" (at 80.01 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 80.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402WGF0000TCE" (at 80.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C17168" (at 80.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 80.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "42f75320-f5b9-5142-861f-347472c9a823")) (pin "2" (uuid "b36b81ef-2964-5542-8196-0c82d8e0bacd")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "R20") (unit 1)))))
+(global_label "RF_LTE_MOD" (shape passive) (at 80.01 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "785882f1-6e6d-54a4-a0e9-8bc4ee2daf6e") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "RF_LTE_1" (shape passive) (at 80.01 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d79728fe-9b89-5b29-9f7c-add59a0ae9f9") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 115.57000000000001 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp yes) (uuid "58c59256-9fc0-5f98-90bb-1e9be3fabb95") (property "Reference" "C21" (at 115.57000000000001 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "NM" (at 115.57000000000001 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "8fadb528-7358-5522-b4bf-f4f49251b68a")) (pin "2" (uuid "8d195829-cdef-54ca-bc0a-537122f0aa86")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C21") (unit 1)))))
+(global_label "RF_LTE_1" (shape passive) (at 115.57000000000001 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "362a6ae9-5caa-5d24-9bdd-5920fd260c3e") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 115.57000000000001 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2eb8ef1a-2af6-5d99-a809-726ddc64924c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:D_TVS") (at 156.21 44.45 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "466a7fc5-28c0-55d2-b904-5dac71bf134b") (property "Reference" "D4" (at 156.21 40.45 0) (effects (font (size 1.27 1.27)))) (property "Value" "LXES15AAA1-153" (at 156.21 38.45 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Diode_SMD:D_0402_1005Metric" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "LXES15AAA1-153" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C5210978" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "ESD de 0,05 pF : le PESD0402-03 de SIMCom (tableau 40) est en rupture" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "70ce0bed-4ecd-5d90-82d6-1c30fac42848")) (pin "2" (uuid "d8f8b317-fe8d-5a6b-9670-59b554645341")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "D4") (unit 1)))))
+(global_label "RF_LTE_1" (shape passive) (at 152.4 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "23aa6b70-9bc1-5df4-a387-5dc2624c3c21") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 160.02 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "2f98805b-7533-505a-a868-a8d5a77e4e83") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 160.02 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:ECT818011998") (at 204.47 45.72 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f1315f29-9c55-53fe-9758-15e021c84e84") (property "Reference" "J6" (at 204.47 41.72 0) (effects (font (size 1.27 1.27)))) (property "Value" "ECT 818011998" (at 204.47 39.72 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:IPEX-SMD_ECT818011998" (at 204.47 45.72 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 204.47 45.72 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "ECT818011998" (at 204.47 45.72 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C437250" (at 204.47 45.72 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Commutateur de mesure conduite (SIMCom § 4.7)" (at 204.47 45.72 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "03be3b72-36e7-5f83-a202-2c458db13bc2")) (pin "2" (uuid "0ea715f6-f1ed-5ea1-a46f-f54825bd0857")) (pin "3" (uuid "583da724-24ed-53e0-ab1f-df1f9b5aeee7")) (pin "4" (uuid "fc62efe7-23f6-50cd-ae86-b353e085aba7")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "J6") (unit 1)))))
+(global_label "RF_LTE_1" (shape passive) (at 195.58 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "8e256a22-a922-53cd-a5c0-1114a29abbb2") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 195.58 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "RF_LTE_2" (shape passive) (at 195.58 46.99 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a4b99148-4983-503b-8777-d21dc67b58da") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 195.58 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 213.36 46.99 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "12f780eb-43e3-597e-9486-1f64ad155c81") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 213.36 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 213.36 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "7bbd041d-5cc9-5f3c-b3af-49f329cdb171") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 213.36 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:U.FL-R-SMT-1") (at 261.62 46.99 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f7ccb6d4-5687-5056-b161-5c9ebfff9303") (property "Reference" "J3" (at 261.62 42.99 0) (effects (font (size 1.27 1.27)))) (property "Value" "Antenne LTE" (at 261.62 40.99 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:RF-SMD_FRF05002-JSS103M" (at 261.62 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 261.62 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "U.FL-R-SMT-1(80)" (at 261.62 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C88374" (at 261.62 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Antenne FPC LTE 698–2700 MHz le long d'un flanc" (at 261.62 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "c3e471b5-2ea5-57f2-bc2d-4961eb17a334")) (pin "2" (uuid "65845745-a5a6-5b77-9b30-3e10027d1891")) (pin "3" (uuid "d2c469fa-df23-554b-9493-978d91e1f57e")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "J3") (unit 1)))))
+(global_label "RF_LTE_2" (shape passive) (at 261.62 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "afe3498f-490c-53b5-988b-a5cfcdd67c34") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 261.62 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 248.92000000000002 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ab83caec-d619-5ca0-895b-4725b8037382") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92000000000002 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 274.32 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "79eed73c-51d5-58d5-98ba-2db1d8dd9b1f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 274.32 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 311.15 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp yes) (uuid "c1c0be2a-814e-5bf0-bd03-7dddabf9787f") (property "Reference" "C22" (at 311.15 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "NM" (at 311.15 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 311.15 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 311.15 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 311.15 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 311.15 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 311.15 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "b460a046-4f40-57b7-8aec-62b145837b0e")) (pin "2" (uuid "a59dbf7e-307b-5166-bf6a-a590b1bb93ae")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C22") (unit 1)))))
+(global_label "RF_GNSS_MOD" (shape passive) (at 311.15 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "bebca98f-10c8-56e9-9976-629077066549") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 311.15 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f95cc1eb-5df1-5271-9c0b-b46580067b58") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 346.71 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "4e0f0fd9-9628-56fd-90c7-724583123834") (property "Reference" "C24" (at 346.71 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "33 pF" (at 346.71 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 346.71 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 346.71 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402CG330J500NT" (at 346.71 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C1562" (at 346.71 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Série : arrête le continu vers le module" (at 346.71 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "03152352-6949-53c2-b193-0ba04fc87aa7")) (pin "2" (uuid "056ebc4f-439d-5949-a2dd-75f80c3ea9df")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C24") (unit 1)))))
+(global_label "RF_GNSS_MOD" (shape passive) (at 346.71 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "cce62b78-5247-5134-96f4-e1f0c51d0b5b") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 346.71 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "RF_GNSS_1" (shape passive) (at 346.71 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d622d368-72fe-52c3-936f-ca1567b32fdf") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 346.71 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:L") (at 382.27 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "ae0f232d-bbc7-50da-8adc-728ffa228130") (property "Reference" "L2" (at 382.27 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "68 nH" (at 382.27 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Inductor_SMD:L_0402_1005Metric" (at 382.27 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 382.27 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "LQW15AN68NG00D" (at 382.27 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C108965" (at 382.27 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Choc de polarisation (> 56 nH, SIMCom) : bobinée pour sa résonance propre" (at 382.27 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0aadc3a6-35e3-5d4e-94c4-b4d40d776322")) (pin "2" (uuid "fc8d6cb6-d9d2-5d98-b376-92c210b6c417")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "L2") (unit 1)))))
+(global_label "RF_GNSS_1" (shape passive) (at 382.27 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "028e7501-563f-5cca-9aa9-b03ce51f94d3") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 382.27 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GNSS_BIAS" (shape passive) (at 382.27 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "282456a9-aa22-54e7-9a4e-1266f19b321c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 382.27 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 44.45 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "4c56e59e-2bcb-5406-a822-948c9764a1ae") (property "Reference" "R23" (at 44.45 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 Ω" (at 44.45 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 44.45 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402WGF100JTCE" (at 44.45 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C25077" (at 44.45 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 44.45 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "1808154f-3e06-5297-957b-92a2532d963b")) (pin "2" (uuid "950dafe3-1ab7-5e1a-bf49-531351c90ca4")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "R23") (unit 1)))))
+(global_label "GNSS_BIAS" (shape passive) (at 44.45 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ded56ce7-f7dc-5325-8580-f730f1474b73") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "MOD_VDD_AUX" (shape passive) (at 44.45 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "6eb1b7b1-753e-5d29-bdf2-56fc5ca9b710") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 80.01 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f8d35c68-9eee-578e-b88a-16511eadc33a") (property "Reference" "C25" (at 80.01 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "100 nF" (at 80.01 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 80.01 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL05B104KO5NNNC" (at 80.01 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C1525" (at 80.01 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 80.01 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "cbe74bba-3c45-527d-92d7-e620c09fec61")) (pin "2" (uuid "75fd1454-831c-551e-91b4-adc5dd9b6f31")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C25") (unit 1)))))
+(global_label "MOD_VDD_AUX" (shape passive) (at 80.01 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "9e21d230-c77f-58e7-8bba-4b7772e4a3a1") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 80.01 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "906aa4c5-1eb8-5bc1-bd60-44db1e9fe72f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 115.57000000000001 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp yes) (uuid "629c1eb4-fa7e-590d-80b8-c1ccf2d2b6c8") (property "Reference" "C23" (at 115.57000000000001 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "NM" (at 115.57000000000001 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 115.57000000000001 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 115.57000000000001 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 115.57000000000001 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 115.57000000000001 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 115.57000000000001 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "6c5a4242-6347-50ca-8319-59f1fdc0409e")) (pin "2" (uuid "9e5f16bd-dd50-518e-8485-26909f9c438b")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "C23") (unit 1)))))
+(global_label "RF_GNSS_1" (shape passive) (at 115.57000000000001 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "113383da-e307-5a24-b319-c84274264516") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 115.57000000000001 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0fffe8f0-b843-54ac-a7a2-5818780562a0") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:D_TVS") (at 156.21 69.85 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "28fe1c58-cc78-5d14-ac5d-9ad71753f8c9") (property "Reference" "D5" (at 156.21 65.85 0) (effects (font (size 1.27 1.27)))) (property "Value" "LXES15AAA1-153" (at 156.21 63.849999999999994 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Diode_SMD:D_0402_1005Metric" (at 156.21 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 156.21 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "LXES15AAA1-153" (at 156.21 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C5210978" (at 156.21 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Tient les 3 V d'alimentation de l'antenne active" (at 156.21 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "3effca1e-46de-594c-801e-e4ed70c02593")) (pin "2" (uuid "07972707-7a13-5ed8-8c93-25ae8016645b")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "D5") (unit 1)))))
+(global_label "RF_GNSS_1" (shape passive) (at 152.4 69.85 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "eaface27-5a62-5fac-8319-9b9052677ac4") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 160.02 69.85 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "07e383a4-6643-5f19-993e-d5639a3ebd82") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 160.02 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:U.FL-R-SMT-1") (at 208.28 72.39 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "c7655e55-f337-515f-8d08-abee373922b2") (property "Reference" "J4" (at 208.28 68.39 0) (effects (font (size 1.27 1.27)))) (property "Value" "Antenne GNSS active" (at 208.28 66.39 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:RF-SMD_FRF05002-JSS103M" (at 208.28 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 208.28 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "U.FL-R-SMT-1(80)" (at 208.28 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C88374" (at 208.28 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Patch céramique actif sous le couvercle, sans métal au-dessus" (at 208.28 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "15f7807c-d9d8-5703-b888-e1f604ecbe78")) (pin "2" (uuid "617b4f4c-1920-5152-a574-b1b008d61890")) (pin "3" (uuid "4099a15e-cb0e-5a72-a519-fb4d5c8150e0")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87" (reference "J4") (unit 1)))))
+(global_label "RF_GNSS_1" (shape passive) (at 208.28 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b5ed5481-4cef-5dac-a05d-09f71242e410") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 195.58 69.85 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "aac5c2c2-0d9a-5100-ac9c-944a5214df57") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 195.58 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 220.98 69.85 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ceef443d-eef8-5084-81d3-e6baadda9e2b") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 220.98 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(embedded_fonts no))

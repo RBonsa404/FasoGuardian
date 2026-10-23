@@ -1,0 +1,6 @@
+kicad/routage/
+kicad/*-backups/
+kicad/fp-info-cache
+kicad/*.lck
+kicad/drc-avant.json
+__pycache__/

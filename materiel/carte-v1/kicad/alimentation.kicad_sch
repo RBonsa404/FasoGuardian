@@ -1,0 +1,2798 @@
+(kicad_sch (version 20250114) (generator "eeschema") (generator_version "9.0")
+(uuid "06663894-3f9d-535a-8063-8860181f393f") (paper "A3")
+(title_block (title "Alimentation, charge et jauge") (date "2026-10-22") (rev "V1.0") (company "Collectif Dedsec — FasoGuardian") (comment 1 "Bracelet FasoGuardian, carte V1 (FG-DOC-08 § 12)") (comment 2 "Généré par materiel/carte-v1/conception/generer_schema.py depuis carte.py"))
+(lib_symbols (symbol "Connector:TestPoint"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0.762)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "TP"
+			(at 0 6.858 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 0 5.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 5.08 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 5.08 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "test point tp"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "Pin* Test*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "TestPoint_0_1"
+			(circle
+				(center 0 3.302)
+				(radius 0.762)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "TestPoint_1_1"
+			(pin passive line
+				(at 0 0 90)
+				(length 2.54)
+				(name "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:C"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0.254)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "C"
+			(at 0.635 2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 0.635 -2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 0.9652 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "cap capacitor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "C_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "C_0_1"
+			(polyline
+				(pts
+					(xy -2.032 0.762) (xy 2.032 0.762)
+				)
+				(stroke
+					(width 0.508)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.032 -0.762) (xy 2.032 -0.762)
+				)
+				(stroke
+					(width 0.508)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "C_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 2.794)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 2.794)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:D_Schottky"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 1.016)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "D"
+			(at 0 2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "D_Schottky"
+			(at 0 -2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Schottky diode"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "diode Schottky"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "D_Schottky_0_1"
+			(polyline
+				(pts
+					(xy -1.905 0.635) (xy -1.905 1.27) (xy -1.27 1.27) (xy -1.27 -1.27) (xy -0.635 -1.27) (xy -0.635 -0.635)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 0) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "D_Schottky_1_1"
+			(pin passive line
+				(at -3.81 0 0)
+				(length 2.54)
+				(name "K"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 3.81 0 180)
+				(length 2.54)
+				(name "A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:D_Zener"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 1.016)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "D"
+			(at 0 2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "D_Zener"
+			(at 0 -2.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Zener diode"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "diode"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "D_Zener_0_1"
+			(polyline
+				(pts
+					(xy -1.27 -1.27) (xy -1.27 1.27) (xy -0.762 1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 0) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "D_Zener_1_1"
+			(pin passive line
+				(at -3.81 0 0)
+				(length 2.54)
+				(name "K"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 3.81 0 180)
+				(length 2.54)
+				(name "A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:Polyfuse"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "F"
+			(at -2.54 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Polyfuse"
+			(at 2.54 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 1.27 -5.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resettable fuse, polymeric positive temperature coefficient"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "resettable fuse PTC PPTC polyfuse polyswitch"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "*polyfuse* *PTC*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "Polyfuse_0_1"
+			(polyline
+				(pts
+					(xy -1.524 2.54) (xy -1.524 1.524) (xy 1.524 -1.524) (xy 1.524 -2.54)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -0.762 2.54)
+				(end 0.762 -2.54)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 0 2.54) (xy 0 -2.54)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "Polyfuse_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:R"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "R"
+			(at 2.032 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "R"
+			(at 0 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at -1.778 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "R res resistor"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "R_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "R_0_1"
+			(rectangle
+				(start -1.016 -2.54)
+				(end 1.016 2.54)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "R_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "Device:Thermistor_NTC"
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "TH"
+			(at -4.445 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Thermistor_NTC"
+			(at 3.175 0 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 1.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 1.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Temperature dependent resistor, negative temperature coefficient"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "thermistor NTC resistor sensor RTD"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "R_* RV_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "Thermistor_NTC_0_1"
+			(arc
+				(start -3.175 2.413)
+				(mid -3.0506 2.3165)
+				(end -3.048 2.159)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -3.048 2.794)
+				(mid -2.9736 2.9736)
+				(end -2.794 3.048)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.794 3.048)
+				(mid -2.6144 2.9736)
+				(end -2.54 2.794)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.794 2.54)
+				(mid -2.9736 2.6144)
+				(end -3.048 2.794)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.794 1.905)
+				(mid -2.9736 1.9794)
+				(end -3.048 2.159)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.54 2.159)
+				(mid -2.6144 1.9794)
+				(end -2.794 1.905)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.159 2.794)
+				(mid -2.434 2.5608)
+				(end -2.794 2.54)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.54 2.159) (xy -2.54 2.794)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.54 -3.683) (xy -2.54 -1.397) (xy -2.794 -2.159) (xy -2.286 -2.159) (xy -2.54 -1.397) (xy -2.54 -1.651)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type outline)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.778 2.54) (xy -1.778 1.524) (xy 1.778 -1.524) (xy 1.778 -2.54)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.778 -1.397) (xy -1.778 -3.683) (xy -2.032 -2.921) (xy -1.524 -2.921) (xy -1.778 -3.683)
+					(xy -1.778 -3.429)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type outline)
+				)
+			)
+			(rectangle
+				(start -1.016 2.54)
+				(end 1.016 -2.54)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "Thermistor_NTC_1_1"
+			(pin passive line
+				(at 0 3.81 270)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -3.81 90)
+				(length 1.27)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:BQ25180YBGR"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "U"
+			(at 0 8.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BQ25180YBGR"
+			(at 0 -8.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:DSBGA-8_L1.6-W0.9-R2-C4-P0.40-BL"
+			(at 0 -11.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C3682423.pdf"
+			(at 0 -13.97 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "TI(德州仪器)"
+			(at 0 -16.51 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BQ25180YBGR"
+			(at 0 -19.05 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C3682423"
+			(at 0 -21.59 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "Battery Management ICs"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "BQ25180YBGR_0_1"
+			(rectangle
+				(start -8.89 6.35)
+				(end 8.89 -6.35)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(circle
+				(center -7.62 5.08)
+				(radius 0.38)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin open_collector line
+				(at 11.43 3.81 180)
+				(length 2.54)
+				(name "/INT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "A1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 11.43 -1.27 180)
+				(length 2.54)
+				(name "IN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "A2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -11.43 3.81 0)
+				(length 2.54)
+				(name "SCL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "B1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_out line
+				(at -11.43 -1.27 0)
+				(length 2.54)
+				(name "SYS"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "B2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin bidirectional line
+				(at -11.43 1.27 0)
+				(length 2.54)
+				(name "SDA"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "C1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 11.43 1.27 180)
+				(length 2.54)
+				(name "BAT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "C2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 11.43 -3.81 180)
+				(length 2.54)
+				(name "TS/MR"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "D1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -11.43 -3.81 0)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "D2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:DFE252012F-2R2M"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "L"
+			(at 0 5.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "DFE252012F-2R2M"
+			(at 0 -5.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:L1008"
+			(at 0 -7.62 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C576403.pdf"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "muRata(村田)"
+			(at 0 -12.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "DFE252012F-2R2M"
+			(at 0 -15.24 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C576403"
+			(at 0 -17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "Power Inductors"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "DFE252012F-2R2M_0_1"
+			(arc
+				(start -4.06 0.01)
+				(mid -3.035 1.0102)
+				(end -2.03 -0.01)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start -2.03 0.01)
+				(mid -1.005 1.0102)
+				(end 0 -0.01)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start 0 0.01)
+				(mid 1.0249 1.0101)
+				(end 2.03 -0.01)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(arc
+				(start 2.03 0.01)
+				(mid 3.0549 1.0101)
+				(end 4.06 -0.01)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin passive line
+				(at -5.08 0 0)
+				(length 1.27)
+				(name "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 0 180)
+				(length 1.27)
+				(name "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:MAX17048G+T10"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "U"
+			(at 0 10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "MAX17048G+T10"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:TDFN-8_L2.0-W2.0-P0.50-BL-EP1.2"
+			(at 0 -12.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C2682616.pdf"
+			(at 0 -15.24 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "ADI(亚德诺)/MAXIM(美信)"
+			(at 0 -17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MAX17048G+T10"
+			(at 0 -20.32 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C2682616"
+			(at 0 -22.86 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "Battery Management ICs"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "MAX17048G+T10_0_1"
+			(rectangle
+				(start -10.16 7.62)
+				(end 10.16 -7.62)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(circle
+				(center -8.89 6.35)
+				(radius 0.38)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin passive line
+				(at -12.7 2.54 0)
+				(length 2.54)
+				(name "CTG"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -12.7 0 0)
+				(length 2.54)
+				(name "CELL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -12.7 -2.54 0)
+				(length 2.54)
+				(name "VDD"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -12.7 -5.08 0)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin open_collector line
+				(at 12.7 -5.08 180)
+				(length 2.54)
+				(name "~{ALRT}"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 12.7 -2.54 180)
+				(length 2.54)
+				(name "QSTRT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 12.7 0 180)
+				(length 2.54)
+				(name "SCL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin bidirectional line
+				(at 12.7 2.54 180)
+				(length 2.54)
+				(name "SDA"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "8"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 12.7 5.08 180)
+				(length 2.54)
+				(name "EP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "9"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:TPS22965DSGR"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "U"
+			(at 0 10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TPS22965DSGR"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:UDFN-8_L2.0-W2.0-P0.50-TL-EP"
+			(at 0 -12.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://lcsc.com/product-detail/PMIC-Power-Distribution-Switches_TI_TPS22965DSGR_TPS22965DSGR_C122837.html"
+			(at 0 -15.24 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "TI(德州仪器)"
+			(at 0 -17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "TPS22965DSGR"
+			(at 0 -20.32 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C122837"
+			(at 0 -22.86 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "Power Distribution Switches"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "TPS22965DSGR_0_1"
+			(rectangle
+				(start -10.16 7.62)
+				(end 10.16 -8.13)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(circle
+				(center -9.02 6.48)
+				(radius 0.38)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin power_in line
+				(at -12.7 2.54 0)
+				(length 2.54)
+				(name "VIN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -12.7 0 0)
+				(length 2.54)
+				(name "VIN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -12.7 -2.54 0)
+				(length 2.54)
+				(name "ON"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -12.7 -5.08 0)
+				(length 2.54)
+				(name "VBIAS"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 12.7 -5.08 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 12.7 -2.54 180)
+				(length 2.54)
+				(name "CT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_out line
+				(at 12.7 0 180)
+				(length 2.54)
+				(name "VOUT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 12.7 2.54 180)
+				(length 2.54)
+				(name "VOUT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "8"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 12.7 5.08 180)
+				(length 2.54)
+				(name "EP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "9"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "fg:TPS63900DSKR"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "U"
+			(at 0 11.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TPS63900DSKR"
+			(at 0 -11.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "fg:WSON-10_L2.5-W2.5-W0.50-TL-EP"
+			(at 0 -13.97 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C1518762.pdf"
+			(at 0 -16.51 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "TI(德州仪器)"
+			(at 0 -19.05 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "TPS63900DSKR"
+			(at 0 -21.59 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C1518762"
+			(at 0 -24.13 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "DC-DC Converters"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "TPS63900DSKR_0_1"
+			(rectangle
+				(start -7.62 8.89)
+				(end 7.62 -8.89)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(circle
+				(center -6.35 7.62)
+				(radius 0.38)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin input line
+				(at -10.16 3.81 0)
+				(length 2.54)
+				(name "EN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -10.16 1.27 0)
+				(length 2.54)
+				(name "SEL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -10.16 -1.27 0)
+				(length 2.54)
+				(name "CFG1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -10.16 -3.81 0)
+				(length 2.54)
+				(name "CFG2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -10.16 -6.35 0)
+				(length 2.54)
+				(name "CFG3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_out line
+				(at 10.16 -6.35 180)
+				(length 2.54)
+				(name "VOUT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 10.16 -3.81 180)
+				(length 2.54)
+				(name "LX2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 10.16 -1.27 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "8"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 10.16 1.27 180)
+				(length 2.54)
+				(name "LX1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "9"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 10.16 3.81 180)
+				(length 2.54)
+				(name "VIN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "10"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 10.16 6.35 180)
+				(length 2.54)
+				(name "EP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "11"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	) (symbol "power:PWR_FLAG"
+		(power global)
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(offset 0)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "#FLG"
+			(at 0 1.905 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 0 3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "flag power"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "PWR_FLAG_0_0"
+			(pin power_out line
+				(at 0 0 90)
+				(length 0)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(symbol "PWR_FLAG_0_1"
+			(polyline
+				(pts
+					(xy 0 0) (xy 0 1.27) (xy -1.016 1.905) (xy 0 2.54) (xy 1.016 1.905) (xy 0 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(embedded_fonts no)
+	))
+(symbol (lib_id "Connector:TestPoint") (at 44.45 44.45 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "e72b6c3a-887f-5de4-8bd2-e0245a855fdd") (property "Reference" "TP1" (at 44.45 40.45 0) (effects (font (size 1.27 1.27)))) (property "Value" "Charge +5 V" (at 44.45 38.45 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_2.5x2.5mm" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "5aa723ff-2d58-512f-9633-279dee72fccd")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP1") (unit 1)))))
+(global_label "VIN_EXT" (shape passive) (at 44.45 44.45 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ebe5f692-4eca-560d-b41e-b333ccd40628") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 80.01 44.45 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "df522343-6081-58c2-83c6-b2a901acdac6") (property "Reference" "TP2" (at 80.01 40.45 0) (effects (font (size 1.27 1.27)))) (property "Value" "Charge masse" (at 80.01 38.45 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_2.5x2.5mm" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "ff4aab13-d374-5a0d-9487-80883f6c82b3")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP2") (unit 1)))))
+(global_label "GND" (shape passive) (at 80.01 44.45 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "4705277e-bc3f-535b-8eec-0e02b5f15c17") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:Polyfuse") (at 115.57000000000001 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "e61aa564-15de-5543-b0a0-c24558063b26") (property "Reference" "F1" (at 115.57000000000001 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "0,5 A" (at 115.57000000000001 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Fuse:Fuse_0603_1608Metric" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0603L050YR" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C207015" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Fusible réarmable : une alimentation branchée à l'envers fait conduire D1 et déclenche F1 ; courant de charge réglé à 300 mA (0,5 C), sous le maintien de 500 mA du fusible" (at 115.57000000000001 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "9480e0d0-c51c-5e88-bfb9-9f644aced3bc")) (pin "2" (uuid "a30a9c88-5dc7-54de-86c2-bbd7abc7e36b")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "F1") (unit 1)))))
+(global_label "VIN_EXT" (shape passive) (at 115.57000000000001 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "833c71d9-2528-55d3-a2d0-cb35a0bfc706") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VIN_F" (shape passive) (at 115.57000000000001 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "865283a8-67bf-5285-b8e4-c11b28905fc4") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:D_Zener") (at 156.21 44.45 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "75f04360-04d2-5fd6-a2b4-9ea6bfb63fbd") (property "Reference" "D1" (at 156.21 40.45 0) (effects (font (size 1.27 1.27)))) (property "Value" "SMF12A" (at 156.21 38.45 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Diode_SMD:D_SOD-123F" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "SMF12A" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C123800" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Écrêteur du connecteur de charge (§ 4.3) : 12 V, sous les 25 V admis par le BQ25180" (at 156.21 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0c674b03-15e0-5ede-864f-5b234ca4fd2e")) (pin "2" (uuid "7d0f23da-1835-531a-8f04-e77cdcfbde33")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "D1") (unit 1)))))
+(global_label "VIN_F" (shape passive) (at 152.4 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "6ac7fd58-2458-5902-b3f8-d608c49a89bc") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 160.02 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "8b5f6c74-ef66-57a8-aab6-a0cf2b0d9f20") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 160.02 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:D_Schottky") (at 199.39000000000001 44.45 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "1cd51e34-58d0-57c8-9988-d96e3308e830") (property "Reference" "D15" (at 199.39000000000001 40.45 0) (effects (font (size 1.27 1.27)))) (property "Value" "B5819W" (at 199.39000000000001 38.45 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Diode_SMD:D_SOD-123" (at 199.39000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 199.39000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "B5819W SL" (at 199.39000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C8598" (at 199.39000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Protection contre l'inversion de polarité du connecteur magnétique" (at 199.39000000000001 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "42c2d4a1-26bd-5645-8d8e-d4e1220850c4")) (pin "2" (uuid "0f292f39-0099-5a72-a111-55b0cb2d3970")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "D15") (unit 1)))))
+(global_label "VIN" (shape passive) (at 195.58 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "cfecc07f-111f-53ce-89f1-21da08f3a48f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 195.58 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VIN_F" (shape passive) (at 203.2 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0e667e9a-31b5-52b5-be52-21278971c2f8") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 203.2 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 238.76 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f9cb0c30-cd56-5dd7-afd0-efc73a72b131") (property "Reference" "C1" (at 238.76 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "2,2 µF 25 V" (at 238.76 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 238.76 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 238.76 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL10A225KA8NNNC" (at 238.76 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C57895" (at 238.76 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 238.76 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "711149be-0bf8-5f36-964c-85aab0edb079")) (pin "2" (uuid "8379c447-3046-5224-ab55-e08f317ebd76")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C1") (unit 1)))))
+(global_label "VIN" (shape passive) (at 238.76 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "f5d9f193-863a-5270-aa70-2875aa455b71") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 238.76 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 238.76 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "032d2da1-6c17-5bff-92ec-214907461838") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 238.76 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:BQ25180YBGR") (at 287.02 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "00dcfbb6-f80b-54db-a8a6-c50a013b02e4") (property "Reference" "U4" (at 287.02 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "BQ25180YBGR" (at 287.02 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:DSBGA-8_L1.6-W0.9-R2-C4-P0.40-BL" (at 287.02 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 287.02 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "BQ25180YBGR" (at 287.02 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C3682423" (at 287.02 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 287.02 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "A1" (uuid "8708b372-aaea-52a2-8c0d-9b96719a9e37")) (pin "A2" (uuid "4da887ae-0fd7-55c9-b8f4-4e9a33e2582b")) (pin "B1" (uuid "ddb5d5b9-4225-5194-acf5-b4ea2c3cbea8")) (pin "B2" (uuid "4a35e51f-29b3-5441-9e33-8e3d09d903d1")) (pin "C1" (uuid "0ce6a886-b67e-5ca6-9640-b081b50d6f7f")) (pin "C2" (uuid "8a24e99a-c094-5739-88a3-d1b26eec3475")) (pin "D1" (uuid "bdf90872-91a4-55a5-96ad-c6f5426b7ba3")) (pin "D2" (uuid "9f3c15a4-3cab-556c-9add-618e26a2ce38")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "U4") (unit 1)))))
+(global_label "CHG_INT" (shape passive) (at 298.45 44.45 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "5a3f5e42-064a-52c0-90cc-2f4aab579b66") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 298.45 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VIN" (shape passive) (at 298.45 49.53 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "063534bd-41d8-54a9-9876-ee67722d5acd") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 298.45 49.53 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "I2C_SCL" (shape passive) (at 275.59000000000003 44.45 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "9a8f68d1-440c-53c0-a2d2-16da84b60a2d") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 275.59000000000003 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VSYS" (shape passive) (at 275.59000000000003 49.53 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "476c82fc-11e1-5432-ae9b-1be21a51b0cd") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 275.59000000000003 49.53 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "I2C_SDA" (shape passive) (at 275.59000000000003 46.99 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7dc2e97e-9ee1-5375-a0b0-cf55c5a44db2") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 275.59000000000003 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT" (shape passive) (at 298.45 46.99 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "2ab7bc01-fdd0-51ca-a256-075eb946d5a9") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 298.45 46.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "BAT_NTC" (shape passive) (at 298.45 52.07 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "a000332c-3c66-5a15-833f-0730cacfda7c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 298.45 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 275.59000000000003 52.07 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ee10c6c3-f1f4-51c4-ae1a-486b26feadde") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 275.59000000000003 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 334.01 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "7a9a1a92-cefd-5b37-b7da-5fe73e58b3a0") (property "Reference" "C2" (at 334.01 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 µF" (at 334.01 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 334.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 334.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL10A106KP8NNNC" (at 334.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C19702" (at 334.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "SYS : 10 µF au pied, 100 µF au plus sur tout le rail (fiche TI)" (at 334.01 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "40767e63-c690-5526-9824-689cd346f713")) (pin "2" (uuid "4e827abc-b55e-59a5-ba97-bce87b9574f3")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C2") (unit 1)))))
+(global_label "VSYS" (shape passive) (at 334.01 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e5cb75be-85c5-5664-9ace-899ff5b03359") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 334.01 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 334.01 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7ec06ebc-38be-5c1a-b78f-20934b05e1be") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 334.01 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 369.57 48.26 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "407625ab-1ce4-573a-af61-6658ccf63560") (property "Reference" "C3" (at 369.57 44.26 0) (effects (font (size 1.27 1.27)))) (property "Value" "1 µF" (at 369.57 42.26 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 369.57 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 369.57 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL05A105KA5NQNC" (at 369.57 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C52923" (at 369.57 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 369.57 48.26 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "4c0e47ee-4a99-59ed-b878-2c07b4f57d17")) (pin "2" (uuid "ff7c6aeb-8260-58e9-80c6-4eddd74807c0")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C3") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 369.57 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "d45aa32a-de2e-533e-8d7a-2e1d3316dee4") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 369.57 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 369.57 52.07 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "1b11e693-4296-59bb-9174-3065a1fdd8d9") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 369.57 52.07 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 44.45 69.85 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "061f3926-f30b-51cf-aa20-9b5cb91ead1b") (property "Reference" "TP8" (at 44.45 65.85 0) (effects (font (size 1.27 1.27)))) (property "Value" "Batterie +" (at 44.45 63.849999999999994 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_2.5x2.5mm" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Point d'insertion de l'analyseur de consommation" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "3aa86f4b-946f-552c-9d58-211283673b10")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP8") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 44.45 69.85 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2f874619-8c63-5e3e-8351-001c1f7a22a3") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 80.01 69.85 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "2f02c194-ffc1-5e67-8aa1-9d8cf6b0245c") (property "Reference" "TP9" (at 80.01 65.85 0) (effects (font (size 1.27 1.27)))) (property "Value" "Batterie −" (at 80.01 63.849999999999994 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_2.5x2.5mm" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "9e8cd5f2-ffc7-5eac-8936-481b56ff6ec2")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP9") (unit 1)))))
+(global_label "GND" (shape passive) (at 80.01 69.85 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "856fcf61-8ffd-5f33-8734-79a376c19ea6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 115.57000000000001 69.85 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "e1e973dd-7dd9-5ebe-925b-e116eeba8c3d") (property "Reference" "TP17" (at 115.57000000000001 65.85 0) (effects (font (size 1.27 1.27)))) (property "Value" "NTC batterie" (at 115.57000000000001 63.849999999999994 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_1.5x1.5mm" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "07a07216-c55e-56ce-a64b-715327a5af12")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP17") (unit 1)))))
+(global_label "BAT_NTC" (shape passive) (at 115.57000000000001 69.85 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7693668d-0c8a-554e-9c3d-6fff1b4fc0d0") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:TPS63900DSKR") (at 162.56 76.2 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "65be7193-3857-58b8-ab1e-b1471a484eb6") (property "Reference" "U5" (at 162.56 72.2 0) (effects (font (size 1.27 1.27)))) (property "Value" "TPS63900DSKR" (at 162.56 70.2 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:WSON-10_L2.5-W2.5-W0.50-TL-EP" (at 162.56 76.2 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 162.56 76.2 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "TPS63900DSKR" (at 162.56 76.2 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C1518762" (at 162.56 76.2 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 162.56 76.2 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "8fce413d-89a9-514e-8106-c62862b61e5d")) (pin "2" (uuid "53307e96-3dae-594a-a5dc-c2b9c199c6b6")) (pin "3" (uuid "de84c156-dee4-5a79-a528-cb409fb6d21f")) (pin "4" (uuid "f97da878-f876-51a6-ad3d-bc61aa9ea629")) (pin "5" (uuid "9bcfdcd1-0b46-5781-acde-64f044490ded")) (pin "6" (uuid "95716b33-d28a-5e1f-9697-f0696d864c6e")) (pin "7" (uuid "c0ac1388-a383-5404-809f-fec064cc648d")) (pin "8" (uuid "5b1c7295-0869-56b6-9234-74185d121b63")) (pin "9" (uuid "44a80642-2e9b-50df-97e2-a4b5d82d4b49")) (pin "10" (uuid "c47f8c47-9a4e-5d97-a902-ac4edaee8106")) (pin "11" (uuid "dea407d6-d220-5888-aaf7-5c4f85ac644a")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "U5") (unit 1)))))
+(global_label "VSYS" (shape passive) (at 152.4 72.39 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "48673f88-c54f-5e61-bc22-b5e0b75d4ff5") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VSYS" (shape passive) (at 152.4 74.93 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "55a73779-aeb5-5137-bedc-4eee1b5c40de") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 74.93 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "TPS_CFG1" (shape passive) (at 152.4 77.47 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "92c842fd-ffeb-5a76-878a-6d57dcc6b067") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 152.4 80.01 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ff7e345c-bab7-5e0c-add0-84a3eb8ae5be") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 80.01 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "TPS_CFG3" (shape passive) (at 152.4 82.55 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "10ab51fa-c81b-5169-b858-89e614653ea0") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 82.55 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "3V3_REG" (shape passive) (at 172.72 82.55 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "a68259d6-ac52-50a3-be41-030c4a217d12") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 82.55 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "TPS_LX2" (shape passive) (at 172.72 80.01 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "084ec851-9150-5711-b4cf-6b359bc68f2b") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 80.01 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 172.72 77.47 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b4056046-6d60-5cbc-a4d6-8ad2c2195d5f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "TPS_LX1" (shape passive) (at 172.72 74.93 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4b4c4d0a-6396-5a5c-a200-59bc13bdda54") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 74.93 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VSYS" (shape passive) (at 172.72 72.39 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "02664b27-668e-5914-95c5-462425131e80") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 72.39 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 172.72 69.85 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "16de2300-61d1-5367-b61f-a83865fdd64a") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 172.72 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 208.28 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "18b1a0f2-6d36-516c-87d3-ae84f42520ce") (property "Reference" "R2" (at 208.28 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "36,5 kΩ 1 %" (at 208.28 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 208.28 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 208.28 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402WGF3652TCE" (at 208.28 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C25887" (at 208.28 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 208.28 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "c53b4c38-cce6-566d-b3db-2b1fd298c088")) (pin "2" (uuid "0e12bb92-6a76-593e-89f8-ade83d002963")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R2") (unit 1)))))
+(global_label "TPS_CFG1" (shape passive) (at 208.28 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "822630dd-e919-5f38-a471-dab1e2a2b6e6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 208.28 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "4b5c0a57-efcd-54d0-afef-4de240cac69d") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 243.84 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "71d32d68-dd3b-5e84-a973-00408525b539") (property "Reference" "R4" (at 243.84 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "16,2 kΩ 1 %" (at 243.84 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 243.84 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 243.84 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "AC0402FR-0716K2L" (at 243.84 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C226806" (at 243.84 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 243.84 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "c68e22a8-827d-5e9e-b8a2-435eea07f804")) (pin "2" (uuid "c2804f3b-241e-5234-a433-612fe93d3e15")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R4") (unit 1)))))
+(global_label "TPS_CFG3" (shape passive) (at 243.84 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4287cd0b-67fb-57e2-b359-2768270a66af") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 243.84 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 243.84 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "94957414-37c8-5f28-b991-0a363761fffc") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 243.84 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:DFE252012F-2R2M") (at 285.75 69.85 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f5f42ac5-f99e-56af-a4f2-d66e7da32c92") (property "Reference" "L1" (at 285.75 65.85 0) (effects (font (size 1.27 1.27)))) (property "Value" "2,2 µH" (at 285.75 63.849999999999994 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:L1008" (at 285.75 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 285.75 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "DFE252012F-2R2M" (at 285.75 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C576403" (at 285.75 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 285.75 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "524b902b-426a-5eb8-aa27-ac357ae6a776")) (pin "2" (uuid "15375daa-4ab8-5574-b935-7eea2233fdac")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "L1") (unit 1)))))
+(global_label "TPS_LX1" (shape passive) (at 280.67 69.85 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "3827aa9d-a0fb-5636-89f8-d68b43b99b86") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 280.67 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "TPS_LX2" (shape passive) (at 290.83 69.85 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "9b77915f-ac7f-59fe-b49c-43d993a80855") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 290.83 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 326.39 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "76f2c523-b131-5307-a618-ba67a7770b62") (property "Reference" "C4" (at 326.39 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 µF" (at 326.39 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 326.39 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 326.39 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL10A106KP8NNNC" (at 326.39 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C19702" (at 326.39 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 326.39 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "dbe31d8f-c98f-5bcc-958d-7e111bd583a7")) (pin "2" (uuid "a829d835-b140-55bb-8054-7ede5f7e2246")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C4") (unit 1)))))
+(global_label "VSYS" (shape passive) (at 326.39 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "5c37694a-4546-523a-a8c8-17968ceb6d8f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 326.39 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 326.39 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "53622608-95a7-582e-8937-24b16c538ad8") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 326.39 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 361.95 73.66 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "31bef16b-575e-554c-bb0a-175f5d639379") (property "Reference" "C5" (at 361.95 69.66 0) (effects (font (size 1.27 1.27)))) (property "Value" "22 µF" (at 361.95 67.66 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 361.95 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 361.95 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL10A226MQ8NRNC" (at 361.95 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C59461" (at 361.95 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 361.95 73.66 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "bb3e8ef9-dada-5d32-92c9-40b9d2d154f4")) (pin "2" (uuid "8a303f5d-91e9-5745-a47f-26ce414245f4")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C5") (unit 1)))))
+(global_label "3V3_REG" (shape passive) (at 361.95 69.85 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "81b1d07a-64e4-551f-bdc1-eaf2b0f7c068") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 361.95 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 361.95 77.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ce8b24b7-6208-54f5-8fb6-f7ec8dcb6397") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 361.95 77.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 44.45 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "be45eae6-f47c-551f-86f2-26a8255c1472") (property "Reference" "R5" (at 44.45 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "0 Ω" (at 44.45 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 44.45 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0603WAF0000T5E" (at 44.45 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C21189" (at 44.45 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Coupable : mesure du courant du rail 3,3 V (§ 4.3)" (at 44.45 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0a06d497-0dbb-51a1-ba1e-5a1826ae7fdc")) (pin "2" (uuid "47b64612-60a4-59ca-bb54-431070861f43")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R5") (unit 1)))))
+(global_label "3V3_REG" (shape passive) (at 44.45 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "fe0c564b-4187-555d-9d1f-d5bc16c18b07") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "3V3" (shape passive) (at 44.45 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "6fc0195a-c222-5b34-b84b-8350be4ac3a6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 80.01 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "b60019bd-7f63-5fce-b411-8e659996d5de") (property "Reference" "R8" (at 80.01 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "0 Ω" (at 80.01 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_1206_3216Metric" (at 80.01 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "1206W4F0000T5E" (at 80.01 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C17888" (at 80.01 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Coupable : mesure du courant du modem (§ 4.3) ; 1206 pour les pointes de 2 A" (at 80.01 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "5c03b15f-df0c-5cf6-a288-f699216b9351")) (pin "2" (uuid "b13415ac-4074-5917-95b5-19e8a03389f2")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R8") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 80.01 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "45b38808-cb78-5ab4-843f-76f63eb4c319") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT_MES" (shape passive) (at 80.01 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "25518663-056c-5457-9b10-d08242dcb85f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:TPS22965DSGR") (at 128.27 105.41 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "99b8c146-692b-5897-94f3-2646fff8014b") (property "Reference" "U6" (at 128.27 101.41 0) (effects (font (size 1.27 1.27)))) (property "Value" "TPS22965DSGR" (at 128.27 99.41 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:UDFN-8_L2.0-W2.0-P0.50-TL-EP" (at 128.27 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 128.27 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "TPS22965DSGR" (at 128.27 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C122837" (at 128.27 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 128.27 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "16ba4ffc-3699-55fc-afbe-f89507f457a7")) (pin "2" (uuid "c74070d0-bae7-5fb0-87b5-277f27bc3129")) (pin "3" (uuid "0fddf024-3b46-5a89-a0d8-04274fa9ad8b")) (pin "4" (uuid "009212ce-ca6a-532b-94d0-eec2b79e2951")) (pin "5" (uuid "bdea205b-3ce4-5b26-88c4-99e95819721e")) (pin "6" (uuid "8f6314e2-3183-546d-85f1-65cb1c2417a4")) (pin "7" (uuid "f794223c-5d36-53cc-a52a-81e30cabcacb")) (pin "8" (uuid "3e3adcc4-5ab3-52c3-aa83-da6327796ef6")) (pin "9" (uuid "fd62a8f9-0788-515d-b1ec-8bca301d3190")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "U6") (unit 1)))))
+(global_label "VBAT_MES" (shape passive) (at 115.57000000000001 102.87 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f732885c-7887-5196-bbe5-dedbf084868f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 102.87 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT_MES" (shape passive) (at 115.57000000000001 105.41 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7ab74849-e119-5757-9ec1-95a0177263f3") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "MODEM_EN" (shape passive) (at 115.57000000000001 107.95 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "94f20b53-9448-5304-b88d-fce06561ba9d") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT_MES" (shape passive) (at 115.57000000000001 110.49 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "624ea617-8097-5d65-b700-922f5d9e52c5") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 110.49 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 140.97 110.49 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "6aa35469-b024-57da-8a1c-e62f7aabd20b") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 140.97 110.49 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "MODEM_CT" (shape passive) (at 140.97 107.95 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "6397211c-4e2b-50a9-a540-7ed8b6c2454c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 140.97 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT_MODEM" (shape passive) (at 140.97 105.41 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0979311a-ad1e-56c5-81e9-c472e0391e16") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 140.97 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT_MODEM" (shape passive) (at 140.97 102.87 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "cd9efc66-eda4-55c2-beef-bb625b2380b8") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 140.97 102.87 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 140.97 100.33 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "1914df58-4c1a-5550-b5c9-96100818ca78") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 140.97 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 177.8 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "25aa0020-f022-52a7-bbad-90833ea33322") (property "Reference" "C6" (at 177.8 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 nF" (at 177.8 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 177.8 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 177.8 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL05B103KB5NNNC" (at 177.8 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C15195" (at 177.8 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "Montée en 13 ms environ (fiche TI, tableau 1) : appel de 0,2 A dans le réservoir de 660 µF" (at 177.8 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "9c16618a-8705-5804-ab13-91938e3d0848")) (pin "2" (uuid "280646b4-777b-530f-bb9e-b08c5b2a8355")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C6") (unit 1)))))
+(global_label "MODEM_CT" (shape passive) (at 177.8 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0dbe5fd9-1527-5850-adc4-f45e5774c5f8") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 177.8 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 177.8 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "41a4ea3c-a02e-52d8-8c62-01d3bf34cfd9") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 177.8 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 213.36 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "38d7afc7-58d6-5d23-927e-7836aa1ccfa3") (property "Reference" "R6" (at 213.36 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "100 kΩ" (at 213.36 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 213.36 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 213.36 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402WGF1003TCE" (at 213.36 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C25741" (at 213.36 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 213.36 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0df183d7-bba9-5837-ab36-e2f3d3747f84")) (pin "2" (uuid "614af302-4a40-5225-a844-9395b3f35361")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R6") (unit 1)))))
+(global_label "MODEM_EN" (shape passive) (at 213.36 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "a48703c1-a0f0-5c04-b855-f92384a52a27") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 213.36 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 213.36 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "4ab6910b-ad77-52cf-a4b2-0842a70a4fb2") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 213.36 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 248.92000000000002 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f4654564-c55b-51b7-908c-204a57d45d42") (property "Reference" "C7" (at 248.92000000000002 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 µF" (at 248.92000000000002 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 248.92000000000002 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 248.92000000000002 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL10A106KP8NNNC" (at 248.92000000000002 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C19702" (at 248.92000000000002 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 248.92000000000002 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "034f15d7-5495-541d-ac18-f7653a9771ed")) (pin "2" (uuid "b59c50f1-7899-5b78-8c20-3c080f193bb9")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C7") (unit 1)))))
+(global_label "VBAT_MES" (shape passive) (at 248.92000000000002 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "a2dfaf3e-868d-5eb0-b08c-d2e97c54325a") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92000000000002 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 248.92000000000002 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "df1a37d8-f6e5-5183-93c6-21112d446e9c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92000000000002 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "fg:MAX17048G+T10") (at 298.45 105.41 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "4ea88cf9-f126-51eb-8ee7-8642a9e40919") (property "Reference" "U7" (at 298.45 101.41 0) (effects (font (size 1.27 1.27)))) (property "Value" "MAX17048G+T10" (at 298.45 99.41 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "fg:TDFN-8_L2.0-W2.0-P0.50-BL-EP1.2" (at 298.45 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 298.45 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "MAX17048G+T10" (at 298.45 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C2682616" (at 298.45 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 298.45 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0e0c576a-d99f-5968-a37b-23717e4c4cf4")) (pin "2" (uuid "17a22469-6f6f-5586-a7c9-1ddc79b81214")) (pin "3" (uuid "abbdc761-a36a-502d-a37c-396ddf0750f3")) (pin "4" (uuid "b6d6b3f1-1dc9-5ac2-a5a0-f24a67be88c6")) (pin "5" (uuid "5cb2a755-f04c-5c28-a4f6-dcd304d0392a")) (pin "6" (uuid "ba796de7-fdb8-50b1-ba90-1c353658ca66")) (pin "7" (uuid "cd05ff7c-f2cf-5286-8ebf-d4816d9974c2")) (pin "8" (uuid "3fc20757-7100-5c89-aeca-18023cc043d8")) (pin "9" (uuid "8c1280ce-2c6f-5648-bf99-0e9a2ce60b78")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "U7") (unit 1)))))
+(global_label "GND" (shape passive) (at 285.75 102.87 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "356b535f-9ab4-5132-a6a0-3e18af1d7fe9") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 285.75 102.87 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT" (shape passive) (at 285.75 105.41 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "443957c2-fec0-55a2-b740-35bb13762f3c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 285.75 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "VBAT" (shape passive) (at 285.75 107.95 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f7412502-f651-5782-ab01-78a9be67e302") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 285.75 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 285.75 110.49 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "e9cb52c8-7245-5ede-bfb9-4ae8f39091a0") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 285.75 110.49 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GAUGE_ALRT" (shape passive) (at 311.15 110.49 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "7c50643b-6dd1-5cfe-a6ed-3e5ee93183cc") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 110.49 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 311.15 107.95 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b674450a-60e2-52a0-8252-c12a2091b326") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "I2C_SCL" (shape passive) (at 311.15 105.41 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ae3f3b77-a61f-5043-a735-7dd1749ff56b") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 105.41 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "I2C_SDA" (shape passive) (at 311.15 102.87 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "03e87574-d6d1-555e-bd8b-d1f9ef6c6d9e") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 102.87 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 311.15 100.33 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "864c705d-dd58-5303-84fd-67aadf13e17f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 311.15 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:C") (at 346.71 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "a7f4b5e7-109c-5649-b03a-40d4ab1ddf03") (property "Reference" "C8" (at 346.71 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "100 nF" (at 346.71 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 346.71 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 346.71 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "CL05B104KO5NNNC" (at 346.71 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C1525" (at 346.71 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 346.71 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "2d6d520c-96a4-5f31-845a-0ac32a260236")) (pin "2" (uuid "e0f66c6f-8ed5-5d64-bd18-76fcb27565ce")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "C8") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 346.71 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e08648ff-479f-56d2-912c-59f67f8e75c7") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 346.71 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 346.71 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0ea3684c-27ca-58da-aa99-fa70d035b519") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 346.71 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:R") (at 382.27 104.14 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "2ce59936-1263-5aba-95f6-c947fb10f1bb") (property "Reference" "R7" (at 382.27 100.14 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 kΩ 1 %" (at 382.27 98.14 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 382.27 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 382.27 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "0402WGF1002TCE" (at 382.27 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C25744" (at 382.27 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 382.27 104.14 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "18dc25a4-3fd7-5477-a1b9-fc0f239c5499")) (pin "2" (uuid "aeb64c26-e8e8-5b4f-a91a-d3b14a2748d7")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "R7") (unit 1)))))
+(global_label "NTC_EN" (shape passive) (at 382.27 100.33 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "56becd1e-6955-598f-9e6d-301995c0a8da") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 382.27 100.33 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "NTC_MES" (shape passive) (at 382.27 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7f24d8a6-e2c3-5dbd-9df2-e6548b525a3f") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 382.27 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Device:Thermistor_NTC") (at 44.45 132.08 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "85c113d8-e2b0-50f5-bc00-d2a79b453147") (property "Reference" "RT1" (at 44.45 128.08 0) (effects (font (size 1.27 1.27)))) (property "Value" "10 kΩ B3435" (at 44.45 126.08000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 44.45 132.08 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 44.45 132.08 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "NCP15XH103F03RC" (at 44.45 132.08 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C77131" (at 44.45 132.08 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 44.45 132.08 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "735f0588-a0fb-58ff-8e10-dd5455348263")) (pin "2" (uuid "2abc8ccc-0fc9-5f2e-834b-175abf424e85")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "RT1") (unit 1)))))
+(global_label "NTC_MES" (shape passive) (at 44.45 128.27 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "dd8066b7-0b27-5ddd-a339-3ca4ad0515d4") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(global_label "GND" (shape passive) (at 44.45 135.89000000000001 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "437cfa1c-0bb7-5506-adab-26c85eaa2600") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 135.89000000000001 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 80.01 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "f0c0d2cd-b363-5823-829e-92d64a0edbca") (property "Reference" "TP3" (at 80.01 124.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Value" "VBAT" (at 80.01 122.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "6e6edf39-1e54-5f27-ac17-ad4128e6a8c4")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP3") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 80.01 128.27 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b722d876-ec72-5276-b194-b773695610f6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 80.01 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 115.57000000000001 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "7e9d1c34-342a-594f-961b-c73789c29a45") (property "Reference" "TP4" (at 115.57000000000001 124.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Value" "VSYS" (at 115.57000000000001 122.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "4612db94-7e0b-586f-a8a6-38aa1f0aa0db")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP4") (unit 1)))))
+(global_label "VSYS" (shape passive) (at 115.57000000000001 128.27 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a513bcab-f25a-59f2-ad91-9e67a649d744") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 115.57000000000001 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 152.4 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "bb209a16-4121-5c73-ac74-8e82cf124aa0") (property "Reference" "TP5" (at 152.4 124.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Value" "3V3" (at 152.4 122.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "bf9562b6-e8cd-5f23-b5d0-b0660515638e")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP5") (unit 1)))))
+(global_label "3V3" (shape passive) (at 152.4 128.27 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "39c09a7d-5c01-5aa5-8bbf-d85720d363cf") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 152.4 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 187.96 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "8ab0e5ed-d7f4-58ac-adbb-85d3f2a2423c") (property "Reference" "TP6" (at 187.96 124.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Value" "VBAT_MODEM" (at 187.96 122.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "7373f7ca-4fb7-5b6c-a6ce-5cf3c20b1f3e")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP6") (unit 1)))))
+(global_label "VBAT_MODEM" (shape passive) (at 187.96 128.27 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "e9d02bc6-1479-5332-bd7c-85aed654d611") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 187.96 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "Connector:TestPoint") (at 223.52 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "2865c6c4-852a-5948-a529-70d8d3dd08c6") (property "Reference" "TP7" (at 223.52 124.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Value" "GND" (at 223.52 122.27000000000001 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "7a8b7925-6004-57c7-a2fc-00fe6332ad73")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "TP7") (unit 1)))))
+(global_label "GND" (shape passive) (at 223.52 128.27 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ba77a931-67cd-5348-93da-2103520bee12") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 223.52 128.27 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 39.37 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "9089aa9a-612f-56ee-9135-21a8c7d13a4d") (property "Reference" "#FLG01" (at 39.37 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 39.37 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 39.37 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 39.37 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "6ab7f762-cdb4-518a-9147-859fa6cf61b0")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG01") (unit 1)))))
+(global_label "GND" (shape passive) (at 39.37 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "823897df-635b-5046-9768-e1f42bf2ec0e") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 39.37 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 62.230000000000004 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "1cc7fe2a-20b3-5cc6-ab8f-1306eb0aa56f") (property "Reference" "#FLG02" (at 62.230000000000004 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 62.230000000000004 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 62.230000000000004 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 62.230000000000004 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "0461ccdb-306b-5bc3-9c35-cbad6ddf27c9")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG02") (unit 1)))))
+(global_label "VIN" (shape passive) (at 62.230000000000004 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "72099696-a300-5db8-92b8-ddb2c044b20a") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 62.230000000000004 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 83.82000000000001 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "f8023ca6-9b68-5687-8111-ced9ed1c4b11") (property "Reference" "#FLG03" (at 83.82000000000001 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 83.82000000000001 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 83.82000000000001 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 83.82000000000001 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "ab13237d-0871-5e85-b029-a99d980e26ec")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG03") (unit 1)))))
+(global_label "VBAT" (shape passive) (at 83.82000000000001 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "4271b2a1-a771-53db-8ee2-d302854343a1") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 83.82000000000001 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 105.41 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "06c4b332-f0d2-5cb8-b633-89d3b331566b") (property "Reference" "#FLG04" (at 105.41 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 105.41 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 105.41 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 105.41 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "a87e7cb7-d2db-5414-9f98-d2b1eb0ad9c6")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG04") (unit 1)))))
+(global_label "VBAT_MES" (shape passive) (at 105.41 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "9188fafe-c07c-5f7e-9f4e-ae258215c9e6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 105.41 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 128.27 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "d893f000-f155-5ce0-9515-c627e29d903e") (property "Reference" "#FLG05" (at 128.27 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 128.27 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 128.27 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 128.27 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "4ccb89a9-5056-55e7-bad0-4518e7d55847")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG05") (unit 1)))))
+(global_label "3V3" (shape passive) (at 128.27 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d75bf5c5-f1c7-51e0-a768-9f6ef4a5fc7c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 128.27 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(symbol (lib_id "power:PWR_FLAG") (at 149.86 250.19 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board yes) (dnp no) (uuid "d3c325a3-6002-593d-b1b9-0acb2d0f89d2") (property "Reference" "#FLG06" (at 149.86 245.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Value" "PWR_FLAG" (at 149.86 247.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Footprint" "" (at 149.86 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 149.86 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "e6190fb2-b26b-5714-b995-24a0a3ac4956")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f" (reference "#FLG06") (unit 1)))))
+(global_label "3V3_FLASH" (shape passive) (at 149.86 250.19 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "3da70dac-851e-5ef8-9ab2-4d642acd0ea6") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 149.86 250.19 0) (effects (font (size 1.27 1.27)) (hide yes))))
+(embedded_fonts no))

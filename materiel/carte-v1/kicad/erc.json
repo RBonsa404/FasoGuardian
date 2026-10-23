@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-10-22T23:58:48",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.6",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053",
+            "violations": []
+        },
+        {
+            "path": "/Alimentation, charge et jauge/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/06663894-3f9d-535a-8063-8860181f393f",
+            "violations": []
+        },
+        {
+            "path": "/Module cellulaire A7670E/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/bf4abc8a-73c0-5416-a1b2-4dd8e17e8020",
+            "violations": []
+        },
+        {
+            "path": "/Antennes LTE et GNSS/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87",
+            "violations": []
+        },
+        {
+            "path": "/Carte SIM/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/d221bbb9-7d4c-5d5f-8e0b-41ed482ca6ae",
+            "violations": []
+        },
+        {
+            "path": "/Microcontrôleur STM32U575/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/f00164bc-1320-5990-b001-d3d612522a42",
+            "violations": []
+        },
+        {
+            "path": "/Capteurs, élément sécurisé et mémoire/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/b91b074c-c063-5dd5-b9cf-75b77c52c5ee",
+            "violations": []
+        },
+        {
+            "path": "/Translateurs 1,8 V / 3,3 V/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/9e13927b-a859-57c3-b421-6e5ee92064fc",
+            "violations": []
+        },
+        {
+            "path": "/Signalisation et détection/",
+            "uuid_path": "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/4f35a2da-b551-5777-a547-e9a9a91c5d1f",
+            "violations": []
+        }
+    ],
+    "source": "fasoguardian-v1.kicad_sch"
+}
