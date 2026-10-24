@@ -17,8 +17,9 @@ from generer_carte import TOUT, zone  # noqa: E402
 ICI = Path(__file__).resolve().parent
 CARTE = ICI.parent / 'kicad' / 'fasoguardian-v1.kicad_pcb'
 TRAVAIL = ICI.parent / 'kicad' / 'routage'
-JAVA = Path(r'C:\Program Files\Java\jdk-21.0.12\bin\java.exe')
-FREEROUTING = Path(r'C:\Users\rachi\outils-pcb\freerouting-2.1.0.jar')
+# Freerouting 2.5 exige Java 25 ; il est appelé par son chemin, sans toucher au Java du projet (JDK 21).
+JAVA = Path(r'C:\Program Files\Eclipse Adoptium\jdk-25.0.4.101-hotspot\bin\java.exe')
+FREEROUTING = Path(r'C:\Users\rachi\outils-pcb\freerouting-2.5.0.jar')
 
 
 def main() -> None:
@@ -31,10 +32,11 @@ def main() -> None:
     # Éventail (fanout) : chaque plot CMS sort vers un via, ce qui relie les plots de masse au plan de la couche 2 ;
     # l'optimiseur, très long sur une carte aussi dense, est laissé de côté (le DRC juge le résultat).
     commande = [str(JAVA), '-jar', str(FREEROUTING), '-de', str(dsn), '-do', str(ses), '-mp', passes, '-mt', '4',
-                '--gui.enabled=false', '--router.fanout.enabled=true', '--router.optimizer.enabled=false']
+                '--gui.enabled=false', '--router.fanout.enabled=true', '--router.optimizer.enabled=false',
+                f'--router.max_passes={passes}', '--router.automatic_neckdown=false']
     print(' '.join(commande), flush=True)
     with (TRAVAIL / 'freerouting.log').open('w', encoding='utf-8') as journal:
-        subprocess.run(commande, stdout=journal, stderr=subprocess.STDOUT, text=True, timeout=5400)
+        subprocess.run(commande, stdout=journal, stderr=subprocess.STDOUT, text=True, timeout=10800)
     if not ses.exists():
         raise SystemExit('Freerouting n\'a pas produit de session : voir routage/freerouting.log')
     if not pcbnew.ImportSpecctraSES(carte, str(ses)):

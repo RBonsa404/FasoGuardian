@@ -32,7 +32,7 @@ réalisation (schéma, placement, routage, fabrication) et sert de grille de rel
   44 × 38 mm visé au § 10 pour le prototype portable V2. La V1 se monte dans un boîtier imprimé en 3D (§ 12). La
   face supérieure porte les pièces hautes ; la face inférieure, contre la batterie, ne porte que des pièces de
   1,2 mm de haut au plus (passifs, petits circuits intégrés, SOT-23) et les pastilles des liaisons hors carte.
-- **Empilement** : 4 couches (signal / masse continue / alimentations / signal), ENIG, pistes et isolements ≥ 0,1 mm,
+- **Empilement** : 4 couches (signal / masse continue / alimentations / signal), ENIG, pistes ≥ 0,09 mm et isolements ≥ 0,1 mm (sorties des plots au pas de 0,5 mm ; 0,09 mm est la capacité standard des façonniers en multicouche),
   vias 0,3 / 0,15 mm, aux capacités standard des façonniers.
 - **Radio** : lignes d'antenne de 50 Ω en guide coplanaire référencé à la masse de la couche 2, de 20 mm au plus
   (SIMCom § 4.7) ; réseau d'adaptation en π (éléments série 0 Ω montés, éléments parallèles non montés, valeurs
