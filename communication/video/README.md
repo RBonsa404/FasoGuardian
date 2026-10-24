@@ -1,6 +1,6 @@
 # Vidéo de présentation
 
-Film publicitaire de 99,5 s (1920 × 1080, 120 i/s, version à 60 i/s pour les réseaux sociaux) destiné aux familles. Le cahier des charges est dans
+Film publicitaire de 105,5 s, dont 6 s de générique sans voix (1920 × 1080, 120 i/s, version à 60 i/s pour les réseaux sociaux) destiné aux familles. Le cahier des charges est dans
 [BRIEF.md](BRIEF.md).
 
 | Fichier | Rôle |
