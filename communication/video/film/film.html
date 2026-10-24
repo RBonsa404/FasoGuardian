@@ -336,10 +336,22 @@
       <div class="texte" data-a="fondu 6.6" style="margin-top:56px; font-size:30px">En point relais ou en ligne · Espace parents</div>
     </div>
   </section>
+  <!-- 13 · Générique (sans voix) -->
+  <section class="plan" data-plan="generique">
+    <div class="abs" style="left:0; right:0; top:200px; text-align:center">
+      <div data-a="fondu 0.3" style="font:600 26px/1 Inter,sans-serif; letter-spacing:.24em; text-transform:uppercase; color:var(--text-3)">Une réalisation du</div>
+      <div id="g-collectif" data-a="monte 0.5" style="margin-top:26px; font:700 108px/1 Sora,sans-serif; letter-spacing:-.04em"></div>
+      <div id="g-ville" class="texte" data-a="fondu 0.9" style="margin-top:22px"></div>
+      <div data-a="fondu 1.3" style="width:120px; height:3px; margin:58px auto; border-radius:2px; background:var(--accent)"></div>
+      <div id="g-nom" data-a="monte 1.6" style="font:700 60px/1.1 Sora,sans-serif; letter-spacing:-.02em"></div>
+      <div id="g-role" class="texte" data-a="monte 1.9" style="margin-top:14px; font-size:30px; color:var(--accent); font-weight:600"></div>
+      <div id="g-contacts" data-a="monte 2.4" style="margin-top:44px; display:flex; justify-content:center; gap:22px"></div>
+    </div>
+  </section>
 </div>
 
 <script type="module">
-  import { PLANS, debuts, DUREE_TOTALE } from './scenario.js';
+  import { PLANS, debuts, DUREE_TOTALE, GENERIQUE } from './scenario.js';
 
   const DEBUTS = debuts();
   const FONDU = 0.45; // fondu enchaîné entre deux plans (s)
@@ -348,6 +360,17 @@
   const borne = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const doux = (x) => 1 - Math.pow(1 - x, 3);
   const plans = PLANS.map((p) => document.querySelector(`[data-plan="${p.id}"]`));
+
+  // Générique : textes et contacts tirés du scénario.
+  for (const cle of ['collectif', 'ville', 'nom', 'role']) document.getElementById(`g-${cle}`).textContent = GENERIQUE[cle];
+  for (const contact of GENERIQUE.contacts) {
+    const puce = document.createElement('div');
+    puce.className = 'puce';
+    const telephone = /^\+?[\d ]{8,}$/.test(contact);
+    if (telephone) puce.innerHTML = '<i class="ic" style="--ic:url(/icones/telephone.svg)"></i>';
+    puce.append(contact);
+    document.getElementById('g-contacts').append(puce);
+  }
 
   // Séquence du bracelet : toutes les images sont chargées d'avance, une seule est visible à la fois.
   for (const hote of document.querySelectorAll('[data-flip]')) {
@@ -373,8 +396,11 @@
     plans.forEach((plan, n) => {
       const { duree } = PLANS[n];
       const l = t - DEBUTS[n];
-      const entree = n === 0 ? borne(l / 0.8) : borne((l + FONDU / 2) / FONDU);
-      const sortie = n === plans.length - 1 ? borne((duree - l) / 1.2) : borne((duree - l + FONDU / 2) / FONDU);
+      // Le film s'ouvre sur le noir ; la signature s'y éteint avant le générique, qui en ressort puis s'y éteint.
+      const noirAvant = n === 0 || PLANS[n].id === 'generique';
+      const noirApres = n === plans.length - 1 || PLANS[n + 1]?.id === 'generique';
+      const entree = noirAvant ? borne(l / 0.8) : borne((l + FONDU / 2) / FONDU);
+      const sortie = noirApres ? borne((duree - l) / 1.2) : borne((duree - l + FONDU / 2) / FONDU);
       const vis = Math.min(entree, sortie);
       plan.style.visibility = vis > 0 ? 'visible' : 'hidden';
       plan.style.opacity = vis;

@@ -5,9 +5,19 @@
  * Chaque plan : `duree` en secondes, `voix` (texte dit, chiffres en toutes lettres), `ecran` (texte affiché quand il
  * diffère de la voix pour les sous-titres, sinon la voix est reprise), `intention` (consigne de jeu pour la voix).
  * Chaque phrase correspond à un fait publié sur le site vitrine (frontend/projects/site/src/app/contenu.ts).
+ * Le dernier plan, le générique, est sans voix : ses textes viennent de GENERIQUE.
  */
 export const DEBIT = 2.5; // mots par seconde, voix posée en français
 export const AMORCE = 0.4; // la voix démarre 0,4 s après le début du plan
+
+/** Générique de fin : l'équipe qui a réalisé le projet et le contact de son fondateur. */
+export const GENERIQUE = {
+  collectif: 'Collectif Dedsec',
+  ville: 'Ouagadougou, Burkina Faso',
+  nom: 'Abdoul Rachid BONSA',
+  role: 'Fondateur du Collectif Dedsec, porteur du projet FasoGuardian',
+  contacts: ['rachidbonsa707@gmail.com'],
+};
 
 export const PLANS = [
   {
@@ -85,6 +95,12 @@ export const PLANS = [
     duree: 9,
     voix: "FasoGuardian, conçu à Ouagadougou pour les familles du Burkina. Toujours près d'eux. Jamais sur leur dos.",
     intention: 'Fierté tranquille sur « Ouagadougou ». Le slogan en deux temps, pause entre les deux phrases.',
+  },
+  {
+    id: 'generique',
+    duree: 6,
+    voix: '',
+    intention: 'Pas de voix : la musique seule porte le générique.',
   },
 ];
 

@@ -49,7 +49,8 @@ enfant »), pas comme une architecture.
 - Fermoir qui détecte le retrait ; étanche IP67 ; autonomie typique 48 h et plus ; charge magnétique.
 - Ni écran, ni caméra, ni micro, ni biométrie.
 - Page QR gravée : appel des contacts choisis, sans nom ni position.
-- Conçu à Ouagadougou par le Collectif Dedsec.
+- Conçu à Ouagadougou par le Collectif Dedsec ; générique de fin : réalisation du Collectif Dedsec, son fondateur
+  Abdoul Rachid BONSA et son contact (demande du porteur du 24 octobre 2026).
 
 Interdits : chiffres non publiés (nombre de familles, temps d'intervention), promesse de retrouver l'enfant
 « à coup sûr », citation de partenaires non signés.
@@ -77,7 +78,8 @@ Interdits : chiffres non publiés (nombre de familles, temps d'intervention), pr
 
 ## 7. Critères d'acceptation
 
-1. Le film dure entre 80 et 100 secondes et chaque sous-titre tient sur deux lignes de 42 caractères au plus.
+1. Le film dure entre 80 et 100 secondes hors générique (6 s, sans voix) et chaque sous-titre tient sur deux
+   lignes de 42 caractères au plus.
 2. Chaque phrase de la voix off correspond à un fait de la section 4.
 3. Aucun écran de la console, aucun terme technique interne n'apparaît.
 4. Les sous-titres et le film proviennent du même `scenario.js`.

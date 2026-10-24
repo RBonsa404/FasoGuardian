@@ -1,7 +1,7 @@
 # Voix off — film de présentation FasoGuardian
 
 Texte généré depuis `film/scenario.js` (ne pas modifier à la main : changer le scénario puis relancer
-`node communication/video/film/produire.mjs textes`). Durée du film : 99,5 s. Débit visé : 2,5 mots par
+`node communication/video/film/produire.mjs textes`). Durée du film : 105,5 s. Débit visé : 2,5 mots par
 seconde, soit une voix posée de publicité. Chaque réplique commence 0,4 s après le début de son plan.
 
 ## Réplique par réplique
@@ -21,6 +21,9 @@ seconde, soit une voix posée de publicité. Chaque réplique commence 0,4 s apr
 | 11 | Les offres | 01:20,9 | 01:30,5 | Le bracelet coûte trente mille francs CFA. L'abonnement commence à mille cinq cents francs par mois, sans engagement, payé par mobile money. | 22 mots en 9,4 s au plus |
 | 12 | Signature | 01:30,9 | 01:39,5 | FasoGuardian, conçu à Ouagadougou pour les familles du Burkina. Toujours près d'eux. Jamais sur leur dos. | 16 mots en 8,4 s au plus |
 
+Le plan 13, générique (01:39,5 à 01:45,5), est sans voix : la
+musique seule le porte.
+
 ## Intentions de jeu
 
 1. **Ouverture** (00:00,0) — Calme, posé, presque murmuré. Une image du quotidien.
@@ -35,6 +38,7 @@ seconde, soit une voix posée de publicité. Chaque réplique commence 0,4 s apr
 10. **La confidentialité** (01:14,0) — Ferme et bienveillant, une promesse tenue.
 11. **Les offres** (01:20,5) — Clair, articulé, aucune précipitation sur les chiffres.
 12. **Signature** (01:30,5) — Fierté tranquille sur « Ouagadougou ». Le slogan en deux temps, pause entre les deux phrases.
+13. **Générique** (01:39,5) — Pas de voix : la musique seule porte le générique.
 
 ## Prononciation
 

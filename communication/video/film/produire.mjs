@@ -5,8 +5,10 @@
 //      segment par ffmpeg au fil de l'eau (aucune image sur disque), puis les segments sont mis bout à bout ;
 //   4. versions à sous-titres incrustés (120 i/s, et 60 i/s pour les réseaux sociaux, plafonnés à 60) et vignette.
 // Usage : node communication/video/film/produire.mjs [textes|film|apercu] [--ips=120] [--rendeurs=4]
-//   textes : étapes 1 et 2 seulement ; apercu : planche de 12 images (une par plan) ; film (défaut) : tout ;
+//   textes : étapes 1 et 2 seulement ; apercu : planche d'une image par plan (une par plan) ; film (défaut) : tout ;
 //   soustitres : étape 4 seule, sur le film déjà rendu.
+//   Le corps du film est gardé dans sortie/corps-<ips>ips.mp4 : seul le générique est rendu à nouveau, sauf avec
+//   --refaire (à passer après toute modification d'un autre plan que le générique).
 // Prérequis : ffmpeg dans le PATH, dépendances du frontend installées (Playwright).
 import { spawn } from 'node:child_process';
 import { createReadStream, existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -29,11 +31,13 @@ const mode = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 'film';
 const DEBUTS = debuts();
 const mots = (texte) => texte.split(/\s+/).filter((m) => /[\p{L}\d]/u.test(m)).length;
 const parole = (plan) => mots(plan.voix) / DEBIT;
-for (const plan of PLANS) {
+const PARLES = PLANS.filter((p) => p.voix);
+for (const plan of PARLES) {
   const besoin = AMORCE + parole(plan) + 0.2;
   if (besoin > plan.duree) throw new Error(`Plan « ${plan.id} » : ${besoin.toFixed(1)} s de voix pour ${plan.duree} s de plan.`);
 }
-if (DUREE_TOTALE < 80 || DUREE_TOTALE > 100) throw new Error(`Durée totale ${DUREE_TOTALE} s hors de la plage 80 à 100 s.`);
+const DUREE_PARLEE = PARLES.reduce((s, p) => s + p.duree, 0);
+if (DUREE_PARLEE < 80 || DUREE_PARLEE > 100) throw new Error(`Film sans le générique : ${DUREE_PARLEE} s, hors de la plage 80 à 100 s.`);
 
 // ---------------------------------------------------------------- 2. Textes
 
@@ -77,6 +81,7 @@ function lignes(bloc) {
 }
 
 const repliques = PLANS.flatMap((plan, n) => {
+  if (!plan.voix) return [];
   // Le minutage suit les mots dits, phrase par phrase ; une phrase affichée trop longue est coupée et sa durée
   // répartie au prorata des caractères.
   const phrases = (texte) => fusionner(texte.split(/(?<=[.?!])\s+/));
@@ -147,7 +152,7 @@ ${repliques.map((r) => `Dialogue: 0,${assTemps(r.debut)},${assTemps(r.fin)},Faso
 const TITRES = {
   ouverture: 'Ouverture', question: 'La question', revelation: 'Révélation', bracelet: 'Le bracelet', position: 'La position',
   zones: 'Les Safe Zones', sos: 'Le SOS', reseau: 'Le réseau', qr: 'La page QR', confidentialite: 'La confidentialité',
-  offres: 'Les offres', fin: 'Signature',
+  offres: 'Les offres', fin: 'Signature', generique: 'Générique',
 };
 
 writeFileSync(
@@ -162,7 +167,10 @@ seconde, soit une voix posée de publicité. Chaque réplique commence ${fr(AMOR
 
 | # | Plan | Entrée | Sortie | Voix | Budget |
 |---|---|---|---|---|---|
-${PLANS.map((p, n) => `| ${n + 1} | ${TITRES[p.id]} | ${court(DEBUTS[n] + AMORCE)} | ${court(DEBUTS[n] + p.duree)} | ${p.voix} | ${mots(p.voix)} mots en ${fr(p.duree - AMORCE - 0.2)} s au plus |`).join('\n')}
+${PLANS.map((p, n) => p.voix && `| ${n + 1} | ${TITRES[p.id]} | ${court(DEBUTS[n] + AMORCE)} | ${court(DEBUTS[n] + p.duree)} | ${p.voix} | ${mots(p.voix)} mots en ${fr(p.duree - AMORCE - 0.2)} s au plus |`).filter(Boolean).join('\n')}
+
+Le plan ${PLANS.length}, ${TITRES[PLANS.at(-1).id].toLowerCase()} (${court(DEBUTS.at(-1))} à ${court(DUREE_TOTALE)}), est sans voix : la
+musique seule le porte.
 
 ## Intentions de jeu
 
@@ -192,9 +200,9 @@ ${PLANS.map((p, n) => `${n + 1}. **${TITRES[p.id]}** (${court(DEBUTS[n])}) — $
 `,
 );
 
-const avecPauses = PLANS.map((p, n) => {
+const avecPauses = PARLES.map((p, n) => {
   const reste = p.duree - AMORCE - parole(p);
-  return `${p.voix}${n < PLANS.length - 1 ? ` <break time="${Math.min(3, reste + AMORCE).toFixed(1)}s" />` : ''}`;
+  return `${p.voix}${n < PARLES.length - 1 ? ` <break time="${Math.min(3, reste + AMORCE).toFixed(1)}s" />` : ''}`;
 }).join('\n\n');
 
 writeFileSync(
@@ -226,7 +234,7 @@ de l'outil, puis le **texte** réplique par réplique.
 
 ## Texte, réplique par réplique (méthode conseillée)
 
-${PLANS.map((p, n) => `${n + 1}. *(${court(DEBUTS[n] + AMORCE)}, ${fr(p.duree - AMORCE - 0.2)} s au plus, ${p.intention.charAt(0).toLowerCase() + p.intention.slice(1)})*\n   ${p.voix}`).join('\n')}
+${PLANS.map((p, n) => p.voix && `${n + 1}. *(${court(DEBUTS[n] + AMORCE)}, ${fr(p.duree - AMORCE - 0.2)} s au plus, ${p.intention.charAt(0).toLowerCase() + p.intention.slice(1)})*\n   ${p.voix}`).filter(Boolean).join('\n')}
 
 ## Texte en une seule prise (outils acceptant les pauses SSML)
 
@@ -301,38 +309,57 @@ const H264 = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 
 const film = `sortie/fasoguardian-presentation-${IPS}ips.mp4`;
 if (mode === 'apercu') {
   const image = await ouvrir();
-  const { entree, fini } = ffmpeg(['-f', 'image2pipe', '-i', '-', '-vf', 'scale=640:-1,tile=3x4', '-frames:v', '1', 'sortie/apercu.jpg']);
+  const { entree, fini } = ffmpeg(['-f', 'image2pipe', '-i', '-', '-vf', 'scale=640:-1,tile=4x4', '-frames:v', '1', 'sortie/apercu.jpg']);
   for (let n = 0; n < PLANS.length; n++) entree.write(await image(DEBUTS[n] + Math.min(PLANS[n].duree - 0.6, PLANS[n].duree * 0.8)));
   entree.end();
   await fini;
   console.log('aperçu : sortie/apercu.jpg');
 } else if (mode !== 'soustitres') {
   const total = Math.round(DUREE_TOTALE * IPS);
+  const coupe = Math.round(DEBUTS[PLANS.findIndex((p) => p.id === 'generique')] * IPS);
   const depart = Date.now();
-  let faites = 0;
-  let annonce = 0;
-  // Chaque rendeur prend une tranche continue du film et l'encode dans son propre segment.
-  const segments = await Promise.all(
-    Array.from({ length: RENDEURS }, async (_, k) => {
-      const [de, a] = [Math.floor((total * k) / RENDEURS), Math.floor((total * (k + 1)) / RENDEURS)];
-      const image = await ouvrir();
-      const nom = `sortie/segment-${k}.mp4`;
-      const { entree, fini } = ffmpeg(['-f', 'image2pipe', '-framerate', String(IPS), '-i', '-', ...H264, '-g', String(IPS * 2), nom]);
-      for (let i = de; i < a; i++) {
-        if (!entree.write(await image(i / IPS))) await new Promise((r) => entree.once('drain', r));
-        if (++faites >= annonce) {
-          console.log(`rendu ${Math.round((100 * faites) / total)} % (${Math.round((Date.now() - depart) / 1000)} s)`);
-          annonce += total / 20;
+
+  /** Rend les images [de, a) sur plusieurs navigateurs, chacun dans son segment, puis les met bout à bout. */
+  async function rendrePlage(de, a, nom) {
+    const n = Math.max(1, Math.min(RENDEURS, Math.floor((a - de) / IPS)));
+    let faites = 0;
+    let annonce = 0;
+    const segments = await Promise.all(
+      Array.from({ length: n }, async (_, k) => {
+        const [d, f] = [de + Math.floor(((a - de) * k) / n), de + Math.floor(((a - de) * (k + 1)) / n)];
+        const image = await ouvrir();
+        const segment = `sortie/segment-${k}.mp4`;
+        const { entree, fini } = ffmpeg(['-f', 'image2pipe', '-framerate', String(IPS), '-i', '-', ...H264, '-g', String(IPS * 2), segment]);
+        for (let i = d; i < f; i++) {
+          if (!entree.write(await image(i / IPS))) await new Promise((r) => entree.once('drain', r));
+          if (++faites >= annonce) {
+            console.log(`${nom} : ${Math.round((100 * faites) / (a - de))} % (${Math.round((Date.now() - depart) / 1000)} s)`);
+            annonce += (a - de) / 20;
+          }
         }
-      }
-      entree.end();
-      await fini;
-      return nom;
-    }),
-  );
-  writeFileSync(join(SORTIE, 'segments.txt'), segments.map((s) => `file '${s.replace('sortie/', '')}'`).join('\n'));
-  await ffmpeg(['-f', 'concat', '-safe', '0', '-i', 'sortie/segments.txt', '-c', 'copy', '-movflags', '+faststart', film]).fini;
-  for (const s of [...segments, 'sortie/segments.txt']) rmSync(join(VIDEO, s));
+        entree.end();
+        await fini;
+        return segment;
+      }),
+    );
+    await assembler(segments, nom);
+    for (const s of segments) rmSync(join(VIDEO, s));
+  }
+
+  async function assembler(morceaux, nom) {
+    writeFileSync(join(SORTIE, 'morceaux.txt'), morceaux.map((s) => `file '${s.replace('sortie/', '')}'`).join('\n'));
+    await ffmpeg(['-f', 'concat', '-safe', '0', '-i', 'sortie/morceaux.txt', '-c', 'copy', '-movflags', '+faststart', nom]).fini;
+    rmSync(join(SORTIE, 'morceaux.txt'));
+  }
+
+  // Le corps du film (tout sauf le générique) n'est rendu qu'une fois et gardé dans sortie/ : changer les
+  // coordonnées du générique ne refait que ses quelques secondes. --refaire impose le rendu complet.
+  const corps = `sortie/corps-${IPS}ips.mp4`;
+  if (!existsSync(join(VIDEO, corps)) || process.argv.includes('--refaire')) await rendrePlage(0, coupe, corps);
+  const generique = `sortie/generique-${IPS}ips.mp4`;
+  await rendrePlage(coupe, total, generique);
+  await assembler([corps, generique], film);
+  rmSync(join(VIDEO, generique));
   console.log(`film : ${film} (${total} images, ${IPS} i/s, ${Math.round((Date.now() - depart) / 1000)} s de rendu)`);
 
   // Vignette : l'image de la révélation.
