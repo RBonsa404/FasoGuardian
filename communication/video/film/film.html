@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>FasoGuardian — film de présentation</title>
+<!--
+  Film de présentation, 1920 × 1080. Chaque image est calculée à son instant par rendre(t) : la lecture dans un
+  navigateur (servi par produire.mjs, adresse /film.html) et le rendu image par image donnent exactement le même film.
+  ?t=12.5 fige l'image à 12,5 s. Le minutage des plans vient de scenario.js ; les instants dans data-a sont relatifs
+  au début du plan.
+-->
+<style>
+  @font-face { font-family: Sora; src: url(/polices/sora/files/sora-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: Inter; src: url(/polices/inter/files/inter-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+  :root {
+    --bg: #0A0E1A; --surface: #121829; --surface-2: #1A2139; --line: #232B45; --line-strong: #323C5C;
+    --text: #F3F5FA; --text-2: #A9B1C7; --text-3: #7F89A5;
+    --accent: #2FA8FF; --primary: #245BAE; --success: #3DD39B; --alert: #FF9F1C; --danger: #FF6B78;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #film { position: relative; width: 1920px; height: 1080px; overflow: hidden; color: var(--text); font-family: Inter, sans-serif; }
+
+  /* Décor commun : halos et trame discrète, comme le site vitrine. */
+  .decor { position: absolute; inset: 0; }
+  .halo { position: absolute; width: 1400px; height: 1400px; border-radius: 50%; filter: blur(40px); }
+  .halo.a { left: -300px; top: -500px; background: radial-gradient(closest-side, rgba(36, 91, 174, .45), transparent); }
+  .halo.b { right: -400px; bottom: -700px; background: radial-gradient(closest-side, rgba(47, 168, 255, .18), transparent); }
+  .trame { position: absolute; inset: 0; opacity: .05;
+    background-image: linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px);
+    background-size: 64px 64px; mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 75%); }
+
+  .plan { position: absolute; inset: 0; visibility: hidden; }
+  .abs { position: absolute; }
+  [data-a] { will-change: transform, opacity; }
+
+  .surtitre { font: 700 22px/1 Inter, sans-serif; letter-spacing: .22em; color: var(--accent); text-transform: uppercase; }
+  .titre { font: 700 84px/1.04 Sora, sans-serif; letter-spacing: -.035em; margin: 22px 0 0; }
+  .titre .accent, .accent { color: var(--accent); }
+  .texte { font: 400 34px/1.4 Inter, sans-serif; color: var(--text-2); }
+
+  .ic { display: inline-block; width: 30px; height: 30px; background: currentColor; flex: none;
+    -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+
+  /* Téléphone : écran 360 × 780, au rapport des captures (390 × 844). */
+  .tel { width: 380px; height: 800px; padding: 10px; border-radius: 60px; background: #04060B;
+    box-shadow: 0 0 0 2px #2A3350, 0 50px 140px rgba(0, 0, 0, .65), 0 0 160px rgba(47, 168, 255, .14); }
+  .ecran { position: relative; width: 100%; height: 100%; border-radius: 50px; overflow: hidden; background: var(--bg); }
+  .ecran img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .carte-bracelet { width: 520px; height: 745px; border-radius: 36px; overflow: hidden; position: relative;
+    box-shadow: 0 0 0 1px var(--line-strong), 0 50px 140px rgba(0, 0, 0, .6); }
+  .carte-bracelet img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; }
+
+  .puce { display: inline-flex; align-items: center; gap: 16px; padding: 18px 26px; border-radius: 22px;
+    background: rgba(18, 24, 41, .92); border: 1px solid var(--line-strong); font: 600 28px/1.2 Inter, sans-serif; }
+  .puce small { display: block; font: 400 22px/1.3 Inter, sans-serif; color: var(--text-2); margin-top: 4px; }
+  .puce .ic { color: var(--accent); }
+  .puce.alerte { border-color: rgba(255, 159, 28, .6); }
+  .puce.alerte .ic { color: var(--alert); }
+  .puce.succes .ic { color: var(--success); }
+
+  .spec { width: 390px; padding: 28px 30px; border-radius: 26px; background: var(--surface); border: 1px solid var(--line); }
+  .spec b { display: block; font: 700 56px/1 Sora, sans-serif; letter-spacing: -.03em; }
+  .spec span { display: block; margin-top: 10px; font: 400 25px/1.3 Inter, sans-serif; color: var(--text-2); }
+
+  .bulle { padding: 14px 22px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line-strong);
+    font: 600 24px/1 Inter, sans-serif; white-space: nowrap; display: flex; align-items: center; gap: 12px; }
+  .bulle::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--success); }
+  .bulle.bleu::before { background: var(--accent); }
+
+  .etape { display: flex; gap: 26px; align-items: flex-start; font: 600 36px/1.25 Inter, sans-serif; }
+  .etape i { font: 700 28px/60px Sora, sans-serif; font-style: normal; width: 60px; height: 60px; border-radius: 50%; flex: none;
+    text-align: center; background: rgba(47, 168, 255, .14); color: var(--accent); }
+
+  .offre { width: 268px; padding: 30px 28px; border-radius: 28px; background: var(--surface); border: 1px solid var(--line); }
+  .offre h3 { margin: 0; font: 700 30px/1 Sora, sans-serif; }
+  .offre .prix { margin-top: 20px; font: 700 60px/1 Sora, sans-serif; letter-spacing: -.03em; }
+  .offre .prix small { font: 500 20px/1 Inter, sans-serif; color: var(--text-2); letter-spacing: 0; }
+  .offre ul { margin: 22px 0 0; padding: 0; list-style: none; font: 400 22px/1.65 Inter, sans-serif; color: var(--text-2); }
+  .offre.mise { border: 2px solid var(--accent); background: linear-gradient(180deg, rgba(36, 91, 174, .35), var(--surface)); }
+  .offre .etiquette { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 999px; background: var(--accent);
+    color: var(--bg); font: 700 18px/1.2 Inter, sans-serif; }
+
+  .noeud { width: 230px; text-align: center; }
+  .noeud .rond { position: relative; width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; background: var(--surface);
+    border: 2px solid var(--line-strong); display: grid; place-items: center; color: var(--text-3); }
+  .noeud .rond .ic { width: 84px; height: 84px; }
+  .noeud .allume { position: absolute; inset: -2px; border-radius: 50%; border: 3px solid var(--accent); background: rgba(47, 168, 255, .14);
+    display: grid; place-items: center; color: var(--accent); }
+  .noeud .allume.vert { border-color: var(--success); background: rgba(61, 211, 155, .14); color: var(--success); }
+  .noeud .libelle { margin-top: 26px; font: 700 44px/1 Sora, sans-serif; }
+  .lien-reseau { width: 170px; height: 4px; border-radius: 2px; background: var(--line-strong); margin-top: -70px; }
+
+  .fond-carte { position: absolute; inset: -60px; }
+  .fond-carte img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: blur(3px) brightness(.42) saturate(.85); }
+  .voile { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 14, 26, .92) 0%, rgba(10, 14, 26, .55) 55%, rgba(10, 14, 26, .75) 100%); }
+</style>
+</head>
+<body>
+<div id="film">
+  <div class="decor"><div class="halo a" data-derive="a"></div><div class="halo b" data-derive="b"></div><div class="trame"></div></div>
+
+  <!-- 1 · Ouverture -->
+  <section class="plan" data-plan="ouverture">
+    <div class="fond-carte" data-kb="1.04 1.12"><img src="captures/carte-sombre.png" alt=""></div>
+    <div class="voile"></div>
+    <div class="abs" style="left:170px; top:300px">
+      <div data-a="monte 0.3 0.9" style="font:700 220px/1 Sora,sans-serif; letter-spacing:-.05em">16 h 30</div>
+      <div class="texte" data-a="monte 1.4" style="margin-top:34px; font-size:44px; color:var(--text)">Ouagadougou · la sortie de l'école</div>
+    </div>
+  </section>
+
+  <!-- 2 · La question -->
+  <section class="plan" data-plan="question">
+    <div class="fond-carte" data-kb="1.12 1.2"><img src="captures/carte-sombre.png" alt=""></div>
+    <div class="voile" style="background:rgba(10,14,26,.72)"></div>
+    <div class="abs" style="left:960px; top:410px; width:0; height:0">
+      <div class="abs" data-pulse="2 0 6.5" style="left:-90px; top:-90px; width:180px; height:180px; border-radius:50%; border:3px solid var(--accent)"></div>
+      <div class="abs" data-pulse="2 1 6.5" style="left:-90px; top:-90px; width:180px; height:180px; border-radius:50%; border:3px solid var(--accent)"></div>
+      <div class="abs" data-a="zoom 0.1" style="left:-22px; top:-22px; width:44px; height:44px; border-radius:50%; background:var(--accent); box-shadow:0 0 40px var(--accent)"></div>
+    </div>
+    <div class="abs" style="left:0; right:0; top:560px; text-align:center">
+      <div data-a="monte 2.2" style="font:700 96px/1.1 Sora,sans-serif; letter-spacing:-.035em">Où est mon enfant,</div>
+      <div data-a="monte 4.1" style="font:700 96px/1.1 Sora,sans-serif; letter-spacing:-.035em; color:var(--accent)">en ce moment&nbsp;?</div>
+    </div>
+  </section>
+
+  <!-- 3 · Révélation -->
+  <section class="plan" data-plan="revelation">
+    <div class="abs" style="left:0; right:0; top:250px; text-align:center" data-sortie="3.7">
+      <svg data-a="zoom 0.1 0.8" width="170" height="170" viewBox="8 3 48 58" style="display:block; margin:0 auto">
+        <path d="M32 5 54 13v17c0 15-9.5 25-22 29C19.5 55 10 45 10 30V13Z" fill="#245BAE"/>
+        <path d="M41 25a11 11 0 1 0 1.5 10H33" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="32" cy="15" r="3" fill="#2FA8FF"/>
+      </svg>
+      <div data-a="monte 0.5" style="margin-top:34px; font:700 120px/1 Sora,sans-serif; letter-spacing:-.04em">FasoGuardian</div>
+      <div data-a="monte 1.3" style="margin-top:34px; font:600 46px/1.2 Sora,sans-serif; color:var(--text-2)">Toujours près d'eux. <span class="accent">Jamais sur leur dos.</span></div>
+    </div>
+    <div class="abs" style="left:330px; top:120px" data-a="gauche 3.9">
+      <div class="carte-bracelet" style="width:470px; height:674px"><img src="captures/bracelet/000.jpg" alt="" style="visibility:visible"></div>
+      <div class="texte" style="margin-top:26px; text-align:center; color:var(--text); font-weight:600">Au poignet</div>
+    </div>
+    <div class="abs" style="left:900px; top:420px; font:300 110px/1 Sora,sans-serif; color:var(--text-3)" data-a="zoom 4.5">+</div>
+    <div class="abs" style="left:1160px; top:90px" data-a="droite 4.6">
+      <div class="tel" style="transform:scale(.88); transform-origin:top center"><div class="ecran"><img src="captures/accueil-sombre.png" alt=""></div></div>
+      <div class="texte" style="margin-top:-70px; text-align:center; color:var(--text); font-weight:600">Dans votre téléphone</div>
+    </div>
+  </section>
+
+  <!-- 4 · Le bracelet -->
+  <section class="plan" data-plan="bracelet">
+    <div class="abs" style="left:190px; top:110px" data-a="gauche 0">
+      <div class="carte-bracelet" data-flip="0.2 8.4"></div>
+    </div>
+    <div class="abs" style="left:880px; top:130px">
+      <div class="surtitre" data-a="monte 0.2">Le bracelet</div>
+      <h2 class="titre" data-a="monte 0.4">Robuste, simple,<br>sans écran.</h2>
+      <div style="display:grid; grid-template-columns:390px 390px; gap:24px; margin-top:56px">
+        <div class="spec" data-a="monte 1.1"><b>0</b><span>écran, caméra ou micro</span></div>
+        <div class="spec" data-a="monte 4.3"><b>IP67</b><span>étanche à la poussière et à l'eau</span></div>
+        <div class="spec" data-a="monte 6.3"><b>48 h +</b><span>d'autonomie typique</span></div>
+        <div class="spec" data-a="monte 7.0"><b>3 s</b><span>d'appui pour lancer un SOS</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · La position -->
+  <section class="plan" data-plan="position">
+    <div class="abs" style="left:170px; top:200px">
+      <div class="surtitre" data-a="monte 0.2">Localisation</div>
+      <h2 class="titre" style="font-size:80px">
+        <span data-a="monte 1.9" style="display:block">Où il est.</span>
+        <span data-a="monte 3.0" style="display:block">À quelle heure.</span>
+        <span data-a="monte 4.2" style="display:block" class="accent">Avec quelle précision.</span>
+      </h2>
+    </div>
+    <div class="abs" style="left:1250px; top:110px" data-a="droite 0">
+      <div class="tel" data-flotte><div class="ecran"><img src="captures/accueil-sombre.png" alt=""></div></div>
+    </div>
+    <div class="abs bulle" style="left:1110px; top:520px" data-a="gauche 3.2">Position · à l'instant</div>
+    <div class="abs bulle" style="left:1150px; top:440px" data-a="gauche 4.4">Précise à ± 12 m</div>
+  </section>
+
+  <!-- 6 · Les Safe Zones -->
+  <section class="plan" data-plan="zones">
+    <div class="abs" style="left:230px; top:110px" data-a="gauche 0">
+      <div class="tel" data-flotte><div class="ecran">
+        <img src="captures/zones-sombre.png" alt="">
+        <img src="captures/alertes-zone-sombre.png" alt="" data-a="fondu 5.5 0.6">
+      </div></div>
+    </div>
+    <div class="abs" style="left:800px; top:150px">
+      <div class="surtitre" data-a="monte 0.2">Safe Zones</div>
+      <h2 class="titre" data-a="monte 0.4">Des lieux de confiance.</h2>
+      <div style="display:flex; flex-direction:column; gap:20px; margin-top:52px; align-items:flex-start">
+        <div class="puce" data-a="monte 1.7"><i class="ic" style="--ic:url(/icones/ecole.svg)"></i><div>L'école<small>lundi au vendredi, 7 h – 17 h 30</small></div></div>
+        <div class="puce" data-a="monte 2.6"><i class="ic" style="--ic:url(/icones/maison.svg)"></i><div>La maison<small>tous les jours</small></div></div>
+        <div class="puce" data-a="monte 3.5"><i class="ic" style="--ic:url(/icones/filiation.svg)"></i><div>Chez grand-mère<small>le week-end</small></div></div>
+        <div class="puce alerte" data-a="monte 5.6"><i class="ic" style="--ic:url(/icones/sortie-zone.svg)"></i><div>Il sort pendant les horaires prévus<small>vous êtes prévenu</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Le SOS -->
+  <section class="plan" data-plan="sos">
+    <div class="abs" style="left:170px; top:120px">
+      <div class="surtitre" data-a="monte 0.1">SOS au poignet</div>
+      <h2 class="titre" data-a="monte 0.3">Un appui. L'alerte part.</h2>
+    </div>
+    <div class="abs" style="left:560px; top:600px; width:0; height:0">
+      <div class="abs" data-pulse="0.9 4.2 7.2" style="left:-120px; top:-120px; width:240px; height:240px; border-radius:50%; border:4px solid var(--alert)"></div>
+      <div class="abs" data-pulse="0.9 4.65 7.2" style="left:-120px; top:-120px; width:240px; height:240px; border-radius:50%; border:4px solid var(--alert)"></div>
+      <svg class="abs" width="380" height="380" style="left:-190px; top:-190px; transform:rotate(-90deg)" data-a="fondu 0.6">
+        <circle cx="190" cy="190" r="170" fill="none" stroke="#232B45" stroke-width="12"/>
+        <circle cx="190" cy="190" r="170" fill="none" stroke="#FF9F1C" stroke-width="12" stroke-linecap="round" data-anneau="1.4 4.4" stroke-dasharray="1068.1"/>
+      </svg>
+      <div class="abs" data-a="zoom 0.5" data-presse="1.4 4.4" style="left:-120px; top:-120px; width:240px; height:240px; border-radius:50%; background:var(--alert); color:var(--bg);
+        display:grid; place-items:center; font:800 64px/1 Sora,sans-serif; box-shadow:0 0 80px rgba(255,159,28,.45), inset 0 -10px 0 rgba(0,0,0,.18)">SOS</div>
+    </div>
+    <div class="abs" style="left:310px; width:500px; top:840px; text-align:center; font:600 34px/1 Inter,sans-serif; color:var(--text-2)">
+      <span data-compte="1.4 4.4" style="color:var(--text); font:700 40px/1 Sora,sans-serif"></span>
+      <span data-a="fondu 4.4 0.4" class="abs" style="left:0; right:0; top:0">Le bracelet vibre&nbsp;: c'est parti.</span>
+    </div>
+    <div class="abs" style="left:1250px; top:110px" data-a="monte 6.5 0.8">
+      <div class="tel"><div class="ecran"><img src="captures/detail-alerte-sombre.png" alt=""></div></div>
+    </div>
+  </section>
+
+  <!-- 8 · Le réseau -->
+  <section class="plan" data-plan="reseau">
+    <div class="abs" style="left:0; right:0; top:150px; text-align:center">
+      <div class="surtitre" data-a="monte 0.1">Réseau</div>
+      <h2 class="titre" data-a="monte 0.3">Même quand la 4G manque.</h2>
+    </div>
+    <div class="abs" style="left:0; right:0; top:420px; display:flex; justify-content:center; align-items:center; gap:0">
+      <div class="noeud" data-a="monte 0.4">
+        <div class="rond"><i class="ic" style="--ic:url(/icones/signal-4g.svg)"></i>
+          <div class="allume" data-a="fondu 0.5 0.4" data-sortie="1.7"><i class="ic" style="--ic:url(/icones/signal-4g.svg)"></i></div>
+          <div class="abs" data-a="fondu 1.7 0.3" style="left:20px; right:20px; top:96px; height:8px; border-radius:4px; background:var(--danger); transform:rotate(-35deg)"></div>
+        </div>
+        <div class="libelle">4G</div>
+      </div>
+      <div class="lien-reseau" data-a="fondu 2.2"></div>
+      <div class="noeud" data-a="monte 2.2">
+        <div class="rond"><i class="ic" style="--ic:url(/icones/signal-2g.svg)"></i>
+          <div class="allume" data-a="fondu 2.6 0.4"><i class="ic" style="--ic:url(/icones/signal-2g.svg)"></i></div>
+        </div>
+        <div class="libelle">2G</div>
+      </div>
+      <div class="lien-reseau" data-a="fondu 4.0"></div>
+      <div class="noeud" data-a="monte 4.0">
+        <div class="rond"><i class="ic" style="--ic:url(/icones/sms-secours.svg)"></i>
+          <div class="allume vert" data-a="fondu 4.6 0.4"><i class="ic" style="--ic:url(/icones/sms-secours.svg)"></i></div>
+        </div>
+        <div class="libelle">SMS</div>
+      </div>
+    </div>
+    <div class="abs texte" style="left:0; right:0; top:800px; text-align:center; color:var(--text)" data-a="monte 5.2">Vos alertes continuent d'arriver.</div>
+  </section>
+
+  <!-- 9 · La page QR -->
+  <section class="plan" data-plan="qr">
+    <div class="abs" style="left:230px; top:110px" data-a="gauche 0">
+      <div class="tel" data-flotte><div class="ecran"><img src="captures/qr-sombre.png" alt=""></div></div>
+    </div>
+    <div class="abs" style="left:800px; top:170px; width:960px">
+      <div class="surtitre" data-a="monte 0.2">Page QR</div>
+      <h2 class="titre" data-a="monte 0.4">Un inconnu peut aider.</h2>
+      <div style="display:flex; flex-direction:column; gap:38px; margin-top:64px">
+        <div class="etape" data-a="monte 1.9"><i>1</i><span>Il scanne le QR code gravé<br>sur le bracelet.</span></div>
+        <div class="etape" data-a="monte 4.0"><i>2</i><span>Il appelle la famille d'un geste.</span></div>
+        <div class="etape" data-a="monte 5.9"><i>3</i><span>Sans voir ni le nom de l'enfant,<br>ni sa position.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · La confidentialité -->
+  <section class="plan" data-plan="confidentialite">
+    <div class="abs" style="left:0; right:0; top:170px; text-align:center">
+      <div data-a="zoom 0.1" style="width:150px; height:150px; margin:0 auto; border-radius:50%; background:rgba(47,168,255,.14); display:grid; place-items:center; color:var(--accent)">
+        <i class="ic" style="--ic:url(/icones/cadenas.svg); width:72px; height:72px"></i>
+      </div>
+      <div data-a="monte 0.4" style="margin-top:48px; font:700 76px/1.12 Sora,sans-serif; letter-spacing:-.035em">Seuls vous et vos proches<br><span class="accent">voient où il se trouve.</span></div>
+      <div style="display:flex; justify-content:center; gap:22px; margin-top:60px">
+        <div class="puce succes" data-a="monte 2.6"><i class="ic" style="--ic:url(/icones/valider.svg)"></i>Aucune biométrie</div>
+        <div class="puce succes" data-a="monte 3.1"><i class="ic" style="--ic:url(/icones/valider.svg)"></i>Données chiffrées</div>
+        <div class="puce succes" data-a="monte 3.6"><i class="ic" style="--ic:url(/icones/valider.svg)"></i>Partage temporaire, révocable</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Les offres -->
+  <section class="plan" data-plan="offres">
+    <div class="abs" style="left:170px; top:170px">
+      <div class="surtitre" data-a="monte 0.1">Offres</div>
+      <div class="texte" data-a="monte 0.4" style="margin-top:40px; color:var(--text)">Le bracelet</div>
+      <div data-a="monte 0.7" style="font:700 132px/1 Sora,sans-serif; letter-spacing:-.045em; margin-top:10px">30 000<span style="font-size:52px; letter-spacing:0; color:var(--text-2)"> FCFA</span></div>
+      <div class="texte" data-a="monte 2.6" style="margin-top:30px; width:560px">puis un abonnement mensuel, par enfant.</div>
+    </div>
+    <div class="abs" style="left:880px; top:190px; display:flex; gap:24px; align-items:flex-start">
+      <div class="offre" data-a="monte 3.2"><h3>Essentiel</h3><div class="prix">1 500 <small>FCFA / mois</small></div>
+        <ul><li>Position toutes les 15 min</li><li>1 Safe Zone</li><li>Historique 24 h</li></ul></div>
+      <div class="offre mise" data-a="monte 3.6"><h3>Intermédiaire</h3><span class="etiquette">Le plus choisi</span><div class="prix">2 250 <small>FCFA / mois</small></div>
+        <ul><li>Position toutes les 5 min</li><li>3 Safe Zones</li><li>Historique 30 jours</li></ul></div>
+      <div class="offre" data-a="monte 4.0"><h3>Premium</h3><div class="prix">5 000 <small>FCFA / mois</small></div>
+        <ul><li>Position toutes les 5 min</li><li>3 Safe Zones</li><li>Historique 90 jours</li></ul></div>
+    </div>
+    <div class="abs" style="left:170px; top:760px; display:flex; gap:22px">
+      <div class="puce succes" data-a="monte 5.9"><i class="ic" style="--ic:url(/icones/valider.svg)"></i>Sans engagement</div>
+      <div class="puce" data-a="monte 7.2"><i class="ic" style="--ic:url(/icones/mobile-money.svg)"></i>Paiement par mobile money</div>
+      <div class="puce" data-a="monte 8.0"><i class="ic" style="--ic:url(/icones/sos.svg)"></i>SOS et page QR inclus dans toutes les offres</div>
+    </div>
+  </section>
+
+  <!-- 12 · Fin -->
+  <section class="plan" data-plan="fin">
+    <div class="abs" style="left:0; right:0; top:150px; text-align:center">
+      <div data-a="zoom 0.1 0.8" style="display:flex; justify-content:center; align-items:center; gap:30px">
+        <svg width="110" height="110" viewBox="8 3 48 58">
+          <path d="M32 5 54 13v17c0 15-9.5 25-22 29C19.5 55 10 45 10 30V13Z" fill="#245BAE"/>
+          <path d="M41 25a11 11 0 1 0 1.5 10H33" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="15" r="3" fill="#2FA8FF"/>
+        </svg>
+        <span style="font:700 96px/1 Sora,sans-serif; letter-spacing:-.04em">FasoGuardian</span>
+      </div>
+      <div data-a="monte 0.9" style="margin-top:46px; display:flex; justify-content:center; align-items:center; gap:20px; font:500 38px/1.2 Inter,sans-serif; color:var(--text-2)">
+        <svg width="54" height="36" viewBox="0 0 54 36" style="border-radius:4px"><rect width="54" height="18" fill="#EF2B2D"/><rect y="18" width="54" height="18" fill="#009E49"/>
+          <path d="M27 11.5l1.6 4.9h5.1l-4.1 3 1.6 4.9-4.2-3-4.2 3 1.6-4.9-4.1-3h5.1z" fill="#FCD116"/></svg>
+        Conçu à Ouagadougou, pour les familles du Burkina Faso.
+      </div>
+      <div style="margin-top:92px; font:700 92px/1.1 Sora,sans-serif; letter-spacing:-.04em">
+        <div data-a="monte 4.0">Toujours près d'eux.</div>
+        <div data-a="monte 5.3" class="accent">Jamais sur leur dos.</div>
+      </div>
+      <div class="texte" data-a="fondu 6.6" style="margin-top:56px; font-size:30px">En point relais ou en ligne · Espace parents</div>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+  import { PLANS, debuts, DUREE_TOTALE } from './scenario.js';
+
+  const DEBUTS = debuts();
+  const FONDU = 0.45; // fondu enchaîné entre deux plans (s)
+  const IMAGES_BRACELET = 90;
+
+  const borne = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const doux = (x) => 1 - Math.pow(1 - x, 3);
+  const plans = PLANS.map((p) => document.querySelector(`[data-plan="${p.id}"]`));
+
+  // Séquence du bracelet : toutes les images sont chargées d'avance, une seule est visible à la fois.
+  for (const hote of document.querySelectorAll('[data-flip]')) {
+    for (let i = 0; i < IMAGES_BRACELET; i++) {
+      const img = document.createElement('img');
+      img.src = `captures/bracelet/${String(i).padStart(3, '0')}.jpg`;
+      img.alt = '';
+      hote.append(img);
+    }
+  }
+
+  const EFFETS = {
+    fondu: (p) => ['', p],
+    monte: (p) => [`translateY(${(1 - p) * 44}px)`, p],
+    zoom: (p) => [`scale(${0.88 + 0.12 * p})`, p],
+    gauche: (p) => [`translateX(${(p - 1) * 70}px)`, p],
+    droite: (p) => [`translateX(${(1 - p) * 70}px)`, p],
+  };
+
+  function rendre(t) {
+    document.querySelector('[data-derive="a"]').style.transform = `translate(${Math.sin(t / 9) * 90}px, ${Math.cos(t / 11) * 60}px)`;
+    document.querySelector('[data-derive="b"]').style.transform = `translate(${Math.cos(t / 10) * 110}px, ${Math.sin(t / 8) * 70}px)`;
+    plans.forEach((plan, n) => {
+      const { duree } = PLANS[n];
+      const l = t - DEBUTS[n];
+      const entree = n === 0 ? borne(l / 0.8) : borne((l + FONDU / 2) / FONDU);
+      const sortie = n === plans.length - 1 ? borne((duree - l) / 1.2) : borne((duree - l + FONDU / 2) / FONDU);
+      const vis = Math.min(entree, sortie);
+      plan.style.visibility = vis > 0 ? 'visible' : 'hidden';
+      plan.style.opacity = vis;
+      if (vis > 0) animer(plan, l, duree);
+    });
+  }
+
+  function animer(plan, l, duree) {
+    for (const e of plan.querySelectorAll('[data-a]')) {
+      const [nom, debut, d = '0.7'] = e.dataset.a.split(' ');
+      const [transformation, opacite] = EFFETS[nom](doux(borne((l - Number(debut)) / Number(d))));
+      const fin = e.dataset.sortie ? 1 - doux(borne((l - Number(e.dataset.sortie)) / 0.4)) : 1;
+      e.style.transform = transformation;
+      e.style.opacity = opacite * fin;
+    }
+    for (const e of plan.querySelectorAll('[data-sortie]:not([data-a])')) {
+      e.style.opacity = 1 - doux(borne((l - Number(e.dataset.sortie)) / 0.4));
+    }
+    for (const e of plan.querySelectorAll('[data-kb]')) {
+      const [s0, s1] = e.dataset.kb.split(' ').map(Number);
+      e.style.transform = `scale(${s0 + (s1 - s0) * borne(l / duree)})`;
+    }
+    for (const e of plan.querySelectorAll('[data-flotte]')) {
+      e.style.transform = `translateY(${Math.sin(l * 0.9) * 7}px)`;
+    }
+    for (const e of plan.querySelectorAll('[data-pulse]')) {
+      const [periode, debut, fin] = e.dataset.pulse.split(' ').map(Number);
+      const actif = l >= debut && l < fin;
+      const f = actif ? ((l - debut) % periode) / periode : 0;
+      e.style.opacity = actif ? (1 - f) * 0.7 : 0;
+      e.style.transform = `scale(${1 + f * 1.4})`;
+    }
+    for (const e of plan.querySelectorAll('[data-flip]')) {
+      const [a, b] = e.dataset.flip.split(' ').map(Number);
+      // Position continue dans la séquence : l'image suivante se fond par-dessus, pour une rotation sans à-coups
+      // même à 120 images par seconde.
+      const x = doux(borne((l - a) / (b - a))) * (IMAGES_BRACELET - 1);
+      const i = Math.floor(x);
+      e.querySelectorAll('img').forEach((img, k) => {
+        img.style.visibility = k === i || k === i + 1 ? 'visible' : 'hidden';
+        img.style.opacity = k === i + 1 ? x - i : 1;
+      });
+    }
+    for (const e of plan.querySelectorAll('[data-anneau]')) {
+      const [a, b] = e.dataset.anneau.split(' ').map(Number);
+      const c = Number(e.getAttribute('stroke-dasharray'));
+      e.setAttribute('stroke-dashoffset', String(c * (1 - borne((l - a) / (b - a)))));
+    }
+    for (const e of plan.querySelectorAll('[data-presse]')) {
+      const [a, b] = e.dataset.presse.split(' ').map(Number);
+      const presse = l >= a && l < b ? 1 : 0;
+      const tremble = l >= b && l < b + 1.6 ? Math.sin((l - b) * 90) * 5 * (1 - (l - b) / 1.6) : 0;
+      e.style.transform = `${e.style.transform} translateX(${tremble}px) scale(${1 - presse * 0.05})`;
+    }
+    for (const e of plan.querySelectorAll('[data-compte]')) {
+      const [a, b] = e.dataset.compte.split(' ').map(Number);
+      e.textContent = l >= a && l < b ? `${Math.floor(l - a) + 1}…` : '';
+    }
+  }
+
+  window.DUREE_TOTALE = DUREE_TOTALE;
+  window.rendre = rendre;
+  window.pret = Promise.all([
+    document.fonts.ready,
+    ...[...document.images].map((img) => (img.complete ? null : new Promise((r) => (img.onload = img.onerror = r)))),
+  ]);
+
+  const fige = new URLSearchParams(location.search).get('t');
+  if (fige !== null) {
+    window.pret.then(() => rendre(Number(fige)));
+  } else if (!navigator.webdriver) {
+    // Lecture en boucle dans un navigateur ordinaire.
+    const depart = performance.now();
+    const boucle = () => {
+      rendre(((performance.now() - depart) / 1000) % DUREE_TOTALE);
+      requestAnimationFrame(boucle);
+    };
+    window.pret.then(() => requestAnimationFrame(boucle));
+  }
+</script>
+</body>
+</html>
