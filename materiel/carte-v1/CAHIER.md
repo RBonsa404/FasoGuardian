@@ -7,7 +7,7 @@ réalisation (schéma, placement, routage, fabrication) et sert de grille de rel
 
 > Concevoir, sous KiCad, le circuit imprimé complet du bracelet FasoGuardian à l'étape **V1 « Premier circuit »**
 > de la feuille de route de FG-DOC-08 (§ 12) : un seul circuit qui réunit toutes les fonctions du banc d'essai V0,
-> **4 couches, finition ENIG, plan de masse continu**, prêt à être fabriqué et assemblé en 5 à 10 exemplaires chez un
+> **4 couches (6 retenues, ADR 0042), finition ENIG, plan de masse continu**, prêt à être fabriqué et assemblé en 5 à 10 exemplaires chez un
 > façonnier (JLCPCB, PCBWay ou équivalent). Chaque composant, chaque liaison et chaque règle viennent de FG-DOC-08
 > v3.0 (§ 4 à 6, 10) et des fiches des fabricants. Un écart au document n'est jamais fait en silence : il est
 > justifié par une fiche technique et consigné (section 5 et ADR 0042). Le livrable comprend le projet KiCad, les
@@ -26,14 +26,20 @@ réalisation (schéma, placement, routage, fabrication) et sert de grille de rel
 
 ## 3. Contraintes retenues
 
-- **Format** : carte de **41 × 36 mm** aux angles arrondis, épaisseur 1,0 mm, **assemblage double face** (ADR 0042,
+- **Format** : carte de **41 × 36 mm** aux angles arrondis, épaisseur 1,2 mm, **assemblage double face** (ADR 0042,
   point 5). L'étude d'encombrement montre que le module (26 × 26 mm), le porte-nano-SIM, les connecteurs d'antenne,
   le bouton latéral et le Tag-Connect ne tiennent pas dans 40 × 34 mm, la place que laisse le boîtier de
   44 × 38 mm visé au § 10 pour le prototype portable V2. La V1 se monte dans un boîtier imprimé en 3D (§ 12). La
   face supérieure porte les pièces hautes ; la face inférieure, contre la batterie, ne porte que des pièces de
   1,2 mm de haut au plus (passifs, petits circuits intégrés, SOT-23) et les pastilles des liaisons hors carte.
-- **Empilement** : 4 couches (signal / masse continue / alimentations / signal), ENIG, pistes ≥ 0,09 mm et isolements ≥ 0,1 mm (sorties des plots au pas de 0,5 mm ; 0,09 mm est la capacité standard des façonniers en multicouche),
-  vias 0,3 / 0,15 mm, aux capacités standard des façonniers.
+- **Empilement** : **6 couches** (signaux et RF / masse continue sans piste / signaux / signaux / alimentations
+  mixtes, plans du modem et de la batterie sans piste, ADR 0042 points 9 et 10 / signaux),
+- **Courant fort du modem** : chemin batterie → R8 → U6 → module pré-routé et verrouillé, bande de plan VBAT
+  dédiée ; au plus 30 mΩ de cuivre (60 mV sous 2 A), mesurés par `controler_carte.py`,
+  1,2 mm, ENIG (décision du porteur, ADR 0042 point 7 : le 4 couches plafonnait à 88 % de routage), pistes ≥ 0,09 mm et isolements ≥ 0,1 mm (sorties des plots au pas de 0,5 mm ; 0,09 mm est la capacité standard des façonniers en multicouche),
+  vias 0,3 / 0,15 mm (0,5 / 0,25 mm sur le plan du modem), aux capacités standard des façonniers en 6 couches ;
+  vias de plan dans les pastilles, bouchés à la résine et recouverts (procédé par défaut du façonnier en 6 couches,
+  à confirmer sur le devis).
 - **Radio** : lignes d'antenne de 50 Ω en guide coplanaire référencé à la masse de la couche 2, de 20 mm au plus
   (SIMCom § 4.7) ; réseau d'adaptation en π (éléments série 0 Ω montés, éléments parallèles non montés, valeurs
   données par l'accord de l'antenne) ; protection ESD de faible capacité ; connecteur de test conduit ECT 818011998
@@ -79,7 +85,7 @@ ci-dessus. On ne passe à l'étape suivante qu'une fois tous les écarts levés.
 | 1. Netlist de référence | `conception/carte.py` : composants, valeurs, liaisons, une seule source de vérité | Script de règles : broches du tableau 8, adresses I²C distinctes, aucune broche en double, niveaux 1,8 / 3,3 V, découplages présents |
 | 2. Schéma | Feuilles KiCad par bloc | ERC sans erreur ; relecture bloc par bloc contre les fiches |
 | 3. Placement | Contour, zones radio, placement des blocs | Règles de proximité (découplages, réservoir, antennes au bord, batterie loin du module) |
-| 4. Routage | 4 couches, plans, lignes 50 Ω | DRC sans erreur ni connexion manquante ; relecture des chemins de courant forts |
+| 4. Routage | 6 couches, plans, lignes 50 Ω | DRC sans erreur ni connexion manquante ; relecture des chemins de courant forts |
 | 5. Fabrication | Gerber, perçage, nomenclature, placement, PDF du schéma, rendu 3D | Relecture finale contre la consigne ; liste des validations restantes |
 
 ## 5. Écarts justifiés au document de conception
@@ -101,5 +107,7 @@ ci-dessus. On ne passe à l'étape suivante qu'une fois tous les écarts levés.
   variantes partagent l'empreinte de 124 plots et le routage prévoit l'antenne GNSS.
 - Cote intérieure du boîtier et hauteur disponible (batterie, carte, antenne GNSS active sous le couvercle).
 - Batterie : PCM à seuil de surintensité d'au moins 3 A, cellule supportant 3C en impulsion, résistance interne
-  de 150 mΩ au plus, connecteur JST SH 3 contacts (BAT+, masse, NTC 10 kΩ B3435).
+  de 150 mΩ au plus, trois fils soudés sur les pastilles BAT+, BAT− et NTC (NTC 10 kΩ B3435).
+- Options de commande de `fabrication/COMMANDE.md` : contrôle d'impédance des lignes d'antenne, vias dans les
+  pastilles bouchés et recouverts, et, si le devis le permet, cuivre interne de 1 oz.
 - Disponibilité du STM32U575CIT6 chez l'assembleur (stock nul chez JLCPCB au 22/10/2026).

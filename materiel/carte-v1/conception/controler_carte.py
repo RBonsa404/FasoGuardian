@@ -11,7 +11,13 @@ from pathlib import Path
 
 import pcbnew
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from resistance import resistance  # noqa: E402
+
 CARTE = Path(__file__).resolve().parent.parent / 'kicad' / 'fasoguardian-v1.kicad_pcb'
+# Batterie → résistance de mesure R8 → interrupteur U6 → plots VBAT du module.
+CHEMIN_DU_MODEM = (('VBAT', ['TP8.1'], ['R8.1']), ('VBAT_MES', ['R8.2'], ['U6.1', 'U6.2']),
+                   ('VBAT_MODEM', ['U6.7', 'U6.8'], ['U2.55', 'U2.56', 'U2.57']))
 RF = {'RF_LTE_MOD': 'LTE', 'RF_LTE_1': 'LTE', 'RF_LTE_2': 'LTE', 'RF_GNSS_MOD': 'GNSS', 'RF_GNSS_1': 'GNSS'}
 
 
@@ -34,10 +40,28 @@ def main() -> int:
         print(f'ligne RF {voie} : {longueur:.1f} mm, {vias_rf[voie]} via(s)')
         if longueur > 20:
             erreurs.append(f'ligne RF {voie} de {longueur:.1f} mm > 20 mm (SIMCom § 4.7)')
-    for nom, minimum in (('VBAT_MODEM', 0.8), ('1V8', 0.3), ('VBAT', 0.4), ('VSYS', 0.4)):
+    # 1V8 (VDD_EXT du module, 50 mA au plus) : classe à 0,3 mm, au moins 0,25 mm partout (plus de 0,5 A admissibles),
+    # l'élargissement (elargir.py) laissant quelques segments à 0,275 mm entre deux obstacles.
+    for nom, minimum in (('1V8', 0.25),):
         trop_fines = [l for l in largeurs.get(nom, []) if l < minimum - 1e-6]
         if trop_fines:
             erreurs.append(f'{nom} : {len(trop_fines)} segment(s) plus fins que {minimum} mm')
+    # Chemin des pointes de 2 A du modem en GSM : résistance réelle du cuivre (pistes, vias et plans), et non largeur
+    # de chaque segment. Budget : 30 mΩ de cuivre, soit 60 mV sous 2 A ; s'y ajoutent l'interrupteur U6 (16 mΩ typ.,
+    # fiche TI) et la batterie. SIMCom demande que VBAT ne descende pas sous 3,4 V pendant une salve.
+    pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
+    total = 0.0
+    for reseau, sources, puits in CHEMIN_DU_MODEM:
+        r = resistance(carte, reseau, sources, puits)
+        total += r
+        print(f'chemin du modem, {reseau} {",".join(sources)} → {",".join(puits)} : {r * 1000:.1f} mΩ ({r * 2000:.0f} mV sous 2 A)')
+    print(f'chemin du modem, cuivre total : {total * 1000:.1f} mΩ ({total * 2000:.0f} mV sous 2 A), '
+          f'avec l\'interrupteur : {(total + 0.016) * 2000:.0f} mV')
+    if total > 0.030:
+        erreurs.append(f'chemin du modem : {total * 1000:.0f} mΩ de cuivre > 30 mΩ')
+    for z in carte.Zones():
+        if not z.GetIsRuleArea() and z.GetNetname() == 'VBAT' and z.GetFilledPolysList(z.GetFirstLayer()).OutlineCount() != 1:
+            erreurs.append('plan VBAT coupé en plusieurs îlots')
     non_routes = carte.GetConnectivity().GetUnconnectedCount(True)
     print(f'connexions non routées : {non_routes}')
     if non_routes:

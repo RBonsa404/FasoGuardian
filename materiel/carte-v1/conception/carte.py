@@ -91,7 +91,7 @@ ajouter('U5', 'fg:TPS63900DSKR', 'fg:WSON-10_L2.5-W2.5-W0.50-TL-EP', 'TPS63900DS
          '9': 'TPS_LX1', '10': 'VSYS', '11': 'GND'}, F, fabricant='TPS63900DSKR', lcsc='C1518762')
 resistance('R2', '36,5 kΩ 1 %', 'TPS_CFG1', 'GND', F)
 resistance('R4', '16,2 kΩ 1 %', 'TPS_CFG3', 'GND', F)
-ajouter('L1', 'fg:DFE252012F-2R2M', 'fg:L1008', '2,2 µH', {'1': 'TPS_LX1', '2': 'TPS_LX2'}, F, face=HAUT,
+ajouter('L1', 'fg:DFE252012F-2R2M', 'fg:L1008', '2,2 µH', {'1': 'TPS_LX1', '2': 'TPS_LX2'}, F,
         fabricant='DFE252012F-2R2M', lcsc='C576403')
 condensateur('C4', '10 µF', 'VSYS', 'GND', F, C0603)
 condensateur('C5', '22 µF', '3V3_REG', 'GND', F, C0603)

@@ -1,6 +1,6 @@
 # Carte électronique V1 du bracelet
 
-Circuit imprimé de l'étape V1 « Premier circuit » de FG-DOC-08 (§ 12) : 4 couches, ENIG, 41 × 36 mm, assemblage
+Circuit imprimé de l'étape V1 « Premier circuit » de FG-DOC-08 (§ 12) : 6 couches, 1,2 mm, ENIG, 41 × 36 mm, assemblage
 double face. Les décisions et les écarts au document de conception sont dans [CAHIER.md](CAHIER.md) et
 [l'ADR 0042](../../docs/adr/0042-carte-v1-du-bracelet.md).
 
@@ -21,15 +21,15 @@ pas à la main : on corrige `carte.py`, puis on rejoue la chaîne.
 |---|---|---|
 | 1. Netlist | `python conception/verifier.py` | Règles du bracelet : broches du tableau 8 et fonctions alternatives, domaines 1,8 / 3,3 V, PWRKEY et RESET, adresses I²C, réservoir ≥ 300 µF, ≤ 100 µF sur SYS, découplage de chaque rail, hauteur en face inférieure |
 | 2. Schéma | `python conception/generer_schema.py` puis `kicad-cli sch erc` | ERC sans erreur ni avertissement, broches typées d'après les fiches (`typer_broches.py`) |
-| 3. Placement | `KICAD_PY conception/generer_carte.py` | DRC avec parité schéma ↔ carte |
-| 4. Routage | `KICAD_PY conception/router.py` (Freerouting) | DRC sans erreur, `KICAD_PY conception/controler_carte.py` : lignes RF ≤ 20 mm, largeurs des rails, aucune liaison manquante |
-| 5. Fabrication | `python conception/fabriquer.py` | Gerber, perçage, nomenclature et placement JLCPCB, PDF, STEP, rendus |
+| 3. Placement | `KICAD_PY conception/generer_carte.py` | DRC avec parité schéma ↔ carte ; chemin du courant fort du modem pré-routé et verrouillé |
+| 4. Routage | `KICAD_PY conception/relier_plans.py avant`, `KICAD_PY conception/router.py 60` (Freerouting), `KICAD_PY conception/relier_plans.py`, `KICAD_PY conception/finir.py 14` (puis `finir.py fenetre 1.0` si un quartier reste saturé), `KICAD_PY conception/elargir.py` | DRC sans erreur ni avertissement, aucune liaison manquante ; `KICAD_PY conception/controler_carte.py` : lignes RF ≤ 20 mm et sans via, chemin du modem ≤ 30 mΩ de cuivre (`resistance.py`), rail 1V8 ≥ 0,25 mm, plan VBAT d'un seul tenant |
+| 5. Fabrication | `python conception/fabriquer.py` | Gerber, perçage, netlist, nomenclature et placement JLCPCB, PDF, STEP, rendus ; options de commande dans `fabrication/COMMANDE.md` |
 
 `KICAD_PY` est l'interpréteur Python de KiCad :
 `C:\Users\rachi\AppData\Local\Programs\KiCad\10.0\bin\python.exe`.
 Outils utilisés :
 - KiCad 10.0.6 ;
-- Freerouting 2.1.0 (Java 21) ;
+- Freerouting 2.5.0 (Java 25, appelé par son chemin ; le projet garde le JDK 21) ;
 - `easyeda2kicad` pour importer les pièces LCSC dans `bibliotheque/`. Chaque pièce importée est contrôlée contre la
   fiche de son fabricant : l'empreinte du module A7670E l'a été plot par plot contre la table SIMCom.
 

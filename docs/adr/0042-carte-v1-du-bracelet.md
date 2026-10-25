@@ -41,8 +41,35 @@ pas de réaliser tels quels.
    dans 40 × 34 mm, la place qui reste dans le boîtier de 44 × 38 mm que FG-DOC-08 § 10 vise pour le prototype
    portable V2. La V1 se monte dans un boîtier imprimé en 3D, comme prévu au § 12. La réduction pour la V2 vient de
    l'eSIM MFF2 de série (12 × 13 mm de porte-SIM en moins) et du raccordement direct des antennes.
-7. **Température.** La thermistance de la batterie n'est lue par le BQ25180 que pendant la charge. Une seconde
+7. **Six couches.** FG-DOC-08 prévoit un circuit de 4 couches. Sur 41 × 36 mm, avec le module de 26 × 26 mm et un
+   assemblage double face, le routage automatique plafonne à 88 % en 4 couches, quels que soient les réglages (30
+   à 50 liaisons sans piste sur 403). Le porteur a retenu le 6 couches (23 octobre 2026) : signaux et lignes RF /
+   masse continue / signaux / signaux / plans d'alimentation (modem, VSYS, 3,3 V) / signaux. L'épaisseur passe à
+   1,2 mm, minimum du façonnier en 6 couches ; le préimprégné externe (3313, 0,0994 mm) ne change pas, ni la ligne
+   de 50 Ω (0,20 mm, fente 0,15 mm). Surcoût estimé du prototype : 20 à 40 USD pour 5 cartes.
+8. **Température.** La thermistance de la batterie n'est lue par le BQ25180 que pendant la charge. Une seconde
    thermistance, sur la carte, assure la surveillance continue demandée par FG-DOC-08 § 5.4.
+9. **Couche d'alimentation mixte.** Le plan de masse de la couche 2 (In1) reste plein et interdit aux pistes : il
+   sert de référence aux lignes RF de 50 Ω et à l'USB du modem, et FG-DOC-08 § 4.2 l'exige continu. Avec quatre
+   couches de signaux seulement, le routage ne se referme pas sur 41 × 36 mm. La couche 5 (In4) devient donc
+   mixte : ses plans VSYS et 3,3 V se coulent autour de pistes de signal courtes, que le routeur n'y place qu'à
+   défaut (coût triplé). Le plan VBAT_MODEM, sous le modem, reste interdit aux pistes, pour que les pointes de 2 A
+   du module ne contournent aucune fente. Une première passe de routage, qui avait aussi tracé des signaux sur la
+   masse, a été écartée pour cette raison (24 octobre 2026). Pour rendre la place perdue, les vias passent à
+   0,3 mm percés à 0,15 mm (0,5/0,25 mm sur le plan du modem), et les vias de plan se posent dans les pastilles
+   quand elles sont assez larges. Ces vias sont bouchés à la résine et recouverts, procédé par défaut du façonnier
+   en 6 couches (capacités JLCPCB : perçage 0,15 mm, diamètre au moins égal au perçage plus 0,1 mm, 0,2 mm entre
+   perçages). Option à vérifier sur le devis.
+10. **Chemin des pointes de courant du modem.** Les pastilles de la batterie sont au bord inférieur, avec les autres
+    raccordements filaires. Le modem et son interrupteur sont en haut. Routé en pistes, le chemin batterie → R8 →
+    U6 mesurait 140 mΩ : les salves GSM de 2 A y perdaient 280 mV, et le modem serait descendu sous les 3,4 V
+    exigés par SIMCom. VBAT_MES, le tronçon de R8 à U6, n'appartenait d'ailleurs à aucune classe de puissance. Le
+    courant passe désormais par une bande de plan VBAT dédiée sur In4, interdite aux pistes : 3,6 mm le long du
+    bord gauche, puis le long du bord supérieur, puis une languette sous R8. Le chemin critique est pré-routé et
+    verrouillé avant le routage automatique : 4 vias dans la pastille de la batterie, 2 dans R8.1, deux pistes de
+    0,4 mm de R8.2 aux entrées VIN de U6. `controler_carte.py` calcule la résistance réelle du chemin
+    (`resistance.py` : pistes, vias et plans maillés) et la limite à 30 mΩ de cuivre, soit 60 mV sous 2 A. Le
+    cuivre interne de 1 oz, en option chez le façonnier, diviserait par deux la part de la bande.
 
 ## Conséquences
 

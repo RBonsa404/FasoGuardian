@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\Users\\rachi\\Desktop\\FasoGuardian\\Code\\fasoguardian\\materiel\\carte-v1\\kicad\\fasoguardian-v1.kicad_sch")
-		(date "2026-10-22T23:33:39")
+		(date "2026-10-25T22:04:35")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -444,11 +444,9 @@
 			(footprint "Capacitor_SMD:C_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL10A225KA8NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C57895")
 				(field
 					(name "Note")
 				)
@@ -468,11 +466,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL10A225KA8NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C57895")
 			)
 			(property
 				(name "Note")
@@ -519,11 +517,9 @@
 			(footprint "Capacitor_SMD:C_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL10A106KP8NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C19702")
 				(field
 					(name "Note") "SYS : 10 µF au pied, 100 µF au plus sur tout le rail (fiche TI)")
 				(field
@@ -542,11 +538,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL10A106KP8NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C19702")
 			)
 			(property
 				(name "Note")
@@ -593,11 +589,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A105KA5NQNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C52923")
 				(field
 					(name "Note")
 				)
@@ -617,11 +611,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A105KA5NQNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C52923")
 			)
 			(property
 				(name "Note")
@@ -668,11 +662,9 @@
 			(footprint "Capacitor_SMD:C_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL10A106KP8NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C19702")
 				(field
 					(name "Note")
 				)
@@ -692,11 +684,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL10A106KP8NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C19702")
 			)
 			(property
 				(name "Note")
@@ -743,11 +735,9 @@
 			(footprint "Capacitor_SMD:C_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL10A226MQ8NRNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C59461")
 				(field
 					(name "Note")
 				)
@@ -767,11 +757,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL10A226MQ8NRNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C59461")
 			)
 			(property
 				(name "Note")
@@ -814,17 +804,15 @@
 		)
 		(comp
 			(ref "C6")
-			(value "2,2 nF")
+			(value "10 nF")
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B103KB5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C15195")
 				(field
-					(name "Note") "Montée progressive : limite l'appel de courant du réservoir")
+					(name "Note") "Montée en 13 ms environ (fiche TI, tableau 1) : appel de 0,2 A dans le réservoir de 660 µF")
 				(field
 					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
 				(field
@@ -841,15 +829,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B103KB5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C15195")
 			)
 			(property
 				(name "Note")
-				(value "Montée progressive : limite l'appel de courant du réservoir")
+				(value "Montée en 13 ms environ (fiche TI, tableau 1) : appel de 0,2 A dans le réservoir de 660 µF")
 			)
 			(property
 				(name "Sheetname")
@@ -892,11 +880,9 @@
 			(footprint "Capacitor_SMD:C_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL10A106KP8NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C19702")
 				(field
 					(name "Note")
 				)
@@ -916,11 +902,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL10A106KP8NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C19702")
 			)
 			(property
 				(name "Note")
@@ -967,11 +953,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -991,11 +975,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -1038,16 +1022,15 @@
 		)
 		(comp
 			(ref "D1")
-			(value "SMF5.0A")
+			(value "SMF12A")
 			(footprint "Diode_SMD:D_SOD-123F")
 			(fields
 				(field
-					(name "Fabricant") "SMF5.0A")
+					(name "Fabricant") "SMF12A")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C123800")
 				(field
-					(name "Note") "Écrêteur de surtension du connecteur de charge (§ 4.3)")
+					(name "Note") "Écrêteur du connecteur de charge (§ 4.3) : 12 V, sous les 25 V admis par le BQ25180")
 				(field
 					(name "Footprint") "Diode_SMD:D_SOD-123F")
 				(field
@@ -1064,15 +1047,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "SMF5.0A")
+				(value "SMF12A")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C123800")
 			)
 			(property
 				(name "Note")
-				(value "Écrêteur de surtension du connecteur de charge (§ 4.3)")
+				(value "Écrêteur du connecteur de charge (§ 4.3) : 12 V, sous les 25 V admis par le BQ25180")
 			)
 			(property
 				(name "Sheetname")
@@ -1110,6 +1093,78 @@
 			)
 		)
 		(comp
+			(ref "D15")
+			(value "B5819W")
+			(footprint "Diode_SMD:D_SOD-123")
+			(fields
+				(field
+					(name "Fabricant") "B5819W SL")
+				(field
+					(name "LCSC") "C8598")
+				(field
+					(name "Note") "Protection contre l'inversion de polarité du connecteur magnétique")
+				(field
+					(name "Footprint") "Diode_SMD:D_SOD-123")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "D_Schottky")
+				(description "Schottky diode")
+			)
+			(property
+				(name "Fabricant")
+				(value "B5819W SL")
+			)
+			(property
+				(name "LCSC")
+				(value "C8598")
+			)
+			(property
+				(name "Note")
+				(value "Protection contre l'inversion de polarité du connecteur magnétique")
+			)
+			(property
+				(name "Sheetname")
+				(value "Alimentation, charge et jauge")
+			)
+			(property
+				(name "Sheetfile")
+				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "diode Schottky")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO-???* *_Diode_* *SingleDiode* D_*")
+			)
+			(sheetpath
+				(names "/Alimentation, charge et jauge/")
+				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
+			)
+			(tstamps "1cd51e34-58d0-57c8-9988-d96e3308e830")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "F1")
 			(value "0,5 A")
 			(footprint "Fuse:Fuse_0603_1608Metric")
@@ -1117,10 +1172,9 @@
 				(field
 					(name "Fabricant") "0603L050YR")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C207015")
 				(field
-					(name "Note") "Fusible réarmable : une alimentation branchée à l'envers fait conduire D1 et déclenche F1")
+					(name "Note") "Fusible réarmable : une alimentation branchée à l'envers fait conduire D1 et déclenche F1 ; courant de charge réglé à 300 mA (0,5 C), sous le maintien de 500 mA du fusible")
 				(field
 					(name "Footprint") "Fuse:Fuse_0603_1608Metric")
 				(field
@@ -1141,11 +1195,11 @@
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C207015")
 			)
 			(property
 				(name "Note")
-				(value "Fusible réarmable : une alimentation branchée à l'envers fait conduire D1 et déclenche F1")
+				(value "Fusible réarmable : une alimentation branchée à l'envers fait conduire D1 et déclenche F1 ; courant de charge réglé à 300 mA (0,5 C), sous le maintien de 500 mA du fusible")
 			)
 			(property
 				(name "Sheetname")
@@ -1177,83 +1231,6 @@
 						)
 						(pin
 							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "J2")
-			(value "Batterie")
-			(footprint "fg:CONN-SMD_SM03B-SRSS-TB-LF-SN-P")
-			(fields
-				(field
-					(name "Fabricant") "SM03B-SRSS-TB(LF)(SN)")
-				(field
-					(name "LCSC") "C160403")
-				(field
-					(name "Note") "1 = BAT+, 2 = masse, 3 = NTC ; point d'insertion de l'analyseur de consommation")
-				(field
-					(name "Footprint") "fg:CONN-SMD_SM03B-SRSS-TB-LF-SN-P")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "fg")
-				(part "SM03B-SRSS-TB")
-				(description "")
-			)
-			(property
-				(name "Fabricant")
-				(value "SM03B-SRSS-TB(LF)(SN)")
-			)
-			(property
-				(name "LCSC")
-				(value "C160403")
-			)
-			(property
-				(name "Note")
-				(value "1 = BAT+, 2 = masse, 3 = NTC ; point d'insertion de l'analyseur de consommation")
-			)
-			(property
-				(name "Sheetname")
-				(value "Alimentation, charge et jauge")
-			)
-			(property
-				(name "Sheetfile")
-				(value "alimentation.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "Wire To Board / Wire To Wire Connector")
-			)
-			(sheetpath
-				(names "/Alimentation, charge et jauge/")
-				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
-			)
-			(tstamps "b0e28588-8af7-54d8-9e4f-55448c67e0b3")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-						(pin
-							(num "3")
-						)
-						(pin
-							(num "5")
-						)
-						(pin
-							(num "4")
 						)
 					)
 				)
@@ -1334,11 +1311,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF3652TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25887")
 				(field
 					(name "Note")
 				)
@@ -1358,11 +1333,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF3652TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25887")
 			)
 			(property
 				(name "Note")
@@ -1409,11 +1384,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "AC0402FR-0716K2L")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C226806")
 				(field
 					(name "Note")
 				)
@@ -1433,11 +1406,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "AC0402FR-0716K2L")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C226806")
 			)
 			(property
 				(name "Note")
@@ -1484,11 +1457,9 @@
 			(footprint "Resistor_SMD:R_0603_1608Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0603WAF0000T5E")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C21189")
 				(field
 					(name "Note") "Coupable : mesure du courant du rail 3,3 V (§ 4.3)")
 				(field
@@ -1507,11 +1478,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0603WAF0000T5E")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C21189")
 			)
 			(property
 				(name "Note")
@@ -1558,11 +1529,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note")
 				)
@@ -1582,11 +1551,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -1633,11 +1602,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -1657,11 +1624,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -1703,6 +1670,78 @@
 			)
 		)
 		(comp
+			(ref "R8")
+			(value "0 Ω")
+			(footprint "Resistor_SMD:R_1206_3216Metric")
+			(fields
+				(field
+					(name "Fabricant") "1206W4F0000T5E")
+				(field
+					(name "LCSC") "C17888")
+				(field
+					(name "Note") "Coupable : mesure du courant du modem (§ 4.3) ; 1206 pour les pointes de 2 A")
+				(field
+					(name "Footprint") "Resistor_SMD:R_1206_3216Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Fabricant")
+				(value "1206W4F0000T5E")
+			)
+			(property
+				(name "LCSC")
+				(value "C17888")
+			)
+			(property
+				(name "Note")
+				(value "Coupable : mesure du courant du modem (§ 4.3) ; 1206 pour les pointes de 2 A")
+			)
+			(property
+				(name "Sheetname")
+				(value "Alimentation, charge et jauge")
+			)
+			(property
+				(name "Sheetfile")
+				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/Alimentation, charge et jauge/")
+				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
+			)
+			(tstamps "b60019bd-7f63-5fce-b411-8e659996d5de")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "RT1")
 			(value "10 kΩ B3435")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
@@ -1710,8 +1749,7 @@
 				(field
 					(name "Fabricant") "NCP15XH103F03RC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C77131")
 				(field
 					(name "Note")
 				)
@@ -1735,7 +1773,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C77131")
 			)
 			(property
 				(name "Note")
@@ -1825,6 +1863,9 @@
 				(value "alimentation.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -1895,6 +1936,9 @@
 			(property
 				(name "Sheetfile")
 				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -1969,6 +2013,9 @@
 				(value "alimentation.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -2039,6 +2086,9 @@
 			(property
 				(name "Sheetfile")
 				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -2113,6 +2163,9 @@
 				(value "alimentation.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -2183,6 +2236,9 @@
 			(property
 				(name "Sheetfile")
 				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -2257,6 +2313,9 @@
 				(value "alimentation.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -2269,6 +2328,230 @@
 				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
 			)
 			(tstamps "2865c6c4-852a-5948-a529-70d8d3dd08c6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP8")
+			(value "Batterie +")
+			(footprint "TestPoint:TestPoint_Pad_2.5x2.5mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Point d'insertion de l'analyseur de consommation")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_2.5x2.5mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Point d'insertion de l'analyseur de consommation")
+			)
+			(property
+				(name "Sheetname")
+				(value "Alimentation, charge et jauge")
+			)
+			(property
+				(name "Sheetfile")
+				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Alimentation, charge et jauge/")
+				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
+			)
+			(tstamps "061f3926-f30b-51cf-aa20-9b5cb91ead1b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP9")
+			(value "Batterie −")
+			(footprint "TestPoint:TestPoint_Pad_2.5x2.5mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note")
+				)
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_2.5x2.5mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "Alimentation, charge et jauge")
+			)
+			(property
+				(name "Sheetfile")
+				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Alimentation, charge et jauge/")
+				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
+			)
+			(tstamps "2f02c194-ffc1-5e67-8aa1-9d8cf6b0245c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP17")
+			(value "NTC batterie")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note")
+				)
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "Alimentation, charge et jauge")
+			)
+			(property
+				(name "Sheetfile")
+				(value "alimentation.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Alimentation, charge et jauge/")
+				(tstamps "/06663894-3f9d-535a-8063-8860181f393f/")
+			)
+			(tstamps "e1e973dd-7dd9-5ebe-925b-e116eeba8c3d")
 			(units
 				(unit
 					(name "A")
@@ -2787,11 +3070,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A105KA5NQNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C52923")
 				(field
 					(name "Note")
 				)
@@ -2811,11 +3092,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A105KA5NQNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C52923")
 			)
 			(property
 				(name "Note")
@@ -2862,11 +3143,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -2886,11 +3165,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -2937,11 +3216,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG330J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1562")
 				(field
 					(name "Note")
 				)
@@ -2961,11 +3238,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG330J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1562")
 			)
 			(property
 				(name "Note")
@@ -3012,11 +3289,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05C100JB5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C32949")
 				(field
 					(name "Note")
 				)
@@ -3036,11 +3311,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05C100JB5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C32949")
 			)
 			(property
 				(name "Note")
@@ -3087,11 +3362,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A105KA5NQNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C52923")
 				(field
 					(name "Note") "Au pied de 1V8_GNSS (plot 97)")
 				(field
@@ -3110,11 +3383,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A105KA5NQNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C52923")
 			)
 			(property
 				(name "Note")
@@ -3161,11 +3434,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "Au pied de VDD_1V8 (plot 15)")
 				(field
@@ -3184,11 +3455,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -3389,11 +3660,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -3413,11 +3682,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -3464,11 +3733,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note")
 				)
@@ -3488,11 +3755,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -3539,11 +3806,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -3563,11 +3828,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -3614,11 +3879,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note")
 				)
@@ -3638,11 +3901,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -3689,11 +3952,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -3713,11 +3974,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -3764,11 +4025,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -3788,11 +4047,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -3839,11 +4098,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -3863,11 +4120,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -3914,13 +4171,11 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF0000TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C17168")
 				(field
-					(name "Note") "Option : démarrage à chaud matériel (≈ 1 mA permanent)")
+					(name "Note") "Option : démarrage à chaud matériel sur le 3,3 V permanent (1,4 à 3,6 V admis ; ≈ 1 mA)")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
 				(field
@@ -3937,15 +4192,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF0000TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C17168")
 			)
 			(property
 				(name "Note")
-				(value "Option : démarrage à chaud matériel (≈ 1 mA permanent)")
+				(value "Option : démarrage à chaud matériel sur le 3,3 V permanent (1,4 à 3,6 V admis ; ≈ 1 mA)")
 			)
 			(property
 				(name "Sheetname")
@@ -4033,6 +4288,9 @@
 				(value "modem.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -4102,6 +4360,9 @@
 			(property
 				(name "Sheetfile")
 				(value "modem.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -4175,6 +4436,9 @@
 				(value "modem.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -4244,6 +4508,9 @@
 			(property
 				(name "Sheetfile")
 				(value "modem.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -4317,6 +4584,9 @@
 				(value "modem.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -4388,6 +4658,9 @@
 				(value "modem.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -4457,6 +4730,9 @@
 			(property
 				(name "Sheetfile")
 				(value "modem.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -5224,17 +5500,161 @@
 			)
 		)
 		(comp
+			(ref "C24")
+			(value "33 pF")
+			(footprint "Capacitor_SMD:C_0402_1005Metric")
+			(fields
+				(field
+					(name "Fabricant") "0402CG330J500NT")
+				(field
+					(name "LCSC") "C1562")
+				(field
+					(name "Note") "Série : arrête le continu vers le module")
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Fabricant")
+				(value "0402CG330J500NT")
+			)
+			(property
+				(name "LCSC")
+				(value "C1562")
+			)
+			(property
+				(name "Note")
+				(value "Série : arrête le continu vers le module")
+			)
+			(property
+				(name "Sheetname")
+				(value "Antennes LTE et GNSS")
+			)
+			(property
+				(name "Sheetfile")
+				(value "radio.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/Antennes LTE et GNSS/")
+				(tstamps "/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87/")
+			)
+			(tstamps "4e0f0fd9-9628-56fd-90c7-724583123834")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C25")
+			(value "100 nF")
+			(footprint "Capacitor_SMD:C_0402_1005Metric")
+			(fields
+				(field
+					(name "Fabricant") "CL05B104KO5NNNC")
+				(field
+					(name "LCSC") "C1525")
+				(field
+					(name "Note")
+				)
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Fabricant")
+				(value "CL05B104KO5NNNC")
+			)
+			(property
+				(name "LCSC")
+				(value "C1525")
+			)
+			(property
+				(name "Note")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "Antennes LTE et GNSS")
+			)
+			(property
+				(name "Sheetfile")
+				(value "radio.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/Antennes LTE et GNSS/")
+				(tstamps "/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87/")
+			)
+			(tstamps "f8d35c68-9eee-578e-b88a-16511eadc33a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "D4")
-			(value "PESD0402-03")
+			(value "LXES15AAA1-153")
 			(footprint "Diode_SMD:D_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant") "PESD0402-03")
+					(name "Fabricant") "LXES15AAA1-153")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C5210978")
 				(field
-					(name "Note") "ESD de faible capacité recommandée par SIMCom (tableau 40)")
+					(name "Note") "ESD de 0,05 pF : le PESD0402-03 de SIMCom (tableau 40) est en rupture")
 				(field
 					(name "Footprint") "Diode_SMD:D_0402_1005Metric")
 				(field
@@ -5251,15 +5671,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "PESD0402-03")
+				(value "LXES15AAA1-153")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C5210978")
 			)
 			(property
 				(name "Note")
-				(value "ESD de faible capacité recommandée par SIMCom (tableau 40)")
+				(value "ESD de 0,05 pF : le PESD0402-03 de SIMCom (tableau 40) est en rupture")
 			)
 			(property
 				(name "Sheetname")
@@ -5298,17 +5718,15 @@
 		)
 		(comp
 			(ref "D5")
-			(value "PESD0402-03")
+			(value "LXES15AAA1-153")
 			(footprint "Diode_SMD:D_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant") "PESD0402-03")
+					(name "Fabricant") "LXES15AAA1-153")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C5210978")
 				(field
-					(name "Note")
-				)
+					(name "Note") "Tient les 3 V d'alimentation de l'antenne active")
 				(field
 					(name "Footprint") "Diode_SMD:D_0402_1005Metric")
 				(field
@@ -5325,15 +5743,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "PESD0402-03")
+				(value "LXES15AAA1-153")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C5210978")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "Tient les 3 V d'alimentation de l'antenne active")
 			)
 			(property
 				(name "Sheetname")
@@ -5587,16 +6005,86 @@
 			)
 		)
 		(comp
+			(ref "L2")
+			(value "68 nH")
+			(footprint "Inductor_SMD:L_0402_1005Metric")
+			(fields
+				(field
+					(name "Fabricant") "LQW15AN68NG00D")
+				(field
+					(name "LCSC") "C108965")
+				(field
+					(name "Note") "Choc de polarisation (> 56 nH, SIMCom) : bobinée pour sa résonance propre")
+				(field
+					(name "Footprint") "Inductor_SMD:L_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "L")
+				(description "Inductor")
+			)
+			(property
+				(name "Fabricant")
+				(value "LQW15AN68NG00D")
+			)
+			(property
+				(name "LCSC")
+				(value "C108965")
+			)
+			(property
+				(name "Note")
+				(value "Choc de polarisation (> 56 nH, SIMCom) : bobinée pour sa résonance propre")
+			)
+			(property
+				(name "Sheetname")
+				(value "Antennes LTE et GNSS")
+			)
+			(property
+				(name "Sheetfile")
+				(value "radio.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "inductor choke coil reactor magnetic")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Choke_* *Coil* Inductor_* L_*")
+			)
+			(sheetpath
+				(names "/Antennes LTE et GNSS/")
+				(tstamps "/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87/")
+			)
+			(tstamps "ae0f232d-bbc7-50da-8adc-728ffa228130")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "R20")
 			(value "0 Ω")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF0000TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C17168")
 				(field
 					(name "Note")
 				)
@@ -5616,11 +6104,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF0000TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C17168")
 			)
 			(property
 				(name "Note")
@@ -5662,16 +6150,14 @@
 			)
 		)
 		(comp
-			(ref "R22")
-			(value "0 Ω")
+			(ref "R23")
+			(value "10 Ω")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF100JTCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25077")
 				(field
 					(name "Note")
 				)
@@ -5691,11 +6177,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF100JTCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25077")
 			)
 			(property
 				(name "Note")
@@ -5721,7 +6207,7 @@
 				(names "/Antennes LTE et GNSS/")
 				(tstamps "/aa25cbcb-d3e2-5fab-80c8-7363b1ea0c87/")
 			)
-			(tstamps "2e601175-d9f4-5318-a342-9e7e6cb8c2ef")
+			(tstamps "4c56e59e-2bcb-5406-a822-948c9764a1ae")
 			(units
 				(unit
 					(name "A")
@@ -5742,11 +6228,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -5766,11 +6250,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -5817,11 +6301,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG330J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1562")
 				(field
 					(name "Note")
 				)
@@ -5841,11 +6323,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG330J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1562")
 			)
 			(property
 				(name "Note")
@@ -5892,11 +6374,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG330J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1562")
 				(field
 					(name "Note")
 				)
@@ -5916,11 +6396,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG330J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1562")
 			)
 			(property
 				(name "Note")
@@ -5967,11 +6447,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG330J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1562")
 				(field
 					(name "Note")
 				)
@@ -5991,11 +6469,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG330J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1562")
 			)
 			(property
 				(name "Note")
@@ -6128,11 +6606,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF220JTCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25092")
 				(field
 					(name "Note")
 				)
@@ -6152,11 +6628,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF220JTCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25092")
 			)
 			(property
 				(name "Note")
@@ -6203,11 +6679,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF220JTCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25092")
 				(field
 					(name "Note")
 				)
@@ -6227,11 +6701,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF220JTCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25092")
 			)
 			(property
 				(name "Note")
@@ -6278,11 +6752,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF220JTCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25092")
 				(field
 					(name "Note")
 				)
@@ -6302,11 +6774,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF220JTCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25092")
 			)
 			(property
 				(name "Note")
@@ -6430,11 +6902,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "Un par broche VDD")
 				(field
@@ -6453,11 +6923,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -6504,11 +6974,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "Un par broche VDD")
 				(field
@@ -6527,11 +6995,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -6578,11 +7046,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "Un par broche VDD")
 				(field
@@ -6601,11 +7067,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -6652,11 +7118,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A475MP5NRNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C23733")
 				(field
 					(name "Note")
 				)
@@ -6676,11 +7140,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A475MP5NRNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C23733")
 			)
 			(property
 				(name "Note")
@@ -6727,11 +7191,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "VDDA")
 				(field
@@ -6750,11 +7212,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -6801,11 +7263,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A105KA5NQNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C52923")
 				(field
 					(name "Note") "VDDA")
 				(field
@@ -6824,11 +7284,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A105KA5NQNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C52923")
 			)
 			(property
 				(name "Note")
@@ -6875,11 +7335,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note") "VBAT du microcontrôleur")
 				(field
@@ -6898,11 +7356,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -6949,11 +7407,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A475MP5NRNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C23733")
 				(field
 					(name "Note") "VCAP : céramique X5R à faible ESR (fiche ST)")
 				(field
@@ -6972,11 +7428,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A475MP5NRNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C23733")
 			)
 			(property
 				(name "Note")
@@ -7023,11 +7479,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -7047,11 +7501,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -7098,11 +7552,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG180J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1549")
 				(field
 					(name "Note") "C = 2 × (CL − Cparasite) pour CL = 12,5 pF")
 				(field
@@ -7121,11 +7573,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG180J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1549")
 			)
 			(property
 				(name "Note")
@@ -7172,11 +7624,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402CG180J500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1549")
 				(field
 					(name "Note")
 				)
@@ -7196,11 +7646,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402CG180J500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1549")
 			)
 			(property
 				(name "Note")
@@ -7289,6 +7739,9 @@
 				(value "microcontroleur.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "Cortex Debug Connector ARM SWD JTAG")
 			)
@@ -7333,11 +7786,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -7357,11 +7808,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -7451,6 +7902,9 @@
 				(value "microcontroleur.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
 				(name "ki_keywords")
 				(value "test point tp")
 			)
@@ -7463,6 +7917,450 @@
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "f3729271-1261-5db4-9600-17ddc9f4e681")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP40")
+			(value "I2C_SCL")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "d718c169-3402-5605-8479-df5676b41633")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP41")
+			(value "I2C_SDA")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "fb4b10cd-c1ba-55fd-b76f-679887c49128")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP42")
+			(value "MCU_TX")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "1ed25d8a-2501-543a-9336-6865c485687a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP43")
+			(value "MCU_RX")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "25a7aef6-9a3b-51b0-8520-4aa5ca9e1033")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP44")
+			(value "MODEM_EN")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "ad513455-448e-5ce4-8506-3265a3ad4763")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP45")
+			(value "STATUS_3V3")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Fabricant")
+				)
+				(field
+					(name "LCSC")
+				)
+				(field
+					(name "Note") "Mise au point")
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Fabricant")
+				(value "")
+			)
+			(property
+				(name "LCSC")
+				(value "")
+			)
+			(property
+				(name "Note")
+				(value "Mise au point")
+			)
+			(property
+				(name "Sheetname")
+				(value "Microcontrôleur STM32U575")
+			)
+			(property
+				(name "Sheetfile")
+				(value "microcontroleur.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/Microcontrôleur STM32U575/")
+				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
+			)
+			(tstamps "e839ae1f-5092-51b8-9f67-44e32ef70ef9")
 			(units
 				(unit
 					(name "A")
@@ -7755,11 +8653,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -7779,11 +8675,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -7830,11 +8726,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05A105KA5NQNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C52923")
 				(field
 					(name "Note")
 				)
@@ -7854,11 +8748,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05A105KA5NQNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C52923")
 			)
 			(property
 				(name "Note")
@@ -7905,11 +8799,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -7929,11 +8821,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -7980,11 +8872,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -8004,11 +8894,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -8127,11 +9017,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF4701TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25900")
 				(field
 					(name "Note")
 				)
@@ -8151,11 +9039,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF4701TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25900")
 			)
 			(property
 				(name "Note")
@@ -8202,11 +9090,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF4701TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25900")
 				(field
 					(name "Note")
 				)
@@ -8226,11 +9112,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF4701TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25900")
 			)
 			(property
 				(name "Note")
@@ -8277,11 +9163,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -8301,11 +9185,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -8352,11 +9236,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -8376,11 +9258,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -8427,11 +9309,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note") "Mémoire coupée par défaut")
 				(field
@@ -8450,11 +9330,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -8501,11 +9381,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -8525,11 +9403,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -8855,11 +9733,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -8879,11 +9755,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -8930,11 +9806,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -8954,11 +9828,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -9005,11 +9879,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -9029,11 +9901,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -9080,11 +9952,9 @@
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "CL05B104KO5NNNC")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1525")
 				(field
 					(name "Note")
 				)
@@ -9104,11 +9974,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "CL05B104KO5NNNC")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1525")
 			)
 			(property
 				(name "Note")
@@ -9135,381 +10005,6 @@
 				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
 			)
 			(tstamps "f6df6421-9887-5c7a-a2ab-3006c99804b4")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R70")
-			(value "100 kΩ")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Fabricant")
-				)
-				(field
-					(name "LCSC")
-				)
-				(field
-					(name "Note")
-				)
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Fabricant")
-				(value "")
-			)
-			(property
-				(name "LCSC")
-				(value "")
-			)
-			(property
-				(name "Note")
-				(value "")
-			)
-			(property
-				(name "Sheetname")
-				(value "Translateurs 1,8 V / 3,3 V")
-			)
-			(property
-				(name "Sheetfile")
-				(value "niveaux.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Translateurs 1,8 V / 3,3 V/")
-				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
-			)
-			(tstamps "1c1d13dd-87cd-575e-bcfe-7cd9b5356d18")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R71")
-			(value "100 kΩ")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Fabricant")
-				)
-				(field
-					(name "LCSC")
-				)
-				(field
-					(name "Note")
-				)
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Fabricant")
-				(value "")
-			)
-			(property
-				(name "LCSC")
-				(value "")
-			)
-			(property
-				(name "Note")
-				(value "")
-			)
-			(property
-				(name "Sheetname")
-				(value "Translateurs 1,8 V / 3,3 V")
-			)
-			(property
-				(name "Sheetfile")
-				(value "niveaux.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Translateurs 1,8 V / 3,3 V/")
-				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
-			)
-			(tstamps "94daf969-d194-5bbb-a15d-0f347f65559c")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R72")
-			(value "100 kΩ")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Fabricant")
-				)
-				(field
-					(name "LCSC")
-				)
-				(field
-					(name "Note")
-				)
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Fabricant")
-				(value "")
-			)
-			(property
-				(name "LCSC")
-				(value "")
-			)
-			(property
-				(name "Note")
-				(value "")
-			)
-			(property
-				(name "Sheetname")
-				(value "Translateurs 1,8 V / 3,3 V")
-			)
-			(property
-				(name "Sheetfile")
-				(value "niveaux.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Translateurs 1,8 V / 3,3 V/")
-				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
-			)
-			(tstamps "c373bdde-4e01-5312-8734-269d80e6e599")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R73")
-			(value "100 kΩ")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Fabricant")
-				)
-				(field
-					(name "LCSC")
-				)
-				(field
-					(name "Note")
-				)
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Fabricant")
-				(value "")
-			)
-			(property
-				(name "LCSC")
-				(value "")
-			)
-			(property
-				(name "Note")
-				(value "")
-			)
-			(property
-				(name "Sheetname")
-				(value "Translateurs 1,8 V / 3,3 V")
-			)
-			(property
-				(name "Sheetfile")
-				(value "niveaux.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Translateurs 1,8 V / 3,3 V/")
-				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
-			)
-			(tstamps "7a202fee-67f8-58f0-b5b0-80794f8e01cb")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R74")
-			(value "100 kΩ")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Fabricant")
-				)
-				(field
-					(name "LCSC")
-				)
-				(field
-					(name "Note")
-				)
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Fabricant")
-				(value "")
-			)
-			(property
-				(name "LCSC")
-				(value "")
-			)
-			(property
-				(name "Note")
-				(value "")
-			)
-			(property
-				(name "Sheetname")
-				(value "Translateurs 1,8 V / 3,3 V")
-			)
-			(property
-				(name "Sheetfile")
-				(value "niveaux.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Translateurs 1,8 V / 3,3 V/")
-				(tstamps "/9e13927b-a859-57c3-b421-6e5ee92064fc/")
-			)
-			(tstamps "bdc50475-f625-50bf-93ad-1a7b66f009a4")
 			(units
 				(unit
 					(name "A")
@@ -9752,15 +10247,13 @@
 		)
 		(comp
 			(ref "C64")
-			(value "22 nF C0G")
+			(value "22 nF X7R")
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402B223K500NT")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C1532")
 				(field
 					(name "Note") "Condensateur d'échantillonnage du TSC")
 				(field
@@ -9779,11 +10272,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402B223K500NT")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C1532")
 			)
 			(property
 				(name "Note")
@@ -9810,6 +10303,78 @@
 				(tstamps "/4f35a2da-b551-5777-a547-e9a9a91c5d1f/")
 			)
 			(tstamps "bac1a386-0afb-5824-a8ab-c4c34b57c05c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C65")
+			(value "10 nF")
+			(footprint "Capacitor_SMD:C_0402_1005Metric")
+			(fields
+				(field
+					(name "Fabricant") "CL05B103KB5NNNC")
+				(field
+					(name "LCSC") "C15195")
+				(field
+					(name "Note") "Filtre les salves radio captées par la sangle")
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Fabricant")
+				(value "CL05B103KB5NNNC")
+			)
+			(property
+				(name "LCSC")
+				(value "C15195")
+			)
+			(property
+				(name "Note")
+				(value "Filtre les salves radio captées par la sangle")
+			)
+			(property
+				(name "Sheetname")
+				(value "Signalisation et détection")
+			)
+			(property
+				(name "Sheetfile")
+				(value "interface.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/Signalisation et détection/")
+				(tstamps "/4f35a2da-b551-5777-a547-e9a9a91c5d1f/")
+			)
+			(tstamps "b8484efa-bfd4-5ac4-8b0f-86c670c711c3")
 			(units
 				(unit
 					(name "A")
@@ -9907,8 +10472,7 @@
 				(field
 					(name "Fabricant") "BAT54WS")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C22629")
 				(field
 					(name "Note") "Roue libre du moteur")
 				(field
@@ -9931,7 +10495,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C22629")
 			)
 			(property
 				(name "Note")
@@ -10112,18 +10676,17 @@
 		)
 		(comp
 			(ref "D14")
-			(value "ESDBW5V0A1")
-			(footprint "fg:X1-DFN1006-2_L1.0-W0.6-P0.65-BI")
+			(value "LXES15AAA1-153")
+			(footprint "Diode_SMD:D_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant") "ESDBW5V0A1")
+					(name "Fabricant") "LXES15AAA1-153")
 				(field
-					(name "LCSC") "C5173252")
+					(name "LCSC") "C5210978")
 				(field
-					(name "Note")
-				)
+					(name "Note") "0,05 pF : ne fausse pas la mesure capacitive de la peau")
 				(field
-					(name "Footprint") "fg:X1-DFN1006-2_L1.0-W0.6-P0.65-BI")
+					(name "Footprint") "Diode_SMD:D_0402_1005Metric")
 				(field
 					(name "Datasheet")
 				)
@@ -10132,21 +10695,21 @@
 				)
 			)
 			(libsource
-				(lib "fg")
-				(part "ESDBW5V0A1_C5173252")
-				(description "")
+				(lib "Device")
+				(part "D_TVS")
+				(description "Bidirectional transient-voltage-suppression diode")
 			)
 			(property
 				(name "Fabricant")
-				(value "ESDBW5V0A1")
+				(value "LXES15AAA1-153")
 			)
 			(property
 				(name "LCSC")
-				(value "C5173252")
+				(value "C5210978")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "0,05 pF : ne fausse pas la mesure capacitive de la peau")
 			)
 			(property
 				(name "Sheetname")
@@ -10158,7 +10721,11 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "ESD Protection Devices")
+				(value "diode TVS thyrector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO-???* *_Diode_* *SingleDiode* D_*")
 			)
 			(sheetpath
 				(names "/Signalisation et détection/")
@@ -10170,10 +10737,10 @@
 					(name "A")
 					(pins
 						(pin
-							(num "2")
+							(num "1")
 						)
 						(pin
-							(num "1")
+							(num "2")
 						)
 					)
 				)
@@ -10429,11 +10996,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -10453,11 +11018,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -10504,11 +11069,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF3300TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25104")
 				(field
 					(name "Note")
 				)
@@ -10528,11 +11091,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF3300TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25104")
 			)
 			(property
 				(name "Note")
@@ -10579,11 +11142,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF3300TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25104")
 				(field
 					(name "Note")
 				)
@@ -10603,11 +11164,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF3300TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25104")
 			)
 			(property
 				(name "Note")
@@ -10654,11 +11215,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note") "Grille bloquée au démarrage")
 				(field
@@ -10677,11 +11236,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -10728,11 +11287,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note") "Grille bloquée au démarrage")
 				(field
@@ -10751,11 +11308,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -10802,11 +11359,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note") "Grille bloquée au démarrage")
 				(field
@@ -10825,11 +11380,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -10876,11 +11431,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note") "Grille bloquée au démarrage")
 				(field
@@ -10899,11 +11452,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -10946,18 +11499,15 @@
 		)
 		(comp
 			(ref "R87")
-			(value "1 kΩ")
+			(value "4,7 kΩ")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF4701TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25900")
 				(field
-					(name "Note")
-				)
+					(name "Note") "Décharge du piézo")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
 				(field
@@ -10974,15 +11524,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF4701TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25900")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "Décharge du piézo")
 			)
 			(property
 				(name "Sheetname")
@@ -11025,11 +11575,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1000TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25076")
 				(field
 					(name "Note")
 				)
@@ -11049,11 +11597,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1000TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25076")
 			)
 			(property
 				(name "Note")
@@ -11100,11 +11648,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1003TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25741")
 				(field
 					(name "Note")
 				)
@@ -11124,11 +11670,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1003TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25741")
 			)
 			(property
 				(name "Note")
@@ -11175,11 +11721,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1001TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C11702")
 				(field
 					(name "Note")
 				)
@@ -11199,11 +11743,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1001TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C11702")
 			)
 			(property
 				(name "Note")
@@ -11246,18 +11790,15 @@
 		)
 		(comp
 			(ref "R92")
-			(value "4,7 MΩ")
+			(value "1 MΩ")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1004TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C26083")
 				(field
-					(name "Note")
-				)
+					(name "Note") "3,3 µA boucle fermée ; assez bas pour tenir les fuites à chaud")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
 				(field
@@ -11274,15 +11815,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1004TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C26083")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "3,3 µA boucle fermée ; assez bas pour tenir les fuites à chaud")
 			)
 			(property
 				(name "Sheetname")
@@ -11325,11 +11866,9 @@
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant")
-				)
+					(name "Fabricant") "0402WGF1002TCE")
 				(field
-					(name "LCSC")
-				)
+					(name "LCSC") "C25744")
 				(field
 					(name "Note")
 				)
@@ -11349,11 +11888,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "")
+				(value "0402WGF1002TCE")
 			)
 			(property
 				(name "LCSC")
-				(value "")
+				(value "C25744")
 			)
 			(property
 				(name "Note")
@@ -11397,17 +11936,17 @@
 		(comp
 			(ref "SW1")
 			(value "SOS")
-			(footprint "Button_Switch_SMD:SW_Push_1P1T-MP_NO_Horizontal_Alps_SKRTLAE010")
+			(footprint "Button_Switch_SMD:SW_SPST_EVQP7A")
 			(fields
 				(field
-					(name "Fabricant") "SKRTLAE010")
+					(name "Fabricant") "EVQP7A01P")
 				(field
-					(name "LCSC") "C110293")
+					(name "LCSC") "C79167")
 				(field
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "Button_Switch_SMD:SW_Push_1P1T-MP_NO_Horizontal_Alps_SKRTLAE010")
+					(name "Footprint") "Button_Switch_SMD:SW_SPST_EVQP7A")
 				(field
 					(name "Datasheet")
 				)
@@ -11422,11 +11961,11 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "SKRTLAE010")
+				(value "EVQP7A01P")
 			)
 			(property
 				(name "LCSC")
-				(value "C110293")
+				(value "C79167")
 			)
 			(property
 				(name "Note")
@@ -11466,7 +12005,7 @@
 		(comp
 			(ref "TP30")
 			(value "Buzzer +")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11478,7 +12017,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11510,6 +12049,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11538,7 +12080,7 @@
 		(comp
 			(ref "TP31")
 			(value "Buzzer −")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11550,7 +12092,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11582,6 +12124,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11610,7 +12155,7 @@
 		(comp
 			(ref "TP32")
 			(value "Vibreur +")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11622,7 +12167,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11654,6 +12199,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11682,7 +12230,7 @@
 		(comp
 			(ref "TP33")
 			(value "Vibreur −")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11694,7 +12242,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11726,6 +12274,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11754,7 +12305,7 @@
 		(comp
 			(ref "TP34")
 			(value "Boucle A")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11766,7 +12317,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11798,6 +12349,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11826,7 +12380,7 @@
 		(comp
 			(ref "TP35")
 			(value "Boucle B")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11838,7 +12392,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11870,6 +12424,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -11898,7 +12455,7 @@
 		(comp
 			(ref "TP36")
 			(value "Électrode")
-			(footprint "TestPoint:TestPoint_Pad_2.0x2.0mm")
+			(footprint "TestPoint:TestPoint_Pad_1.5x1.5mm")
 			(fields
 				(field
 					(name "Fabricant")
@@ -11910,7 +12467,7 @@
 					(name "Note")
 				)
 				(field
-					(name "Footprint") "TestPoint:TestPoint_Pad_2.0x2.0mm")
+					(name "Footprint") "TestPoint:TestPoint_Pad_1.5x1.5mm")
 				(field
 					(name "Datasheet")
 				)
@@ -11942,6 +12499,9 @@
 			(property
 				(name "Sheetfile")
 				(value "interface.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
 			)
 			(property
 				(name "ki_keywords")
@@ -12195,6 +12755,43 @@
 				(pin
 					(num "2")
 					(name "A")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "L")
+			(description "Inductor")
+			(footprints
+				(fp "Choke_*")
+				(fp "*Coil*")
+				(fp "Inductor_*")
+				(fp "L_*")
+			)
+			(fields
+				(field
+					(name "Reference") "L")
+				(field
+					(name "Value") "L")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Inductor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "2")
 					(type "passive")
 				)
 			)
@@ -13994,57 +14591,6 @@
 		)
 		(libpart
 			(lib "fg")
-			(part "SM03B-SRSS-TB")
-			(docs "https://lcsc.com/product-detail/Others_JST-Sales-America__JST-Sales-America-SM03B-SRSS-TB-LF-SN-P_C160403.html")
-			(fields
-				(field
-					(name "Reference") "U")
-				(field
-					(name "Value") "SM03B-SRSS-TB")
-				(field
-					(name "Footprint") "fg:CONN-SMD_SM03B-SRSS-TB-LF-SN-P")
-				(field
-					(name "Datasheet") "https://lcsc.com/product-detail/Others_JST-Sales-America__JST-Sales-America-SM03B-SRSS-TB-LF-SN-P_C160403.html")
-				(field
-					(name "Description")
-				)
-				(field
-					(name "Manufacturer") "JST")
-				(field
-					(name "MPN") "SM03B-SRSS-TB(LF)(SN)")
-				(field
-					(name "LCSC Part") "C160403")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "1")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "2")
-					(type "passive")
-				)
-				(pin
-					(num "3")
-					(name "3")
-					(type "passive")
-				)
-				(pin
-					(num "4")
-					(name "4")
-					(type "passive")
-				)
-				(pin
-					(num "5")
-					(name "5")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "fg")
 			(part "SN74AXC4T774BQBR")
 			(docs "https://www.lcsc.com/datasheet/C2862903.pdf")
 			(fields
@@ -14481,7 +15027,7 @@
 		(net
 			(code "1")
 			(name "1V8")
-			(class "Default")
+			(class "Alim_1V8")
 			(node
 				(ref "C16")
 				(pin "1")
@@ -14499,11 +15045,6 @@
 			)
 			(node
 				(ref "C72")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R17")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -14571,7 +15112,7 @@
 		(net
 			(code "2")
 			(name "3V3")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "C40")
 				(pin "1")
@@ -14645,6 +15186,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "R17")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
 				(ref "R5")
 				(pin "2")
 				(pintype "passive")
@@ -14671,21 +15217,6 @@
 			)
 			(node
 				(ref "R64")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R70")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R71")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R72")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -14770,7 +15301,7 @@
 		(net
 			(code "3")
 			(name "3V3_FLASH")
-			(class "Default")
+			(class "Alim_1V8")
 			(node
 				(ref "C63")
 				(pin "1")
@@ -14809,7 +15340,7 @@
 		(net
 			(code "4")
 			(name "3V3_REG")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "C5")
 				(pin "1")
@@ -14849,9 +15380,9 @@
 			(name "BAT_NTC")
 			(class "Default")
 			(node
-				(ref "J2")
-				(pin "3")
-				(pinfunction "3_3")
+				(ref "TP17")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -14956,7 +15487,7 @@
 			(node
 				(ref "D14")
 				(pin "1")
-				(pinfunction "K_1")
+				(pinfunction "A1_1")
 				(pintype "passive")
 			)
 			(node
@@ -15114,6 +15645,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "C25")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "C3")
 				(pin "2")
 				(pintype "passive")
@@ -15234,6 +15770,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "C65")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "C7")
 				(pin "2")
 				(pintype "passive")
@@ -15284,7 +15825,7 @@
 			(node
 				(ref "D14")
 				(pin "2")
-				(pinfunction "A_2")
+				(pinfunction "A2_2")
 				(pintype "passive")
 			)
 			(node
@@ -15303,12 +15844,6 @@
 				(ref "D5")
 				(pin "2")
 				(pinfunction "A2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J2")
-				(pin "2")
-				(pinfunction "2_2")
 				(pintype "passive")
 			)
 			(node
@@ -15444,16 +15979,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R73")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R74")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
 				(ref "R83")
 				(pin "2")
 				(pintype "passive")
@@ -15503,6 +16028,12 @@
 			)
 			(node
 				(ref "TP7")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "TP9")
 				(pin "1")
 				(pinfunction "1_1")
 				(pintype "passive")
@@ -15936,6 +16467,22 @@
 		)
 		(net
 			(code "16")
+			(name "GNSS_BIAS")
+			(class "Default")
+			(node
+				(ref "L2")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R23")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
 			(name "GNSS_PWRCTL")
 			(class "Default")
 			(node
@@ -15951,7 +16498,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "18")
 			(name "GNSS_RXD")
 			(class "Default")
 			(node
@@ -15967,7 +16514,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "19")
 			(name "GNSS_TXD")
 			(class "Default")
 			(node
@@ -15983,7 +16530,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "20")
 			(name "GNSS_VBKP")
 			(class "Default")
 			(node
@@ -15999,12 +16546,18 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "21")
 			(name "I2C_SCL")
 			(class "Default")
 			(node
 				(ref "R60")
 				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "TP40")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -16039,12 +16592,18 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "22")
 			(name "I2C_SDA")
 			(class "Default")
 			(node
 				(ref "R61")
 				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "TP41")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -16079,7 +16638,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "23")
 			(name "LED_B")
 			(class "Default")
 			(node
@@ -16101,7 +16660,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "LED_BD")
 			(class "Default")
 			(node
@@ -16117,7 +16676,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "LED_BK")
 			(class "Default")
 			(node
@@ -16133,7 +16692,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "LED_G")
 			(class "Default")
 			(node
@@ -16155,7 +16714,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "LED_GD")
 			(class "Default")
 			(node
@@ -16171,7 +16730,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "LED_GK")
 			(class "Default")
 			(node
@@ -16187,7 +16746,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "LED_R")
 			(class "Default")
 			(node
@@ -16209,7 +16768,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "LED_RD")
 			(class "Default")
 			(node
@@ -16225,7 +16784,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "LED_RK")
 			(class "Default")
 			(node
@@ -16241,9 +16800,14 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "LOOP")
 			(class "Default")
+			(node
+				(ref "C65")
+				(pin "1")
+				(pintype "passive")
+			)
 			(node
 				(ref "R91")
 				(pin "2")
@@ -16262,7 +16826,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "LOOP_EXT")
 			(class "Default")
 			(node
@@ -16284,14 +16848,9 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "MCU_CTS")
 			(class "Default")
-			(node
-				(ref "R71")
-				(pin "1")
-				(pintype "passive")
-			)
 			(node
 				(ref "U1")
 				(pin "32")
@@ -16306,7 +16865,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "MCU_DTR")
 			(class "Default")
 			(node
@@ -16323,7 +16882,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "MCU_PWRKEY")
 			(class "Default")
 			(node
@@ -16339,7 +16898,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "MCU_RESET")
 			(class "Default")
 			(node
@@ -16355,7 +16914,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "38")
 			(name "MCU_RTS")
 			(class "Default")
 			(node
@@ -16372,12 +16931,13 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "39")
 			(name "MCU_RX")
 			(class "Default")
 			(node
-				(ref "R70")
+				(ref "TP43")
 				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -16394,9 +16954,15 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "40")
 			(name "MCU_TX")
 			(class "Default")
+			(node
+				(ref "TP42")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
 			(node
 				(ref "U1")
 				(pin "30")
@@ -16411,7 +16977,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "41")
 			(name "MODEM_CT")
 			(class "Default")
 			(node
@@ -16427,12 +16993,18 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "42")
 			(name "MODEM_EN")
 			(class "Default")
 			(node
 				(ref "R6")
 				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "TP44")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -16449,7 +17021,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "43")
 			(name "MOD_CTS")
 			(class "Default")
 			(node
@@ -16466,7 +17038,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "44")
 			(name "MOD_DM")
 			(class "Default")
 			(node
@@ -16483,7 +17055,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "45")
 			(name "MOD_DP")
 			(class "Default")
 			(node
@@ -16500,7 +17072,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "46")
 			(name "MOD_DTR")
 			(class "Default")
 			(node
@@ -16517,7 +17089,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "47")
 			(name "MOD_LOG_RX")
 			(class "Default")
 			(node
@@ -16534,7 +17106,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "48")
 			(name "MOD_LOG_TX")
 			(class "Default")
 			(node
@@ -16551,7 +17123,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "49")
 			(name "MOD_MKIN3")
 			(class "Default")
 			(node
@@ -16567,7 +17139,7 @@
 			)
 		)
 		(net
-			(code "49")
+			(code "50")
 			(name "MOD_NETLIGHT")
 			(class "Default")
 			(node
@@ -16584,7 +17156,7 @@
 			)
 		)
 		(net
-			(code "50")
+			(code "51")
 			(name "MOD_PWRKEY")
 			(class "Default")
 			(node
@@ -16601,7 +17173,7 @@
 			)
 		)
 		(net
-			(code "51")
+			(code "52")
 			(name "MOD_RESET")
 			(class "Default")
 			(node
@@ -16618,7 +17190,7 @@
 			)
 		)
 		(net
-			(code "52")
+			(code "53")
 			(name "MOD_RI")
 			(class "Default")
 			(node
@@ -16635,7 +17207,7 @@
 			)
 		)
 		(net
-			(code "53")
+			(code "54")
 			(name "MOD_RTS")
 			(class "Default")
 			(node
@@ -16652,7 +17224,7 @@
 			)
 		)
 		(net
-			(code "54")
+			(code "55")
 			(name "MOD_RXD")
 			(class "Default")
 			(node
@@ -16669,7 +17241,7 @@
 			)
 		)
 		(net
-			(code "55")
+			(code "56")
 			(name "MOD_STATUS")
 			(class "Default")
 			(node
@@ -16686,7 +17258,7 @@
 			)
 		)
 		(net
-			(code "56")
+			(code "57")
 			(name "MOD_TXD")
 			(class "Default")
 			(node
@@ -16703,7 +17275,7 @@
 			)
 		)
 		(net
-			(code "57")
+			(code "58")
 			(name "MOD_U3RXD")
 			(class "Default")
 			(node
@@ -16719,7 +17291,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "59")
 			(name "MOD_U3TXD")
 			(class "Default")
 			(node
@@ -16735,7 +17307,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "60")
 			(name "MOD_USB_BOOT")
 			(class "Default")
 			(node
@@ -16752,7 +17324,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "61")
 			(name "MOD_VBUS")
 			(class "Default")
 			(node
@@ -16769,14 +17341,30 @@
 			)
 		)
 		(net
-			(code "61")
-			(name "NETLIGHT_3V3")
+			(code "62")
+			(name "MOD_VDD_AUX")
 			(class "Default")
 			(node
-				(ref "R74")
+				(ref "C25")
 				(pin "1")
 				(pintype "passive")
 			)
+			(node
+				(ref "R23")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U2")
+				(pin "99")
+				(pinfunction "VDD_AUX_99")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "63")
+			(name "NETLIGHT_3V3")
+			(class "Default")
 			(node
 				(ref "U1")
 				(pin "28")
@@ -16791,7 +17379,7 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "64")
 			(name "NRST")
 			(class "Default")
 			(node
@@ -16813,7 +17401,7 @@
 			)
 		)
 		(net
-			(code "63")
+			(code "65")
 			(name "NTC_EN")
 			(class "Default")
 			(node
@@ -16829,7 +17417,7 @@
 			)
 		)
 		(net
-			(code "64")
+			(code "66")
 			(name "NTC_MES")
 			(class "Default")
 			(node
@@ -16850,7 +17438,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "67")
 			(name "OSC32_IN")
 			(class "Default")
 			(node
@@ -16872,7 +17460,7 @@
 			)
 		)
 		(net
-			(code "66")
+			(code "68")
 			(name "OSC32_OUT")
 			(class "Default")
 			(node
@@ -16894,7 +17482,7 @@
 			)
 		)
 		(net
-			(code "67")
+			(code "69")
 			(name "PWRKEY_G")
 			(class "Default")
 			(node
@@ -16915,7 +17503,7 @@
 			)
 		)
 		(net
-			(code "68")
+			(code "70")
 			(name "RESET_G")
 			(class "Default")
 			(node
@@ -16936,12 +17524,17 @@
 			)
 		)
 		(net
-			(code "69")
+			(code "71")
 			(name "RF_GNSS_1")
-			(class "Default")
+			(class "RF")
 			(node
 				(ref "C23")
 				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C24")
+				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -16957,22 +17550,23 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R22")
-				(pin "2")
+				(ref "L2")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "70")
+			(code "72")
 			(name "RF_GNSS_MOD")
-			(class "Default")
+			(class "RF")
 			(node
 				(ref "C22")
 				(pin "1")
 				(pintype "passive")
 			)
 			(node
-				(ref "R22")
+				(ref "C24")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -16984,9 +17578,9 @@
 			)
 		)
 		(net
-			(code "71")
+			(code "73")
 			(name "RF_LTE_1")
-			(class "Default")
+			(class "RF")
 			(node
 				(ref "C21")
 				(pin "1")
@@ -17011,9 +17605,9 @@
 			)
 		)
 		(net
-			(code "72")
+			(code "74")
 			(name "RF_LTE_2")
-			(class "Default")
+			(class "RF")
 			(node
 				(ref "J3")
 				(pin "1")
@@ -17028,9 +17622,9 @@
 			)
 		)
 		(net
-			(code "73")
+			(code "75")
 			(name "RF_LTE_MOD")
-			(class "Default")
+			(class "RF")
 			(node
 				(ref "C20")
 				(pin "1")
@@ -17049,14 +17643,9 @@
 			)
 		)
 		(net
-			(code "74")
+			(code "76")
 			(name "RI_3V3")
 			(class "Default")
-			(node
-				(ref "R72")
-				(pin "1")
-				(pintype "passive")
-			)
 			(node
 				(ref "U1")
 				(pin "41")
@@ -17071,7 +17660,7 @@
 			)
 		)
 		(net
-			(code "75")
+			(code "77")
 			(name "SIM_CLK")
 			(class "Default")
 			(node
@@ -17098,7 +17687,7 @@
 			)
 		)
 		(net
-			(code "76")
+			(code "78")
 			(name "SIM_CLK_M")
 			(class "Default")
 			(node
@@ -17114,7 +17703,7 @@
 			)
 		)
 		(net
-			(code "77")
+			(code "79")
 			(name "SIM_DATA")
 			(class "Default")
 			(node
@@ -17141,7 +17730,7 @@
 			)
 		)
 		(net
-			(code "78")
+			(code "80")
 			(name "SIM_DATA_M")
 			(class "Default")
 			(node
@@ -17157,7 +17746,7 @@
 			)
 		)
 		(net
-			(code "79")
+			(code "81")
 			(name "SIM_RST")
 			(class "Default")
 			(node
@@ -17184,7 +17773,7 @@
 			)
 		)
 		(net
-			(code "80")
+			(code "82")
 			(name "SIM_RST_M")
 			(class "Default")
 			(node
@@ -17200,9 +17789,9 @@
 			)
 		)
 		(net
-			(code "81")
+			(code "83")
 			(name "SIM_VDD")
-			(class "Default")
+			(class "Alim_1V8")
 			(node
 				(ref "C30")
 				(pin "1")
@@ -17228,7 +17817,7 @@
 			)
 		)
 		(net
-			(code "82")
+			(code "84")
 			(name "SOS")
 			(class "Default")
 			(node
@@ -17251,7 +17840,7 @@
 			)
 		)
 		(net
-			(code "83")
+			(code "85")
 			(name "SPI_MISO")
 			(class "Default")
 			(node
@@ -17268,7 +17857,7 @@
 			)
 		)
 		(net
-			(code "84")
+			(code "86")
 			(name "SPI_MOSI")
 			(class "Default")
 			(node
@@ -17285,7 +17874,7 @@
 			)
 		)
 		(net
-			(code "85")
+			(code "87")
 			(name "SPI_SCK")
 			(class "Default")
 			(node
@@ -17302,12 +17891,13 @@
 			)
 		)
 		(net
-			(code "86")
+			(code "88")
 			(name "STATUS_3V3")
 			(class "Default")
 			(node
-				(ref "R73")
+				(ref "TP45")
 				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -17324,7 +17914,7 @@
 			)
 		)
 		(net
-			(code "87")
+			(code "89")
 			(name "SWCLK")
 			(class "Default")
 			(node
@@ -17341,7 +17931,7 @@
 			)
 		)
 		(net
-			(code "88")
+			(code "90")
 			(name "SWDIO")
 			(class "Default")
 			(node
@@ -17358,7 +17948,7 @@
 			)
 		)
 		(net
-			(code "89")
+			(code "91")
 			(name "TPS_CFG1")
 			(class "Default")
 			(node
@@ -17374,7 +17964,7 @@
 			)
 		)
 		(net
-			(code "90")
+			(code "92")
 			(name "TPS_CFG3")
 			(class "Default")
 			(node
@@ -17390,9 +17980,9 @@
 			)
 		)
 		(net
-			(code "91")
+			(code "93")
 			(name "TPS_LX1")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "L1")
 				(pin "1")
@@ -17407,9 +17997,9 @@
 			)
 		)
 		(net
-			(code "92")
+			(code "94")
 			(name "TPS_LX2")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "L1")
 				(pin "2")
@@ -17424,7 +18014,7 @@
 			)
 		)
 		(net
-			(code "93")
+			(code "95")
 			(name "TSC_CS")
 			(class "Default")
 			(node
@@ -17440,7 +18030,7 @@
 			)
 		)
 		(net
-			(code "94")
+			(code "96")
 			(name "TSC_EL")
 			(class "Default")
 			(node
@@ -17456,16 +18046,11 @@
 			)
 		)
 		(net
-			(code "95")
+			(code "97")
 			(name "VBAT")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "C3")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C7")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -17475,9 +18060,8 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J2")
+				(ref "R8")
 				(pin "1")
-				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -17487,9 +18071,42 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "TP8")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+			(node
 				(ref "U4")
 				(pin "C2")
 				(pinfunction "BAT_C2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U7")
+				(pin "2")
+				(pinfunction "CELL_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U7")
+				(pin "3")
+				(pinfunction "VDD_3")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "98")
+			(name "VBAT_MES")
+			(class "Default")
+			(node
+				(ref "C7")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R8")
+				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -17510,23 +18127,11 @@
 				(pinfunction "VBIAS_4")
 				(pintype "power_in")
 			)
-			(node
-				(ref "U7")
-				(pin "2")
-				(pinfunction "CELL_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U7")
-				(pin "3")
-				(pinfunction "VDD_3")
-				(pintype "power_in")
-			)
 		)
 		(net
-			(code "96")
+			(code "99")
 			(name "VBAT_MODEM")
-			(class "Default")
+			(class "Modem")
 			(node
 				(ref "C10")
 				(pin "1")
@@ -17603,7 +18208,7 @@
 			)
 		)
 		(net
-			(code "97")
+			(code "100")
 			(name "VCAP")
 			(class "Default")
 			(node
@@ -17619,7 +18224,7 @@
 			)
 		)
 		(net
-			(code "98")
+			(code "101")
 			(name "VIB")
 			(class "Default")
 			(node
@@ -17635,7 +18240,7 @@
 			)
 		)
 		(net
-			(code "99")
+			(code "102")
 			(name "VIB_G")
 			(class "Default")
 			(node
@@ -17656,7 +18261,7 @@
 			)
 		)
 		(net
-			(code "100")
+			(code "103")
 			(name "VIB_N")
 			(class "Default")
 			(node
@@ -17679,23 +18284,18 @@
 			)
 		)
 		(net
-			(code "101")
+			(code "104")
 			(name "VIN")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "C1")
 				(pin "1")
 				(pintype "passive")
 			)
 			(node
-				(ref "D1")
+				(ref "D15")
 				(pin "1")
 				(pinfunction "K_1")
-				(pintype "passive")
-			)
-			(node
-				(ref "F1")
-				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -17706,9 +18306,9 @@
 			)
 		)
 		(net
-			(code "102")
+			(code "105")
 			(name "VIN_EXT")
-			(class "Default")
+			(class "Puissance")
 			(node
 				(ref "F1")
 				(pin "1")
@@ -17722,9 +18322,31 @@
 			)
 		)
 		(net
-			(code "103")
-			(name "VSYS")
+			(code "106")
+			(name "VIN_F")
 			(class "Default")
+			(node
+				(ref "D1")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D15")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "F1")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "107")
+			(name "VSYS")
+			(class "Puissance")
 			(node
 				(ref "C2")
 				(pin "1")
@@ -17796,29 +18418,7 @@
 			)
 		)
 		(net
-			(code "104")
-			(name "unconnected-(J2-Pad4)")
-			(class "Default")
-			(node
-				(ref "J2")
-				(pin "4")
-				(pinfunction "4_4")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "105")
-			(name "unconnected-(J2-Pad5)")
-			(class "Default")
-			(node
-				(ref "J2")
-				(pin "5")
-				(pinfunction "5_5")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "106")
+			(code "108")
 			(name "unconnected-(J5-VPP-Pad6)")
 			(class "Default")
 			(node
@@ -17829,7 +18429,7 @@
 			)
 		)
 		(net
-			(code "107")
+			(code "109")
 			(name "unconnected-(J7-SWO-Pad6)")
 			(class "Default")
 			(node
@@ -17840,7 +18440,7 @@
 			)
 		)
 		(net
-			(code "108")
+			(code "110")
 			(name "unconnected-(U2-1PPS-Pad100)")
 			(class "Default")
 			(node
@@ -17851,7 +18451,7 @@
 			)
 		)
 		(net
-			(code "109")
+			(code "111")
 			(name "unconnected-(U2-ADC-Pad25)")
 			(class "Default")
 			(node
@@ -17862,7 +18462,7 @@
 			)
 		)
 		(net
-			(code "110")
+			(code "112")
 			(name "unconnected-(U2-BT_ANT-Pad93)")
 			(class "Default")
 			(node
@@ -17873,7 +18473,7 @@
 			)
 		)
 		(net
-			(code "111")
+			(code "113")
 			(name "unconnected-(U2-CAM_I2C_SCL-Pad118)")
 			(class "Default")
 			(node
@@ -17884,7 +18484,7 @@
 			)
 		)
 		(net
-			(code "112")
+			(code "114")
 			(name "unconnected-(U2-CAM_I2C_SDA-Pad117)")
 			(class "Default")
 			(node
@@ -17895,7 +18495,7 @@
 			)
 		)
 		(net
-			(code "113")
+			(code "115")
 			(name "unconnected-(U2-CAM_MCLK-Pad121)")
 			(class "Default")
 			(node
@@ -17906,7 +18506,7 @@
 			)
 		)
 		(net
-			(code "114")
+			(code "116")
 			(name "unconnected-(U2-CAM_PWDN-Pad119)")
 			(class "Default")
 			(node
@@ -17917,7 +18517,7 @@
 			)
 		)
 		(net
-			(code "115")
+			(code "117")
 			(name "unconnected-(U2-CAM_RST-Pad120)")
 			(class "Default")
 			(node
@@ -17928,7 +18528,7 @@
 			)
 		)
 		(net
-			(code "116")
+			(code "118")
 			(name "unconnected-(U2-CAM_SPI_CLK-Pad124)")
 			(class "Default")
 			(node
@@ -17939,7 +18539,7 @@
 			)
 		)
 		(net
-			(code "117")
+			(code "119")
 			(name "unconnected-(U2-CAM_SPI_D0-Pad122)")
 			(class "Default")
 			(node
@@ -17950,7 +18550,7 @@
 			)
 		)
 		(net
-			(code "118")
+			(code "120")
 			(name "unconnected-(U2-CAM_SPI_D1-Pad123)")
 			(class "Default")
 			(node
@@ -17961,7 +18561,7 @@
 			)
 		)
 		(net
-			(code "119")
+			(code "121")
 			(name "unconnected-(U2-DCD-Pad5)")
 			(class "Default")
 			(node
@@ -17972,7 +18572,7 @@
 			)
 		)
 		(net
-			(code "120")
+			(code "122")
 			(name "unconnected-(U2-EAR_N-Pad41)")
 			(class "Default")
 			(node
@@ -17983,7 +18583,7 @@
 			)
 		)
 		(net
-			(code "121")
+			(code "123")
 			(name "unconnected-(U2-EAR_P-Pad40)")
 			(class "Default")
 			(node
@@ -17994,7 +18594,7 @@
 			)
 		)
 		(net
-			(code "122")
+			(code "124")
 			(name "unconnected-(U2-GPIO1-Pad19)")
 			(class "Default")
 			(node
@@ -18005,7 +18605,7 @@
 			)
 		)
 		(net
-			(code "123")
+			(code "125")
 			(name "unconnected-(U2-GPIO2-Pad26)")
 			(class "Default")
 			(node
@@ -18016,7 +18616,7 @@
 			)
 		)
 		(net
-			(code "124")
+			(code "126")
 			(name "unconnected-(U2-GPIO3-Pad48)")
 			(class "Default")
 			(node
@@ -18027,7 +18627,7 @@
 			)
 		)
 		(net
-			(code "125")
+			(code "127")
 			(name "unconnected-(U2-GPIO4-Pad53)")
 			(class "Default")
 			(node
@@ -18038,7 +18638,7 @@
 			)
 		)
 		(net
-			(code "126")
+			(code "128")
 			(name "unconnected-(U2-I2C_SCL-Pad38)")
 			(class "Default")
 			(node
@@ -18049,7 +18649,7 @@
 			)
 		)
 		(net
-			(code "127")
+			(code "129")
 			(name "unconnected-(U2-I2C_SDA-Pad37)")
 			(class "Default")
 			(node
@@ -18060,7 +18660,7 @@
 			)
 		)
 		(net
-			(code "128")
+			(code "130")
 			(name "unconnected-(U2-LCD_BL_PWM-Pad101)")
 			(class "Default")
 			(node
@@ -18071,7 +18671,7 @@
 			)
 		)
 		(net
-			(code "129")
+			(code "131")
 			(name "unconnected-(U2-LCD_DCX-Pad107)")
 			(class "Default")
 			(node
@@ -18082,7 +18682,7 @@
 			)
 		)
 		(net
-			(code "130")
+			(code "132")
 			(name "unconnected-(U2-LCD_RST-Pad106)")
 			(class "Default")
 			(node
@@ -18093,7 +18693,7 @@
 			)
 		)
 		(net
-			(code "131")
+			(code "133")
 			(name "unconnected-(U2-LCD_SPI_CLK-Pad102)")
 			(class "Default")
 			(node
@@ -18104,7 +18704,7 @@
 			)
 		)
 		(net
-			(code "132")
+			(code "134")
 			(name "unconnected-(U2-LCD_SPI_CS-Pad105)")
 			(class "Default")
 			(node
@@ -18115,7 +18715,7 @@
 			)
 		)
 		(net
-			(code "133")
+			(code "135")
 			(name "unconnected-(U2-LCD_SPI_RXD-Pad104)")
 			(class "Default")
 			(node
@@ -18126,7 +18726,7 @@
 			)
 		)
 		(net
-			(code "134")
+			(code "136")
 			(name "unconnected-(U2-LCD_SPI_TXD-Pad103)")
 			(class "Default")
 			(node
@@ -18137,7 +18737,7 @@
 			)
 		)
 		(net
-			(code "135")
+			(code "137")
 			(name "unconnected-(U2-MIC_N-Pad43)")
 			(class "Default")
 			(node
@@ -18148,7 +18748,7 @@
 			)
 		)
 		(net
-			(code "136")
+			(code "138")
 			(name "unconnected-(U2-MIC_P-Pad42)")
 			(class "Default")
 			(node
@@ -18159,7 +18759,7 @@
 			)
 		)
 		(net
-			(code "137")
+			(code "139")
 			(name "unconnected-(U2-MK_IN_2-Pad47)")
 			(class "Default")
 			(node
@@ -18170,7 +18770,7 @@
 			)
 		)
 		(net
-			(code "138")
+			(code "140")
 			(name "unconnected-(U2-MK_IN_5-Pad68)")
 			(class "Default")
 			(node
@@ -18181,7 +18781,7 @@
 			)
 		)
 		(net
-			(code "139")
+			(code "141")
 			(name "unconnected-(U2-MK_IN_6-Pad36)")
 			(class "Default")
 			(node
@@ -18192,7 +18792,7 @@
 			)
 		)
 		(net
-			(code "140")
+			(code "142")
 			(name "unconnected-(U2-MK_OUT_2-Pad44)")
 			(class "Default")
 			(node
@@ -18203,7 +18803,7 @@
 			)
 		)
 		(net
-			(code "141")
+			(code "143")
 			(name "unconnected-(U2-MK_OUT_3-Pad21)")
 			(class "Default")
 			(node
@@ -18214,7 +18814,7 @@
 			)
 		)
 		(net
-			(code "142")
+			(code "144")
 			(name "unconnected-(U2-MK_OUT_5-Pad67)")
 			(class "Default")
 			(node
@@ -18225,7 +18825,7 @@
 			)
 		)
 		(net
-			(code "143")
+			(code "145")
 			(name "unconnected-(U2-MK_OUT_6-Pad35)")
 			(class "Default")
 			(node
@@ -18236,7 +18836,7 @@
 			)
 		)
 		(net
-			(code "144")
+			(code "146")
 			(name "unconnected-(U2-NC-Pad113)")
 			(class "Default")
 			(node
@@ -18247,7 +18847,7 @@
 			)
 		)
 		(net
-			(code "145")
+			(code "147")
 			(name "unconnected-(U2-NC-Pad114)")
 			(class "Default")
 			(node
@@ -18258,7 +18858,7 @@
 			)
 		)
 		(net
-			(code "146")
+			(code "148")
 			(name "unconnected-(U2-NC-Pad115)")
 			(class "Default")
 			(node
@@ -18269,7 +18869,7 @@
 			)
 		)
 		(net
-			(code "147")
+			(code "149")
 			(name "unconnected-(U2-SPI_CLK-Pad11)")
 			(class "Default")
 			(node
@@ -18280,7 +18880,7 @@
 			)
 		)
 		(net
-			(code "148")
+			(code "150")
 			(name "unconnected-(U2-SPI_CS-Pad12)")
 			(class "Default")
 			(node
@@ -18291,7 +18891,7 @@
 			)
 		)
 		(net
-			(code "149")
+			(code "151")
 			(name "unconnected-(U2-SPI_MISO-Pad14)")
 			(class "Default")
 			(node
@@ -18302,7 +18902,7 @@
 			)
 		)
 		(net
-			(code "150")
+			(code "152")
 			(name "unconnected-(U2-SPI_MOSI-Pad13)")
 			(class "Default")
 			(node
@@ -18313,7 +18913,7 @@
 			)
 		)
 		(net
-			(code "151")
+			(code "153")
 			(name "unconnected-(U2-USIM1_DET-Pad34)")
 			(class "Default")
 			(node
@@ -18324,7 +18924,7 @@
 			)
 		)
 		(net
-			(code "152")
+			(code "154")
 			(name "unconnected-(U2-USIM2_CLK-Pad109)")
 			(class "Default")
 			(node
@@ -18335,7 +18935,7 @@
 			)
 		)
 		(net
-			(code "153")
+			(code "155")
 			(name "unconnected-(U2-USIM2_DATA-Pad108)")
 			(class "Default")
 			(node
@@ -18346,7 +18946,7 @@
 			)
 		)
 		(net
-			(code "154")
+			(code "156")
 			(name "unconnected-(U2-USIM2_DET-Pad112)")
 			(class "Default")
 			(node
@@ -18357,7 +18957,7 @@
 			)
 		)
 		(net
-			(code "155")
+			(code "157")
 			(name "unconnected-(U2-USIM2_RST-Pad111)")
 			(class "Default")
 			(node
@@ -18368,7 +18968,7 @@
 			)
 		)
 		(net
-			(code "156")
+			(code "158")
 			(name "unconnected-(U2-USIM2_VDD-Pad110)")
 			(class "Default")
 			(node
@@ -18379,7 +18979,7 @@
 			)
 		)
 		(net
-			(code "157")
+			(code "159")
 			(name "unconnected-(U2-VBAT_ADC-Pad51)")
 			(class "Default")
 			(node
@@ -18390,18 +18990,7 @@
 			)
 		)
 		(net
-			(code "158")
-			(name "unconnected-(U2-VDD_AUX-Pad99)")
-			(class "Default")
-			(node
-				(ref "U2")
-				(pin "99")
-				(pinfunction "VDD_AUX_99")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "159")
+			(code "160")
 			(name "unconnected-(U3-INT2-Pad11)")
 			(class "Default")
 			(node
@@ -18412,7 +19001,7 @@
 			)
 		)
 		(net
-			(code "160")
+			(code "161")
 			(name "unconnected-(U3-NC-Pad5)")
 			(class "Default")
 			(node
@@ -18423,7 +19012,7 @@
 			)
 		)
 		(net
-			(code "161")
+			(code "162")
 			(name "unconnected-(U8-NC-Pad1)")
 			(class "Default")
 			(node
@@ -18434,7 +19023,7 @@
 			)
 		)
 		(net
-			(code "162")
+			(code "163")
 			(name "unconnected-(U8-NC-Pad2)")
 			(class "Default")
 			(node
@@ -18445,7 +19034,7 @@
 			)
 		)
 		(net
-			(code "163")
+			(code "164")
 			(name "unconnected-(U8-NC-Pad3)")
 			(class "Default")
 			(node
@@ -18456,7 +19045,7 @@
 			)
 		)
 		(net
-			(code "164")
+			(code "165")
 			(name "unconnected-(U8-NC-Pad7)")
 			(class "Default")
 			(node

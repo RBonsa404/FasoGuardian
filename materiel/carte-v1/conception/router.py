@@ -27,7 +27,13 @@ def main() -> None:
     TRAVAIL.mkdir(exist_ok=True)
     dsn, ses = TRAVAIL / 'carte.dsn', TRAVAIL / 'carte.ses'
     carte = pcbnew.LoadBoard(str(CARTE))
-    if not pcbnew.ExportSpecctraDSN(carte, str(dsn)):
+    # Freerouting traite une zone interdite aux pistes comme un obstacle complet, vias compris : la règle du plan de
+    # masse (toute la couche In1) lui interdirait tout via. L'export se fait donc depuis une copie sans ces règles ;
+    # In1, de type « power », reste fermée aux pistes, et finir.py re-route ce qui serait tombé dans la zone du modem.
+    copie = pcbnew.LoadBoard(str(CARTE))
+    for regle in [z for z in copie.Zones() if z.GetIsRuleArea() and z.GetDoNotAllowTracks() and not z.GetDoNotAllowVias()]:
+        copie.Delete(regle)
+    if not pcbnew.ExportSpecctraDSN(copie, str(dsn)):
         raise SystemExit('export Specctra impossible')
     # Éventail (fanout) : chaque plot CMS sort vers un via, ce qui relie les plots de masse au plan de la couche 2 ;
     # l'optimiseur, très long sur une carte aussi dense, est laissé de côté (le DRC juge le résultat).

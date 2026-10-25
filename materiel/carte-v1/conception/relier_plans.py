@@ -1,8 +1,10 @@
 """Finition après routage : relie aux plans les plots d'alimentation que le routeur a laissés isolés.
 
 Freerouting tient un plot pour relié dès qu'un plan du même réseau existe ; il ne pose pas le via. Ce script pose,
-au pied de chaque plot encore isolé, un via vers le plan et la courte piste qui l'y relie, à un endroit vérifié libre
-sur toutes les couches. Les plans internes passent à 0,1 mm d'isolement pour rester d'un seul tenant.
+pour chaque plot encore isolé, un via vers le plan : dans la pastille quand elle est assez large (via bouché et
+recouvert, procédé par défaut du façonnier en 6 couches : aucune piste ni place prise autour), sinon au pied du plot
+avec la courte piste qui l'y relie, à un endroit vérifié libre sur toutes les couches. Les plans internes passent à
+0,1 mm d'isolement pour rester d'un seul tenant.
 
 À lancer avec l'interpréteur Python de KiCad, deux fois :
     relier_plans.py avant : juste après le placement, un via verrouillé par plot de masse, de 3,3 V et du modem, posé
@@ -18,9 +20,12 @@ from pathlib import Path
 import pcbnew
 
 CARTE = Path(__file__).resolve().parent.parent / 'kicad' / 'fasoguardian-v1.kicad_pcb'
-PLANS = {'3V3': pcbnew.In2_Cu, 'VBAT_MODEM': pcbnew.In2_Cu, 'VSYS': pcbnew.In2_Cu, 'GND': pcbnew.In1_Cu}
+PLANS = {'3V3': pcbnew.In4_Cu, 'VBAT_MODEM': pcbnew.In4_Cu, 'VSYS': pcbnew.In4_Cu, 'VBAT': pcbnew.In4_Cu,
+         'GND': pcbnew.In1_Cu}
+CUIVRE = (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu, pcbnew.B_Cu)
 # Isolement : le plus grand des classes de réseaux (puissance et RF : 0,15 mm), avec une marge.
-VIA, PERCAGE, PISTE, ISOLEMENT = 0.4, 0.2, 0.2, 0.16
+VIA, PERCAGE, PISTE, ISOLEMENT = 0.3, 0.15, 0.2, 0.16
+VIA_MODEM = (0.5, 0.25)  # pointes de 2 A du module : vias plus gros sur le plan du modem
 VERROUILLER = False
 
 
@@ -33,17 +38,17 @@ def obstacles(carte: pcbnew.BOARD, reseau: str):
     elements = []
     for plot in carte.GetPads():
         if plot.GetNetname() != reseau:
-            for couche in (pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu):
+            for couche in CUIVRE:
                 if plot.IsOnLayer(couche):
                     elements.append((plot.GetEffectiveShape(couche), couche))
             if plot.GetDrillSize().x > 0:
-                for couche in (pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu):
+                for couche in CUIVRE:
                     elements.append((plot.GetEffectiveHoleShape(), couche))
     for piste in carte.GetTracks():
         if piste.GetNetname() == reseau:
             continue
         if piste.GetClass() == 'PCB_VIA':
-            for couche in (pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu):
+            for couche in CUIVRE:
                 elements.append((piste.GetEffectiveShape(couche), couche))
         else:
             elements.append((piste.GetEffectiveShape(), piste.GetLayer()))
@@ -55,50 +60,75 @@ def libre(forme, couches, elements, marge: int) -> bool:
 
 
 def bord_libre(carte: pcbnew.BOARD, centre: pcbnew.VECTOR2I) -> bool:
+    """Loin du bord, et hors des zones interdites aux vias de la carte et des empreintes (connecteurs, antennes)."""
     boite = carte.GetBoardEdgesBoundingBox()
     m = mm(0.8)
-    return boite.GetLeft() + m < centre.x < boite.GetRight() - m and boite.GetTop() + m < centre.y < boite.GetBottom() - m
+    if not (boite.GetLeft() + m < centre.x < boite.GetRight() - m and boite.GetTop() + m < centre.y < boite.GetBottom() - m):
+        return False
+    return not any(z.GetDoNotAllowVias() and z.Outline().Contains(centre) for z in interdits(carte))
+
+
+_INTERDITS: dict = {}
+
+
+def interdits(carte: pcbnew.BOARD) -> list:
+    if id(carte) not in _INTERDITS:
+        zones = list(carte.Zones()) + [z for fp in carte.GetFootprints() for z in fp.Zones()]
+        _INTERDITS[id(carte)] = [z for z in zones if z.GetIsRuleArea()]
+    return _INTERDITS[id(carte)]
 
 
 def sur_le_plan(carte: pcbnew.BOARD, reseau: str, centre: pcbnew.VECTOR2I) -> bool:
     """Le via tombe sur du cuivre coulé du plan de son réseau (et non dans le plan d'un autre rail)."""
     couche = PLANS[reseau]
-    return any(z.GetNetname() == reseau and z.GetFirstLayer() == couche and z.HitTestFilledArea(couche, centre, mm(VIA / 2))
+    rayon = (VIA_MODEM[0] if reseau == 'VBAT_MODEM' else VIA) / 2
+    return any(z.GetNetname() == reseau and z.GetFirstLayer() == couche and z.HitTestFilledArea(couche, centre, mm(rayon))
                for z in carte.Zones() if not z.GetIsRuleArea())
 
 
+def poser_via(carte: pcbnew.BOARD, plot: pcbnew.PAD, centre: pcbnew.VECTOR2I, diametre: float, percage: float, elements):
+    via = pcbnew.PCB_VIA(carte)
+    via.SetPosition(centre)
+    via.SetWidth(mm(diametre))
+    via.SetDrill(mm(percage))
+    via.SetNet(plot.GetNet())
+    via.SetLocked(VERROUILLER)
+    carte.Add(via)
+    elements.append((via.GetEffectiveShape(pcbnew.F_Cu), pcbnew.F_Cu))
+
+
 def relier(carte: pcbnew.BOARD, plot: pcbnew.PAD, elements) -> bool:
-    """Pose un via et sa piste au pied du plot ; rend False si aucune place n'est libre."""
+    """Pose un via dans la pastille, ou au pied du plot avec sa piste ; rend False si aucune place n'est libre."""
     couche = pcbnew.F_Cu if plot.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu
     centre = plot.GetPosition()
     taille = max(plot.GetSize().x, plot.GetSize().y) / 2
-    toutes = {pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu}
+    toutes = set(CUIVRE)
+    diametre, percage = VIA_MODEM if plot.GetNetname() == 'VBAT_MODEM' else (VIA, PERCAGE)
+    # Via dans la pastille : il faut qu'elle le contienne et qu'il soit libre sur les autres couches.
+    if min(plot.GetSize().x, plot.GetSize().y) >= mm(diametre) and bord_libre(carte, centre) and \
+            sur_le_plan(carte, plot.GetNetname(), centre) and \
+            libre(pcbnew.SHAPE_CIRCLE(centre, mm(diametre / 2)), toutes, elements, mm(ISOLEMENT)):
+        poser_via(carte, plot, centre, diametre, percage, elements)
+        return True
     for distance in [taille + mm(0.45 + 0.25 * i) for i in range(9)]:
         for k in range(24):
             angle = 2 * math.pi * k / 24
             via_centre = pcbnew.VECTOR2I(int(centre.x + distance * math.cos(angle)), int(centre.y + distance * math.sin(angle)))
             if not bord_libre(carte, via_centre) or not sur_le_plan(carte, plot.GetNetname(), via_centre):
                 continue
-            cercle = pcbnew.SHAPE_CIRCLE(via_centre, mm(VIA / 2))
+            cercle = pcbnew.SHAPE_CIRCLE(via_centre, mm(diametre / 2))
             segment = pcbnew.SHAPE_SEGMENT(centre, via_centre, mm(PISTE))
             if not libre(cercle, toutes, elements, mm(ISOLEMENT)) or not libre(segment, {couche}, elements, mm(ISOLEMENT)):
                 continue
-            via = pcbnew.PCB_VIA(carte)
-            via.SetPosition(via_centre)
-            via.SetWidth(mm(VIA))
-            via.SetDrill(mm(PERCAGE))
-            via.SetNet(plot.GetNet())
-            carte.Add(via)
+            poser_via(carte, plot, via_centre, diametre, percage, elements)
             piste = pcbnew.PCB_TRACK(carte)
             piste.SetStart(centre)
             piste.SetEnd(via_centre)
             piste.SetWidth(mm(PISTE))
             piste.SetLayer(couche)
             piste.SetNet(plot.GetNet())
-            via.SetLocked(VERROUILLER)
             piste.SetLocked(VERROUILLER)
             carte.Add(piste)
-            elements.append((via.GetEffectiveShape(pcbnew.F_Cu), pcbnew.F_Cu))
             return True
     return False
 
@@ -108,7 +138,7 @@ def main() -> None:
     VERROUILLER = len(sys.argv) > 1 and sys.argv[1] == 'avant'
     carte = pcbnew.LoadBoard(str(CARTE))
     for surface in carte.Zones():
-        if not surface.GetIsRuleArea() and surface.GetFirstLayer() in (pcbnew.In1_Cu, pcbnew.In2_Cu):
+        if not surface.GetIsRuleArea() and surface.GetFirstLayer() in (pcbnew.In1_Cu, pcbnew.In4_Cu):
             surface.SetLocalClearance(mm(0.1))
             surface.SetMinThickness(mm(0.1))
     pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())

@@ -27,7 +27,7 @@ def cpwg(w: float, s: float, h: float, er: float) -> tuple[float, float]:
 
 
 if __name__ == '__main__':
-    H, ER = 0.0994, 4.1  # JLC04101H-3313 : préimprégné 3313 entre L1 et L2 (mm), permittivité
+    H, ER = 0.0994, 4.1  # préimprégné 3313 entre L1 et L2 des empilements JLCPCB (4 et 6 couches) : mm, permittivité
     for s in (0.10, 0.127, 0.15, 0.20):
         w = min((x / 1000 for x in range(80, 600)), key=lambda x: abs(cpwg(x, s, H, ER)[0] - 50))
         z, e = cpwg(w, s, H, ER)

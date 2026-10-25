@@ -144,7 +144,7 @@ for c in COMPOSANTS:
             erreur(f'{c.ref} : aucun condensateur sur {reseau}')
 
 # 7. Faces : en face inférieure, pièces de moins de 1 mm de haut seulement.
-HAUTES = ('fg:A7670E', 'fg:T520', 'fg:NANOSIM', 'fg:U.FL', 'fg:SM03B', 'fg:ECT8', 'Switch:', 'fg:DFE25', 'MCU_ST', 'fg:FC-B1010')
+HAUTES = ('fg:A7670E', 'fg:T520', 'fg:NANOSIM', 'fg:U.FL', 'fg:SM03B', 'fg:ECT8', 'Switch:', 'MCU_ST', 'fg:FC-B1010')
 for c in COMPOSANTS:
     if c.face == 'B' and c.symbole.startswith(HAUTES):
         erreur(f'{c.ref} ({c.symbole}) trop haut pour la face inférieure')

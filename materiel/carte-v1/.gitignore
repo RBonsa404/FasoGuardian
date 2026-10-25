@@ -4,3 +4,6 @@ kicad/fp-info-cache
 kicad/*.lck
 kicad/drc-avant.json
 __pycache__/
+kicad/*.meilleure.kicad_pcb
+# Modèle 3D (21 Mo) : régénéré par conception/fabriquer.py
+fabrication/carte-fasoguardian-v1.step
