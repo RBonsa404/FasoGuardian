@@ -28,7 +28,7 @@
 	(fp_line (start -1.02 -0.98) (end 0.98 -0.98) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 0.98 -0.98) (end 0.98 1.02) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 0.98 1.02) (end -1.02 1.02) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/IPEX-SMD_ECT818011998.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/IPEX-SMD_ECT818011998.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

@@ -23,8 +23,10 @@ CARTE = Path(__file__).resolve().parent.parent / 'kicad' / 'fasoguardian-v1.kica
 PLANS = {'3V3': pcbnew.In4_Cu, 'VBAT_MODEM': pcbnew.In4_Cu, 'VSYS': pcbnew.In4_Cu, 'VBAT': pcbnew.In4_Cu,
          'GND': pcbnew.In1_Cu}
 CUIVRE = (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu, pcbnew.B_Cu)
-# Isolement : le plus grand des classes de réseaux (puissance et RF : 0,15 mm), avec une marge.
+# Isolement minimal (le plus grand des classes ordinaires, avec une marge) ; chaque paire de réseaux prend l'isolement
+# que le DRC lui applique (isolement_paire).
 VIA, PERCAGE, PISTE, ISOLEMENT = 0.3, 0.15, 0.2, 0.16
+TROU = 0.2  # isolement d'un perçage (règle de la carte)
 VIA_MODEM = (0.5, 0.25)  # pointes de 2 A du module : vias plus gros sur le plan du modem
 VERROUILLER = False
 
@@ -33,30 +35,51 @@ def mm(v: float) -> int:
     return pcbnew.FromMM(v)
 
 
+def isolement_paire(carte: pcbnew.BOARD, a: str, b: str) -> float:
+    """Isolement (mm) que le DRC exige entre deux réseaux : le plus grand des deux classes, sauf la fente du guide
+    coplanaire, de 0,15 mm entre une ligne RF et la masse ou une autre ligne RF (règles du projet,
+    kicad/fasoguardian-v1.kicad_dru)."""
+    classes = carte.GetDesignSettings().m_NetSettings
+    classe = lambda n: classes.GetEffectiveNetClass(n).GetName() if n else ''
+    isol = lambda n: pcbnew.ToMM(classes.GetEffectiveNetClass(n).GetClearance()) if n else TROU
+    rf_a, rf_b = classe(a) == 'RF', classe(b) == 'RF'
+    if (rf_a and (rf_b or b in ('GND', 'GNSS_BIAS'))) or (rf_b and a in ('GND', 'GNSS_BIAS')):
+        return 0.15
+    return max(isol(a), isol(b))
+
+
 def obstacles(carte: pcbnew.BOARD, reseau: str):
-    """Cuivre des autres réseaux : (forme, couches) ; les vias et trous traversent toutes les couches."""
+    """Cuivre des autres réseaux et perçages de tous les réseaux : (forme, couche, isolement exigé) ; les vias et
+    trous traversent toutes les couches. Un perçage du même réseau compte aussi : la distance entre deux perçages
+    (TROU) vaut quel que soit leur réseau, et un via de plan ne doit pas tomber sur un via thermique."""
     elements = []
+    marge = {}
+    isol = lambda autre: marge.setdefault(autre, mm(max(ISOLEMENT, isolement_paire(carte, reseau, autre) + 0.01)))
     for plot in carte.GetPads():
         if plot.GetNetname() != reseau:
             for couche in CUIVRE:
                 if plot.IsOnLayer(couche):
-                    elements.append((plot.GetEffectiveShape(couche), couche))
-            if plot.GetDrillSize().x > 0:
-                for couche in CUIVRE:
-                    elements.append((plot.GetEffectiveHoleShape(), couche))
+                    elements.append((plot.GetEffectiveShape(couche), couche, isol(plot.GetNetname())))
+        if plot.GetDrillSize().x > 0:
+            for couche in CUIVRE:
+                elements.append((plot.GetEffectiveHoleShape(), couche, mm(TROU + 0.01)))
     for piste in carte.GetTracks():
+        if piste.GetClass() == 'PCB_VIA':
+            for couche in CUIVRE:
+                elements.append((piste.GetEffectiveHoleShape(), couche, mm(TROU + 0.01)))
         if piste.GetNetname() == reseau:
             continue
         if piste.GetClass() == 'PCB_VIA':
             for couche in CUIVRE:
-                elements.append((piste.GetEffectiveShape(couche), couche))
+                elements.append((piste.GetEffectiveShape(couche), couche, isol(piste.GetNetname())))
         else:
-            elements.append((piste.GetEffectiveShape(), piste.GetLayer()))
+            elements.append((piste.GetEffectiveShape(), piste.GetLayer(), isol(piste.GetNetname())))
     return elements
 
 
 def libre(forme, couches, elements, marge: int) -> bool:
-    return not any(c in couches and f.Collide(forme, marge) for f, c in elements)
+    """Aucun élément des couches données à moins de son isolement exigé (au moins `marge`)."""
+    return not any(c in couches and f.Collide(forme, max(marge, m)) for f, c, m in elements)
 
 
 def bord_libre(carte: pcbnew.BOARD, centre: pcbnew.VECTOR2I) -> bool:
@@ -94,7 +117,7 @@ def poser_via(carte: pcbnew.BOARD, plot: pcbnew.PAD, centre: pcbnew.VECTOR2I, di
     via.SetNet(plot.GetNet())
     via.SetLocked(VERROUILLER)
     carte.Add(via)
-    elements.append((via.GetEffectiveShape(pcbnew.F_Cu), pcbnew.F_Cu))
+    elements.append((via.GetEffectiveShape(pcbnew.F_Cu), pcbnew.F_Cu, mm(TROU)))
 
 
 def relier(carte: pcbnew.BOARD, plot: pcbnew.PAD, elements) -> bool:
@@ -133,6 +156,38 @@ def relier(carte: pcbnew.BOARD, plot: pcbnew.PAD, elements) -> bool:
     return False
 
 
+def degager_et_relier(carte: pcbnew.BOARD, plot: pcbnew.PAD) -> bool:
+    """Après le routage, quand aucune place n'est libre : via dans la pastille, en retirant les pistes et vias non
+    verrouillés des autres réseaux qui le gênent (finir.py les refait) ; la liaison au plan passe avant le signal.
+    Rend False si la pastille ne peut pas le recevoir (trop petite, hors du plan, zone interdite, plot ou cuivre
+    verrouillé dans le passage)."""
+    reseau = plot.GetNetname()
+    diametre, percage = VIA_MODEM if reseau == 'VBAT_MODEM' else (VIA, PERCAGE)
+    centre = plot.GetPosition()
+    if min(plot.GetSize().x, plot.GetSize().y) < mm(diametre) or not bord_libre(carte, centre) or             not sur_le_plan(carte, reseau, centre):
+        return False
+    cercle = pcbnew.SHAPE_CIRCLE(centre, mm(diametre / 2))
+    marge = lambda autre: mm(max(ISOLEMENT, isolement_paire(carte, reseau, autre) + 0.01))
+    for p in carte.GetPads():
+        if p.GetNetname() != reseau and any(p.IsOnLayer(c) and p.GetEffectiveShape(c).Collide(cercle, marge(p.GetNetname()))
+                                            for c in CUIVRE):
+            return False
+    genants = []
+    for t in carte.GetTracks():
+        if t.GetClass() == 'PCB_VIA':
+            touche = t.GetEffectiveHoleShape().Collide(cercle, mm(TROU + 0.01)) or                 (t.GetNetname() != reseau and t.GetEffectiveShape(pcbnew.F_Cu).Collide(cercle, marge(t.GetNetname())))
+        else:
+            touche = t.GetNetname() != reseau and t.GetEffectiveShape().Collide(cercle, marge(t.GetNetname()))
+        if touche:
+            if t.IsLocked():
+                return False
+            genants.append(t)
+    for t in genants:
+        carte.Delete(t)
+    poser_via(carte, plot, centre, diametre, percage, [])
+    return True
+
+
 def main() -> None:
     global VERROUILLER
     VERROUILLER = len(sys.argv) > 1 and sys.argv[1] == 'avant'
@@ -143,23 +198,30 @@ def main() -> None:
             surface.SetMinThickness(mm(0.1))
     pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
     connexions = carte.GetConnectivity()
-    poses, echecs = 0, []
+    poses, echecs, degages = 0, [], []
     for reseau in PLANS:
         elements = None
         for plot in [p for p in carte.GetPads() if p.GetNetname() == reseau and p.GetDrillSize().x == 0]:
-            # Déjà relié : le plot touche un via ou une surface du réseau (piste, via ou plan).
-            if any(item.GetClass() in ('PCB_VIA', 'ZONE') or (item.GetClass() == 'PCB_TRACK' and item.GetNetname() == reseau)
+            # Déjà relié : le cuivre qui le touche, de proche en proche, atteint le plan du réseau (un îlot de
+            # remplissage ou une piste isolée ne suffisent pas).
+            if any(item.GetClass() == 'ZONE' and item.IsOnLayer(PLANS[reseau])
                    for item in connexions.GetConnectedItems(plot)):
                 continue
             elements = elements or obstacles(carte, reseau)
+            nom = f'{plot.GetParentFootprint().GetReference()}.{plot.GetNumber()}'
             if relier(carte, plot, elements):
                 poses += 1
+            elif not VERROUILLER and degager_et_relier(carte, plot):
+                degages.append(nom)
+                elements = None
             else:
-                echecs.append(f'{plot.GetParentFootprint().GetReference()}.{plot.GetNumber()}')
+                echecs.append(nom)
         connexions.RecalculateRatsnest()
     pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
     carte.Save(str(CARTE))
     print(f'{poses} vias posés vers les plans ; sans place : {", ".join(echecs) or "aucun"}')
+    if degages:
+        print(f'vias posés dans la pastille en dégageant le routage : {", ".join(degages)}')
     print(f'connexions non routées : {carte.GetConnectivity().GetUnconnectedCount(True)}')
 
 

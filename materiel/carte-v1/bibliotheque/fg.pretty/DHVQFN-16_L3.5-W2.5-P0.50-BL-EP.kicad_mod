@@ -42,7 +42,7 @@
 	(fp_line (start -1.75 -1.25) (end 1.75 -1.25) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 1.75 -1.25) (end 1.75 1.25) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 1.75 1.25) (end -1.75 1.25) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/DHVQFN-16_L3.5-W2.5-H1.0-P0.50.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/DHVQFN-16_L3.5-W2.5-H1.0-P0.50.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\Users\\rachi\\Desktop\\FasoGuardian\\Code\\fasoguardian\\materiel\\carte-v1\\kicad\\fasoguardian-v1.kicad_sch")
-		(date "2026-10-25T22:04:35")
+		(date "2026-10-26T07:50:45")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -246,10 +246,10 @@
 		)
 		(sheet
 			(number "6")
-			(name "/Microcontrôleur STM32U575/")
+			(name "/Microcontrôleur STM32U585/")
 			(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			(title_block
-				(title "Microcontrôleur STM32U575")
+				(title "Microcontrôleur STM32U585")
 				(company "Collectif Dedsec — FasoGuardian")
 				(rev "V1.0")
 				(date "2026-10-22")
@@ -585,16 +585,15 @@
 		)
 		(comp
 			(ref "C3")
-			(value "1 µF")
+			(value "4,7 µF")
 			(footprint "Capacitor_SMD:C_0402_1005Metric")
 			(fields
 				(field
-					(name "Fabricant") "CL05A105KA5NQNC")
+					(name "Fabricant") "CL05A475MP5NRNC")
 				(field
-					(name "LCSC") "C52923")
+					(name "LCSC") "C23733")
 				(field
-					(name "Note")
-				)
+					(name "Note") "BAT : au moins 1 µF effectif sous 4,2 V (fiche TI) ; un 1 µF 0402 en perd 20 %")
 				(field
 					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
 				(field
@@ -611,15 +610,15 @@
 			)
 			(property
 				(name "Fabricant")
-				(value "CL05A105KA5NQNC")
+				(value "CL05A475MP5NRNC")
 			)
 			(property
 				(name "LCSC")
-				(value "C52923")
+				(value "C23733")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "BAT : au moins 1 µF effectif sous 4,2 V (fiche TI) ; un 1 µF 0402 en perd 20 %")
 			)
 			(property
 				(name "Sheetname")
@@ -6935,7 +6934,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -6950,7 +6949,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "8e9252e6-5b4c-5038-bfde-8f309386c1e5")
@@ -7007,7 +7006,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7022,7 +7021,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "6cb69718-1224-5993-a17a-d30b224d9d1f")
@@ -7079,7 +7078,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7094,7 +7093,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "19afbe12-e92d-531f-aeb5-6d51725eba3f")
@@ -7152,7 +7151,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7167,7 +7166,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "cde15679-063d-5f1f-b3b7-13596dc59d68")
@@ -7224,7 +7223,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7239,7 +7238,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "fc634a31-2957-55fd-b006-24d42daba4b2")
@@ -7296,7 +7295,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7311,7 +7310,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "7c35854f-9b10-529f-b8b0-ede584daada2")
@@ -7368,7 +7367,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7383,7 +7382,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "43bd76f4-3d58-554e-a289-d05c58baab9c")
@@ -7440,7 +7439,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7455,7 +7454,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "8ecfc902-acc6-5569-bf2a-3a1f01a8e313")
@@ -7513,7 +7512,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7528,7 +7527,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "5c97ac2a-0d98-50a9-9d55-457ae9e83c52")
@@ -7585,7 +7584,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7600,7 +7599,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "53892892-b8bd-51ea-9faa-8df623919869")
@@ -7658,7 +7657,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7673,7 +7672,7 @@
 				(value "C_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "8f145ef9-b936-5b13-908c-ef4ac0cb47f4")
@@ -7732,7 +7731,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7750,7 +7749,7 @@
 				(value "*TC2030*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "42e11a07-c7e2-572a-95a3-1b882a59448d")
@@ -7820,7 +7819,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7835,7 +7834,7 @@
 				(value "R_*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "e451e365-fe25-57b2-a7c5-d3c578a82d06")
@@ -7895,7 +7894,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7913,7 +7912,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "f3729271-1261-5db4-9600-17ddc9f4e681")
@@ -7969,7 +7968,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -7987,7 +7986,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "d718c169-3402-5605-8479-df5676b41633")
@@ -8043,7 +8042,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8061,7 +8060,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "fb4b10cd-c1ba-55fd-b76f-679887c49128")
@@ -8117,7 +8116,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8135,7 +8134,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "1ed25d8a-2501-543a-9336-6865c485687a")
@@ -8191,7 +8190,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8209,7 +8208,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "25a7aef6-9a3b-51b0-8520-4aa5ca9e1033")
@@ -8265,7 +8264,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8283,7 +8282,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "ad513455-448e-5ce4-8506-3265a3ad4763")
@@ -8339,7 +8338,7 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8357,7 +8356,7 @@
 				(value "Pin* Test*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "e839ae1f-5092-51b8-9f67-44e32ef70ef9")
@@ -8374,16 +8373,15 @@
 		)
 		(comp
 			(ref "U1")
-			(value "STM32U575CIT6")
+			(value "STM32U585CIT6")
 			(footprint "Package_QFP:LQFP-48_7x7mm_P0.5mm")
 			(fields
 				(field
-					(name "Fabricant") "STM32U575CIT6")
+					(name "Fabricant") "STM32U585CIT6")
 				(field
-					(name "LCSC") "C5271014")
+					(name "LCSC") "C5271027")
 				(field
-					(name "Note")
-				)
+					(name "Note") "STM32U575 et accélérateurs cryptographiques (AES, PKA, HASH), même brochage : le U575CIT6 est en rupture chez JLCPCB (ADR 0042, point 11)")
 				(field
 					(name "Footprint") "Package_QFP:LQFP-48_7x7mm_P0.5mm")
 				(field
@@ -8395,24 +8393,24 @@
 			)
 			(libsource
 				(lib "MCU_ST_STM32U5")
-				(part "STM32U575CITx")
+				(part "STM32U585CITx")
 				(description "STMicroelectronics Arm Cortex-M33 MCU, 2048KB flash, 786KB RAM, 160 MHz, 1.71-3.6V, 37 GPIO, LQFP48")
 			)
 			(property
 				(name "Fabricant")
-				(value "STM32U575CIT6")
+				(value "STM32U585CIT6")
 			)
 			(property
 				(name "LCSC")
-				(value "C5271014")
+				(value "C5271027")
 			)
 			(property
 				(name "Note")
-				(value "")
+				(value "STM32U575 et accélérateurs cryptographiques (AES, PKA, HASH), même brochage : le U575CIT6 est en rupture chez JLCPCB (ADR 0042, point 11)")
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
@@ -8427,7 +8425,7 @@
 				(value "LQFP*7x7mm*P0.5mm*")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "642de0d6-fb47-5ff4-b6f4-9e5e87db8b70")
@@ -8622,14 +8620,14 @@
 			)
 			(property
 				(name "Sheetname")
-				(value "Microcontrôleur STM32U575")
+				(value "Microcontrôleur STM32U585")
 			)
 			(property
 				(name "Sheetfile")
 				(value "microcontroleur.kicad_sch")
 			)
 			(sheetpath
-				(names "/Microcontrôleur STM32U575/")
+				(names "/Microcontrôleur STM32U585/")
 				(tstamps "/f00164bc-1320-5990-b001-d3d612522a42/")
 			)
 			(tstamps "8cba30cb-906a-5094-915f-1334d9d6f727")
@@ -12902,9 +12900,9 @@
 		)
 		(libpart
 			(lib "MCU_ST_STM32U5")
-			(part "STM32U575CITx")
+			(part "STM32U585CITx")
 			(description "STMicroelectronics Arm Cortex-M33 MCU, 2048KB flash, 786KB RAM, 160 MHz, 1.71-3.6V, 37 GPIO, LQFP48")
-			(docs "https://www.st.com/resource/en/datasheet/stm32u575ci.pdf")
+			(docs "https://www.st.com/resource/en/datasheet/stm32u585ci.pdf")
 			(footprints
 				(fp "LQFP*7x7mm*P0.5mm*")
 			)
@@ -12912,11 +12910,11 @@
 				(field
 					(name "Reference") "U")
 				(field
-					(name "Value") "STM32U575CITx")
+					(name "Value") "STM32U585CITx")
 				(field
 					(name "Footprint") "Package_QFP:LQFP-48_7x7mm_P0.5mm")
 				(field
-					(name "Datasheet") "https://www.st.com/resource/en/datasheet/stm32u575ci.pdf")
+					(name "Datasheet") "https://www.st.com/resource/en/datasheet/stm32u585ci.pdf")
 				(field
 					(name "Description") "STMicroelectronics Arm Cortex-M33 MCU, 2048KB flash, 786KB RAM, 160 MHz, 1.71-3.6V, 37 GPIO, LQFP48")
 			)
@@ -18083,6 +18081,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "U6")
+				(pin "4")
+				(pinfunction "VBIAS_4")
+				(pintype "power_in")
+			)
+			(node
 				(ref "U7")
 				(pin "2")
 				(pinfunction "CELL_2")
@@ -18119,12 +18123,6 @@
 				(ref "U6")
 				(pin "2")
 				(pinfunction "VIN_2")
-				(pintype "power_in")
-			)
-			(node
-				(ref "U6")
-				(pin "4")
-				(pinfunction "VBIAS_4")
 				(pintype "power_in")
 			)
 		)

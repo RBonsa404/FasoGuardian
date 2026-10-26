@@ -1,6 +1,6 @@
 (kicad_sch (version 20250114) (generator "eeschema") (generator_version "9.0")
 (uuid "f00164bc-1320-5990-b001-d3d612522a42") (paper "A3")
-(title_block (title "Microcontrôleur STM32U575") (date "2026-10-22") (rev "V1.0") (company "Collectif Dedsec — FasoGuardian") (comment 1 "Bracelet FasoGuardian, carte V1 (FG-DOC-08 § 12)") (comment 2 "Généré par materiel/carte-v1/conception/generer_schema.py depuis carte.py"))
+(title_block (title "Microcontrôleur STM32U585") (date "2026-10-22") (rev "V1.0") (company "Collectif Dedsec — FasoGuardian") (comment 1 "Bracelet FasoGuardian, carte V1 (FG-DOC-08 § 12)") (comment 2 "Généré par materiel/carte-v1/conception/generer_schema.py depuis carte.py"))
 (lib_symbols (symbol "Connector:Conn_ARM_SWD_TagConnect_TC2030"
 		(exclude_from_sim no)
 		(in_bom no)
@@ -624,7 +624,7 @@
 			)
 		)
 		(embedded_fonts no)
-	) (symbol "MCU_ST_STM32U5:STM32U575CITx"
+	) (symbol "MCU_ST_STM32U5:STM32U585CITx"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -641,7 +641,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "STM32U575CITx"
+		(property "Value" "STM32U585CITx"
 			(at 7.62 39.37 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -664,7 +664,7 @@
 				(justify right)
 			)
 		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32u575ci.pdf"
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32u585ci.pdf"
 			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -708,7 +708,7 @@
 				)
 			)
 		)
-		(symbol "STM32U575CITx_0_1"
+		(symbol "STM32U585CITx_0_1"
 			(rectangle
 				(start -12.7 -38.1)
 				(end 12.7 38.1)
@@ -721,7 +721,7 @@
 				)
 			)
 		)
-		(symbol "STM32U575CITx_1_1"
+		(symbol "STM32U585CITx_1_1"
 			(pin power_in line
 				(at -5.08 40.64 270)
 				(length 2.54)
@@ -2124,7 +2124,7 @@
 		)
 		(embedded_fonts no)
 	))
-(symbol (lib_id "MCU_ST_STM32U5:STM32U575CITx") (at 59.69 85.09 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "642de0d6-fb47-5ff4-b6f4-9e5e87db8b70") (property "Reference" "U1" (at 59.69 81.09 0) (effects (font (size 1.27 1.27)))) (property "Value" "STM32U575CIT6" (at 59.69 79.09 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Package_QFP:LQFP-48_7x7mm_P0.5mm" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "STM32U575CIT6" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C5271014" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "38fd4b2d-c4d0-5a44-81c6-64c2ea21550b")) (pin "2" (uuid "a140b5c7-715f-5060-9c1c-b3f074b27285")) (pin "3" (uuid "04b03462-dced-5213-9378-e468c8bf419a")) (pin "4" (uuid "098d8799-8ad9-52df-b9ff-c929e59187d4")) (pin "5" (uuid "19d70210-d4ba-5da3-bc2f-eefc364cb612")) (pin "6" (uuid "5b8b3bb2-33a2-5962-b74b-9616154b6fc3")) (pin "7" (uuid "2c3a77cb-db6b-51b4-b2cf-6dac2890c531")) (pin "8" (uuid "2ea876e6-965b-5da6-abe3-ea70fe027d05")) (pin "9" (uuid "3af38a6c-b0e6-5c71-a26f-777e08ae86dc")) (pin "10" (uuid "452b112f-9f3d-5ad6-baed-e200f2d7fdb7")) (pin "11" (uuid "6e31bb86-88a8-535d-8ac9-0d5fe54b655e")) (pin "12" (uuid "aaac547b-aa74-5d1b-90ad-5a402446bac3")) (pin "13" (uuid "d39ea4ed-2029-5168-a012-c1cb6e989435")) (pin "14" (uuid "3d5ef509-3862-5902-937d-22c6defa63ba")) (pin "15" (uuid "123ee3f1-fb22-5ec5-9c85-9c31f14b20b2")) (pin "16" (uuid "84f8a916-2a1e-5951-91c5-9507ab6af3cd")) (pin "17" (uuid "fcc4ba30-2c69-547f-bb4f-869877b61b5f")) (pin "18" (uuid "7bbdec91-5ba8-503e-b6b9-b5de0ff74072")) (pin "19" (uuid "e061c88b-6ad6-53bd-a00b-6c3042648cbf")) (pin "20" (uuid "bb3f981f-4c0f-5bbd-9210-e3bb5565cf2d")) (pin "21" (uuid "cbbed031-c8ed-53c0-9ccc-b8c211f9e0d2")) (pin "22" (uuid "9235d73d-1b6b-50f7-9a23-4348fc83e88d")) (pin "23" (uuid "fcc886b6-d785-5f35-a4ec-9c87ed4264ce")) (pin "24" (uuid "24f8a334-3792-5617-9bba-e3926ac36e54")) (pin "25" (uuid "5d8725c0-9d6e-5695-a275-084605f946ca")) (pin "26" (uuid "7135fd7f-0913-56dd-abcc-51412f6a90ee")) (pin "27" (uuid "8fabc32a-4868-5bcd-811f-9e3e5d902768")) (pin "28" (uuid "0ab41786-e9cf-52fa-a0e9-0f2be91b1748")) (pin "29" (uuid "31e84cae-c151-57e4-97c2-362f5b80269e")) (pin "30" (uuid "0dac8720-19fb-5504-8161-4ea700e6c83d")) (pin "31" (uuid "911d8870-f88e-5dce-9499-8926c5133b4d")) (pin "32" (uuid "672310d0-af5d-5d55-b976-2a05df855340")) (pin "33" (uuid "97bb76db-aeb6-5eff-89ff-f9a364c04dac")) (pin "34" (uuid "99ca7f91-1a40-54a3-bd70-2873fa2beea0")) (pin "35" (uuid "1aca9284-15ac-5ed6-868f-93a45c0a6bc8")) (pin "36" (uuid "d1303cba-fa69-52e7-b84c-b0d6fffaa30a")) (pin "37" (uuid "94e52187-28f4-5742-ab66-648a7b88d1f9")) (pin "38" (uuid "52b369f1-d3d8-52af-8dc9-a36f1e3f59c5")) (pin "39" (uuid "914fd589-3390-50dc-b6e3-5af522eb5791")) (pin "40" (uuid "94af7dee-35e8-557e-9fc1-e50b7b9c109c")) (pin "41" (uuid "1e19bf87-3c47-5e58-af5f-3f749c225a12")) (pin "42" (uuid "ea22bc9d-7aa7-5376-bb4f-ce68ad9fdeca")) (pin "43" (uuid "95e86826-850f-5d62-a6a4-e1042d16591d")) (pin "44" (uuid "d2031589-2503-59dc-bf93-5a1637499d95")) (pin "45" (uuid "3b40a547-2d65-53c6-85d6-14985d993ba9")) (pin "46" (uuid "50b29adb-cd05-516f-b6d0-971c612940b8")) (pin "47" (uuid "3b3371dc-8a51-53c3-bd3e-01c533b757d1")) (pin "48" (uuid "7f88771b-5ade-5388-873f-159758205d60")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/f00164bc-1320-5990-b001-d3d612522a42" (reference "U1") (unit 1)))))
+(symbol (lib_id "MCU_ST_STM32U5:STM32U585CITx") (at 59.69 85.09 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "642de0d6-fb47-5ff4-b6f4-9e5e87db8b70") (property "Reference" "U1" (at 59.69 81.09 0) (effects (font (size 1.27 1.27)))) (property "Value" "STM32U585CIT6" (at 59.69 79.09 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Package_QFP:LQFP-48_7x7mm_P0.5mm" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Datasheet" "" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Fabricant" "STM32U585CIT6" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC" "C5271027" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Note" "STM32U575 et accélérateurs cryptographiques (AES, PKA, HASH), même brochage : le U575CIT6 est en rupture chez JLCPCB (ADR 0042, point 11)" (at 59.69 85.09 0) (effects (font (size 1.27 1.27)) (hide yes))) (pin "1" (uuid "38fd4b2d-c4d0-5a44-81c6-64c2ea21550b")) (pin "2" (uuid "a140b5c7-715f-5060-9c1c-b3f074b27285")) (pin "3" (uuid "04b03462-dced-5213-9378-e468c8bf419a")) (pin "4" (uuid "098d8799-8ad9-52df-b9ff-c929e59187d4")) (pin "5" (uuid "19d70210-d4ba-5da3-bc2f-eefc364cb612")) (pin "6" (uuid "5b8b3bb2-33a2-5962-b74b-9616154b6fc3")) (pin "7" (uuid "2c3a77cb-db6b-51b4-b2cf-6dac2890c531")) (pin "8" (uuid "2ea876e6-965b-5da6-abe3-ea70fe027d05")) (pin "9" (uuid "3af38a6c-b0e6-5c71-a26f-777e08ae86dc")) (pin "10" (uuid "452b112f-9f3d-5ad6-baed-e200f2d7fdb7")) (pin "11" (uuid "6e31bb86-88a8-535d-8ac9-0d5fe54b655e")) (pin "12" (uuid "aaac547b-aa74-5d1b-90ad-5a402446bac3")) (pin "13" (uuid "d39ea4ed-2029-5168-a012-c1cb6e989435")) (pin "14" (uuid "3d5ef509-3862-5902-937d-22c6defa63ba")) (pin "15" (uuid "123ee3f1-fb22-5ec5-9c85-9c31f14b20b2")) (pin "16" (uuid "84f8a916-2a1e-5951-91c5-9507ab6af3cd")) (pin "17" (uuid "fcc4ba30-2c69-547f-bb4f-869877b61b5f")) (pin "18" (uuid "7bbdec91-5ba8-503e-b6b9-b5de0ff74072")) (pin "19" (uuid "e061c88b-6ad6-53bd-a00b-6c3042648cbf")) (pin "20" (uuid "bb3f981f-4c0f-5bbd-9210-e3bb5565cf2d")) (pin "21" (uuid "cbbed031-c8ed-53c0-9ccc-b8c211f9e0d2")) (pin "22" (uuid "9235d73d-1b6b-50f7-9a23-4348fc83e88d")) (pin "23" (uuid "fcc886b6-d785-5f35-a4ec-9c87ed4264ce")) (pin "24" (uuid "24f8a334-3792-5617-9bba-e3926ac36e54")) (pin "25" (uuid "5d8725c0-9d6e-5695-a275-084605f946ca")) (pin "26" (uuid "7135fd7f-0913-56dd-abcc-51412f6a90ee")) (pin "27" (uuid "8fabc32a-4868-5bcd-811f-9e3e5d902768")) (pin "28" (uuid "0ab41786-e9cf-52fa-a0e9-0f2be91b1748")) (pin "29" (uuid "31e84cae-c151-57e4-97c2-362f5b80269e")) (pin "30" (uuid "0dac8720-19fb-5504-8161-4ea700e6c83d")) (pin "31" (uuid "911d8870-f88e-5dce-9499-8926c5133b4d")) (pin "32" (uuid "672310d0-af5d-5d55-b976-2a05df855340")) (pin "33" (uuid "97bb76db-aeb6-5eff-89ff-f9a364c04dac")) (pin "34" (uuid "99ca7f91-1a40-54a3-bd70-2873fa2beea0")) (pin "35" (uuid "1aca9284-15ac-5ed6-868f-93a45c0a6bc8")) (pin "36" (uuid "d1303cba-fa69-52e7-b84c-b0d6fffaa30a")) (pin "37" (uuid "94e52187-28f4-5742-ab66-648a7b88d1f9")) (pin "38" (uuid "52b369f1-d3d8-52af-8dc9-a36f1e3f59c5")) (pin "39" (uuid "914fd589-3390-50dc-b6e3-5af522eb5791")) (pin "40" (uuid "94af7dee-35e8-557e-9fc1-e50b7b9c109c")) (pin "41" (uuid "1e19bf87-3c47-5e58-af5f-3f749c225a12")) (pin "42" (uuid "ea22bc9d-7aa7-5376-bb4f-ce68ad9fdeca")) (pin "43" (uuid "95e86826-850f-5d62-a6a4-e1042d16591d")) (pin "44" (uuid "d2031589-2503-59dc-bf93-5a1637499d95")) (pin "45" (uuid "3b40a547-2d65-53c6-85d6-14985d993ba9")) (pin "46" (uuid "50b29adb-cd05-516f-b6d0-971c612940b8")) (pin "47" (uuid "3b3371dc-8a51-53c3-bd3e-01c533b757d1")) (pin "48" (uuid "7f88771b-5ade-5388-873f-159758205d60")) (instances (project "fasoguardian-v1" (path "/575af4e1-e15c-5e7c-a7b6-b5580dce1053/f00164bc-1320-5990-b001-d3d612522a42" (reference "U1") (unit 1)))))
 (global_label "3V3" (shape passive) (at 54.61 44.45 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "338f4c9f-bc33-5fbb-a977-e39019478ca4") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 54.61 44.45 0) (effects (font (size 1.27 1.27)) (hide yes))))
 (global_label "MCU_PWRKEY" (shape passive) (at 44.45 67.31 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "8bd5df47-9533-56a4-8751-7fcf41f245a2") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 67.31 0) (effects (font (size 1.27 1.27)) (hide yes))))
 (global_label "OSC32_IN" (shape passive) (at 44.45 69.85 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "c75bfc02-3100-5177-bf42-57f6171ce958") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 44.45 69.85 0) (effects (font (size 1.27 1.27)) (hide yes))))

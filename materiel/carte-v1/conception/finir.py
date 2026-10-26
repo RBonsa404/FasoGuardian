@@ -434,11 +434,81 @@ def conformer(carte: pcbnew.BOARD) -> int:
     return n
 
 
+def doublons(carte: pcbnew.BOARD, rapport: dict) -> int:
+    """Retire, de chaque paire de vias du même réseau trop proches (hole_to_hole), le via thermique en trop : sans
+    piste, dans une pastille qui garde au moins un autre via. C'est le cas d'un via de plan posé au pied d'une broche
+    de masse, contre un via thermique de la pastille exposée voisine. Rend le nombre de vias retirés."""
+    plots = list(carte.GetPads())
+    bouts = {(t.GetNetCode(), b.x, b.y) for t in carte.GetTracks() if t.GetClass() == 'PCB_TRACK'
+             for b in (t.GetStart(), t.GetEnd())}
+    centres = [(t.GetNetCode(), t.GetPosition().x, t.GetPosition().y) for t in carte.GetTracks()
+               if t.GetClass() == 'PCB_VIA']
+    retires = 0
+    for v in rapport.get('violations', []):
+        if v['type'] not in ('hole_to_hole', 'holes_co_located') or len(v['items']) != 2:
+            continue
+        paire = [carte.ResolveItem(pcbnew.KIID(it['uuid'])) for it in v['items']]
+        if any(o is None or o.GetClass() != 'PCB_VIA' for o in paire):
+            continue
+        paire = [o.Cast() for o in paire]
+        if paire[0].GetNetCode() != paire[1].GetNetCode():
+            continue
+        for via in paire:
+            centre = (via.GetNetCode(), via.GetPosition().x, via.GetPosition().y)
+            if centre in bouts:
+                continue
+            pastilles = [q for q in plots if q.GetNetCode() == centre[0] and q.HitTest(via.GetPosition())]
+            if any(sum(1 for n, x, y in centres if n == centre[0] and q.HitTest(pcbnew.VECTOR2I(x, y))) >= 2
+                   for q in pastilles):
+                carte.Delete(via)
+                centres.remove(centre)
+                retires += 1
+                break
+    return retires
+
+
+def cuivre_mort(carte: pcbnew.BOARD) -> int:
+    """Retire les grappes de pistes et de vias non verrouillés qui ne touchent ni plot ni zone : une boucle fermée n'a
+    pas de bout libre, le DRC ne la signale pas comme orpheline, mais la compte comme une liaison à faire. Rend le
+    nombre d'éléments retirés."""
+    connexions = carte.GetConnectivity()
+    vus, morts = set(), []
+    for piste in carte.GetTracks():
+        if piste.m_Uuid.AsString() in vus:
+            continue
+        # La grappe rendue par KiCad contient aussi l'élément de départ : un dictionnaire évite de le compter deux fois.
+        grappe = {i.m_Uuid.AsString(): i for i in [piste, *connexions.GetConnectedItems(piste)]
+                  if i.GetNetCode() == piste.GetNetCode()}
+        vus |= set(grappe)
+        grappe = list(grappe.values())
+        cuivre = [i for i in grappe if i.GetClass() in ('PCB_TRACK', 'PCB_VIA', 'PCB_ARC')]
+        if len(cuivre) == len(grappe) and not any(i.IsLocked() for i in cuivre):
+            morts += cuivre
+    for objet in morts:
+        carte.Delete(objet)
+    return len(morts)
+
+
 def nettoyer() -> tuple[int, int]:
-    """Supprime les orphelins (jusqu'à stabilité) et le cuivre non verrouillé en infraction ; rend les deux comptes."""
+    """Supprime les orphelins (jusqu'à stabilité), le cuivre mort, les vias en double et le cuivre non verrouillé en
+    infraction ; rend les deux comptes."""
     orphelins = infractions = 0
+    carte = pcbnew.LoadBoard(str(CARTE))
+    morts = cuivre_mort(carte)
+    if morts:
+        carte.BuildConnectivity()
+        pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
+        carte.Save(str(CARTE))
+        orphelins += morts
     for passe in range(6):
         rapport = drc()
+        if passe == 0 and any(v['type'] in ('hole_to_hole', 'holes_co_located') for v in rapport.get('violations', [])):
+            carte = pcbnew.LoadBoard(str(CARTE))
+            infractions += doublons(carte, rapport)
+            if infractions:
+                pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
+                carte.Save(str(CARTE))
+                rapport = drc()
         cibles = {it['uuid'] for v in rapport.get('violations', []) if v['type'] in ORPHELINS for it in v['items']}
         forces = set()
         if passe == 0:
@@ -456,7 +526,7 @@ def nettoyer() -> tuple[int, int]:
             carte.Delete(objet)
             retires += 1
         if passe == 0:
-            infractions = retires
+            infractions += retires
         else:
             orphelins += retires
         if not retires:

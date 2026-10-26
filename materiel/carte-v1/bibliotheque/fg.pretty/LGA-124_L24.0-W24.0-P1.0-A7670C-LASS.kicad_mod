@@ -154,7 +154,7 @@
 	(fp_line (start 12.00 -12.00) (end 12.00 12.00) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 12.00 12.00) (end -12.00 12.00) (layer F.CrtYd) (width 0.05))
 	(fp_poly (pts (xy -9.849968 -8.849970) (xy -9.849968 -7.549972) (xy -10.049332 -7.549972) (xy -10.599420 -8.100060) (xy -9.849968 -8.849970)) (stroke (width 0) (type solid)) (fill solid) (layer "F.SilkS"))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/LGA-124_L24.0-W24.0-P1.0-A7670C-LASS.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/LGA-124_L24.0-W24.0-P1.0-A7670C-LASS.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

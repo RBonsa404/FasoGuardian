@@ -28,7 +28,7 @@
 	(fp_line (start 1.00 -1.00) (end 1.00 1.00) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 1.00 1.00) (end -1.00 1.00) (layer F.CrtYd) (width 0.05))
 	(fp_line (start -1.00 1.00) (end -1.00 -1.00) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/UDFN-8_L2.0-W2.0-H0.8-P0.50.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/UDFN-8_L2.0-W2.0-H0.8-P0.50.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

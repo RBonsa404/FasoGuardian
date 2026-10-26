@@ -20,7 +20,7 @@ import pcbnew
 
 CARTE = Path(__file__).resolve().parent.parent / 'kicad' / 'fasoguardian-v1.kicad_pcb'
 RHO = 1.72e-8                                    # résistivité du cuivre (Ω·m)
-EPAISSEUR_EXT, EPAISSEUR_INT = 35e-6, 17.5e-6    # 1 oz sur les faces, 0,5 oz à l'intérieur (empilement JLC 6 couches)
+EPAISSEUR_EXT, EPAISSEUR_INT = 35e-6, 30e-6      # 1 oz sur les faces et à l'intérieur (JLC061211-3313 : 0,03 mm)
 PLACAGE = 18e-6                                  # cuivre déposé dans un perçage de via (m)
 HAUTEUR = 1.2e-3                                 # épaisseur de la carte (m)
 PAS = 0.2                                        # maille des plans (mm)

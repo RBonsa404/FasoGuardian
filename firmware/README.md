@@ -1,12 +1,13 @@
 # Logiciel embarqué du bracelet
 
-Logiciel du bracelet FasoGuardian (C, STM32 HAL/LL, FreeRTOS) pour le STM32U575, conforme à FG-DOC-08 et à
+Logiciel du bracelet FasoGuardian (C, STM32 HAL/LL, FreeRTOS) pour le STM32U585 (le STM32U575 de FG-DOC-08 avec des
+accélérateurs cryptographiques, même brochage : ADR 0042, point 11), conforme à FG-DOC-08 et à
 `docs/protocole-bracelet.md`. Architecture et périmètre : ADR 0030.
 
 | Dossier | Contenu |
 |---|---|
 | `noyau/` | Règles du bracelet, sans matériel : rythme des positions, SOS, retrait, batterie, tampon hors ligne, repli SMS signé, vérification des commandes et des images de mise à jour |
-| `ports/fg_port.h` | Frontière avec le matériel ; le port STM32U575 sera écrit avec le prototype |
+| `ports/fg_port.h` | Frontière avec le matériel ; le port STM32U585 sera écrit avec le prototype |
 | `tests/` | Essais du noyau sur machine hôte et port d'essai |
 | `outils/` | Image Docker pour lancer les essais sans compilateur C installé |
 

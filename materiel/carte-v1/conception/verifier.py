@@ -11,7 +11,8 @@ from collections import defaultdict
 import bibliotheques as bib
 from carte import ADRESSES_I2C, ALIMENTATIONS, COMPOSANTS, RAILS_DECOUPLES
 
-# Affectation des broches du STM32U575CIT6 : FG-DOC-08 tableau 8, avec les écarts de CAHIER.md § 5.
+# Affectation des broches du STM32U585CIT6, brochage identique au STM32U575CIT6 : FG-DOC-08 tableau 8, avec les
+# écarts de CAHIER.md § 5.
 TABLEAU_8 = {
     'PA9': 'MCU_TX', 'PA10': 'MCU_RX', 'PA11': 'MCU_CTS', 'PA12': 'MCU_RTS',
     'PB5': 'RI_3V3', 'PB2': 'STATUS_3V3', 'PB6': 'I2C_SCL', 'PB7': 'I2C_SDA', 'PA15': 'ACC_INT1', 'PA1': 'CHG_INT',
@@ -143,7 +144,8 @@ for c in COMPOSANTS:
         if not any(par_ref[r].symbole == 'Device:C' or 'T520' in par_ref[r].symbole for r, _ in reseaux[reseau]):
             erreur(f'{c.ref} : aucun condensateur sur {reseau}')
 
-# 7. Faces : en face inférieure, pièces de moins de 1 mm de haut seulement.
+# 7. Faces : les pièces hautes sur la face supérieure ; la hauteur de chaque pièce de la face inférieure (1,35 mm au
+# plus, d'après les fiches) est contrôlée sur la carte placée par modeles_3d.py.
 HAUTES = ('fg:A7670E', 'fg:T520', 'fg:NANOSIM', 'fg:U.FL', 'fg:SM03B', 'fg:ECT8', 'Switch:', 'MCU_ST', 'fg:FC-B1010')
 for c in COMPOSANTS:
     if c.face == 'B' and c.symbole.startswith(HAUTES):

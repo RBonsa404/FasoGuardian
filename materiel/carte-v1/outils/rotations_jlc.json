@@ -1,0 +1,429 @@
+{
+ "Button_Switch_SMD:SW_SPST_EVQP7A|C79167": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "SW1"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C15195": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C6",
+   "C65"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C1525": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C8",
+   "C13",
+   "C17",
+   "C25",
+   "C30",
+   "C40",
+   "C41",
+   "C42",
+   "C44",
+   "C46",
+   "C48",
+   "C60",
+   "C62",
+   "C63",
+   "C70",
+   "C71",
+   "C72",
+   "C73"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C1532": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C64"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C1549": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C49",
+   "C50"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C1562": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C14",
+   "C24",
+   "C31",
+   "C32",
+   "C33"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C23733": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C3",
+   "C43",
+   "C47"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C32949": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C15"
+  ]
+ },
+ "Capacitor_SMD:C_0402_1005Metric|C52923": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.06,
+  "refs": [
+   "C12",
+   "C16",
+   "C45",
+   "C61"
+  ]
+ },
+ "Capacitor_SMD:C_0603_1608Metric|C19702": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.075,
+  "refs": [
+   "C2",
+   "C4",
+   "C7"
+  ]
+ },
+ "Capacitor_SMD:C_0603_1608Metric|C57895": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.075,
+  "refs": [
+   "C1"
+  ]
+ },
+ "Capacitor_SMD:C_0603_1608Metric|C59461": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.075,
+  "refs": [
+   "C5"
+  ]
+ },
+ "Diode_SMD:D_0402_1005Metric|C5210978": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.015,
+  "refs": [
+   "D4",
+   "D5",
+   "D14"
+  ]
+ },
+ "Diode_SMD:D_SOD-123|C8598": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.05,
+  "refs": [
+   "D15"
+  ]
+ },
+ "Diode_SMD:D_SOD-123F|C123800": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.25,
+  "refs": [
+   "D1"
+  ]
+ },
+ "Diode_SMD:D_SOD-323|C22629": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.12,
+  "refs": [
+   "D11"
+  ]
+ },
+ "Fuse:Fuse_0603_1608Metric|C207015": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.037,
+  "refs": [
+   "F1"
+  ]
+ },
+ "Inductor_SMD:L_0402_1005Metric|C108965": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.065,
+  "refs": [
+   "L2"
+  ]
+ },
+ "Package_QFP:LQFP-48_7x7mm_P0.5mm|C5271014": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.112,
+  "refs": [
+   "U1"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C11702": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R10",
+   "R12",
+   "R15",
+   "R16",
+   "R80",
+   "R91"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C17168": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R20"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C226806": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R4"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25076": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R88"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25077": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R23"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25092": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R30",
+   "R31",
+   "R32"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25104": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R81",
+   "R82"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25741": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R6",
+   "R11",
+   "R13",
+   "R64",
+   "R83",
+   "R84",
+   "R85",
+   "R86",
+   "R89"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25744": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R7",
+   "R14",
+   "R40",
+   "R62",
+   "R63",
+   "R65",
+   "R93"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25887": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R2"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C25900": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R60",
+   "R61",
+   "R87"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C26083": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "R92"
+  ]
+ },
+ "Resistor_SMD:R_0402_1005Metric|C77131": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.08,
+  "refs": [
+   "RT1"
+  ]
+ },
+ "Resistor_SMD:R_0603_1608Metric|C21189": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.075,
+  "refs": [
+   "R5"
+  ]
+ },
+ "Resistor_SMD:R_1206_3216Metric|C17888": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.018,
+  "refs": [
+   "R8"
+  ]
+ },
+ "fg:CAP-SMD_L3.5-W2.8-R-RD|C696806": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "C10",
+   "C11"
+  ]
+ },
+ "fg:CRYSTAL-SMD_L3.2-W1.5-FC-135R32.7680KF-A3|C20340322": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "Y1"
+  ]
+ },
+ "fg:DHVQFN-16_L3.5-W2.5-P0.50-BL-EP|C2862903": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "U10",
+   "U11"
+  ]
+ },
+ "fg:DSBGA-8_L1.6-W0.9-R2-C4-P0.40-BL|C3682423": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "U4"
+  ]
+ },
+ "fg:IPEX-SMD_ECT818011998|C437250": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "J6"
+  ]
+ },
+ "fg:LED-ARRAY-SMD_4P-L1.0-W1.0-TR-RD|C158099": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "D10"
+  ]
+ },
+ "fg:LGA-124_L24.0-W24.0-P1.0-A7670C-LASS|C7435296": {
+  "rotation": 0,
+  "dx": 0.0,
+  "dy": 0.0,
+  "residu": 0.0,
+  "refs": [
+   "U2"
+  ]
+ }
+}

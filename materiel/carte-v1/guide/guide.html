@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>FasoGuardian V1 — Commande et mise en service</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm 15mm; }
+  :root {
+    --encre: #1b1f24; --doux: #57606a; --trait: #d0d7de; --fond: #f6f8fa;
+    --vert: #1f5135; --vert-clair: #e8f3ec; --orange: #c2410c; --orange-clair: #fff4ec;
+    --bleu: #1d4ed8; --bleu-clair: #eef3ff; --rouge: #b42318; --rouge-clair: #fdecea;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--encre); background: #fff; font: 10pt/1.45 "Segoe UI", Arial, sans-serif; }
+  h1, h2, h3 { color: var(--vert); line-height: 1.2; }
+  h2 { font-size: 15pt; margin: 0 0 3mm; padding-bottom: 1.5mm; border-bottom: 0.6mm solid var(--vert); break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 5mm 0 2mm; break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1.2mm; }
+  section { margin-top: 7mm; }
+  section.page { break-before: page; margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1mm 0 4mm; font-size: 8.8pt; break-inside: auto; }
+  table.entier { break-inside: avoid; }
+  tr { break-inside: avoid; }
+  th, td { border: 0.25mm solid var(--trait); padding: 1.2mm 1.8mm; text-align: left; vertical-align: top; }
+  th { background: var(--fond); font-weight: 600; }
+  code, .code { font-family: Consolas, "Cascadia Mono", monospace; font-size: 8.6pt; }
+  pre { font-family: Consolas, "Cascadia Mono", monospace; font-size: 8.2pt; background: var(--fond);
+        border: 0.25mm solid var(--trait); border-radius: 1mm; padding: 2.5mm 3mm; white-space: pre-wrap; margin: 1mm 0 4mm; }
+  .encadre { border-radius: 1.5mm; padding: 3mm 4mm; margin: 2mm 0 4mm; break-inside: avoid; }
+  .encadre p:last-child, .encadre ul:last-child { margin-bottom: 0; }
+  .info { background: var(--bleu-clair); border-left: 1.2mm solid var(--bleu); }
+  .attention { background: var(--orange-clair); border-left: 1.2mm solid var(--orange); }
+  .danger { background: var(--rouge-clair); border-left: 1.2mm solid var(--rouge); }
+  .ok { background: var(--vert-clair); border-left: 1.2mm solid var(--vert); }
+  .titre-encadre { font-weight: 700; margin-bottom: 1mm; }
+  .couverture { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .couverture .haut { margin-top: 18mm; }
+  .couverture .marque { color: var(--vert); font-size: 12pt; font-weight: 700; letter-spacing: 0.3mm; text-transform: uppercase; }
+  .couverture h1 { font-size: 27pt; margin: 6mm 0 4mm; }
+  .couverture .sous-titre { font-size: 13pt; color: var(--doux); max-width: 150mm; }
+  .couverture .vues { display: flex; gap: 6mm; margin: 10mm 0; }
+  .couverture .vues img { width: 50%; border: 0.25mm solid var(--trait); border-radius: 1.5mm; background: #fff; }
+  .couverture .pied { font-size: 9pt; color: var(--doux); border-top: 0.25mm solid var(--trait); padding-top: 3mm; }
+  .resume { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-bottom: 4mm; }
+  .resume .carte { border: 0.25mm solid var(--trait); border-radius: 1.5mm; padding: 3mm; break-inside: avoid; }
+  .resume .carte b { display: block; color: var(--vert); margin-bottom: 1mm; }
+  .chiffre { font-size: 15pt; font-weight: 700; color: var(--encre); }
+  .etapes { counter-reset: etape; list-style: none; padding-left: 0; }
+  .etapes > li { counter-increment: etape; position: relative; padding-left: 9mm; margin-bottom: 2.5mm; break-inside: avoid; }
+  .etapes > li::before { content: counter(etape); position: absolute; left: 0; top: 0; width: 6mm; height: 6mm;
+        border-radius: 50%; background: var(--vert); color: #fff; font-weight: 700; font-size: 9pt; text-align: center; line-height: 6mm; }
+  figure { margin: 2mm auto 4mm; width: 92%; break-inside: avoid; }
+  figure img { width: 100%; display: block; border: 0.25mm solid var(--trait); border-radius: 1.5mm; }
+  figcaption { font-size: 8.5pt; color: var(--doux); margin-top: 1.5mm; }
+  .legende { display: flex; gap: 5mm; font-size: 8.5pt; margin: 1mm 0 3mm; }
+  .legende span::before { content: ""; display: inline-block; width: 3mm; height: 3mm; border-radius: 50%; margin-right: 1.2mm;
+        vertical-align: -0.4mm; border: 0.5mm solid currentColor; }
+  .c-cablage { color: #c2410c; } .c-mesure { color: #1d4ed8; } .c-connecteur { color: #15803d; }
+  .sommaire { columns: 2; column-gap: 8mm; padding-left: 5mm; }
+  .sommaire li { margin-bottom: 1.5mm; }
+  .case::before { content: "☐ "; color: var(--vert); font-weight: 700; }
+  .nb { font-size: 8.5pt; color: var(--doux); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ couverture -->
+<div class="couverture">
+  <div class="haut">
+    <div class="marque">FasoGuardian · Carte électronique V1</div>
+    <h1>Commande chez JLCPCB<br>et mise en service</h1>
+    <div class="sous-titre">Guide pratique du porteur du projet : ce que JLCPCB fabrique, comment passer la commande,
+      ce qu'il faut acheter à côté, et quoi faire quand les cartes arrivent.</div>
+    <div class="vues">
+      <img src="../fabrication/rendu-dessus.png" alt="Rendu 3D de la face supérieure">
+      <img src="../fabrication/rendu-dessous.png" alt="Rendu 3D de la face inférieure">
+    </div>
+  </div>
+  <div class="pied">
+    Collectif Dedsec — projet FasoGuardian · Version 1.0 du 26 octobre 2026 · Carte 41 × 36 mm, 6 couches, assemblage
+    double face. Les fichiers cités sont dans le dépôt, dossier <code>materiel/carte-v1/</code>.
+  </div>
+</div>
+
+<!-- ============================================================ 1 -->
+<section class="page">
+<h2>1. L'essentiel</h2>
+<div class="resume">
+  <div class="carte"><b>Ce que vous recevez</b>Des cartes <strong>complètes</strong> : JLCPCB fabrique le circuit
+    imprimé, achète les 55 références de composants et les soude sur les deux faces. Les soudures cachées (module,
+    chargeur, boîtiers sans pattes) sont contrôlées aux rayons X.</div>
+  <div class="carte"><b>Ce que JLCPCB ne fait pas</b>La programmation, la batterie, les antennes, le vibreur, le
+    buzzer, la carte SIM, le boîtier et les essais de fonctionnement. C'est votre part, décrite pas à pas aux
+    sections 6 à 11.</div>
+  <div class="carte"><b>Budget indicatif pour 5 cartes</b><span class="chiffre">560 à 720 $</span><br>Transport DHL
+    compris, hors droits et taxes à l'arrivée. Le devis exact s'affiche sur le site avant de payer (section 5).</div>
+  <div class="carte"><b>Délai indicatif</b><span class="chiffre">2 à 4 semaines</span><br>Fabrication 6 couches,
+    assemblage double face, transport jusqu'à Ouagadougou, dédouanement.</div>
+</div>
+
+<h3>Votre feuille de route</h3>
+<ol class="etapes">
+  <li><strong>Passer la commande</strong> (30 à 45 minutes) en suivant la section 4. Tous les fichiers sont prêts ;
+    les choix techniques sont faits (section 3).</li>
+  <li><strong>Pendant la fabrication</strong>, répondre vite aux e-mails de JLCPCB et acheter le matériel de la
+    section 6 (programmateur, batteries, antennes, vibreurs, buzzers, SIM).</li>
+  <li><strong>À la réception</strong> : contrôle visuel et électrique sans alimentation (section 7), puis première
+    mise sous tension à courant limité (section 8).</li>
+  <li><strong>Batterie, programme, câblage</strong> : brancher la batterie (section 9), charger le programme de test
+    (section 10), souder les éléments externes (section 11).</li>
+  <li><strong>Essais</strong> : radio, GNSS, capteurs, autonomie (section 12), puis boîtier (section 13).</li>
+</ol>
+
+<div class="encadre ok">
+  <div class="titre-encadre">Contrôles déjà passés sur les fichiers envoyés</div>
+  <ul>
+    <li>Contrôle électrique du schéma (ERC) : aucune erreur ni aucun avertissement.</li>
+    <li>Contrôle de la carte (DRC) avec parité schéma ↔ carte : aucune erreur ni aucun avertissement, aucune liaison
+      manquante.</li>
+    <li>Lignes d'antenne de 50 Ω calculées sur l'empilement réel de JLCPCB ; chemin du courant du modem sous
+      30 mΩ ; hauteur des pièces de la face côté batterie relevée sur les fiches des fabricants.</li>
+    <li>Orientation de chaque empreinte comparée à celle de la bibliothèque de JLCPCB ; stock vérifié pour
+      5 cartes.</li>
+  </ul>
+</div>
+
+<h3>Sommaire</h3>
+<ol class="sommaire">
+  <li>L'essentiel</li><li>Qui fait quoi</li><li>Décisions prises avant la commande</li><li>Commander pas à pas</li>
+  <li>Coût, délai, stock</li><li>Matériel à acheter à côté</li><li>Contrôle à la réception</li>
+  <li>Première mise sous tension</li><li>Batterie</li><li>Programmation</li><li>Câblage des éléments externes</li>
+  <li>Essais de fonctionnement</li><li>Boîtier et sécurité</li><li>Où trouver quoi</li>
+</ol>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="page">
+<h2>2. Qui fait quoi</h2>
+<table>
+  <tr><th style="width:46%">Tâche</th><th style="width:18%">JLCPCB</th><th>Vous</th></tr>
+  <tr><td>Fabriquer le circuit imprimé 6 couches, impédance contrôlée, finition or (ENIG)</td><td>Oui</td><td>Choisir les options (section 4)</td></tr>
+  <tr><td>Acheter les 55 références de composants</td><td>Oui, sur son stock</td><td>Réserver les pièces au stock faible (section 5)</td></tr>
+  <tr><td>Poser et souder les composants sur les deux faces</td><td>Oui</td><td>—</td></tr>
+  <tr><td>Contrôle optique et radiographie des soudures cachées</td><td>Oui</td><td>—</td></tr>
+  <tr><td>Vérifier l'orientation de chaque pièce avant la production</td><td>Oui, par un technicien</td><td>Valider ses éventuelles questions par e-mail</td></tr>
+  <tr><td>Programmer le microcontrôleur</td><td>Non</td><td>Oui (section 10)</td></tr>
+  <tr><td>Batterie, antennes, vibreur, buzzer, carte SIM</td><td>Non</td><td>Acheter (section 6), souder (section 11)</td></tr>
+  <tr><td>Boîtier et sangle</td><td>Non</td><td>Impression 3D (section 13)</td></tr>
+  <tr><td>Essais de fonctionnement</td><td>Non</td><td>Oui (sections 8 et 12)</td></tr>
+</table>
+
+<div class="encadre info">
+  <div class="titre-encadre">Pourquoi tout faire assembler par JLCPCB</div>
+  <p>La carte porte un module radio à 124 plots sous son boîtier, un chargeur en boîtier à billes de 1,6 × 0,9 mm et
+    une dizaine de boîtiers sans pattes au pas de 0,4 à 0,5 mm. Ces pièces ne se soudent qu'au four, avec pochoir et
+    contrôle aux rayons X. Un assemblage à la main serait long, incertain et sans contrôle des soudures cachées.</p>
+</div>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="page">
+<h2>3. Décisions prises avant la commande</h2>
+<p>Les points laissés ouverts dans le cahier de réalisation sont tranchés comme suit. Chaque choix est justifié dans
+  <code>CAHIER.md</code> et dans l'ADR 0042 du dépôt.</p>
+<table>
+  <tr><th style="width:20%">Point</th><th style="width:38%">Décision</th><th>Raison</th></tr>
+  <tr><td>Module cellulaire</td><td>SIMCom <strong>A7670E-FASE</strong> : LTE Cat-1 avec repli 2G, GNSS, Bluetooth</td>
+      <td>Variante de l'A7670E (bandes d'Europe et d'Afrique) qui intègre le GNSS ; 380 pièces en stock chez
+      JLCPCB.</td></tr>
+  <tr><td>Microcontrôleur</td><td><strong>STM32U585CIT6</strong> au lieu du STM32U575CIT6</td>
+      <td>Le U575 est en rupture chez JLCPCB. Le U585 a le même brochage et ajoute des accélérateurs
+      cryptographiques, utiles pour l'amorce sécurisée et la protection des données des enfants. Il en reste peu :
+      à réserver (section 5).</td></tr>
+  <tr><td>Batterie</td><td>Li-Po une cellule 3,7 V, <strong>600 à 650 mAh</strong>, format 603035 (6,0 × 30 × 35 mm),
+      protection intégrée (PCM) d'au moins 3 A, trois fils : +, − et thermistance NTC 10 kΩ (B = 3435)</td>
+      <td>Le modem tire des pointes de 2 A ; la charge est réglée à 300 mA (0,5 C). Cellule tenant 2C en continu et 3C
+      en impulsion, résistance interne de 150 mΩ au plus, certifiée UN38.3 pour le transport.</td></tr>
+  <tr><td>Hauteur sous la carte</td><td>1,6 mm réservés entre la carte et la batterie</td>
+      <td>La pièce la plus haute de la face côté batterie mesure 1,35 mm d'après sa fiche ; on ajoute 0,25 mm de mousse
+      isolante.</td></tr>
+  <tr><td>Boîtier V1</td><td>Impression 3D (résine) autour de la carte : cote intérieure 43 × 38 mm, hauteur intérieure
+      d'environ 17,5 mm</td>
+      <td>Empilement détaillé à la section 13. La V1 sert à valider l'électronique ; l'objectif de 14 mm d'épaisseur du
+      prototype portable demandera une antenne GNSS plate et une batterie plus fine.</td></tr>
+  <tr><td>Circuit imprimé</td><td>6 couches, 1,2 mm, empilement JLC061211-3313 à cuivre interne de 1 oz, impédance contrôlée, vias bouchés dans
+      les pastilles, ENIG</td><td>Lignes d'antenne de 50 Ω, module et chargeur au pas fin (section 4).</td></tr>
+  <tr><td>Quantité</td><td><strong>5 cartes assemblées</strong></td><td>Une pour le programme, une pour la radio, une pour
+      l'autonomie, deux de réserve ou pour le boîtier. Deux cartes au minimum si le budget l'impose (section 5).</td></tr>
+</table>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="page">
+<h2>4. Commander pas à pas</h2>
+<div class="encadre attention">
+  <div class="titre-encadre">À faire vous-même</div>
+  <p>La création du compte, le paiement et la validation de la commande vous reviennent. Préparez une adresse de
+    livraison à Ouagadougou avec un numéro de téléphone joignable par le transporteur.</p>
+</div>
+
+<h3>4.1 Les fichiers</h3>
+<p>Tout est dans <code>materiel/carte-v1/fabrication/</code> :</p>
+<table>
+  <tr><th style="width:38%">Fichier</th><th>Rôle</th></tr>
+  <tr><td><code>gerber-fasoguardian-v1.zip</code></td><td>Le circuit imprimé : 6 couches de cuivre, vernis, pâte à souder, sérigraphie, contour, perçages</td></tr>
+  <tr><td><code>nomenclature-jlcpcb.csv</code></td><td>La liste des composants (BOM), une ligne par référence LCSC</td></tr>
+  <tr><td><code>placement-jlcpcb.csv</code></td><td>La position et l'orientation de chaque composant sur les deux faces (CPL)</td></tr>
+  <tr><td><code>COMMANDE.md</code></td><td>Le récapitulatif technique des options, à garder sous la main</td></tr>
+</table>
+
+<h3>4.2 Déposer le circuit imprimé</h3>
+<ol class="etapes">
+  <li>Sur <strong>jlcpcb.com</strong>, se connecter, puis cliquer sur <em>Order Now</em> (ou <em>Instant Quote</em>).</li>
+  <li><em>Add gerber file</em> : choisir <code>gerber-fasoguardian-v1.zip</code>. Le site affiche un aperçu, lit
+    <strong>6 couches</strong> et <strong>41 × 36 mm</strong>. Si ce n'est pas le cas, s'arrêter : mauvais fichier.</li>
+  <li>Régler les options suivantes ; ne pas laisser les valeurs par défaut.</li>
+</ol>
+<table>
+  <tr><th style="width:32%">Option du site</th><th style="width:28%">Valeur à choisir</th><th>Pourquoi</th></tr>
+  <tr><td>Base Material</td><td>FR-4</td><td>Standard</td></tr>
+  <tr><td>Layers</td><td>6</td><td>Lu dans les fichiers</td></tr>
+  <tr><td>PCB Qty</td><td>5</td><td>Cinq cartes</td></tr>
+  <tr><td>Delivery Format</td><td>Single PCB</td><td>JLCPCB ajoute les rails d'assemblage</td></tr>
+  <tr><td>PCB Thickness</td><td>1.2 mm</td><td>Épaisseur calculée pour les antennes</td></tr>
+  <tr><td>Impedance Control</td><td>Yes, <strong>JLC061211-3313</strong></td><td>Lignes d'antenne de 50 Ω (apparaît une fois le cuivre interne réglé à 1 oz)</td></tr>
+  <tr><td>Via Covering</td><td>Epoxy Filled &amp; Capped</td><td>Vias dans les pastilles ; gratuit en 6 couches</td></tr>
+  <tr><td>Min via hole size / diameter</td><td>0.15 mm / 0.3 mm</td><td>Plus petits vias de la carte</td></tr>
+  <tr><td>Surface Finish</td><td>ENIG</td><td>Pas fin, contacts de la SIM</td></tr>
+  <tr><td>Outer / Inner Copper Weight</td><td>1 oz / <strong>1 oz</strong></td><td>Courant du modem : 20 mΩ de cuivre au lieu de 33 mΩ</td></tr>
+  <tr><td>Mark on PCB</td><td>Remove Mark</td><td>Pas de numéro de commande imprimé sur la carte</td></tr>
+  <tr><td>Confirm Production file</td><td>Yes</td><td>Vous validez les fichiers de production avant fabrication</td></tr>
+</table>
+
+<h3>4.3 Activer l'assemblage</h3>
+<ol class="etapes">
+  <li>Plus bas sur la même page, activer <em>PCB Assembly</em>.</li>
+  <li>Régler :</li>
+</ol>
+<table>
+  <tr><th style="width:32%">Option du site</th><th style="width:28%">Valeur à choisir</th><th>Pourquoi</th></tr>
+  <tr><td>PCBA Type</td><td><strong>Standard</strong></td><td>Seule formule qui assemble les deux faces</td></tr>
+  <tr><td>Assembly Side</td><td><strong>Both Sides</strong></td><td>Composants sur les deux faces</td></tr>
+  <tr><td>PCBA Qty</td><td>5</td><td>Deux au minimum</td></tr>
+  <tr><td>Edge Rails / Fiducials</td><td>Added by JLCPCB</td><td>Carte trop petite pour la machine : JLCPCB ajoute deux rails</td></tr>
+  <tr><td>Confirm Parts Placement</td><td><strong>Yes</strong></td><td>Un technicien vérifie l'orientation de chaque pièce</td></tr>
+</table>
+<ol class="etapes" start="3">
+  <li><em>Next</em>, puis déposer <code>nomenclature-jlcpcb.csv</code> comme <em>BOM</em> et
+    <code>placement-jlcpcb.csv</code> comme <em>CPL</em>. Si le site demande à quoi correspondent les colonnes :
+    <em>Comment</em>, <em>Designator</em>, <em>Footprint</em>, <em>LCSC Part #</em>.</li>
+  <li>Vérifier la liste : <strong>55 lignes</strong>, toutes avec une pièce choisie, aucune en manque
+    (<em>shortfall</em>). Le site signale des repères sans pièce (TP…, J7) : c'est normal, ce sont des pastilles nues.</li>
+  <li>Ouvrir l'aperçu du placement : sur chaque face, le repère du point 1 de chaque circuit intégré doit tomber sur
+    le petit point blanc de la sérigraphie. Ne rien corriger vous-même : le technicien de l'option
+    <em>Confirm Parts Placement</em> s'en charge et vous écrit s'il a un doute.</li>
+  <li>Coller la remarque ci-dessous dans le champ de commentaire, en anglais, telle quelle :</li>
+</ol>
+<pre>Edge rails on the LEFT and RIGHT sides only: SW1 overhangs the bottom board edge by 0.3 mm.
+Controlled impedance: 50 ohm coplanar waveguide on L1 (0.186 mm track, 0.15 mm gap), referenced to L2,
+stackup JLC061211-3313 (1 oz inner copper).
+Via-in-pad: epoxy filled and capped.
+Bottom side rotations in the CPL follow the JLCPCB convention (180 deg minus the KiCad angle).
+Please check pin 1 of every IC against its silkscreen dot, on both sides.
+Test points (TP*) and J7 (Tag-Connect pads) are bare pads: nothing to place.</pre>
+<ol class="etapes" start="7">
+  <li>Ajouter au panier, choisir le transport (DHL Express recommandé vers le Burkina Faso), payer.</li>
+  <li>JLCPCB examine les fichiers en quelques heures. Répondre à chaque e-mail le jour même : une question sans
+    réponse bloque la production. Avec <em>Confirm Production file</em>, vérifier dans le fichier proposé qu'il y a
+    6 couches et que les rails sont à gauche et à droite.</li>
+</ol>
+<div class="encadre attention">
+  <div class="titre-encadre">Le point à ne pas laisser passer : les rails</div>
+  <p>Le bouton SOS dépasse du bord inférieur de la carte. Un rail posé sur ce bord gênerait le bouton. La remarque
+    demande donc les rails sur les bords gauche et droit uniquement ; vérifiez-le sur le fichier de production.</p>
+</div>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="page">
+<h2>5. Coût, délai, stock</h2>
+<h3>5.1 Estimation pour 5 cartes</h3>
+<table>
+  <tr><th style="width:52%">Poste</th><th style="width:20%">Montant</th><th>Remarque</th></tr>
+  <tr><td>Composants (55 références, pertes machine comprises)</td><td>≈ 250 $</td><td>Prix JLCPCB du 25/10/2026 (<code>outils/stock_jlc.py</code>)</td></tr>
+  <tr><td>Circuit imprimé 6 couches, ENIG, impédance, cuivre interne de 1 oz, vias bouchés</td><td>50 à 100 $</td><td>Selon les promotions du moment</td></tr>
+  <tr><td>Mise en route de l'assemblage double face</td><td>≈ 50 $</td><td>Forfait</td></tr>
+  <tr><td>Pochoirs (deux faces)</td><td>≈ 16 $</td><td>Forfait</td></tr>
+  <tr><td>Chargement des 55 références sur la machine</td><td>≈ 85 $</td><td>≈ 1,5 $ par référence</td></tr>
+  <tr><td>Radiographie des soudures cachées</td><td>40 à 90 $</td><td>Une douzaine de pièces par carte</td></tr>
+  <tr><td>Soudures et contrôle des pièces</td><td>≈ 10 $</td><td>Au point de soudure</td></tr>
+  <tr><td>Transport DHL vers Ouagadougou</td><td>35 à 70 $</td><td>Selon le poids et le moment</td></tr>
+  <tr><th>Total indicatif</th><th>560 à 720 $</th><th>Hors droits et taxes à l'importation</th></tr>
+</table>
+<p class="nb">Ces montants viennent des grilles publiées par JLCPCB et des prix de ses composants à la date du guide.
+  Seul le devis affiché avant le paiement fait foi.</p>
+<div class="encadre info">
+  <div class="titre-encadre">Pour réduire la facture</div>
+  <p>Assembler 2 cartes au lieu de 5 ramène le total vers 390 à 500 $ : les forfaits restent, les composants
+    baissent de moitié environ. Commander 5 circuits imprimés et n'en faire assembler que 2 est possible.</p>
+</div>
+
+<h3>5.2 Délai</h3>
+<table>
+  <tr><th style="width:52%">Étape</th><th>Durée habituelle</th></tr>
+  <tr><td>Examen des fichiers, questions éventuelles</td><td>quelques heures à 1 jour</td></tr>
+  <tr><td>Fabrication du circuit 6 couches</td><td>5 à 7 jours ouvrés</td></tr>
+  <tr><td>Assemblage double face, radiographie</td><td>3 à 5 jours ouvrés</td></tr>
+  <tr><td>Transport DHL jusqu'à Ouagadougou</td><td>4 à 8 jours</td></tr>
+  <tr><td>Dédouanement</td><td>variable</td></tr>
+</table>
+
+<h3>5.3 Stock : le microcontrôleur à réserver</h3>
+<p>Au 25/10/2026, toutes les références sont en stock pour 5 cartes, mais le STM32U585CIT6 n'en compte que 6. Avant
+  de commander :</p>
+<ul>
+  <li>relancer <code>python outils/stock_jlc.py 5</code>, qui signale toute ligne en stock insuffisant ;</li>
+  <li>si une pièce manque, la réserver dans votre bibliothèque personnelle JLCPCB (<em>Parts Manager</em>, achat de
+    pièces) ou passer par l'achat externe (<em>Global Sourcing</em>) ; n'acceptez jamais une substitution
+    automatique d'un circuit intégré ;</li>
+  <li>pour un condensateur ou une résistance seulement, un équivalent de même valeur, même boîtier, même tension et
+    même tolérance convient.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="page">
+<h2>6. Matériel à acheter à côté</h2>
+<p>À commander pendant la fabrication des cartes, chez un distributeur (Mouser, DigiKey, LCSC, ou Electro Lab à
+  Ouagadougou pour l'outillage courant).</p>
+<table>
+  <tr><th style="width:24%">Article</th><th style="width:40%">Caractéristiques</th><th style="width:8%">Qté</th><th>Usage</th></tr>
+  <tr><td>Programmateur</td><td>ST <strong>STLINK-V3MINIE</strong> (≈ 12 $)</td><td>1</td><td>Programmation et mise au point</td></tr>
+  <tr><td>Câble de programmation</td><td>Tag-Connect <strong>TC2030-CTX-NL-STDC14</strong> (≈ 43 $) ; pince de maintien
+      TC2030-CLIP conseillée</td><td>1</td><td>Relie le programmateur aux pastilles J7, sans connecteur soudé</td></tr>
+  <tr><td>Alimentation de laboratoire</td><td>0 à 30 V, 0 à 3 A, <strong>limitation de courant réglable</strong></td><td>1</td><td>Premières mises sous tension</td></tr>
+  <tr><td>Multimètre</td><td>Tension, résistance, continuité</td><td>1</td><td>Contrôles</td></tr>
+  <tr><td>Batterie</td><td>Li-Po 603035, 3,7 V, 600 à 650 mAh, PCM ≥ 3 A, 3 fils dont NTC 10 kΩ B3435, UN38.3</td><td>6</td><td>Une par carte et une de réserve</td></tr>
+  <tr><td>Antenne LTE</td><td>Antenne souple (FPC) multibande 698 à 2 700 MHz, câble de 50 à 100 mm avec prise
+      U.FL (par exemple Molex 146153-0100)</td><td>5</td><td>Liaison cellulaire, sur J3</td></tr>
+  <tr><td>Antenne GNSS active</td><td>L1 1 575 MHz, amplificateur intégré alimenté sous 3 V (plage 2,7 à 3,6 V),
+      câble avec prise U.FL</td><td>5</td><td>Position, sur J4</td></tr>
+  <tr><td>Buzzer</td><td>Transducteur piézo <strong>passif</strong> (sans oscillateur), Ø 12 à 20 mm</td><td>5</td><td>Alarme sonore</td></tr>
+  <tr><td>Vibreur</td><td>Moteur à balourd (ERM) en pastille Ø 10 mm, 3 V, 80 mA au plus</td><td>5</td><td>Alerte par vibration</td></tr>
+  <tr><td>Carte SIM</td><td>Nano-SIM avec forfait données (Orange, Moov ou Telecel), code PIN désactivé</td><td>2 à 3</td><td>Essais réseau</td></tr>
+  <tr><td>Soudure</td><td>Fer à panne fine, étain fin avec flux, flux en stylo, tresse, fil souple AWG 28 à 30,
+      gaine thermorétractable, loupe ou microscope</td><td>—</td><td>Câblage des éléments externes</td></tr>
+</table>
+<div class="encadre info">
+  <div class="titre-encadre">Pourquoi une alimentation de laboratoire</div>
+  <p>Elle limite le courant : si une carte a un défaut, l'alimentation plafonne le courant au lieu de laisser brûler
+    une piste ou un composant. Ne mettez jamais une carte neuve sous tension directement sur une batterie.</p>
+</div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section class="page">
+<h2>7. Contrôle à la réception</h2>
+<p>Les plans ci-dessous situent tout ce qu'on soude ou mesure. La face inférieure est dessinée <strong>vue de
+  dessous</strong>, telle que vous la voyez en la retournant.</p>
+<div class="legende"><span class="c-cablage">pastille à câbler</span><span class="c-mesure">point de mesure</span>
+  <span class="c-connecteur">connecteur ou repère</span></div>
+<figure><img src="plan-dessous.svg" alt="Plan de la face inférieure"><figcaption>Face inférieure, vue de dessous
+  (côté batterie) : pastilles de câblage, points de mesure et pastilles de programmation J7.</figcaption></figure>
+<figure><img src="plan-dessus.svg" alt="Plan de la face supérieure"><figcaption>Face supérieure, vue de dessus :
+  module, microcontrôleur, connecteurs d'antenne, porte-SIM et bouton SOS.</figcaption></figure>
+
+<h3>7.1 Contrôle visuel, à la loupe</h3>
+<ul>
+  <li class="case">Aucun pont de soudure entre les pattes du microcontrôleur U1 (pas de 0,5 mm) ni autour du module U2.</li>
+  <li class="case">Toutes les pièces présentes : comparer avec <code>montage-face-superieure.pdf</code> et
+    <code>montage-face-inferieure.pdf</code>.</li>
+  <li class="case">Point 1 de chaque circuit intégré sur son point de sérigraphie, diodes dans le bon sens.</li>
+  <li class="case">Pas de pièce décollée, pas de bille d'étain libre.</li>
+</ul>
+<h3>7.2 Contrôle sans alimentation, au multimètre</h3>
+<p>En mode résistance, pointe noire sur <strong>TP7 (GND)</strong>, mesurer chaque rail :</p>
+<table class="entier">
+  <tr><th style="width:28%">Point</th><th style="width:22%">Rail</th><th>Attendu</th></tr>
+  <tr><td>TP3</td><td>VBAT</td><td rowspan="5">Plus de 100 Ω, qui monte en quelques secondes (les condensateurs se
+    chargent). <strong>Moins de 10 Ω : court-circuit, ne pas alimenter la carte.</strong></td></tr>
+  <tr><td>TP4</td><td>VSYS</td></tr>
+  <tr><td>TP5</td><td>3V3</td></tr>
+  <tr><td>TP6</td><td>VBAT_MODEM</td></tr>
+  <tr><td>TP16</td><td>1V8 du module</td></tr>
+</table>
+</section>
+
+<!-- ============================================================ 8 -->
+<section class="page">
+<h2>8. Première mise sous tension, sans batterie</h2>
+<ol class="etapes">
+  <li>Régler l'alimentation de laboratoire à <strong>5,0 V</strong> et limiter le courant à <strong>100 mA</strong>,
+    sortie coupée.</li>
+  <li>Relier le + à la pastille <strong>+5V</strong> et le − à la pastille <strong>GND</strong> de la face inférieure
+    (entrée de charge). Pinces fines ou fils soudés provisoirement.</li>
+  <li>Mettre sous tension et lire le courant : <strong>moins de 30 mA</strong>. Si l'alimentation bute sur 100 mA,
+    couper aussitôt et reprendre le contrôle visuel.</li>
+  <li>Mesurer, pointe noire sur TP7 :</li>
+</ol>
+<table>
+  <tr><th style="width:22%">Point</th><th style="width:26%">Attendu</th><th>Signification</th></tr>
+  <tr><td>TP4 (VSYS)</td><td>4,4 à 4,6 V</td><td>Le chargeur alimente le système à 4,5 V (réglage d'usine)</td></tr>
+  <tr><td>TP5 (3V3)</td><td>3,25 à 3,35 V</td><td>Le régulateur fournit la logique</td></tr>
+  <tr><td>TP6 (VBAT_MODEM)</td><td>0 V</td><td>Le modem reste coupé tant que le programme ne l'allume pas</td></tr>
+  <tr><td>TP16 (1V8)</td><td>0 V</td><td>Le module est éteint</td></tr>
+  <tr><td>TP3 (VBAT)</td><td>peut varier</td><td>Sans batterie, le chargeur cherche une cellule : normal</td></tr>
+</table>
+<div class="encadre ok">
+  <div class="titre-encadre">Si tout est conforme</div>
+  <p>Le bloc d'alimentation fonctionne. Notez les valeurs pour chaque carte : elles serviront de référence.</p>
+</div>
+<div class="encadre attention">
+  <div class="titre-encadre">Si une valeur s'écarte</div>
+  <ul>
+    <li>TP4 à 0 V : regarder la diode D15 et le fusible F1 près de l'entrée de charge.</li>
+    <li>TP5 à 0 V ou instable : regarder le régulateur U5 et son inductance L1.</li>
+    <li>TP6 différent de 0 V : l'interrupteur du modem U6 conduit sans commande ; ne pas aller plus loin.</li>
+  </ul>
+</div>
+</section>
+
+<!-- ============================================================ 9 -->
+<section>
+<h2>9. Brancher la batterie</h2>
+<div class="encadre danger">
+  <div class="titre-encadre">Batterie au lithium : règles de sécurité</div>
+  <ul>
+    <li>Ne jamais mettre en contact les fils + et − : couper et souder <strong>un fil à la fois</strong>, extrémités
+      isolées.</li>
+    <li>Ne pas percer, plier ni chauffer la cellule ; souder vite, sur les fils seulement, jamais sur la cellule.</li>
+    <li>Pendant les premières charges, rester présent, poser la carte sur une surface non inflammable.</li>
+    <li>Une cellule gonflée, chaude ou qui sent le solvant se met à l'écart, dehors, et ne se réutilise pas.</li>
+  </ul>
+</div>
+<ol class="etapes">
+  <li>Mesurer la batterie au multimètre : 3,6 à 4,2 V, et repérer ses fils (rouge +, noir −, troisième fil NTC).</li>
+  <li>Souder, dans l'ordre : le fil NTC sur <strong>NTC</strong>, le fil − sur <strong>BAT−</strong>, puis le fil +
+    sur <strong>BAT+</strong> (face inférieure, coin inférieur droit en vue de dessous).</li>
+  <li>Sans alimentation externe, mesurer : TP3 (VBAT) et TP4 (VSYS) à la tension de la batterie, TP5 (3V3) à
+    3,3 V. Le chargeur démarre seul sur la batterie dès qu'elle dépasse 3,2 V environ.</li>
+  <li>Rebrancher 5 V sur +5V / GND : la charge démarre. Sans programme, le chargeur charge à <strong>10 mA</strong>
+    (réglage d'usine, sans danger) ; le courant de 300 mA sera réglé par le programme.</li>
+</ol>
+<p>La thermistance NTC fait suspendre la charge hors de la plage de température sûre. Sans elle, le chargeur refuse
+  de charger : c'est voulu.</p>
+</section>
+
+<!-- ============================================================ 10 -->
+<section class="page">
+<h2>10. Programmation</h2>
+<div class="encadre info">
+  <div class="titre-encadre">Où en est le programme</div>
+  <p>Le cœur du logiciel du bracelet (règles d'alerte, zones, file des positions) est écrit et essayé sur ordinateur.
+    Sa partie propre au matériel, le « port » STM32U585 (pilotes, FreeRTOS, amorce sécurisée), s'écrit sur ces
+    cartes : c'est la prochaine étape de développement. Le premier programme chargé est un <strong>programme
+    d'essai de la carte</strong> qui allume le modem, lit les capteurs et pilote LED, buzzer et vibreur.</p>
+</div>
+<ol class="etapes">
+  <li>Installer <strong>STM32CubeProgrammer</strong> (gratuit, site de ST) sur l'ordinateur.</li>
+  <li>Brancher le câble Tag-Connect sur le STLINK-V3MINIE (connecteur 14 points), puis poser la tête du câble sur
+    les pastilles <strong>J7</strong> de la face inférieure : ses trois picots entrent dans les trois trous, dans un
+    seul sens possible. Tenir la tête à plat, ou la fixer avec la pince TC2030-CLIP.</li>
+  <li>La carte doit être alimentée (5 V sur +5V / GND, ou batterie) : le programmateur ne l'alimente pas.</li>
+  <li>Dans STM32CubeProgrammer : interface <em>ST-LINK</em>, mode <em>Under reset</em>, <em>Connect</em>. Le
+    logiciel doit reconnaître un <strong>STM32U575/585</strong>.</li>
+  <li>Charger le fichier du programme (<code>.elf</code> ou <code>.hex</code>) avec <em>Download</em>, puis
+    <em>Disconnect</em> : le programme démarre.</li>
+</ol>
+<p class="nb">En cas d'échec de connexion : vérifier l'alimentation (TP5 à 3,3 V), que la tête est bien à plat sur
+  J7, et essayer à vitesse réduite (<em>Frequency</em> 1 000 kHz).</p>
+</section>
+
+<!-- ============================================================ 11 -->
+<section>
+<h2>11. Câblage des éléments externes</h2>
+<p>Toutes les pastilles de câblage sont sur la <strong>face inférieure</strong>, marquées en sérigraphie. Utiliser du
+  fil souple fin, isoler chaque soudure par une gaine.</p>
+<table>
+  <tr><th style="width:22%">Élément</th><th style="width:24%">Pastilles</th><th>Remarque</th></tr>
+  <tr><td>Batterie</td><td>BAT+, BAT−, NTC</td><td>Section 9 ; un fil à la fois</td></tr>
+  <tr><td>Connecteur de charge</td><td>+5V, GND</td><td>Vers le connecteur magnétique du boîtier ; protégé contre
+      l'inversion et les surtensions jusqu'à 12 V</td></tr>
+  <tr><td>Buzzer piézo</td><td>BZ+, BZ−</td><td>Le sens n'importe pas pour un piézo passif</td></tr>
+  <tr><td>Vibreur</td><td>M+ (fil rouge), M− (fil noir)</td><td>Inverser les fils change seulement le sens de rotation</td></tr>
+  <tr><td>Boucle de la sangle</td><td>LP, LP−</td><td>Les deux extrémités du fil conducteur de la sangle ; boucle
+      ouverte = alerte d'arrachement. Pour les essais : un simple fil entre LP et LP−</td></tr>
+  <tr><td>Électrode de peau</td><td>EL</td><td>Plaque métallique au dos du boîtier ; détecte le port du bracelet</td></tr>
+</table>
+<table>
+  <tr><th style="width:22%">Connecteur</th><th style="width:24%">Face</th><th>Remarque</th></tr>
+  <tr><td>J3 · antenne LTE</td><td>supérieure</td><td>Clipser la prise U.FL bien d'aplomb ; ne jamais émettre sans antenne</td></tr>
+  <tr><td>J4 · antenne GNSS</td><td>supérieure</td><td>Antenne active, alimentée sous 3 V par le module à travers J4</td></tr>
+  <tr><td>J5 · nano-SIM</td><td>supérieure</td><td>Puce vers la carte, coin coupé selon le dessin du support</td></tr>
+  <tr><td>J6</td><td>supérieure</td><td>Commutateur de mesure conduite pour les essais radio en laboratoire : ne rien y brancher</td></tr>
+</table>
+</section>
+
+<!-- ============================================================ 12 -->
+<section class="page">
+<h2>12. Essais de fonctionnement</h2>
+<p>Avec le programme d'essai, dans l'ordre :</p>
+<table>
+  <tr><th style="width:26%">Essai</th><th style="width:40%">Méthode</th><th>Attendu</th></tr>
+  <tr><td>LED, buzzer, vibreur</td><td>Commande du programme d'essai</td><td>Couleurs rouge, verte, bleue ; son ; vibration</td></tr>
+  <tr><td>Bouton SOS</td><td>Appui long de 3 s</td><td>Le programme signale l'appui</td></tr>
+  <tr><td>Allumage du modem</td><td>Le programme ferme l'interrupteur du modem et appuie sur PWRKEY</td><td>TP6 ≈ tension batterie, TP16 = 1,8 V</td></tr>
+  <tr><td>Réseau</td><td>SIM insérée, antenne LTE en place</td><td>Inscription sur le réseau en moins d'une minute</td></tr>
+  <tr><td>GNSS</td><td>À l'extérieur, ciel dégagé</td><td>Première position en quelques minutes</td></tr>
+  <tr><td>Accéléromètre, jauge, mémoire</td><td>Lecture par le programme</td><td>Valeurs cohérentes, aucune erreur de bus</td></tr>
+  <tr><td>Charge</td><td>5 V sur +5V / GND, batterie à mi-charge</td><td>Environ 300 mA avec le programme ; arrêt à 4,2 V</td></tr>
+  <tr><td>Consommation en veille</td><td>Analyseur de consommation sur BAT+ (pastille prévue)</td><td>À comparer au budget d'énergie du document de conception</td></tr>
+</table>
+<p class="nb">Le module peut aussi être piloté directement par commandes AT depuis un ordinateur : fils USB sur
+  TP11 (VBUS), TP12 (D+), TP13 (D−) et GND, une fois le modem allumé par le programme. La mise à jour du
+  logiciel du module passe par ce même accès, avec TP10 (USB_BOOT).</p>
+</section>
+
+<!-- ============================================================ 13 -->
+<section>
+<h2>13. Boîtier et sécurité</h2>
+<h3>13.1 Empilement dans le boîtier V1</h3>
+<table>
+  <tr><th style="width:55%">Couche, du fond vers le couvercle</th><th>Épaisseur</th></tr>
+  <tr><td>Batterie 603035 et marge de gonflement en fin de vie (≈ 8 %)</td><td>6,5 mm</td></tr>
+  <tr><td>Mousse isolante et composants de la face inférieure (1,35 mm au plus)</td><td>1,6 mm</td></tr>
+  <tr><td>Carte (1,2 mm ± 10 %)</td><td>1,3 mm</td></tr>
+  <tr><td>Face supérieure : module (2,4 mm), prises U.FL connectées (2,5 mm au plus)</td><td>2,6 mm</td></tr>
+  <tr><td>Jeu et antenne GNSS active posée au-dessus du module</td><td>≈ 5,5 mm</td></tr>
+  <tr><th>Hauteur intérieure</th><th>≈ 17,5 mm</th></tr>
+</table>
+<p>Cote intérieure : 43 × 38 mm (carte de 41 × 36 mm et 1 mm de jeu par côté). Prévoir le passage du bouton SOS dans
+  la paroi du bord inférieur, et celui des câbles d'antenne. Le modèle 3D de la carte
+  (<code>carte-fasoguardian-v1.step</code>) sert de référence pour le dessin du boîtier.</p>
+<h3>13.2 Sécurité</h3>
+<ul>
+  <li>Ne jamais faire émettre le modem sans antenne branchée sur J3.</li>
+  <li>Isoler la batterie de la carte par la mousse ; aucune pièce métallique libre dans le boîtier.</li>
+  <li>Aucun essai porté par un enfant avant d'avoir mesuré l'échauffement du boîtier en charge et en émission.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 14 -->
+<section>
+<h2>14. Où trouver quoi</h2>
+<table>
+  <tr><th style="width:44%">Dans le dépôt</th><th>Contenu</th></tr>
+  <tr><td><code>materiel/carte-v1/fabrication/</code></td><td>Fichiers à envoyer à JLCPCB, <code>COMMANDE.md</code>, plans de montage, schéma en PDF, modèle 3D, rendus</td></tr>
+  <tr><td><code>materiel/carte-v1/guide/</code></td><td>Ce guide et ses plans</td></tr>
+  <tr><td><code>materiel/carte-v1/CAHIER.md</code></td><td>Cahier de réalisation : contraintes, écarts justifiés, décisions</td></tr>
+  <tr><td><code>docs/adr/0042-carte-v1-du-bracelet.md</code></td><td>Décisions d'architecture de la carte</td></tr>
+  <tr><td><code>materiel/carte-v1/conception/carte.py</code></td><td>Source unique : composants, valeurs, liaisons</td></tr>
+  <tr><td><code>materiel/carte-v1/kicad/</code></td><td>Projet KiCad (schéma, carte) et rapports de contrôle</td></tr>
+  <tr><td><code>materiel/carte-v1/outils/stock_jlc.py</code></td><td>Contrôle du stock et du coût des composants avant commande</td></tr>
+</table>
+<div class="encadre info">
+  <div class="titre-encadre">Après les essais</div>
+  <p>Les constats sur les cartes réelles (mesures, défauts, accord des antennes) alimentent la version suivante :
+    réseau d'adaptation des antennes réglé par mesure, valeurs ajustées dans <code>carte.py</code>, puis la chaîne de
+    conception rejouée pour produire une V1.1 ou le prototype portable.</p>
+</div>
+</section>
+
+</body>
+</html>

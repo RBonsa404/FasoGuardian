@@ -22,6 +22,9 @@ from carte import COMPOSANTS  # noqa: E402
 from generer_schema import FEUILLE_UUID, NOM, RACINE, symbole_uuid  # noqa: E402
 
 LARGEUR, HAUTEUR, RAYON = 41.0, 36.0, 1.0
+# Lignes d'antenne : 50 Ω en guide coplanaire (fente de 0,15 mm) sur le préimprégné 3313 de 0,092 mm de l'empilement
+# JLC061211-3313, à cuivre interne de 1 oz (outils/impedance.py).
+PISTE_RF = 0.186
 X0, Y0 = 100.0, 100.0
 ECART = 0.5  # écart entre pièces rangées : la place d'un via ou de deux pistes pour le routage
 BORD = 0.6  # distance des pièces rangées au bord de la carte (mm)
@@ -47,7 +50,7 @@ FIXES = {
     'U2': (27.3, 18.0, 0, 'F'),       # module : plot RF (60) vers le bord supérieur, GNSS (90) vers le bas
     'J5': (6.6, 7.0, 0, 'F'),         # porte-nano-SIM
     'U1': (7.0, 22.4, 0, 'F'),        # microcontrôleur
-    'J7': (7.0, 15.4, 0, 'B'),        # Tag-Connect : ses trous tombent entre le porte-SIM et le microcontrôleur
+    'J7': (7.0, 15.4, 180, 'B'),        # Tag-Connect : ses trous tombent entre le porte-SIM et le microcontrôleur
     'J4': (8.6, 33.6, 180, 'F'),      # U.FL GNSS, plot signal vers le haut (loin du bord)
     'J3': (16.6, 2.4, 0, 'F'),        # U.FL LTE
     'J6': (20.6, 2.4, 180, 'F'),      # commutateur de mesure conduite, entrée côté module
@@ -55,7 +58,53 @@ FIXES = {
     'C11': (37.6, 2.4, 0, 'F'),
     'SW1': (36.5, 34.0, 0, 'F'),      # bouton SOS latéral : poussoir au bord inférieur, sous la membrane du boîtier
     'D10': (25.0, 33.5, 0, 'F'),      # LED RGB (guide de lumière du boîtier)
+    # Chemin des pointes de courant du modem : R8.2 en face des entrées VIN de U6 (broches 1 et 2), R8.1 au-dessus
+    # de la languette du plan VBAT (pré-routage de chemin_du_modem, ADR 0042 point 10).
+    'R8': (21.625, 6.575, 0, 'B'),
+    'U6': (25.882, 6.49, 0, 'B'),
+    # Pastilles des fils de la batterie, de la charge et du buzzer, par paires le long du bord inférieur, et protection
+    # de l'entrée de charge à côté (les pastilles du vibreur, de la boucle et de l'électrode sont rangées sous le module).
+    'TP8': (2.395, 31.395, 0, 'B'), 'TP9': (6.495, 31.395, 0, 'B'), 'TP17': (10.095, 30.895, 0, 'B'),
+    'TP1': (16.395, 32.795, 0, 'B'), 'TP2': (20.495, 32.795, 0, 'B'),
+    'D15': (25.195, 32.195, 0, 'B'), 'D1': (30.345, 32.195, 0, 'B'),
+    'TP30': (34.395, 32.295, 0, 'B'), 'TP31': (37.495, 32.295, 0, 'B'),
+    # Pastilles du vibreur, l'une au-dessus de l'autre au bord droit.
+    'TP32': (39.0, 20.4, 0, 'B'), 'TP33': (39.0, 23.0, 0, 'B'),
 }
+# Empreintes posées par leur origine plutôt que par le centre de leur encombrement.
+PAR_ORIGINE = ('U2', 'U1', 'J7', 'SW1', 'R8', 'U6')
+
+# Éléments posés au pied de la broche qu'ils servent, avant le rangement par zones : condensateur → (circuit, broche).
+# Dans l'ordre de priorité (le plus exigeant d'abord pour chaque circuit). Sur la face de leur zone si la place y est,
+# sinon sur l'autre face, sous la broche.
+AU_PIED = {
+    # Microcontrôleur (face supérieure) : VCAP, puis une capacité par broche VDD, VDDA, VBAT, NRST, quartz.
+    'C47': ('U1', '22'), 'C40': ('U1', '24'), 'C41': ('U1', '36'), 'C42': ('U1', '48'), 'C44': ('U1', '9'),
+    'C45': ('U1', '9'), 'C46': ('U1', '1'), 'C43': ('U1', '48'), 'C48': ('U1', '7'), 'C64': ('U1', '25'),
+    'C65': ('U1', '10'), 'Y1': ('U1', '3'), 'C49': ('Y1', '1'), 'C50': ('Y1', '2'),
+    # Module : 10 pF et 33 pF au ras des plots VBAT (SIMCom § 3.1.1), puis 100 nF, 1 µF, TVS ; 1,8 V.
+    'C15': ('U2', '56'), 'C14': ('U2', '56'), 'C13': ('U2', '55'), 'C12': ('U2', '57'), 'D2': ('U2', '55'),
+    'C17': ('U2', '15'), 'C16': ('U2', '97'),
+    # Interrupteur du modem, chargeur, jauge.
+    'C7': ('U6', '1'), 'C6': ('U6', '6'),
+    'C2': ('U4', 'B2'), 'C3': ('U4', 'C2'), 'C1': ('U4', 'A2'),
+    'C8': ('U7', '3'),
+    # Mémoire, capteurs, élément sécurisé, translateurs.
+    'C63': ('U9', '8'), 'C60': ('U3', '9'), 'C61': ('U3', '10'), 'C62': ('U8', '8'),
+    'C70': ('U10', '16'), 'C71': ('U10', '15'), 'C72': ('U11', '16'), 'C73': ('U11', '15'),
+}
+PAIRES = (('TP35', 'TP34'),)  # second fil → premier fil (boucle du bracelet)
+ECART_PIED = 0.15   # écart entre un élément posé au pied et ses voisins (encombrements déjà élargis de 0,2 mm)
+RAYON_PIED = 3.0    # distance maximale du plot de l'élément à la broche servie (mm)
+HALO = 1.2          # dégagement des circuits intégrés rangés, pour la place de leurs condensateurs (mm)
+def candidats(rayon: float, pas: float = 0.05) -> list[tuple[float, float, float]]:
+    n = int(rayon / pas)
+    return sorted(((i * pas) ** 2 + (j * pas) ** 2, i * pas, j * pas)
+                  for i in range(-n, n + 1) for j in range(-n, n + 1) if (i * pas) ** 2 + (j * pas) ** 2 <= rayon ** 2)
+
+
+CANDIDATS = candidats(RAYON_PIED)
+CANDIDATS_PAIRES = candidats(6.0, 0.1)  # second fil d'une paire : jusqu'à 6 mm du premier
 
 # Zones de rangement : (face, x1, y1, x2, y2, références dans l'ordre de rangement).
 ZONES = [
@@ -68,10 +117,9 @@ ZONES = [
     ('B', 14.6, 5.4, 27.4, 18.0, ['F1', 'C1', 'R8', 'U4', 'C2', 'C3', 'R2', 'R4', 'R5', 'U7', 'C8', 'U6', 'C6', 'R6', 'C7']),
     ('B', 27.6, 5.4, 40.4, 18.0, ['Q1', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15', 'R16', 'R17', 'C16', 'C17', 'R7', 'RT1', 'TP7', 'TP3', 'TP4', 'TP5', 'TP6', 'TP10', 'TP11',
                                    'TP12', 'TP13', 'TP14', 'TP15', 'TP16']),
-    ('B', 14.6, 18.2, 27.4, 31.0, ['U10', 'C70', 'C71', 'U11', 'C72', 'C73', 'U3', 'C60', 'C61', 'U8', 'C62',
-                                    'TP33', 'TP34', 'TP35']),
+    ('B', 14.6, 18.2, 27.4, 31.0, ['U10', 'C70', 'C71', 'U11', 'C72', 'C73', 'U3', 'C60', 'C61', 'U8', 'C62', 'TP34']),
     ('B', 27.6, 18.2, 40.4, 31.0, ['Q3', 'Q4', 'R80', 'R81', 'R82', 'R83', 'R84', 'R85', 'R86', 'R87', 'Q5', 'R88', 'R89',
-                                   'D11', 'D12', 'R91', 'R92', 'C65', 'D13', 'R93', 'C64', 'D14', 'TP32']),
+                                   'D11', 'D12', 'R91', 'R92', 'C65', 'D13', 'R93', 'C64', 'D14']),
     ('B', 14.6, 31.0, 40.4, 35.6, ['TP1', 'TP2', 'D1', 'D15', 'TP30', 'TP31']),
 ]
 
@@ -149,10 +197,13 @@ def enveloppe(empreinte: pcbnew.FOOTPRINT) -> tuple[float, float, float, float]:
 
 
 def poser(empreinte: pcbnew.FOOTPRINT, x: float, y: float, rotation: float, face: str) -> None:
+    """Pose l'empreinte en (x, y) sur la face voulue : elle est d'abord mise sur sa face (retournée au besoin), puis
+    orientée de `rotation` (angle de KiCad, vu de dessus). Le résultat ne dépend pas de la pose précédente."""
+    voulue = pcbnew.B_Cu if face == 'B' else pcbnew.F_Cu
+    if empreinte.GetLayer() != voulue:
+        empreinte.Flip(empreinte.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
     empreinte.SetOrientationDegrees(rotation)
     empreinte.SetPosition(point(x, y))
-    if face == 'B' and empreinte.GetLayer() == pcbnew.F_Cu:
-        empreinte.Flip(empreinte.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
 
 
 def centrer(empreinte: pcbnew.FOOTPRINT, x: float, y: float) -> None:
@@ -176,6 +227,10 @@ class Obstacles:
                         pcbnew.ToMM(b.GetRight()) - X0 + 0.4, pcbnew.ToMM(b.GetBottom()) - Y0 + 0.4)
                 self.faces['F' if face == 'B' else 'B'].append(trou)
 
+    def reserver(self, face: str, boite: tuple[float, float, float, float]) -> None:
+        """Réserve une surface sans empreinte (couloir d'une piste pré-routée)."""
+        self.faces[face].append(boite)
+
     def libre(self, face: str, boite: tuple[float, float, float, float], ecart: float) -> bool:
         x1, y1, x2, y2 = boite
         return all(x2 + ecart <= a1 or x1 - ecart >= a2 or y2 + ecart <= b1 or y1 - ecart >= b2
@@ -183,10 +238,10 @@ class Obstacles:
 
 
 def ranger(empreintes: list[pcbnew.FOOTPRINT], face: str, x1: float, y1: float, x2: float, y2: float,
-           obstacles: Obstacles) -> list[str]:
+           obstacles: Obstacles, ecart: float = ECART) -> list[str]:
     """Rangement « en bas à gauche d'abord » : chaque pièce, de la plus grande à la plus petite, prend la première
     place libre de la zone, dans l'orientation qui tient, sans toucher les pièces ni les trous déjà posés."""
-    ecart, pas = ECART, 0.1
+    pas = 0.1
     x1, y1 = max(x1, BORD), max(y1, BORD)
     x2, y2 = min(x2, LARGEUR - BORD), min(y2, HAUTEUR - BORD)
     hors = []
@@ -226,6 +281,64 @@ def ranger(empreintes: list[pcbnew.FOOTPRINT], face: str, x1: float, y1: float, 
 
 def plot(empreinte: pcbnew.FOOTPRINT, numero: str) -> pcbnew.PAD:
     return next(p for p in empreinte.Pads() if p.GetNumber() == numero)
+
+
+def au_pied(empreinte: pcbnew.FOOTPRINT, broche: pcbnew.PAD, face_preferee: str, obstacles: Obstacles,
+            numero: str | None = None, positions: list | None = None) -> bool:
+    """Pose l'élément pour que son plot du réseau de `broche` (ou son plot `numero`) en soit le plus près possible
+    (RAYON_PIED au plus) : sur la face préférée, ou sur l'autre face s'il y gagne plus de 0,3 mm. Rend False s'il n'y
+    a pas de place."""
+    reseau = broche.GetNetname()
+    tx, ty = xy(broche.GetPosition())
+    meilleur = None
+    for face in (face_preferee, 'B' if face_preferee == 'F' else 'F'):
+        malus = 0.0 if face == face_preferee else 0.3
+        # Seuls les obstacles du voisinage comptent (la recherche reste dans RAYON_PIED de la broche).
+        positions = positions or CANDIDATS
+        portee = positions[-1][0] ** 0.5 + 4.0
+        proches = [b for b in obstacles.faces[face]
+                   if b[0] < tx + portee and b[2] > tx - portee and b[1] < ty + portee and b[3] > ty - portee]
+        voisinage = Obstacles()
+        voisinage.faces[face] = proches
+        for rotation in (0, 90, 180, 270):
+            poser(empreinte, 0, 0, rotation, face)
+            pied = next((p for p in empreinte.Pads() if (p.GetNumber() == numero if numero else p.GetNetname() == reseau)), None)
+            if pied is None:
+                return False
+            px, py = xy(pied.GetPosition())
+            ex1, ey1, ex2, ey2 = enveloppe(empreinte)
+            for d2, dx, dy in positions:
+                score = d2 ** 0.5 + malus
+                if meilleur is not None and score >= meilleur[0]:
+                    break
+                cx, cy = tx + dx - px, ty + dy - py
+                boite = (ex1 + cx, ey1 + cy, ex2 + cx, ey2 + cy)
+                if boite[0] < BORD or boite[1] < BORD or boite[2] > LARGEUR - BORD or boite[3] > HAUTEUR - BORD:
+                    continue
+                if voisinage.libre(face, boite, ECART_PIED):
+                    meilleur = (score, face, rotation, cx, cy)
+                    break
+    if meilleur is None:
+        return False
+    _, face, rotation, cx, cy = meilleur
+    poser(empreinte, cx, cy, rotation, face)
+    obstacles.ajouter(empreinte, face)
+    return True
+
+
+def poser_au_pied(empreintes, refs, places: set, obstacles: Obstacles, faces: dict[str, str]) -> None:
+    """Pose au pied de leur broche les éléments de `refs` dont le circuit est déjà placé (jusqu'à stabilité : un
+    condensateur de charge peut servir le quartz qui vient d'être posé)."""
+    progres = True
+    while progres:
+        progres = False
+        for ref in refs:
+            if ref in places or ref not in AU_PIED or AU_PIED[ref][0] not in places:
+                continue
+            circuit, numero = AU_PIED[ref]
+            if au_pied(empreintes[ref], plot(empreintes[circuit], numero), faces[ref], obstacles):
+                places.add(ref)
+                progres = True
 
 
 def xy(position: pcbnew.VECTOR2I) -> tuple[float, float]:
@@ -276,7 +389,7 @@ def coudes(a: tuple[float, float], b: tuple[float, float], vertical_d_abord: boo
 def lignes_rf(carte, empreintes, reseaux, obstacles: 'Obstacles') -> dict[str, float]:
     """Lignes d'antenne de 50 Ω tracées droites le long du bord (SIMCom § 4.7 : 20 mm au plus, sans via), réseau
     d'adaptation aligné sur la ligne, éléments parallèles posés à cheval sur elle."""
-    largeur = 0.2
+    largeur = PISTE_RF
     e = empreintes
     # LTE : plot 60 du module, π (C20, R20, C21), ESD (D4), commutateur de mesure J6, U.FL J3.
     j6_entree = xy(plot(e['J6'], '1').GetPosition())
@@ -319,7 +432,7 @@ def bloc_regulateur(empreintes, obstacles: 'Obstacles', x: float, y: float) -> N
     """Régulateur 3,3 V posé en bloc (face inférieure) : inductance face aux broches LX1 (9) et LX2 (7), condensateurs
     au pied de VIN (10) et de VOUT (6). Le nœud de commutation reste de quelques millimètres (fiche TI, § 10)."""
     u5, l1, c4, c5 = (empreintes[r] for r in ('U5', 'L1', 'C4', 'C5'))
-    poser(u5, x, y, 0, 'B')
+    poser(u5, x, y, 180, 'B')
     lx1, lx2 = xy(plot(u5, '9').GetPosition()), xy(plot(u5, '7').GetPosition())
     cote = 1 if lx1[0] > x else -1
     for rotation in (90, 270):
@@ -327,55 +440,54 @@ def bloc_regulateur(empreintes, obstacles: 'Obstacles', x: float, y: float) -> N
         if (xy(plot(l1, '1').GetPosition())[1] - y) * (lx1[1] - y) > 0:
             break
     vin, vout = xy(plot(u5, '10').GetPosition()), xy(plot(u5, '6').GetPosition())
-    poser(c4, x - 0.2 * cote, y + (2.2 if vin[1] > y else -2.2), 0, 'B')
-    poser(c5, x - 0.2 * cote, y + (2.2 if vout[1] > y else -2.2), 0, 'B')
+    poser(c4, x - 0.2 * cote, y + (2.2 if vin[1] > y else -2.2), 180, 'B')
+    poser(c5, x - 0.2 * cote, y + (2.2 if vout[1] > y else -2.2), 180, 'B')
     for e in (u5, l1, c4, c5):
         obstacles.ajouter(e, 'B')
 
 
 def coutures(carte: pcbnew.BOARD, masse: pcbnew.NETINFO_ITEM) -> int:
-    """Vias de masse de part et d'autre des lignes RF (guide coplanaire), là où la place est libre."""
-    pistes = [s for s in carte.GetTracks() if s.GetClass() == 'PCB_TRACK' and s.GetNetname().startswith('RF_')]
-    plots = [p for f in carte.Footprints() for p in f.Pads()]
+    """Vias de masse du guide coplanaire (0,3/0,15 mm, verrouillés) : un dans chaque plot de masse des éléments
+    d'adaptation, des connecteurs U.FL et du commutateur de mesure, puis tous les 0,8 mm de part et d'autre de chaque
+    ligne, à 0,5 mm de son axe, là où la place est libre sur toutes les couches. Rend le nombre de vias posés."""
+    from relier_plans import CUIVRE, ISOLEMENT, libre, obstacles
+    elements = obstacles(carte, 'GND')
     poses: list[tuple[float, float]] = []
-    for s in pistes:
+
+    def poser_couture(x: float, y: float) -> None:
+        if not (BORD <= x <= LARGEUR - BORD and BORD <= y <= HAUTEUR - BORD):
+            return
+        if any((x - a) ** 2 + (y - b) ** 2 < 0.6 ** 2 for a, b in poses):
+            return
+        if not libre(pcbnew.SHAPE_CIRCLE(point(x, y), mm(0.15)), set(CUIVRE), elements, mm(ISOLEMENT)):
+            return
+        via = pcbnew.PCB_VIA(carte)
+        via.SetPosition(point(x, y))
+        via.SetWidth(mm(0.3))
+        via.SetDrill(mm(0.15))
+        via.SetNet(masse)
+        via.SetLocked(True)
+        carte.Add(via)
+        poses.append((x, y))
+
+    for ref in ('C20', 'C21', 'D4', 'J6', 'J3', 'C22', 'C23', 'D5', 'J4'):
+        empreinte = carte.FindFootprintByReference(ref)
+        for p in empreinte.Pads():
+            if p.GetNetname() == 'GND':
+                poser_couture(*xy(p.GetPosition()))
+    for s in carte.GetTracks():
+        if s.GetClass() != 'PCB_TRACK' or not s.GetNetname().startswith('RF_'):
+            continue
         (xa, ya), (xb, yb) = xy(s.GetStart()), xy(s.GetEnd())
         longueur = ((xa - xb) ** 2 + (ya - yb) ** 2) ** 0.5
-        if longueur < 0.5:
+        if longueur < 0.3:
             continue
         ux, uy = (xb - xa) / longueur, (yb - ya) / longueur
-        n = int(longueur // 1.0)
-        for k in range(1, n + 1):
-            cx, cy = xa + ux * k * longueur / (n + 1), ya + uy * k * longueur / (n + 1)
+        ecart = pcbnew.ToMM(s.GetWidth()) / 2 + 0.15 + 0.15 + 0.1  # bord de la piste, fente, rayon du via, marge
+        for k in range(int(longueur / 0.8) + 1):
+            cx, cy = xa + ux * min(k * 0.8, longueur), ya + uy * min(k * 0.8, longueur)
             for signe in (-1, 1):
-                vx, vy = cx - uy * 0.65 * signe, cy + ux * 0.65 * signe
-                if not (BORD <= vx <= LARGEUR - BORD and BORD <= vy <= HAUTEUR - BORD):
-                    continue
-                libre = all(abs(vx - px) > 0.55 or abs(vy - py) > 0.55 for px, py in poses)
-                for p in plots:
-                    if not libre:
-                        break
-                    b = p.GetBoundingBox()
-                    x1, y1 = pcbnew.ToMM(b.GetLeft()) - X0, pcbnew.ToMM(b.GetTop()) - Y0
-                    x2, y2 = pcbnew.ToMM(b.GetRight()) - X0, pcbnew.ToMM(b.GetBottom()) - Y0
-                    libre = not (x1 - 0.4 < vx < x2 + 0.4 and y1 - 0.4 < vy < y2 + 0.4)
-                for autre in pistes:
-                    if not libre:
-                        break
-                    (a1, b1), (a2, b2) = xy(autre.GetStart()), xy(autre.GetEnd())
-                    dx, dy = a2 - a1, b2 - b1
-                    l2 = dx * dx + dy * dy or 1e-9
-                    u = max(0.0, min(1.0, ((vx - a1) * dx + (vy - b1) * dy) / l2))
-                    libre = ((a1 + u * dx - vx) ** 2 + (b1 + u * dy - vy) ** 2) ** 0.5 > 0.5
-                if libre:
-                    via = pcbnew.PCB_VIA(carte)
-                    via.SetPosition(point(vx, vy))
-                    via.SetWidth(mm(0.4))
-                    via.SetDrill(mm(0.2))
-                    via.SetNet(masse)
-                    via.SetLocked(True)
-                    carte.Add(via)
-                    poses.append((vx, vy))
+                poser_couture(cx - uy * ecart * signe, cy + ux * ecart * signe)
     return len(poses)
 
 
@@ -433,7 +545,7 @@ def vias_dans_plot(carte: pcbnew.BOARD, plot: pcbnew.PAD, diametre: float, perca
 def chemin_du_modem(carte: pcbnew.BOARD, empreintes, reseaux) -> None:
     """Pré-routage verrouillé du courant fort du modem (pointes de 2 A en GSM) : batterie → plan VBAT d'In4 par vias
     dans les pastilles TP8 et R8.1, puis R8.2 → entrées VIN de l'interrupteur U6 par deux pistes de 0,4 mm. La broche 4
-    de U6 (VBIAS, quelques µA) et le condensateur d'entrée restent au routeur."""
+    de U6 (VBIAS, quelques µA) est reliée par polarisation_du_modem ; le condensateur d'entrée reste au routeur."""
     from relier_plans import ISOLEMENT, libre, obstacles
     for ref, numero, nombre in (('TP8', '1', 4), ('R8', '1', 2)):
         poses = vias_dans_plot(carte, plot(empreintes[ref], numero), 0.4, 0.2, nombre, BANDE_VBAT)
@@ -467,28 +579,178 @@ def chemin_du_modem(carte: pcbnew.BOARD, empreintes, reseaux) -> None:
         carte.Add(segment)
 
 
+def couloir_de_la_commande(carte: pcbnew.BOARD, empreintes) -> None:
+    """Zone interdite aux vias entre R8 et la broche ON (3) de U6 : c'est le seul passage de la commande du modem,
+    sous le bord du module. Sans elle, un via de plan posé dans un plot de masse du module ressort sur cette face et
+    ferme le passage ; ce plot reste relié à la masse par ses voisins."""
+    import relier_plans
+    x3, y3 = xy(plot(empreintes['U6'], '3').GetPosition())
+    r8 = plot(empreintes['R8'], '2').GetBoundingBox()
+    x1 = pcbnew.ToMM(r8.GetRight()) - X0 + 0.05
+    x2 = x3 - pcbnew.ToMM(plot(empreintes['U6'], '3').GetBoundingBox().GetWidth()) / 2
+    y1, y2 = y3 - 1.4, y3 + 0.5
+    regle = pcbnew.ZONE(carte)
+    regle.SetIsRuleArea(True)
+    regle.SetZoneName('Couloir de la commande du modem')
+    regle.SetLayerSet(pcbnew.LSET.AllCuMask())
+    regle.SetDoNotAllowTracks(False)
+    regle.SetDoNotAllowVias(True)
+    regle.SetDoNotAllowPads(False)
+    regle.SetDoNotAllowFootprints(False)
+    regle.SetDoNotAllowZoneFills(False)
+    contour_regle = regle.Outline()
+    contour_regle.NewOutline()
+    for x, y in ((x1, y1), (x2, y1), (x2, y2), (x1, y2)):
+        contour_regle.Append(mm(X0 + x), mm(Y0 + y))
+    carte.Add(regle)
+    relier_plans._INTERDITS.pop(id(carte), None)  # zones de règles relues au prochain contrôle
+
+
+def polarisation_du_modem(carte: pcbnew.BOARD, empreintes, reseaux) -> None:
+    """VBIAS (broche 4) de l'interrupteur U6 rejoint la bande VBAT d'In4 par une piste et un via verrouillés, posés
+    avant le routage. Ses voisines VIN (2) et ON (3) sont sous le bord du module : aucun via ne passe sous ses plots,
+    et une liaison de VBIAS vers R8 par la face de U6 ferait le tour de la broche ON, qui ne sortirait plus. La piste
+    monte depuis la broche jusqu'au-dessus du module, puis file vers le via, au plus court ; le passage de ON reste
+    interdit aux vias (couloir_de_la_commande)."""
+    from relier_plans import CUIVRE, ISOLEMENT, bord_libre, libre, obstacles
+    couloir_de_la_commande(carte, empreintes)
+    vbias = plot(empreintes['U6'], '4')
+    couche = pcbnew.B_Cu if vbias.IsOnLayer(pcbnew.B_Cu) else pcbnew.F_Cu
+    x4, y4 = xy(vbias.GetPosition())
+    zone_recherche = pcbnew.BOX2I(point(x4 - 6.0, y4 - 4.0), pcbnew.VECTOR2I(mm(7.0), mm(5.0)))
+    elements = [e for e in obstacles(carte, vbias.GetNetname()) if e[0].BBox().Intersects(zone_recherche)]
+    bande = pcbnew.SHAPE_POLY_SET()
+    bande.NewOutline()
+    for x, y in BANDE_VBAT:
+        bande.Append(mm(X0 + x), mm(Y0 + y))
+    largeur, rayon, marge = 0.15, 0.15, mm(ISOLEMENT)
+    meilleur = None
+    for i in range(6, 61):
+        for j in range(6, 31):
+            xv, yv = x4 - 0.1 * i, y4 - 0.1 * j
+            centre, coude = point(xv, yv), point(x4, yv)
+            # Au moins 0,3 mm à l'intérieur de la bande : le via touche le plan coulé.
+            if not all(bande.Contains(point(xv + dx, yv + dy)) for dx in (-0.3, 0.3) for dy in (-0.3, 0.3)):
+                continue
+            longueur = (x4 - xv) + (y4 - yv)
+            if meilleur is not None and longueur >= meilleur[0]:
+                continue
+            if not bord_libre(carte, centre) or                     not libre(pcbnew.SHAPE_CIRCLE(centre, mm(rayon)), set(CUIVRE), elements, marge) or                     not libre(pcbnew.SHAPE_SEGMENT(vbias.GetPosition(), coude, mm(largeur)), {couche}, elements, marge) or                     not libre(pcbnew.SHAPE_SEGMENT(coude, centre, mm(largeur)), {couche}, elements, marge):
+                continue
+            meilleur = (longueur, coude, centre)
+    if meilleur is None:
+        raise SystemExit('chemin du modem : aucune place pour relier VBIAS de U6 à la bande VBAT')
+    _, coude, centre = meilleur
+    reseau = reseaux[vbias.GetNetname()]
+    for debut_piste, fin_piste in ((vbias.GetPosition(), coude), (coude, centre)):
+        piste = pcbnew.PCB_TRACK(carte)
+        piste.SetStart(debut_piste)
+        piste.SetEnd(fin_piste)
+        piste.SetWidth(mm(largeur))
+        piste.SetLayer(couche)
+        piste.SetNet(reseau)
+        piste.SetLocked(True)
+        carte.Add(piste)
+    via = pcbnew.PCB_VIA(carte)
+    via.SetPosition(centre)
+    via.SetWidth(mm(2 * rayon))
+    via.SetDrill(mm(0.15))
+    via.SetNet(reseau)
+    via.SetLocked(True)
+    carte.Add(via)
+
+
 def placer_etiquette(carte: pcbnew.BOARD, etiquette: pcbnew.PCB_TEXT, empreinte: pcbnew.FOOTPRINT) -> None:
-    """Pose l'étiquette au-dessus, en dessous ou à côté de la pastille : au premier endroit où elle ne recouvre aucun
-    cuivre de sa face, ni ne sort de la carte (la sérigraphie sur du cuivre est rognée par le façonnier)."""
-    x1, y1, x2, y2 = enveloppe(empreinte)
+    """Pose l'étiquette contre sa pastille (au-dessus, en dessous, à gauche, à droite, puis en diagonale ; droite, puis
+    tournée d'un quart de tour) : au premier endroit où elle ne recouvre ni cuivre de sa face ni autre sérigraphie, et
+    reste dans la carte (la sérigraphie sur du cuivre est rognée par le façonnier). La taille reste de 0,8 mm, minimum
+    du façonnier."""
     face = pcbnew.B_Cu if empreinte.GetLayer() == pcbnew.B_Cu else pcbnew.F_Cu
     plots = [q for f in carte.GetFootprints() for q in f.Pads() if q.IsOnLayer(face)]
+    textes = [d.GetBoundingBox() for d in carte.GetDrawings() if d.GetLayer() == etiquette.GetLayer() and d is not etiquette]
     bord = carte.GetBoardEdgesBoundingBox()
+    b = next(iter(empreinte.Pads())).GetBoundingBox()
+    x1, y1 = pcbnew.ToMM(b.GetLeft()) - X0, pcbnew.ToMM(b.GetTop()) - Y0
+    x2, y2 = pcbnew.ToMM(b.GetRight()) - X0, pcbnew.ToMM(b.GetBottom()) - Y0
     cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
-    # Au plus près d'abord, puis plus loin et en diagonale, droite puis tournée d'un quart de tour ; la taille reste de
-    # 0,8 mm, minimum du façonnier.
     etiquette.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8)))
     for angle in (0, 90):
         etiquette.SetTextAngleDegrees(angle)
-        for d in (0.5, 0.9, 1.3, 1.8):
-            for x, y in ((cx, y1 - d), (cx, y2 + d), (x1 - d - 0.6, cy), (x2 + d + 0.6, cy),
-                         (x1 - d, y1 - d), (x2 + d, y1 - d), (x1 - d, y2 + d), (x2 + d, y2 + d)):
+        etiquette.SetPosition(point(cx, cy))
+        taille = etiquette.GetBoundingBox()
+        w, h = pcbnew.ToMM(taille.GetWidth()) / 2, pcbnew.ToMM(taille.GetHeight()) / 2
+        for d in (0.2, 0.4, 0.7, 1.0, 1.4, 1.8, 2.2, 2.6):
+            for x, y in ((cx, y1 - d - h), (cx, y2 + d + h), (x1 - d - w, cy), (x2 + d + w, cy),
+                         (x1 - d - w, y1 - d - h), (x2 + d + w, y1 - d - h), (x1 - d - w, y2 + d + h),
+                         (x2 + d + w, y2 + d + h)):
                 etiquette.SetPosition(point(x, y))
                 boite = etiquette.GetBoundingBox()
                 boite.Inflate(pcbnew.FromMM(0.15))
-                if bord.Contains(boite) and not any(boite.Intersects(q.GetBoundingBox()) for q in plots):
+                if bord.Contains(boite) and not any(boite.Intersects(q.GetBoundingBox()) for q in plots) and                         not any(boite.Intersects(t) for t in textes):
                     return
     raise SystemExit(f'étiquette {etiquette.GetText()} : aucune place libre de cuivre près de {empreinte.GetReference()}')
+
+
+# Pastille thermique de chaque circuit : vias de masse (bouchés et recouverts) et pâte réduite, pour que le
+# composant ne flotte pas sur un excès de brasure (environ 60 % de la pastille couverte).
+PASTILLES_THERMIQUES = {'U5': '11', 'U6': '9', 'U7': '9', 'U8': '9', 'U9': '9', 'U10': '17', 'U11': '17'}
+
+
+def pastilles_thermiques(carte: pcbnew.BOARD, empreintes) -> int:
+    poses = 0
+    for ref, numero in PASTILLES_THERMIQUES.items():
+        p = plot(empreintes[ref], numero)
+        l, h = pcbnew.ToMM(p.GetSize().x), pcbnew.ToMM(p.GetSize().y)
+        poses += vias_dans_plot(carte, p, 0.3, 0.15, max(1, min(6, round(l * h / 0.45))), TOUT)
+        p.SetLocalSolderPasteMarginRatio(-0.1 if l * h < 4 else -0.13)
+    return poses
+
+
+# Repère de broche 1 (circuits, transistors, LED), de cathode (diodes) et de + (condensateurs au tantale).
+POLARISES = ('D1', 'D15', 'D11', 'D10', 'C10', 'C11')
+
+
+def marquer_polarite(carte: pcbnew.BOARD, empreintes) -> list[str]:
+    """Point de sérigraphie de 0,35 mm près du plot repère, hors de tout cuivre de la face ; rend les références
+    sans place."""
+    sans_place = []
+    bord = carte.GetBoardEdgesBoundingBox()
+    for ref in sorted(r for r in empreintes if r[0] in 'UQ') + list(POLARISES):
+        fp = empreintes[ref]
+        dessous = fp.GetLayer() == pcbnew.B_Cu
+        cuivre = pcbnew.B_Cu if dessous else pcbnew.F_Cu
+        numeros = [q.GetNumber() for q in fp.Pads()]
+        repere = plot(fp, '1' if '1' in numeros else 'A1')
+        plots = [q for f in carte.GetFootprints() for q in f.Pads() if q.IsOnLayer(cuivre)]
+        textes = [d for d in carte.GetDrawings() if d.GetLayer() == (pcbnew.B_SilkS if dessous else pcbnew.F_SilkS)]
+        (cx, cy), (px, py) = xy(fp.GetPosition()), xy(repere.GetPosition())
+        norme = ((px - cx) ** 2 + (py - cy) ** 2) ** 0.5 or 1.0
+        ux, uy = (px - cx) / norme, (py - cy) / norme
+        demi = max(pcbnew.ToMM(repere.GetSize().x), pcbnew.ToMM(repere.GetSize().y)) / 2
+        pose = False
+        for d in (demi + 0.35, demi + 0.55, demi + 0.8, demi + 1.1):
+            for ax, ay in ((ux, uy), (-uy, ux), (uy, -ux), (ux - uy, uy + ux), (ux + uy, uy - ux)):
+                n = (ax * ax + ay * ay) ** 0.5
+                x, y = px + ax / n * d, py + ay / n * d
+                boite = pcbnew.BOX2I(point(x - 0.33, y - 0.33), pcbnew.VECTOR2I(mm(0.66), mm(0.66)))
+                if not bord.Contains(boite) or any(boite.Intersects(q.GetBoundingBox()) for q in plots) or \
+                        any(boite.Intersects(t.GetBoundingBox()) for t in textes):
+                    continue
+                point_repere = pcbnew.PCB_SHAPE(carte)
+                point_repere.SetShape(pcbnew.SHAPE_T_CIRCLE)
+                point_repere.SetCenter(point(x, y))
+                point_repere.SetEnd(point(x + 0.1, y))
+                point_repere.SetWidth(mm(0.15))
+                point_repere.SetFilled(True)
+                point_repere.SetLayer(pcbnew.B_SilkS if dessous else pcbnew.F_SilkS)
+                carte.Add(point_repere)
+                pose = True
+                break
+            if pose:
+                break
+        if not pose:
+            sans_place.append(ref)
+    return sans_place
 
 
 def une_couche(couche: int) -> pcbnew.LSET:
@@ -543,6 +805,21 @@ def contour(carte: pcbnew.BOARD) -> None:
         carte.Add(arc)
 
 
+REGLES_DRC = """(version 1)
+
+# Guide coplanaire des lignes d'antenne (outils/impedance.py) : la classe RF tient tout autre réseau à 0,5 mm, mais la
+# masse et les autres tronçons RF gardent la fente de 0,15 mm qui fixe l'impédance de 50 ohms.
+(rule "Fente du guide coplanaire"
+  (condition "(A.NetClass == 'RF' && (B.NetName == 'GND' || B.NetClass == 'RF')) || (B.NetClass == 'RF' && A.NetName == 'GND')")
+  (constraint clearance (min 0.15mm)))
+
+# Choc de polarisation de l'antenne GNSS (L2, 0402) : ses deux plots, RF_GNSS_1 et GNSS_BIAS, sont à 0,38 mm.
+(rule "Polarisation de l'antenne GNSS"
+  (condition "(A.NetClass == 'RF' && B.NetName == 'GNSS_BIAS') || (B.NetClass == 'RF' && A.NetName == 'GNSS_BIAS')")
+  (constraint clearance (min 0.15mm)))
+"""
+
+
 def regles(carte: pcbnew.BOARD) -> None:
     """Règles aux capacités standard des façonniers (4 couches) et classes de réseaux."""
     reglage = carte.GetDesignSettings()
@@ -559,6 +836,8 @@ def regles(carte: pcbnew.BOARD) -> None:
     reglage.m_HoleClearance = mm(0.2)
     reglage.m_CopperEdgeClearance = mm(0.3)
     reglage.m_MinResolvedSpokes = 1  # petits plots de masse : un rayon de liaison thermique suffit
+    reglage.m_TentViasFront = True   # vias recouverts de vernis (ceux des pastilles sont bouchés et recouverts)
+    reglage.m_TentViasBack = True
     reseaux = reglage.m_NetSettings
     defaut = reseaux.GetDefaultNetclass()
     defaut.SetTrackWidth(mm(0.127))
@@ -570,7 +849,9 @@ def regles(carte: pcbnew.BOARD) -> None:
         'Modem': (0.8, 0.15, 0.6, 0.3, ['VBAT_MODEM']),
         'Puissance': (0.4, 0.15, 0.5, 0.25, ['VBAT', 'VSYS', 'VIN', 'VIN_EXT', '3V3', '3V3_REG', 'TPS_LX1', 'TPS_LX2']),
         'Alim_1V8': (0.3, 0.127, 0.3, 0.15, ['1V8', '3V3_FLASH', 'SIM_VDD']),
-        'RF': (0.2, 0.15, 0.3, 0.15, ['RF_LTE_MOD', 'RF_LTE_1', 'RF_LTE_2', 'RF_GNSS_MOD', 'RF_GNSS_1']),
+        # RF : 0,5 mm de tout autre réseau (couloir des lignes de 50 Ω) ; la fente de 0,15 mm vers la masse est une
+        # règle du projet (REGLES_DRC).
+        'RF': (PISTE_RF, 0.5, 0.3, 0.15, ['RF_LTE_MOD', 'RF_LTE_1', 'RF_LTE_2', 'RF_GNSS_MOD', 'RF_GNSS_1']),
     }
     for nom, (piste, isolement, via, percage, membres) in classes.items():
         classe = pcbnew.NETCLASS(nom)
@@ -638,26 +919,74 @@ def main() -> None:
     empreintes = {}
     for c in COMPOSANTS:
         empreinte = charger(c)
-        for plot in empreinte.Pads():
-            nom = schema.get((c.ref, plot.GetNumber()))
+        for broche in empreinte.Pads():
+            nom = schema.get((c.ref, broche.GetNumber()))
             if nom:
-                plot.SetNet(reseaux[nom])
+                broche.SetNet(reseaux[nom])
         carte.Add(empreinte)
         empreintes[c.ref] = empreinte
 
     obstacles = Obstacles()
     for ref, (x, y, rotation, face) in FIXES.items():
         poser(empreintes[ref], 0, 0, rotation, face)
-        centrer(empreintes[ref], x, y) if ref not in ('U2', 'U1', 'J7', 'SW1') else empreintes[ref].SetPosition(point(x, y))
+        centrer(empreintes[ref], x, y) if ref not in PAR_ORIGINE else empreintes[ref].SetPosition(point(x, y))
         obstacles.ajouter(empreintes[ref], face)
 
+    # Place des étiquettes des pastilles figées, réservée avant le rangement : au-dessus de la pastille, au-dessous pour
+    # le second fil d'une paire verticale (placer_etiquette essaie ces deux places en premier).
+    for ref in ETIQUETTES:
+        if ref in FIXES:
+            b = next(iter(empreintes[ref].Pads())).GetBoundingBox()
+            x1, y1 = pcbnew.ToMM(b.GetLeft()) - X0, pcbnew.ToMM(b.GetTop()) - Y0
+            x2, y2 = pcbnew.ToMM(b.GetRight()) - X0, pcbnew.ToMM(b.GetBottom()) - Y0
+            cx = (x1 + x2) / 2
+            dessous = ref == 'TP33'
+            obstacles.reserver(FIXES[ref][3], (cx - 1.25, y2 + 0.05, cx + 1.25, y2 + 1.7) if dessous else
+                               (cx - 1.25, y1 - 1.7, cx + 1.25, y1 - 0.05))
+
     longueurs_rf = lignes_rf(carte, empreintes, reseaux, obstacles)
+    # Les lignes RF elles-mêmes, et leur couloir de 0,5 mm, sont interdits aux autres pièces de la face supérieure.
+    for s in carte.GetTracks():
+        if s.GetNetname().startswith('RF_'):
+            (xa, ya), (xb, yb) = xy(s.GetStart()), xy(s.GetEnd())
+            obstacles.reserver('F', (min(xa, xb) - 0.6, min(ya, yb) - 0.6, max(xa, xb) + 0.6, max(ya, yb) + 0.6))
     bloc_regulateur(empreintes, obstacles, 17.0, 9.0)
+    # Couloir des pistes VBAT_MES pré-routées entre R8.2 et les broches VIN de U6.
+    (xr, _), broches_vin = xy(plot(empreintes['R8'], '2').GetPosition()), [xy(plot(empreintes['U6'], n).GetPosition()) for n in '12']
+    obstacles.reserver('B', (xr, min(y for _, y in broches_vin) - 0.45, max(x for x, _ in broches_vin),
+                             max(y for _, y in broches_vin) + 0.45))
     places = set(FIXES) | {'C20', 'R20', 'C21', 'D4', 'C22', 'C24', 'C23', 'D5', 'L2', 'U5', 'L1', 'C4', 'C5'}
+    faces = {r: face for face, *_, refs in ZONES for r in refs}
+    # Découplage des circuits déjà en place (microcontrôleur, module, interrupteur), puis chaque zone : ses circuits
+    # intégrés avec un dégagement, leurs condensateurs à leur pied, puis le reste.
+    poser_au_pied(empreintes, list(AU_PIED), places, obstacles, faces)
     hors = []
     for face, x1, y1, x2, y2, refs in ZONES:
-        hors += ranger([empreintes[r] for r in refs], face, x1, y1, x2, y2, obstacles)
-        places |= set(refs)
+        circuits = [r for r in refs if r not in places and r.startswith('U')]
+        if circuits:
+            hors += ranger([empreintes[r] for r in circuits], face, x1, y1, x2, y2, obstacles, ECART + HALO)
+            places |= set(circuits) - set(hors)
+            poser_au_pied(empreintes, refs, places, obstacles, faces)
+        reste = [r for r in refs if r not in places]
+        sortis = ranger([empreintes[r] for r in reste], face, x1, y1, x2, y2, obstacles)
+        # Repli : une pièce qui ne tient plus dans sa zone (les condensateurs posés au pied y ont pris leur place)
+        # prend la première place libre de sa face, puis de l'autre.
+        for ref in sortis:
+            if ranger([empreintes[ref]], face, 0, 0, LARGEUR, HAUTEUR, obstacles) and \
+                    ranger([empreintes[ref]], 'B' if face == 'F' else 'F', 0, 0, LARGEUR, HAUTEUR, obstacles):
+                hors.append(ref)
+        places |= set(reste)
+    # Second fil de chaque paire (vibreur, boucle du bracelet) à côté du premier : les deux fils arrivent ensemble.
+    for ref, voisin in PAIRES:
+        if not au_pied(empreintes[ref], plot(empreintes[voisin], '1'), 'B', obstacles, numero='1', positions=CANDIDATS_PAIRES):
+            hors.append(ref)
+        places.add(ref)
+    loin = [r for r in AU_PIED if r in empreintes and r in places and
+            min(((p.GetPosition() - plot(empreintes[AU_PIED[r][0]], AU_PIED[r][1]).GetPosition()).EuclideanNorm()
+                 for p in empreintes[r].Pads() if p.GetNetname() == plot(empreintes[AU_PIED[r][0]], AU_PIED[r][1]).GetNetname()),
+                default=0) > mm(RAYON_PIED + 0.01)]
+    if loin:
+        print('posés hors de portée de leur broche (rangés dans leur zone) :', ', '.join(loin))
     oublies = sorted(set(empreintes) - places)
     if oublies:
         raise SystemExit(f'composants sans place : {oublies}')
@@ -684,6 +1013,8 @@ def main() -> None:
     zone(carte, reseaux['VBAT'], pcbnew.In4_Cu, BANDE_VBAT, 3)
     sans_pistes(carte, une_couche(pcbnew.In4_Cu), BANDE_VBAT)
     chemin_du_modem(carte, empreintes, reseaux)
+    polarisation_du_modem(carte, empreintes, reseaux)
+    vias_thermiques = pastilles_thermiques(carte, empreintes)
     interdits_bord(carte)
     vias_masse = coutures(carte, reseaux['GND'])
 
@@ -698,6 +1029,9 @@ def main() -> None:
         etiquette.SetMirrored(empreinte.GetLayer() == pcbnew.B_Cu)
         placer_etiquette(carte, etiquette, empreinte)
         carte.Add(etiquette)
+    sans_repere = marquer_polarite(carte, empreintes)
+    if sans_repere:
+        print('sans place pour le repère de polarité :', ', '.join(sans_repere))
     # Marquage de la carte.
     marque = pcbnew.PCB_TEXT(carte)
     marque.SetText('FG V1.0')
@@ -710,8 +1044,10 @@ def main() -> None:
     pcbnew.ZONE_FILLER(carte).Fill(carte.Zones())
     carte.Save(str(SORTIE))
     severites_du_projet()
+    SORTIE.with_suffix('.kicad_dru').write_text(REGLES_DRC, encoding='utf-8')
     print(f'carte enregistrée : {SORTIE} ; {len(empreintes)} empreintes ; lignes RF ' +
-          ', '.join(f'{k} {v:.1f} mm' for k, v in longueurs_rf.items()) + f' ; {vias_masse} vias de couture')
+          ', '.join(f'{k} {v:.1f} mm' for k, v in longueurs_rf.items()) + f' ; {vias_masse} vias de couture ; '
+          f'{vias_thermiques} vias dans les pastilles thermiques')
     if hors:
         print('NE TIENNENT PAS DANS LEUR ZONE :', ', '.join(hors))
 

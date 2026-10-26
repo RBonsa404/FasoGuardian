@@ -31,18 +31,21 @@ réalisation (schéma, placement, routage, fabrication) et sert de grille de rel
   le bouton latéral et le Tag-Connect ne tiennent pas dans 40 × 34 mm, la place que laisse le boîtier de
   44 × 38 mm visé au § 10 pour le prototype portable V2. La V1 se monte dans un boîtier imprimé en 3D (§ 12). La
   face supérieure porte les pièces hautes ; la face inférieure, contre la batterie, ne porte que des pièces de
-  1,2 mm de haut au plus (passifs, petits circuits intégrés, SOT-23) et les pastilles des liaisons hors carte.
+  1,35 mm de haut au plus d'après les fiches des fabricants (passifs, petits circuits intégrés, SOT-23 ; ADR 0042,
+  point 12) et les pastilles des liaisons hors carte.
 - **Empilement** : **6 couches** (signaux et RF / masse continue sans piste / signaux / signaux / alimentations
-  mixtes, plans du modem et de la batterie sans piste, ADR 0042 points 9 et 10 / signaux),
+  mixtes, plans du modem et de la batterie sans piste, ADR 0042 points 9 et 10 / signaux), 1,2 mm, ENIG
+  (décision du porteur, ADR 0042 point 7 : le 4 couches plafonnait à 88 % de routage). Empilement JLC061211-3313 à
+  cuivre interne de 1 oz (ADR 0042, point 15). Pistes ≥ 0,09 mm et isolements ≥ 0,1 mm : sorties des plots au pas
+  de 0,5 mm ; 0,09 mm est la capacité standard du façonnier en multicouche, cuivre interne de 1 oz compris. Vias
+  0,3 / 0,15 mm (0,5 / 0,25 mm sur le plan du modem) ; vias de plan dans les pastilles, bouchés à la résine et
+  recouverts (gratuit en 6 couches).
 - **Courant fort du modem** : chemin batterie → R8 → U6 → module pré-routé et verrouillé, bande de plan VBAT
-  dédiée ; au plus 30 mΩ de cuivre (60 mV sous 2 A), mesurés par `controler_carte.py`,
-  1,2 mm, ENIG (décision du porteur, ADR 0042 point 7 : le 4 couches plafonnait à 88 % de routage), pistes ≥ 0,09 mm et isolements ≥ 0,1 mm (sorties des plots au pas de 0,5 mm ; 0,09 mm est la capacité standard des façonniers en multicouche),
-  vias 0,3 / 0,15 mm (0,5 / 0,25 mm sur le plan du modem), aux capacités standard des façonniers en 6 couches ;
-  vias de plan dans les pastilles, bouchés à la résine et recouverts (procédé par défaut du façonnier en 6 couches,
-  à confirmer sur le devis).
-- **Radio** : lignes d'antenne de 50 Ω en guide coplanaire référencé à la masse de la couche 2, de 20 mm au plus
-  (SIMCom § 4.7) ; réseau d'adaptation en π (éléments série 0 Ω montés, éléments parallèles non montés, valeurs
-  données par l'accord de l'antenne) ; protection ESD de faible capacité ; connecteur de test conduit ECT 818011998
+  dédiée ; au plus 30 mΩ de cuivre (60 mV sous 2 A), mesurés par `controler_carte.py` : 20 mΩ avec le cuivre
+  interne de 1 oz.
+- **Radio** : lignes d'antenne de 50 Ω en guide coplanaire référencé à la masse de la couche 2 (piste de 0,186 mm,
+  fente de 0,15 mm, sur le préimprégné 3313 de 0,092 mm), de 20 mm au plus (SIMCom § 4.7) ; réseau d'adaptation
+  en π (éléments série 0 Ω montés, éléments parallèles non montés, valeurs données par l'accord de l'antenne) ; protection ESD de faible capacité ; connecteur de test conduit ECT 818011998
   sur la voie LTE ; connecteurs U.FL vers l'antenne FPC LTE (flanc) et l'antenne GNSS active (dessus du boîtier).
   La batterie est sous la carte (§ 10) : le plan de masse continu fait écran, les antennes partent du bord opposé
   au bloc de charge. L'antenne GNSS active est alimentée par un té de polarisation (SIMCom figure 34) :
@@ -66,7 +69,8 @@ réalisation (schéma, placement, routage, fabrication) et sert de grille de rel
   masse, NRST 100 nF, découplage de chaque VDD et de VDDA.
 - **Protection** : ESD/TVS sur le connecteur de charge, le bouton, la SIM et la boucle (§ 4.3).
 - **Broches** : affectation de FG-DOC-08 tableau 8, vérifiée contre les fonctions alternatives du STM32U575CIT6
-  (symbole KiCad) ; les écarts sont à la section 5.
+  (symbole KiCad), dont le STM32U585CIT6 retenu reprend le brochage (ADR 0042, point 11) ; les écarts sont à la
+  section 5.
 - **Basse consommation** : rappel externe de 1 MΩ filtré par 10 nF sur la boucle (PA0) au lieu du rappel interne
   de 40 kΩ (80 µA permanents) ; grilles des MOSFET rappelées à l'état bloqué ; mémoire et thermistance de carte alimentées seulement
   pendant la mesure ou l'écriture.
@@ -101,13 +105,13 @@ ci-dessus. On ne passe à l'étape suivante qu'une fois tous les écarts levés.
 | § 4.2, lignes 15 et 17 : batterie avec connecteur | Un JST SH (1 A par contact) ne tient pas les pointes de 2 A du modem | Batterie soudée sur pastilles ; entrée de charge protégée (écrêteur 12 V, Schottky, fusible 0,5 A, charge à 300 mA) |
 | § 4.2, ligne 16 : nano-SIM au prototype | Conservé : le porte-nano-SIM permet d'essayer les cartes d'Orange, Moov et Telecel ; l'eSIM MFF2 reste pour la série | Porte-nano-SIM 6 contacts sur la face supérieure |
 
-## 6. Points à confirmer avant la commande
+## 6. Points tranchés avant la commande (25 octobre 2026)
 
-- Variante exacte du module avec GNSS (suffixe -FASE ou -LASE) : les sources publiques se contredisent ; toutes les
-  variantes partagent l'empreinte de 124 plots et le routage prévoit l'antenne GNSS.
-- Cote intérieure du boîtier et hauteur disponible (batterie, carte, antenne GNSS active sous le couvercle).
-- Batterie : PCM à seuil de surintensité d'au moins 3 A, cellule supportant 3C en impulsion, résistance interne
-  de 150 mΩ au plus, trois fils soudés sur les pastilles BAT+, BAT− et NTC (NTC 10 kΩ B3435).
-- Options de commande de `fabrication/COMMANDE.md` : contrôle d'impédance des lignes d'antenne, vias dans les
-  pastilles bouchés et recouverts, et, si le devis le permet, cuivre interne de 1 oz.
-- Disponibilité du STM32U575CIT6 chez l'assembleur (stock nul chez JLCPCB au 22/10/2026).
+| Point | Décision |
+|---|---|
+| Variante du module | **A7670E-FASE** : LTE Cat-1 et 2G, GNSS et Bluetooth (LCSC C7435296, 380 pièces en stock). Toutes les variantes partagent l'empreinte de 124 plots. |
+| Microcontrôleur | **STM32U585CIT6** (LCSC C5271027) : le STM32U575CIT6 est en rupture chez JLCPCB ; même brochage, accélérateurs cryptographiques en plus (ADR 0042, point 11). Stock faible : à réserver avant la commande. |
+| Batterie | Li-Po une cellule, 600 à 650 mAh, format 603035 (6,0 × 30 × 35 mm) ; PCM à seuil de surintensité d'au moins 3 A ; cellule tenant 2C en continu et 3C en impulsion ; résistance interne de 150 mΩ au plus ; trois fils soudés sur BAT+, BAT− et NTC (NTC 10 kΩ, B3435) ; certification UN38.3. |
+| Boîtier V1 | Imprimé en 3D : cote intérieure 43 × 38 mm, 1,6 mm réservés sous la carte (composants de 1,35 mm au plus et 0,25 mm de mousse), hauteur intérieure d'environ 17,5 mm avec l'antenne GNSS active posée au-dessus du module ; empilement dans `guide/guide-commande-et-mise-en-service.pdf` (§ 13). |
+| Options de commande | `fabrication/COMMANDE.md` : empilement JLC061211-3313 à impédance contrôlée et cuivre interne de 1 oz (le chemin du modem passe de 33 à 20 mΩ, sous les 30 mΩ du budget), vias dans les pastilles bouchés et recouverts (gratuit en 6 couches), assemblage standard des deux faces, rails à gauche et à droite, contrôle du placement par l'assembleur. |
+| Quantité | 5 cartes assemblées (2 au minimum). |

@@ -78,9 +78,9 @@ ajouter('U4', 'fg:BQ25180YBGR', 'fg:DSBGA-8_L1.6-W0.9-R2-C4-P0.40-BL', 'BQ25180Y
         {'A1': 'CHG_INT', 'A2': 'VIN', 'B1': 'I2C_SCL', 'B2': 'VSYS', 'C1': 'I2C_SDA', 'C2': 'VBAT', 'D1': 'BAT_NTC', 'D2': 'GND'},
         F, fabricant='BQ25180YBGR', lcsc='C3682423')
 condensateur('C2', '10 µF', 'VSYS', 'GND', F, C0603, note='SYS : 10 µF au pied, 100 µF au plus sur tout le rail (fiche TI)')
-condensateur('C3', '1 µF', 'VBAT', 'GND', F)
-# Batterie Li-Po 600 mAh avec PCM et NTC 10 kΩ (§ 4.2, ligne 15) : JST SH 3 contacts.
-# Batterie soudée sur trois pastilles : un JST SH (1 A par contact) ne tient pas les pointes de 2 A du modem.
+condensateur('C3', '4,7 µF', 'VBAT', 'GND', F, note='BAT : au moins 1 µF effectif sous 4,2 V (fiche TI) ; un 1 µF 0402 en perd 20 %')
+# Batterie Li-Po 600 mAh avec PCM et NTC 10 kΩ (§ 4.2, ligne 15, qui prévoit un JST SH 3 contacts) : soudée sur trois
+# pastilles, car un JST SH (1 A par contact) ne tient pas les pointes de 2 A du modem.
 point_test('TP8', 'VBAT', F, PASTILLE_CHARGE, 'Batterie +', note="Point d'insertion de l'analyseur de consommation")
 point_test('TP9', 'GND', F, PASTILLE_CHARGE, 'Batterie −')
 point_test('TP17', 'BAT_NTC', F, PASTILLE, 'NTC batterie')
@@ -96,11 +96,12 @@ ajouter('L1', 'fg:DFE252012F-2R2M', 'fg:L1008', '2,2 µH', {'1': 'TPS_LX1', '2':
 condensateur('C4', '10 µF', 'VSYS', 'GND', F, C0603)
 condensateur('C5', '22 µF', '3V3_REG', 'GND', F, C0603)
 resistance('R5', '0 Ω', '3V3_REG', '3V3', F, R0603, note='Coupable : mesure du courant du rail 3,3 V (§ 4.3)')
-# Interrupteur du modem TPS22965 (ADR 0042) : VIN, VBIAS depuis la batterie, ON rappelé à l'état bloqué.
+# Interrupteur du modem TPS22965 (ADR 0042) : VIN par R8 (VBAT_MES), VBIAS directement sur la batterie (quelques µA,
+# hors de la mesure ; VIN ≤ VBIAS en toute circonstance, comme l'exige TI), ON rappelé à l'état bloqué.
 resistance('R8', '0 Ω', 'VBAT', 'VBAT_MES', F, 'Resistor_SMD:R_1206_3216Metric',
            note='Coupable : mesure du courant du modem (§ 4.3) ; 1206 pour les pointes de 2 A')
 ajouter('U6', 'fg:TPS22965DSGR', 'fg:UDFN-8_L2.0-W2.0-P0.50-TL-EP', 'TPS22965DSGR',
-        {'1': 'VBAT_MES', '2': 'VBAT_MES', '3': 'MODEM_EN', '4': 'VBAT_MES', '5': 'GND', '6': 'MODEM_CT', '7': 'VBAT_MODEM',
+        {'1': 'VBAT_MES', '2': 'VBAT_MES', '3': 'MODEM_EN', '4': 'VBAT', '5': 'GND', '6': 'MODEM_CT', '7': 'VBAT_MODEM',
          '8': 'VBAT_MODEM', '9': 'GND'}, F, fabricant='TPS22965DSGR', lcsc='C122837')
 condensateur('C6', '10 nF', 'MODEM_CT', 'GND', F,
              note='Montée en 13 ms environ (fiche TI, tableau 1) : appel de 0,2 A dans le réservoir de 660 µF')
@@ -217,15 +218,16 @@ ajouter('U12', 'fg:ESDA6V1W5', 'fg:SC-70-5_L2.1-W1.3-P0.65-LS2.1-BR', 'ESDA6V1W5
 
 # --------------------------------------------------------------------------------------------------- microcontrôleur
 F = 'microcontroleur'
-ajouter('U1', 'MCU_ST_STM32U5:STM32U575CITx', 'Package_QFP:LQFP-48_7x7mm_P0.5mm', 'STM32U575CIT6', {
+ajouter('U1', 'MCU_ST_STM32U5:STM32U585CITx', 'Package_QFP:LQFP-48_7x7mm_P0.5mm', 'STM32U585CIT6', {
     '1': '3V3', '2': 'MCU_PWRKEY', '3': 'OSC32_IN', '4': 'OSC32_OUT', '5': 'MODEM_EN', '6': 'MCU_RESET', '7': 'NRST',
     '8': 'GND', '9': '3V3', '10': 'LOOP', '11': 'CHG_INT', '12': 'GAUGE_ALRT', '13': 'NTC_MES', '14': 'FLASH_CS',
     '15': 'SPI_SCK', '16': 'SPI_MISO', '17': 'SPI_MOSI', '18': 'LED_R', '19': 'LED_G', '20': 'STATUS_3V3', '21': 'LED_B',
     '22': 'VCAP', '23': 'GND', '24': '3V3', '25': 'TSC_CS', '26': 'TSC_EL', '27': 'BUZZER', '28': 'NETLIGHT_3V3',
     '29': 'SOS', '30': 'MCU_TX', '31': 'MCU_RX', '32': 'MCU_CTS', '33': 'MCU_RTS', '34': 'SWDIO', '35': 'GND', '36': '3V3',
     '37': 'SWCLK', '38': 'ACC_INT1', '39': 'NTC_EN', '40': 'MCU_DTR', '41': 'RI_3V3', '42': 'I2C_SCL', '43': 'I2C_SDA',
-    '44': 'BOOT0', '45': 'FLASH_PWR_N', '46': 'VIB', '47': 'GND', '48': '3V3'}, F, face=HAUT, fabricant='STM32U575CIT6',
-    lcsc='C5271014')
+    '44': 'BOOT0', '45': 'FLASH_PWR_N', '46': 'VIB', '47': 'GND', '48': '3V3'}, F, face=HAUT, fabricant='STM32U585CIT6',
+    lcsc='C5271027', note="STM32U575 et accélérateurs cryptographiques (AES, PKA, HASH), même brochage : le U575CIT6 est "
+                          "en rupture chez JLCPCB (ADR 0042, point 11)")
 for ref in ('C40', 'C41', 'C42'):
     condensateur(ref, '100 nF', '3V3', 'GND', F, note='Un par broche VDD')
 condensateur('C43', '4,7 µF', '3V3', 'GND', F)
@@ -373,7 +375,7 @@ TITRES = {
     'modem': 'Module cellulaire A7670E',
     'radio': 'Antennes LTE et GNSS',
     'sim': 'Carte SIM',
-    'microcontroleur': 'Microcontrôleur STM32U575',
+    'microcontroleur': 'Microcontrôleur STM32U585',
     'capteurs': 'Capteurs, élément sécurisé et mémoire',
     'niveaux': 'Translateurs 1,8 V / 3,3 V',
     'interface': 'Signalisation et détection',

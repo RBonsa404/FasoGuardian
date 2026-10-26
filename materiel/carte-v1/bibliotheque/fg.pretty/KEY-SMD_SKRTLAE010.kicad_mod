@@ -38,7 +38,7 @@
 	(fp_line (start 1.00 1.96) (end -1.00 1.96) (layer F.CrtYd) (width 0.05))
 	(fp_line (start -1.00 1.96) (end -1.00 1.12) (layer F.CrtYd) (width 0.05))
 	(fp_line (start -1.00 1.12) (end -2.25 1.12) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/KEY-SMD_L4.6-W3.4-H3.4.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/KEY-SMD_L4.6-W3.4-H3.4.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

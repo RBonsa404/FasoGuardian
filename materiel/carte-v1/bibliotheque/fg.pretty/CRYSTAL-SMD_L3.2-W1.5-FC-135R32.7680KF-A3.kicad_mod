@@ -19,7 +19,7 @@
 	(fp_line (start -1.60 -0.75) (end 1.60 -0.75) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 1.60 -0.75) (end 1.60 0.75) (layer F.CrtYd) (width 0.05))
 	(fp_line (start 1.60 0.75) (end -1.60 0.75) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/CRYSTAL-SMD_L3.2-W1.5-FC-135R32.7680KF-A3.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/CRYSTAL-SMD_L3.2-W1.5-FC-135R32.7680KF-A3.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))

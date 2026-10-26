@@ -1,0 +1,12 @@
+(version 1)
+
+# Guide coplanaire des lignes d'antenne (outils/impedance.py) : la classe RF tient tout autre réseau à 0,5 mm, mais la
+# masse et les autres tronçons RF gardent la fente de 0,15 mm qui fixe l'impédance de 50 ohms.
+(rule "Fente du guide coplanaire"
+  (condition "(A.NetClass == 'RF' && (B.NetName == 'GND' || B.NetClass == 'RF')) || (B.NetClass == 'RF' && A.NetName == 'GND')")
+  (constraint clearance (min 0.15mm)))
+
+# Choc de polarisation de l'antenne GNSS (L2, 0402) : ses deux plots, RF_GNSS_1 et GNSS_BIAS, sont à 0,38 mm.
+(rule "Polarisation de l'antenne GNSS"
+  (condition "(A.NetClass == 'RF' && B.NetName == 'GNSS_BIAS') || (B.NetClass == 'RF' && A.NetName == 'GNSS_BIAS')")
+  (constraint clearance (min 0.15mm)))

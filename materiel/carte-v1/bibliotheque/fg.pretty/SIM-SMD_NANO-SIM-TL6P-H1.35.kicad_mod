@@ -51,7 +51,7 @@
 	(fp_line (start 3.50 5.31) (end -3.50 5.31) (layer F.CrtYd) (width 0.05))
 	(fp_line (start -3.50 5.31) (end -3.50 6.15) (layer F.CrtYd) (width 0.05))
 	(fp_line (start -3.50 6.15) (end -5.02 6.15) (layer F.CrtYd) (width 0.05))
-	(model "C:/Users/rachi/Desktop/FasoGuardian/Code/fasoguardian/materiel/carte-v1/bibliotheque/fg.3dshapes/SIM-SMD_NANO-SIM-TL6P-H1.35.wrl"
+	(model "${KIPRJMOD}/../bibliotheque/fg.3dshapes/SIM-SMD_NANO-SIM-TL6P-H1.35.wrl"
 		(offset (xyz 0.000 0.000 0.000))
 		(scale (xyz 1 1 1))
 		(rotate (xyz 0 0 0))
