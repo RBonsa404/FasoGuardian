@@ -35,6 +35,7 @@ export const ICONES = {
   'safe-zone': "<path d=\"M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18M12 8l3 1.2V12c0 2-1.4 3.3-3 3.8-1.6-.5-3-1.8-3-3.8V9.2z\"></path>",
   'signal-2g': "<path d=\"M4 20v-3M9 20v-7\"></path>",
   'signal-4g': "<path d=\"M4 20v-3M9 20v-7M14 20v-11M19 20V5\"></path>",
+  'signal-coupe': "<path d=\"M3 3l18 18M4 20v-3M9 20v-7M14 14v6M19 20V5\"></path>",
   'sms-secours': "<path d=\"M4 5h16v11H9l-5 4zM8 10.5h.01M12 10.5h.01M16 10.5h.01\"></path>",
   'sortie-zone': "<path d=\"M12 3a9 9 0 0 1 9 9M3 12a9 9 0 0 0 9 9M14 10l7-7M16 3h5v5\"></path>",
   'sos': "<path d=\"M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18M12 7v6M12 16.5v.5\"></path>",

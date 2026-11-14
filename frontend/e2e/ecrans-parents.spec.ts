@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, parentAvecEnfant, ongletReglages } from './aides';
+import { MOT_DE_PASSE_PARENT, SERVEUR, braceletAuParc, braceletEmet, parentAvecEnfant, ongletReglages, sqlPile } from './aides';
 
 /** Écran 9 : à la première ouverture sur un appareil, l'introduction passe avant la connexion. */
 test('la première visite montre l’introduction, les suivantes mènent droit à la connexion', async ({ page }) => {
@@ -72,4 +72,23 @@ test('un parent voit ce que montre la page QR de son enfant, et l’état de mai
   await page.goto(`/enfants/${enfants[0].id}/bracelet/maintenance`);
   await expect(page.getByRole('heading', { name: 'Aucun incident en cours' })).toBeVisible();
   await expect(page.getByText('Le bracelet répond normalement')).toBeVisible();
+
+  // Écran 16 : bracelet muet. L'ouverture du ticket par la supervision est couverte par MaintenanceIT ; ici, le
+  // silence est daté de trois heures (au-delà de trois intervalles de toute offre) et le ticket posé directement.
+  const serie = carte.numeroSerie;
+  sqlPile(`UPDATE dispositifs.appairage SET debut = now() - INTERVAL '1 day' WHERE fin IS NULL AND bracelet_id = (SELECT id FROM dispositifs.bracelet WHERE numero_serie = '${serie}')`);
+  braceletEmet(serie, 'telemetry', { t: Math.floor(Date.now() / 1000) - 3 * 3600, seq: 1, lat: 12.3586, lon: -1.5354, acc: 9, src: 'gnss', bat: 64, net: '2g' });
+  await expect.poll(async () => (await (await request.get(`${enfant}/position`, { headers: entetes })).json()).position !== null).toBe(true);
+  sqlPile(`INSERT INTO dispositifs.ticket_maintenance (id, reference, bracelet_id, motif, statut, ouvert_le, dernier_contact, batterie, reseau) `
+    + `SELECT gen_random_uuid(), 'SAV-' || lpad(nextval('dispositifs.reference_ticket')::text, 6, '0'), id, 'MUET', 'OUVERT', now(), `
+    + `now() - INTERVAL '3 hours', 64, '2G' FROM dispositifs.bracelet WHERE numero_serie = '${serie}'; `
+    + `UPDATE telemetrie.etat_bracelet SET dernier_contact = now() - INTERVAL '3 hours' WHERE bracelet_id = (SELECT id FROM dispositifs.bracelet WHERE numero_serie = '${serie}')`);
+  await page.goto('/');
+  const muet = page.getByRole('status').filter({ hasText: 'Pas de nouvelles depuis 3 h' });
+  await expect(muet).toBeVisible();
+  await expect(muet).toContainText(/Dernière position \d\d:\d\d\. Un ticket SAV a été ouvert\./);
+  await page.screenshot({ path: 'e2e/.etat/ecran-16-muet.png' });
+  await muet.click();
+  await expect(page).toHaveURL(/\/bracelet\/maintenance$/);
+  await expect(page.getByText(/SAV-\d{6}/).first()).toBeVisible();
 });

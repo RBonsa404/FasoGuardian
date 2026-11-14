@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 
-import { ClientBracelet, ClientZones, FicheEnfant, SafeZone, Situation } from 'api';
+import { ClientBracelet, ClientZones, FicheEnfant, SafeZone, Situation, SuiviMaintenance } from 'api';
 
 import { Carte, PositionSurCarte } from '../carte/fond';
 import { ApercuEnfant } from './apercu-enfant';
@@ -54,12 +54,15 @@ function situation(source: 'GNSS' | 'CELLULE', precisionM: number, minutes: numb
   };
 }
 
+/** Le bracelet répond : aucun ticket de maintenance n'est ouvert. */
+const AUCUN_TICKET = () => throwError(() => new HttpErrorResponse({ status: 404, error: { status: 404, code: 'RESSOURCE_INTROUVABLE', detail: 'Aucun ticket.' } }));
+
 describe('aperçu de l’enfant sur le tableau de bord', () => {
-  async function monter(reponse: Observable<Situation>, zones: SafeZone[] = [ECOLE]) {
+  async function monter(reponse: Observable<Situation>, zones: SafeZone[] = [ECOLE], maintenance: () => Observable<SuiviMaintenance> = AUCUN_TICKET) {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: ClientBracelet, useValue: { situation: () => reponse } },
+        { provide: ClientBracelet, useValue: { situation: () => reponse, maintenance } },
         { provide: ClientZones, useValue: { zones: () => of({ zones, maximum: 3 }) } },
       ],
     });
@@ -106,12 +109,41 @@ describe('aperçu de l’enfant sur le tableau de bord', () => {
     expect(texte).toContain('Hors de « École Les Manguiers »');
   });
 
+  it('bracelet muet : depuis quand, sa dernière position et le ticket SAV ouvert, avec le lien vers son suivi', async () => {
+    const muette = situation('GNSS', 10, 18);
+    const ticket: SuiviMaintenance = {
+      reference: 'SAV-000031',
+      numeroSerie: 'FG-2291',
+      statut: 'OUVERT',
+      ouvertLe: new Date().toISOString(),
+      dernierContact: muette.etat!.dernierContact,
+      batterie: 64,
+      reseau: '2G',
+      prisEnChargeLe: null,
+      pointRelais: null,
+      rendezVousLe: null,
+    };
+    const { texte, element } = await monter(of(muette), [ECOLE], () => of(ticket));
+
+    const heure = new Date(muette.position!.mesureeLe).toLocaleTimeString('fr', { hour: '2-digit', minute: '2-digit' });
+    expect(texte).toContain('Pas de nouvelles depuis 18 min');
+    expect(texte).toContain(`Dernière position ${heure} dans « École Les Manguiers ». Un ticket SAV a été ouvert.`);
+    expect(element.querySelector('a[href="/enfants/e1/bracelet/maintenance"]')).not.toBeNull();
+  });
+
+  it('sans ticket en cours, pas de carte « bracelet muet »', async () => {
+    const { texte } = await monter(of(situation('GNSS', 10, 2)));
+
+    expect(texte).not.toContain('Pas de nouvelles');
+    expect(texte).not.toContain('ticket SAV');
+  });
+
   it('reprend l’écran 16 : choix de l’enfant, cloche, actions rapides et dernière alerte', async () => {
     const localisations: string[] = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: ClientBracelet, useValue: { situation: () => of(situation('GNSS', 12, 2)), localiser: (id: string) => (localisations.push(id), of(undefined)) } },
+        { provide: ClientBracelet, useValue: { situation: () => of(situation('GNSS', 12, 2)), maintenance: AUCUN_TICKET, localiser: (id: string) => (localisations.push(id), of(undefined)) } },
         { provide: ClientZones, useValue: { zones: () => of({ zones: [ECOLE], maximum: 3 }) } },
       ],
     });

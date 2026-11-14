@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, injec
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import { Alerte, ClientBracelet, ClientZones, FicheEnfant, SafeZone, Situation } from 'api';
+import { Alerte, ClientBracelet, ClientZones, FicheEnfant, SafeZone, Situation, SuiviMaintenance } from 'api';
 import { FgBanniere, FgBouton, FgIcon, FgSquelette, NomIcone } from 'ui';
 
 import { iconeAlerte, statutLisible, titreCourt } from '../alertes/libelles';
 import { Carte } from '../carte/fond';
 import { forceDuSignal, positionAncienne, repereDe } from '../carte/lecture';
-import { erreurLisible } from '../commun/erreurs';
-import { heure, ilYA } from '../commun/temps';
+import { erreurLisible, estIntrouvable } from '../commun/erreurs';
+import { dureeDepuis, heure, ilYA } from '../commun/temps';
 import { DePipe, de } from '../commun/francais';
 
 const RAFRAICHISSEMENT_MS = 60_000;
@@ -98,6 +98,16 @@ const PASTILLE_ACTION =
           }
         </dl>
       </section>
+      @if (muet(); as m) {
+        <!-- Bracelet muet : la supervision a ouvert un ticket de maintenance, l'écran 40 en donne le suivi. -->
+        <a class="flex items-start gap-3 rounded-[20px] border border-attention bg-surface p-3.5 focus-visible:outline-2 focus-visible:outline-accent" [routerLink]="['/enfants', enfant().id, 'bracelet', 'maintenance']" role="status">
+          <span class="grid size-10 flex-none place-items-center rounded-md bg-attention-soft text-attention" aria-hidden="true"><fg-icon nom="signal-coupe" [taille]="20" /></span>
+          <span class="flex min-w-0 flex-col gap-0.75">
+            <strong class="text-[15px] font-semibold">{{ m.titre }}</strong>
+            <span class="text-label text-text-2">{{ m.texte }}</span>
+          </span>
+        </a>
+      }
     } @else if (sansBracelet()) {
       <section class="relative z-1000 mx-[-8px] -mt-7 flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-5 shadow-e2 lg:mx-0 lg:mt-0">
         <h2 class="m-0 text-h3 font-semibold" i18n="@@apercu.associer.titre">Associez le bracelet {{ enfant().prenom | de }}</h2>
@@ -192,6 +202,8 @@ export class ApercuEnfant {
   protected readonly sansBracelet = signal(false);
   protected readonly erreur = signal<string | null>(null);
   protected readonly positionSuspendue = signal<string | null>(null);
+  /** Ticket « bracelet muet » en cours, ouvert par la supervision quand le bracelet ne donne plus de nouvelles. */
+  private readonly maintenance = signal<SuiviMaintenance | null>(null);
   protected readonly enDemande = signal(false);
   protected readonly demande = signal<string | null>(null);
   private readonly maintenant = signal(new Date());
@@ -220,6 +232,26 @@ export class ApercuEnfant {
       return $localize`:@@carte.titre.sortie:Hors de « ${sortie}:zone: »`;
     }
     return this.zoneDedans() ?? $localize`:@@carte.titre.position:Position ${de(this.enfant().prenom)}:dePrenom:`;
+  });
+  /** Carte « bracelet muet » de l'écran 16, tant qu'un ticket est en cours. */
+  protected readonly muet = computed(() => {
+    const suivi = this.maintenance();
+    if (!suivi) {
+      return null;
+    }
+    const situation = this.situation();
+    const contact = suivi.dernierContact ?? situation?.etat?.dernierContact ?? null;
+    const position = situation?.position;
+    const zone = this.zoneDedans();
+    const titre = contact
+      ? $localize`:@@apercu.muet.titre:Pas de nouvelles depuis ${dureeDepuis(contact, this.maintenant())}:duree:`
+      : $localize`:@@apercu.muet.jamais:Pas encore de nouvelles du bracelet`;
+    const lieu = !position
+      ? ''
+      : zone
+        ? $localize`:@@apercu.muet.positionZone:Dernière position ${heure(position.mesureeLe)}:heure: dans « ${zone}:zone: ». `
+        : $localize`:@@apercu.muet.position:Dernière position ${heure(position.mesureeLe)}:heure:. `;
+    return { titre, texte: lieu + $localize`:@@apercu.muet.ticket:Un ticket SAV a été ouvert.` };
   });
   protected readonly derniereAlerte = computed(() => this.alertes()[0] ?? null);
   protected readonly mesures = computed(() => {
@@ -254,6 +286,7 @@ export class ApercuEnfant {
       this.situation.set(null);
       this.sansBracelet.set(false);
       this.positionSuspendue.set(null);
+      this.maintenance.set(null);
       this.demande.set(null);
       this.rafraichir();
     });
@@ -302,6 +335,7 @@ export class ApercuEnfant {
         this.positionSuspendue.set(null);
         this.situation.set(situation);
         this.zones.set(zones.zones);
+        this.lireMaintenance(id);
       },
       error: (cause: unknown) => {
         const lisible = erreurLisible(cause);
@@ -314,6 +348,14 @@ export class ApercuEnfant {
           this.erreur.set(lisible.message);
         }
       },
+    });
+  }
+
+  /** Un ticket introuvable veut dire que le bracelet répond ; une autre erreur laisse l'état affiché tel quel. */
+  private lireMaintenance(id: string): void {
+    this.bracelets.maintenance(id).subscribe({
+      next: (suivi) => this.enfant().id === id && this.maintenance.set(suivi),
+      error: (cause: unknown) => estIntrouvable(cause) && this.enfant().id === id && this.maintenance.set(null),
     });
   }
 }

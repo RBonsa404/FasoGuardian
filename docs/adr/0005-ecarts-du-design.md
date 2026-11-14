@@ -55,7 +55,11 @@ traçabilité.
   l'estime pas ; le bandeau orange d'une alerte en cours est conservé sous la carte d'état, une alerte ne
   devant jamais tenir dans le seul point de la cloche ; les accès à la carte, aux Safe Zones, aux trajets et
   au bracelet restent en liste sous la dernière alerte, la maquette ne disant pas d'où on les ouvre. Mes
-  enfants, l'abonnement, l'aide et la déconnexion passent dans l'onglet Réglages (écran 48).
+  enfants, l'abonnement, l'aide et la déconnexion passent dans l'onglet Réglages (écran 48). L'état « bracelet
+  muet » s'affiche tant que la supervision tient un ticket de maintenance ouvert pour le bracelet, sous la carte
+  d'état qui garde la dernière position ; il mène au suivi de l'écran 40. La dernière position y est située par
+  la Safe Zone où elle se trouvait, pas par un nom de quartier (« à Pissy ») : la plateforme ne convertit pas
+  les positions en adresses.
 - **Écran 56, recherche Ctrl K.** La maquette invite à « rechercher un dossier, un parent, un FG-XXXX ». La
   recherche trouve les écrans de l'agent et reconnaît les références de ses seuls rôles (FG-…, SAV-…, KYC-…,
   SUP-…, FG-SIG-…), puis ouvre l'écran qui les cherche avec ses propres contrôles et sa journalisation. Elle

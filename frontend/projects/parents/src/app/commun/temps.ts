@@ -16,6 +16,16 @@ export function ilYA(instantIso: string, maintenant = new Date()): string {
   return heures < 24 ? $localize`:@@duree.heures:il y a ${heures}:heures: h` : $localize`:@@duree.jours:il y a ${Math.floor(heures / 24)}:jours: j`;
 }
 
+/** Durée écoulée depuis un instant, sans « il y a » : « 18 min », « 3 h », « 2 j » (au moins 1 min). */
+export function dureeDepuis(instantIso: string, maintenant = new Date()): string {
+  const minutes = Math.max(1, minutesDepuis(instantIso, maintenant));
+  if (minutes < 60) {
+    return $localize`:@@duree.courte.minutes:${minutes}:minutes: min`;
+  }
+  const heures = Math.floor(minutes / 60);
+  return heures < 24 ? $localize`:@@duree.courte.heures:${heures}:heures: h` : $localize`:@@duree.courte.jours:${Math.floor(heures / 24)}:jours: j`;
+}
+
 export function minutesDepuis(instantIso: string, maintenant = new Date()): number {
   return Math.max(0, Math.floor((maintenant.getTime() - new Date(instantIso).getTime()) / 60_000));
 }
